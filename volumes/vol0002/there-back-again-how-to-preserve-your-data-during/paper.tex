@@ -59,7 +59,7 @@ Datasets often need to be transformed---from an external file format into a data
 
 Digital Humanities projects work with many kinds of data. But the data is very rarely created, processed, visualized, backed up and archived in a single format in only one computer system. It is almost always transformed in one or more steps between formats and systems. The journey starts when data is loaded into a database from a source file in a structured format like XML, JSON, or CSV or an unstructured format like plain text. This process is also often called ETL (extract, transform, load). The journey continues when data is migrated from one database system to a different one or from one data model to another and it may end when the data is migrated into an archival format for long-term preservation or other data export formats for users to download and process. Each of these transformations carries the risk of inadvertent loss or corruption of data.
 
-Most data transformations are done by software, often by multiple pieces of software by different authors. The integrity of transformed data depends therefore on the correctness of the software. The importance of software and of the correctness of software for the Digital Humanities has been argued more generally in  the context of improving software quality through code review \autocite{damerow_code_2025}. Code review and software tests as another element of good practice in software engineering often concentrate on small pieces of code and test small units with synthetic pieces of data. Software testing typically starts with isolated unit testing followed by more encompassing integration testing and system testing \autocite{leloudas_introduction_2023}. Testing data transformation integrity is not explicitly mentioned, but it could be considered a type of end-to-end or system test where full, real input data is compared with the transformed output.
+Most data transformations are done by software, often by multiple pieces of software by different authors. The integrity of transformed data depends therefore on the correctness of the software. The importance of software and of the correctness of software for the Digital Humanities has been argued more generally in  the context of improving software quality through code review \autocite{damerow_code_2025}. Code review and software tests as another element of good practice in software engineering often concentrate on small pieces of code and test small units with synthetic pieces of data. Software testing typically starts with isolated unit testing followed by more encompassing integration testing and system testing as described in an introductory text \autocite{leloudas_introduction_2023}. Testing data transformation integrity is not explicitly mentioned in this text, but it can be considered a type of end-to-end or system test where full, real input data is compared with the transformed output.
 
 In the following, I present three basic methods that were applied in different projects to detect data loss and corruption in the data transformation process. The methods range from simple and easy to implement counting techniques to the development of rather complex and work-intensive re-transformation and comparison tools. The costs and benefits of applying each method have to be considered in the context of the specific project and development constraints, as in all software engineering decisions. The effort of considering and implementing measures to detect data loss and corruption was motivated by the need for insights into the migration process during the development cycle and by cases of real data loss in production.
 
@@ -108,9 +108,9 @@ count
 \label{code:ismi-cnt}
 \end{listing}
 
-\section{Method 2: Track of entities during transformation steps}
+\section{Method 2: Keep track of entities during transformation steps}
 
-An intermediate method is internal bookkeeping in a transformation script. It is often possible to create counts and lists of items as they are read and compare these numbers or lists to the results of later stages of the transformation process. This method can detect dropped or added entities and, depending on the implementation, also some cases of corrupted entities. If items can be identified and kept in lists or sets it is possible to differentiate between added and dropped items and identify which items were added or dropped even if the total count stays the same.
+An intermediate method is internal bookkeeping in a transformation script. It is often possible to create counts and lists of items as they are read and compare these numbers or lists to the results of later stages of the transformation process. This method can detect dropped or added entities and, depending on the implementation, also some cases of corrupted entities. If items can be individually identified and kept in lists or sets it is possible to differentiate between added and dropped items and identify which items were added or dropped even if the total count stays the same.
 
 An example is a migration script that processes hundreds of HTML files that are the result of web scraping and a separate JSON file containing the navigation hierarchy exported from a dynamic legacy Zope\footnote{\url{https://www.zope.dev/}} website. The migration script uses the HTML and JSON input files to create a corrected static HTML website. The script reads the navigation hierarchy file and the raw HTML files and processes the HTML by comparing links to other HTML files within the navigation hierarchy data to create correct links, omit duplicated files, and find broken links.
 
@@ -225,6 +225,8 @@ options:
 
 \section{Conclusion}
 
+The three basic methods for testing data integrity presented here have different strengths and weaknesses and every developer needs to weigh these against the requirements of the individual project and the available development resources. Table~\ref{tab:method-abilities} shows an overview of the methods and their ability to detect dropped or added or corrupted entities versus the implementation complexity.
+
 \begin{table}[h]
   \centering
   \begin{tabular}{>{\raggedright}p{0.3\textwidth} >{\centering}p{0.2\textwidth} >{\centering}p{0.2\textwidth} c}
@@ -236,8 +238,6 @@ options:
   \caption{Detection abilities and complexity cost of three methods.}
   \label{tab:method-abilities}
 \end{table}
-
-The three basic methods for testing data integrity presented here have different strengths and weaknesses and every developer needs to weigh these against the requirements of the individual project and the available development resources. Table~\ref{tab:method-abilities} shows an overview of the methods and their ability to detect dropped or added or corrupted entities versus the implementation complexity.
 
 Creating and running different kinds of tests has become an integral part of good practice of software development in general. Tests let you trust your own code during and after active development. Tests also let others that review or use your code, trust the code. Tests can also be an active part of the development process when they allow to measure progress during the early phases of development or when they help to detect and avoid regressions when refactoring the code. The basic methods of end-to-end testing of data integrity shown here can be part of every developer's toolbox of tests to apply, depending on the requirements of the development project.
 
