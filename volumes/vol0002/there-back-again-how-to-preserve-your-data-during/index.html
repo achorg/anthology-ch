@@ -186,13 +186,13 @@ another element of good practice in software engineering often
 concentrate on small pieces of code and test small units with synthetic
 pieces of data. Software testing typically starts with isolated unit
 testing followed by more encompassing integration testing and system
-testing <span class="citation"
+testing as described in an introductory text <span class="citation"
 data-cites="leloudas_introduction_2023">[<a
 href="#ref-leloudas_introduction_2023"
 role="doc-biblioref">2</a>]</span>. Testing data transformation
-integrity is not explicitly mentioned, but it could be considered a type
-of end-to-end or system test where full, real input data is compared
-with the transformed output.</p>
+integrity is not explicitly mentioned in this text, but it can be
+considered a type of end-to-end or system test where full, real input
+data is compared with the transformed output.</p>
 <p>In the following, I present three basic methods that were applied in
 different projects to detect data loss and corruption in the data
 transformation process. The methods range from simple and easy to
@@ -289,18 +289,18 @@ count
 <figcaption>Listing 2: drush command to extract the count of Drupal entities by type.</figcaption>
 </figure>
 <h1 data-number="4"
-id="method-2-track-of-entities-during-transformation-steps"><span
-class="header-section-number">4</span> Method 2: Track of entities
+id="method-2-keep-track-of-entities-during-transformation-steps"><span
+class="header-section-number">4</span> Method 2: Keep track of entities
 during transformation steps</h1>
 <p>An intermediate method is internal bookkeeping in a transformation
 script. It is often possible to create counts and lists of items as they
 are read and compare these numbers or lists to the results of later
 stages of the transformation process. This method can detect dropped or
 added entities and, depending on the implementation, also some cases of
-corrupted entities. If items can be identified and kept in lists or sets
-it is possible to differentiate between added and dropped items and
-identify which items were added or dropped even if the total count stays
-the same.</p>
+corrupted entities. If items can be individually identified and kept in
+lists or sets it is possible to differentiate between added and dropped
+items and identify which items were added or dropped even if the total
+count stays the same.</p>
 <p>An example is a migration script that processes hundreds of HTML
 files that are the result of web scraping and a separate JSON file
 containing the navigation hierarchy exported from a dynamic legacy
@@ -476,6 +476,13 @@ options:
 </figure>
 <h1 data-number="6" id="conclusion"><span
 class="header-section-number">6</span> Conclusion</h1>
+<p>The three basic methods for testing data integrity presented here
+have different strengths and weaknesses and every developer needs to
+weigh these against the requirements of the individual project and the
+available development resources.
+Table <a href="#tab:method-abilities">1</a> shows an overview of the
+methods and their ability to detect dropped or added or corrupted
+entities versus the implementation complexity.</p>
 <div id="tab:method-abilities">
 <table>
 <caption>Table 1: Detection abilities and complexity cost of three
@@ -513,13 +520,6 @@ result</td>
 </tbody>
 </table>
 </div>
-<p>The three basic methods for testing data integrity presented here
-have different strengths and weaknesses and every developer needs to
-weigh these against the requirements of the individual project and the
-available development resources.
-Table <a href="#tab:method-abilities">1</a> shows an overview of the
-methods and their ability to detect dropped or added or corrupted
-entities versus the implementation complexity.</p>
 <p>Creating and running different kinds of tests has become an integral
 part of good practice of software development in general. Tests let you
 trust your own code during and after active development. Tests also let

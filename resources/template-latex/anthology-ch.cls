@@ -107,6 +107,8 @@
 \newcommand{\pagestart}[1]{\renewcommand{\@pagestart}{#1}}
 \newcommand{\@pageend}{}
 \newcommand{\pageend}[1]{\renewcommand{\@pageend}{#1}}
+\newcommand{\@paperorder}{}
+\newcommand{\paperorder}[1]{\renewcommand{\@paperorder}{#1}}
 \newcommand{\@conferencename}{}
 \newcommand{\conferencename}[1]{\renewcommand{\@conferencename}{#1}}
 \newcommand{\@conferenceeditors}{}
