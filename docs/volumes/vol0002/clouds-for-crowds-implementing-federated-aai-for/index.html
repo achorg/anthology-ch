@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clouds for Crowds—Implementing Federated AAI for the Digital Humanities</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../../../css/site.css">
+
+  <!-- citation information -->
+  <link rel="canonical" href="https://anthology.ach.org/volumes/vol0002/clouds-for-crowds-implementing-federated-aai-for/">
+  <meta name="citation_title" content="Clouds for Crowds—Implementing Federated AAI for the Digital Humanities">
+  <meta name="citation_date" content="2025">
+  <meta name="citation_public_url" content="https://anthology.ach.org/volumes/vol0002/clouds-for-crowds-implementing-federated-aai-for/">
+  <meta name="citation_journal_title" content="Anthology of Computers and the Humanities">
+  <meta name="citation_issn" content="">
+  <meta name="citation_volume" content="2">
+  <meta name="citation_firstpage" content="32">
+  <meta name="citation_lastpage" content="37">
+  <meta name="citation_doi" content="10.63744/a9oVejGuN3UN">
+  <meta name="citation_author" content="Kálmán, Tibor">
+  <meta name="citation_author" content="Chambers, Sally">
+  <meta name="citation_author" content="Gietz, Peter">
+  <meta name="citation_editor" content="Damerow, Julia">
+  <meta name="citation_editor" content="Koeser, Rebecca Sutton">
+  <meta name="citation_abstract" content="Technology has been inherent to the digital humanities from the outset. However, with the increase in data-driven research, Research Infrastructures (RI) such as DARIAH (Digital Research Infrastructure for the Arts and Humanities) need to ensure secure access to the data, tools and workflows they offer. Furthermore, collaboration with other RIs through initiatives such as OSCARS (Open Science Clusters’s Action for Research and Society) and compatibility with the European Open Science Cloud (EOSC) are becoming increasingly important. It is within this context that this article aims to highlight the necessity and advantages of implementing federated identity management and authorisation. It describes the technological background of such an Authentication and Authorisation Infrastructure (AAI) solution for the digital humanities. Finally, it motivates the DHTech community to adopt the AARC Blueprint Architecture supported by a Compendium being developed in the context of the AARC-TREE project.">
+  <meta name="citation_language" content="en">
+  <meta name="citation_keywords" content="DARIAH AAI; AARC TREE; Authentication and Authorisation Infrastructure; AAI; AARC Blueprint Architecture">
+  <meta name="citation_fulltext_html_url" content="https://anthology.ach.org/volumes/vol0002/clouds-for-crowds-implementing-federated-aai-for/">
+  <meta name="citation_pdf_url" content="https://anthology.ach.org/volumes/vol0002/clouds-for-crowds-implementing-federated-aai-for/10.63744@a9oVejGuN3UN.pdf">
+
+  <!-- Lightbox CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" />
+
+  <!-- Pandoc syntax highlighting CSS -->
+  <link rel="stylesheet" href="../../../css/syntax-highlighting.css" />
+  <link rel="stylesheet" href="../../../css/article.css" />
+
+
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://ach.org">
+        <img src="../../../logo/logo.png" alt="ACH Logo">
+      </a>
+
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+
+    <div class="navbar-menu" id="navbarMain">
+      <div class="navbar-start">
+      </div>
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://anthology.ach.org/">
+          <b>Home</b>
+        </a>
+        <a class="navbar-item" href="https://anthology.ach.org/volumes/">
+          <b>Volumes</b>
+        </a>
+        <a class="navbar-item" href="https://anthology.ach.org/about">
+          <b>About</b>
+        </a>
+        <span style="width: 25px"></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container">
+        <p class="subtitle is-6 has-text-grey">Anthology of Computers and the Humanities · <a href="..">Volume 2</a></p>
+        <h1 class="title paper-title">Clouds for Crowds—Implementing Federated AAI for the Digital Humanities</h1>
+
+        <div class="is-size-5 pl-7 has-text-centered">
+          <a href="https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;"><img style="height:25px!important;margin-left:3px;vertical-align:text-bottom;" src="../../../logo/cc-by.png"></a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <section class="section">
+    <div class="container">
+
+      <div class="paper-meta">
+        <div class="authors-container">
+          <div class="authors">
+            <section class="authors-block">
+              <p class="authors">
+                  <span class="author">
+                    Tibor Kálmán<sup></sup><a class="orcid-link" href="https://orcid.org/0000-0001-5194-5053" target="_blank" rel="noopener">
+                        <img class="orcid" src="../../../logo/orcid.png" alt="ORCID">
+                      </a>
+                  </span>,
+                  <span class="author">
+                    Sally Chambers<sup></sup><a class="orcid-link" href="https://orcid.org/0000-0002-2430-475X" target="_blank" rel="noopener">
+                        <img class="orcid" src="../../../logo/orcid.png" alt="ORCID">
+                      </a>
+                  </span> and
+                  <span class="author">
+                    Peter Gietz<sup></sup><a class="orcid-link" href="https://orcid.org/0000-0002-8310-2015" target="_blank" rel="noopener">
+                        <img class="orcid" src="../../../logo/orcid.png" alt="ORCID">
+                      </a>
+                  </span>
+              </p>
+
+              <ul class="affiliations">
+                  <li><sup>1</sup> GWDG, Göttingen, Germany</li>
+                  <li><sup>2</sup> DARIAH, Paris, France</li>
+                  <li><sup>3</sup> DAASI International, Tübingen, Germany</li>
+              </ul>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Download Buttons -->
+      <div class="buttons-container">
+        <a href="10.63744@a9oVejGuN3UN.pdf" class="button is-primary" target="_blank">
+          <span class="icon">
+            <i class="fas fa-file-pdf"></i>
+          </span>
+          <span>Download PDF</span>
+        </a>
+        <a href="10.63744@a9oVejGuN3UN.bib" class="button is-info" target="_blank">
+          <span class="icon">
+            <i class="fas fa-file-code"></i>
+          </span>
+          <span>Download Citation</span>
+        </a>
+        
+      </div>
+
+      <!-- DOI -->
+      <div class="doi-box">
+        <p class="is-size-6">
+          <b>Permanent Link:</b> <a class="doi-link" href="https://doi.org/10.63744/a9oVejGuN3UN" target="_blank">https://doi.org/10.63744/a9oVejGuN3UN</a>
+        </p>
+        <p class="is-size-6">
+          <b>Published:</b> 22 October 2025
+        </p>
+      </div>
+
+      <!-- Abstract -->
+      <div class="content">
+         <div class="abs"><span>Abstract</span><p>Technology has been inherent to the digital humanities from the
+outset. However, with the increase in data-driven research, Research
+Infrastructures (RI) such as DARIAH (Digital Research Infrastructure for
+the Arts and Humanities) need to ensure secure access to the data, tools
+and workflows they offer. Furthermore, collaboration with other RIs
+through initiatives such as OSCARS (Open Science Clusters’s Action for
+Research and Society) and compatibility with the European Open Science
+Cloud (EOSC) are becoming increasingly important. It is within this
+context that this article aims to highlight the necessity and advantages
+of implementing federated identity management and authorisation. It
+describes the technological background of such an Authentication and
+Authorisation Infrastructure (AAI) solution for the digital humanities.
+Finally, it motivates the DHTech community to adopt the AARC Blueprint
+Architecture supported by a Compendium being developed in the context of
+the AARC-TREE project.</p></div>
+
+<h1 data-number="1"
+id="research-infrastructure-for-the-arts-and-humanities"><span
+class="header-section-number">1</span> Research Infrastructure for the
+Arts and Humanities</h1>
+<p>DARIAH (Digital Research Infrastructure for the Arts and
+Humanities) <span class="citation" data-cites="web_dariah"><a
+href="#ref-web_dariah" role="doc-biblioref">[6]</a></span> is a European
+research infrastructure that provides a platform for researchers in the
+arts and humanities to access, share, and preserve digital resources and
+tools <span class="citation" data-cites="sshoc_marketplace"><a
+href="#ref-sshoc_marketplace" role="doc-biblioref">[4]</a></span>.
+DARIAH aims to enhance and support digitally-enabled research in the
+arts and humanities, fostering collaboration, innovation and
+knowledge-sharing across disciplines and borders <span class="citation"
+data-cites="chambers_2025_14881627"><a
+href="#ref-chambers_2025_14881627" role="doc-biblioref">[5]</a></span>.
+The infrastructure offers a range of services, including repositories,
+virtual research environments, and authentication and authorisation
+mechanisms, to support the research lifecycle and facilitate the
+creation, publication, and preservation of digital scholarship. By
+providing a shared infrastructure and community-driven approach, DARIAH
+enables researchers to work together more effectively, leveraging
+digital methods and tools to advance our understanding of human culture
+and society. The technical foundation for this shared infrastructure is
+provided by the DARIAH AAI (Authentication and Authorisation
+Infrastructure) .</p>
+<p>This paper provides an overview of the DARIAH AAI from the authors’
+perspective. One author is one of the developers of the DARIAH AAI, one
+is responsible for its current operation, and one holds a management
+position within DARIAH. This paper provides insights into the technical
+aspects of the DARIAH infrastructure with the goal to encourage others
+to build on top of DARIAH AAI by following AAI best practices, and to
+showcase a sustainable integration pathway for DH services and DH
+communities into the global research infrastructure landscape.</p>
+<h1 data-number="2" id="aai-for-dariah"><span
+class="header-section-number">2</span> AAI for DARIAH</h1>
+<p>The DARIAH AAI <span class="citation" data-cites="web_dariahaai"><a
+href="#ref-web_dariahaai" role="doc-biblioref">[7]</a></span> is a
+federated identity management system designed to facilitate secure and
+seamless access to data, tools and workflows for researchers in the
+humanities and arts. By leveraging federated authentication and
+authorisation, service providers can benefit from improved security,
+reduced administrative burdens, and enhanced user experience. Federated
+authentication allows users to access multiple services with a single
+set of credentials (e.g. their home institution login), eliminating the
+need for multiple usernames and passwords. This approach also enables
+service providers to outsource identity management to trusted identity
+providers, reducing the risk of password breaches and minimising the
+administrative effort required to manage user accounts. Furthermore,
+federated authorisation enables fine-grained access control, allowing
+developers to define and enforce precise access policies based on user
+attributes, group memberships and roles. From the user perspective, the
+DARIAH AAI also allows for single sign-on (SSO), i.e. the user
+authenticates once after connecting to a first application and is then
+automatically authenticated for all other federated applications they
+want to use the same day. By adopting the DARIAH AAI, service providers
+and developers can focus on delivering high-quality services to their
+users, while relying on a robust and scalable infrastructure to manage
+authentication and authorisation.</p>
+<h1 data-number="3" id="technological-background"><span
+class="header-section-number">3</span> Technological Background</h1>
+<p>The technological background of DARIAH AAI is provided using
+established technologies and standardised protocols for federated
+identity management, as summarised below. More background information
+can be found in Chapter 3.3.3, <em>Access control to research data in
+the frame of FAIR principles and open access</em> <span class="citation"
+data-cites="erzsebet_toth_czifra_2023_8059626"><a
+href="#ref-erzsebet_toth_czifra_2023_8059626"
+role="doc-biblioref">[13]</a></span>.</p>
+<p> <strong>SAML (Security Assertion Markup Language).</strong> The
+DARIAH AAI uses SAML as the primary protocol for exchanging
+authentication and authorisation information between identity providers
+and service providers. SAML allows for the secure exchange of user
+attributes and authentication statements between parties.</p>
+<p> <strong>OpenID Connect (OIDC).</strong> In addition to SAML, the
+DARIAH AAI also supports OIDC, an authentication protocol built on top
+of the OAuth 2.0 framework. OIDC provides a simpler and more lightweight
+alternative to SAML for authentication and authorisation.</p>
+<p> <strong>OAuth 2.0.</strong> The DARIAH AAI also supports OAuth 2.0
+as the authorisation framework for managing access to protected
+resources. OAuth 2.0 provides a standardised mechanism for clients to
+request access to resources on behalf of the user.</p>
+<p> <strong>Shibboleth and SimpleSAMLphp.</strong> The DARIAH AAI is
+based on the Shibboleth and simpleSAMLphp open source software systems,
+which provide a robust and scalable framework for managing identity
+federation. Both products support SAML and OIDC, and can provide a
+single sign-on (SSO) experience across both protocols.</p>
+<p> <strong>Role-based Access Control (RBAC).</strong> The DARIAH AAI
+implements RBAC as a policy-based approach to access control. It allows
+for fine-grained access control decisions based on user roles,
+affiliations and permissions.</p>
+<p> <strong>LDAP (Lightweight Directory Access Protocol).</strong> The
+DARIAH AAI uses LDAP as a directory service for storing and managing
+user attributes and identity information, as well as group memberships
+and roles.</p>
+<p> <strong>SP/IdP Proxy (Service Provider / Identity Provider
+Proxy).</strong> DARIAH’s SP/IdP proxy simplifies the connection of
+services and identity sources to the infrastructure. This mechanism
+enables any DARIAH related attributes (e.g. member of a specific
+research project), to be provided, in addition to the attributes
+provided by the home organisation.</p>
+<p>The DARIAH AAI is designed to support federation, which means that it
+allows multiple identity providers and service providers to participate
+in the infrastructure. This enables users to access multiple services
+with a single set of credentials, while also allowing service providers
+to outsource identity management to trusted identity providers. It
+interconnects, for example, with eduGAIN <span class="citation"
+data-cites="web_eduGAIN"><a href="#ref-web_eduGAIN"
+role="doc-biblioref">[10]</a></span>, the interfederation of national
+research federations world-wide. Thus a researcher from a country that
+is part of the interfederation can access federated services world-wide
+by using the credentials managed by their home organisation.</p>
+<p>Figure <a href="#fig:dariahaai1">1</a> depicts the DARIAH AAI
+architecture.</p>
+<figure id="fig:dariahaai1" data-latex-placement="t!">
+<a href="figures/Figure_dariahaai1-v2.png" data-lightbox="figures" data-title="Figure 1: The Architecture of the DARIAH Authentication and Authorisation Infrastructure."><img
+src="figures/Figure_dariahaai1-v2.png" style="width:70.0%" /></a>
+<figcaption>Figure 1: The Architecture of the DARIAH Authentication and
+Authorisation Infrastructure.</figcaption>
+</figure>
+<p>The DARIAH SP/IdP Proxy allows authentication for (1) users from
+every IdPs interfederated in eduGAIN, as well as for (2) so-called
+“homeless” users from the DARIAH “homeless” IdP, where any humanities
+researcher can register for an account including independent researchers
+without an institutional affiliation. For users of both categories
+("eduGAIN" or "homeless"), DARIAH-specific rights and privileges can be
+managed with the DARIAH group membership management. This enables the
+proxy to transfer user attributes from the IdP where the authentication
+took place, as well as membership attributes from the DARIAH virtual
+organisation to the DARIAH services.</p>
+<p>By leveraging the above mentioned standard technologies and
+protocols, the DARIAH AAI provides a robust, scalable and secure system
+for managing identity and access control in the context of the research
+landscape. The majority of the design decisions made for the DARIAH AAI
+are compliant with the globally recognised AARC Blueprint
+Architecture.</p>
+<h1 data-number="4" id="aarc-blueprint-architecture"><span
+class="header-section-number">4</span> AARC Blueprint Architecture</h1>
+<p>The AARC (Authentication and Authorisation for Research and
+Collaboration) Blueprint Architecture <span class="citation"
+data-cites="aarc_community_members_2019_3672785"><a
+href="#ref-aarc_community_members_2019_3672785"
+role="doc-biblioref">[2]</a></span> is a comprehensive framework for
+designing and implementing federated authentication and authorisation
+infrastructures for research communities. Developed through three phases
+of AARC projects <span class="citation" data-cites="web_AARC"><a
+href="#ref-web_AARC" role="doc-biblioref">[1]</a></span>, the Blueprint
+provides a set of guidelines, policies and architectures for building
+scalable and secure identity management systems. DARIAH AAI implements
+the main components of AARC, including: <strong>(1) Policy
+Framework</strong>, which defines the rules and guidelines for identity
+management and access control; <strong>(2) Proxy-based
+Architecture</strong>, which outlines the technical design and
+components of the infrastructure; <strong>(3) Standards and
+Protocols</strong>, which specify the interoperability standards for
+identity federation and attribute-based access control; and <strong>(4)
+Governance</strong>, which establishes the organisational and
+operational structures for managing the infrastructure. By following the
+AARC Blueprint, research organisations and communities can establish
+robust and trustworthy identity management systems (like DARIAH AAI), to
+enable secure and seamless collaboration and access to shared resources
+and services.</p>
+<p>The current AARC TREE project (AARC Technical Revision to Enhance
+Effectiveness) <span class="citation" data-cites="web_aarc_tree"><a
+href="#ref-web_aarc_tree" role="doc-biblioref">[3]</a></span> drives the
+next phase of integration for research infrastructures. It expands
+federated access management to integrate user-centred technologies and
+access to federated data and services (authorisation), as well as
+defining common strategies for the development, deployment and
+sustainability of AAIs. A key aim of the AARC TREE project is to foster
+the uptake of the AARC Blueprint Architecture and Guidelines by research
+infrastructures and their communities such as DARIAH. This work is
+supported by the development of a Compendium of AARC best practices and
+recommendations for a common long-term strategy for AAI services in
+pan-European Research Infrastructures in Europe. Furthermore, this work
+will lay the foundations for ensuring that the AAIs are compatible with
+the European Open Science Cloud.</p>
+<h1 data-number="5" id="eosc-and-pan-european-e-infrastructures"><span
+class="header-section-number">5</span> EOSC and pan-European
+e-Infrastructures</h1>
+<p>The European Open Science Cloud (EOSC) <span class="citation"
+data-cites="web_eosc"><a href="#ref-web_eosc"
+role="doc-biblioref">[9]</a></span> is a virtual environment that brings
+together research communities, data repositories, and service providers
+to enable seamless access to research data, services, and resources. The
+EOSC Federation <span class="citation"
+data-cites="eosc_association_2025_14999577"><a
+href="#ref-eosc_association_2025_14999577"
+role="doc-biblioref">[8]</a></span> enables the distributed management
+of such data, knowledge and resources for European research, fostering
+collaboration, innovation, and the uptake of open science.</p>
+<p>At the heart of the EOSC Federation are the EOSC Nodes, which are
+national or thematic hubs that provide access to research services,
+data, and resources. EOSC Nodes are responsible for aggregating and
+providing services, data, and resources from their respective domains,
+making them available to the broader research community through the EOSC
+Federation. Each Node acts as a gateway to the EOSC, providing a single
+point of access to a wide range of research services, including data
+repositories, computing resources, and software tools. By connecting to
+the EOSC Federation through the Nodes, researchers can access a vast
+array of resources and services, facilitating collaboration, data
+sharing, and innovation across disciplines and borders. The EOSC Nodes
+play a crucial role in realising the vision of the EOSC, enabling the
+creation of a unified, open, and accessible research environment for
+European scientists. The basis of the EOSC Federation is the EOSC AAI as
+described in <span class="citation"
+data-cites="kanellopoulos_2025_15388270"><a
+href="#ref-kanellopoulos_2025_15388270"
+role="doc-biblioref">[12]</a></span>, which interoperates with the
+DARIAH AAI.</p>
+<figure id="fig:dariahaai2" data-latex-placement="t!">
+<a href="figures/Figure_dariahaai2-v2.png" data-lightbox="figures" data-title="Figure 2: Interoperation between DARIAH-AAI and Services of a Research Infrastructure."><img
+src="figures/Figure_dariahaai2-v2.png" style="width:70.0%" /></a>
+<figcaption>Figure 2: Interoperation between DARIAH-AAI and Services of
+a Research Infrastructure.</figcaption>
+</figure>
+<p>DARIAH AAI’s interoperability with pan-European e-infrastructures has
+already been successfully validated by various proof of concepts
+implementations (PoC). For instance, <span class="citation"
+data-cites="dariah_poc"><a href="#ref-dariah_poc"
+role="doc-biblioref">[11]</a></span> showcases how DARIAH-AAI users
+could access services from other e-infrastructures, by using the DARIAH
+AAI proxy as presented in the Figure <a href="#fig:dariahaai2">2</a>.
+The Figure also shows how the DARIAH-AAI proxy provides a powerful layer
+of identity harmonisation (account linking capabilities) by interacting
+with other infrastructure proxies (like EGI’s Check-In service or the
+EOSC EU Node’s MyAccessID service).</p>
+<p>With the European Open Science Cloud entering its build-up phase,
+such federated access is crucial for enabling humanities researchers to
+connect to the wealth of data, services and resources available. Based
+on these undertakings it is now possible to productively login to the
+EOSC EU Node, via the DARIAH AAI.</p>
+<h1 data-number="6" id="conclusion"><span
+class="header-section-number">6</span> Conclusion</h1>
+<p>Robust federated identity management and authorisation for research
+infrastructures such as DARIAH is becoming increasingly essential. By
+ensuring that the DARIAH-AAI is compatible with the AARC Blueprint
+Architecture and related initiatives such as EOSC, its adoption not only
+helps to simplify the management of access control and authorisation for
+DH service providers, but also reduces administrative burdens and most
+importantly, improves the overall user experience for researchers in the
+humanities and arts.</p>
+<h1 class="unnumbered" id="acknowledgments">Acknowledgments</h1>
+<p>This work was partly funded by the European Union (AARC TREE project,
+grant agreement no. 101131237). We would also like to acknowledge the
+support and contributions of the AARC community, and we are grateful for
+the feedback provided by the DARIAH community.</p>
+<h1 class="unnumbered" id="bibliography">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent"
+data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-web_AARC" class="csl-entry" role="listitem">
+[1] AARC Community. <em>AARC Webpage</em>. <a
+href="https://aarc-community.org">https://aarc-community.org</a>.
+</div>
+<div id="ref-aarc_community_members_2019_3672785" class="csl-entry"
+role="listitem">
+[2] AARC Community members and AppInt members. <em>AARC Blueprint
+Architecture 2019 (AARC-G045)</em>. 2019, <a
+href="https://doi.org/10.5281/zenodo.3672785">https://doi.org/10.5281/zenodo.3672785</a>.
+</div>
+<div id="ref-web_aarc_tree" class="csl-entry" role="listitem">
+[3] AARC Technical Revision to Enhance Effectiveness. <em>AARC TREE
+Webpage</em>. <a
+href="https://wiki.geant.org/display/AARC/AARC+TREE+Project">https://wiki.geant.org/display/AARC/AARC+TREE+Project</a>.
+</div>
+<div id="ref-sshoc_marketplace" class="csl-entry" role="listitem">
+[4] Barbot, Laure, Maja Dolinar, {Edward J.} Gray, Cristina Grisot,
+Klaus Illmayer, Michael Kurzmeier, and Barbara McGillivray.
+<span>“Contextualizing Research Tools &amp; Services Through Workflows
+in the SSH Open Marketplace.”</span> <em>Journal of Open Humanities
+Data</em>, vol. 10, Feb. 2024, <a
+href="https://doi.org/10.5334/johd.192">https://doi.org/10.5334/johd.192</a>.
+</div>
+<div id="ref-chambers_2025_14881627" class="csl-entry" role="listitem">
+[5] Chambers, Sally, Melanie Nentwich, Giovanni Guerrieri, Anca Hienola,
+Marion Pierre, Michael Kurzmeier, Laure Barbot, Léo Chazallet, Joaquín
+López Lerida, Romain David, et al. <em>OSCARS D2.1 - Clusters’ Services
+and Data Sources Portfolios</em>. Zenodo, Feb. 2025, <a
+href="https://doi.org/10.5281/zenodo.14881627">https://doi.org/10.5281/zenodo.14881627</a>.
+</div>
+<div id="ref-web_dariah" class="csl-entry" role="listitem">
+[6] DARIAH (Digital Research Infrastructure for the Arts and Humanities.
+<em>DARIAH Webpage</em>. <a
+href="https://www.dariah.eu/">https://www.dariah.eu/</a>.
+</div>
+<div id="ref-web_dariahaai" class="csl-entry" role="listitem">
+[7] DARIAH (Digital Research Infrastructure for the Arts and
+Humanities). <em>Documentation for DARIAH-AAI</em>. <a
+href="https://doc.de.dariah.eu/DARIAH-AAI-Documentation/">https://doc.de.dariah.eu/DARIAH-AAI-Documentation/</a>.
+</div>
+<div id="ref-eosc_association_2025_14999577" class="csl-entry"
+role="listitem">
+[8] EOSC Association. <em>EOSC Federation Handbook</em>. Zenodo, 2025,
+<a
+href="https://doi.org/10.5281/zenodo.14999577">https://doi.org/10.5281/zenodo.14999577</a>.
+</div>
+<div id="ref-web_eosc" class="csl-entry" role="listitem">
+[9] European Open Science Cloud. <em>EOSC Webpage</em>. <a
+href="https://www.eosc.eu/">https://www.eosc.eu/</a>.
+</div>
+<div id="ref-web_eduGAIN" class="csl-entry" role="listitem">
+[10] GÉANT Association. <em>EduGAIN Webpage</em>. <a
+href="https://edugain.org">https://edugain.org</a>.
+</div>
+<div id="ref-dariah_poc" class="csl-entry" role="listitem">
+[11] Hübner, D., and I. Igoumenos. <em>Showcase of the DARIAH-EGI
+Pilot</em>. 2019, <a
+href="https://doi.org/10.5281/zenodo.3672785">https://doi.org/10.5281/zenodo.3672785</a>.
+</div>
+<div id="ref-kanellopoulos_2025_15388270" class="csl-entry"
+role="listitem">
+[12] Kanellopoulos, Christos, Marina Adomeit, Valeria Ardizzone, Licia
+Florio, Francesco Giacomini, David Groep, Marcus Hardt, Tibor Kálmán,
+Tomasz Kuczyński, Nicolas Liampotis, et al. <em>EOSC AAI Architecture
+2025</em>. Versions March 2025, Zenodo, May 2025, <a
+href="https://doi.org/10.5281/zenodo.15388270">https://doi.org/10.5281/zenodo.15388270</a>.
+</div>
+<div id="ref-erzsebet_toth_czifra_2023_8059626" class="csl-entry"
+role="listitem">
+[13] Tóth-Czifra, Erzsébet, Marta Błaszczyńska, Francesco Gelati, Femmy
+Admiraal, Mirjam Blümm, Erik Buelinckx, Vera Chiquet, Rita Gautschy,
+Peter Gietz, Péter Király, et al. <em>Research Data Management for Arts
+and Humanities: Integrating Voices of the Community</em>. Zenodo, Aug.
+2023, <a
+href="https://doi.org/10.5281/zenodo.8059626">https://doi.org/10.5281/zenodo.8059626</a>.
+</div>
+</div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="content has-text-centered">
+      <p>
+        <strong>Anthology of Computers and the Humanities</strong> · Association for Computers and the Humanities
+      </p>
+      <p class="is-size-7">
+        Paper © 2025 the authors. All other content © 2025 ACH.
+      </p>
+    </div>
+  </footer>
+
+
+  <!-- Lightbox JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
+
+  <!-- Prism.js for syntax highlighting -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-xml.min.js"></script>
+
+  <!-- Custom JavaScript -->
+  <script src="../../../js/navbar.js"></script>
+  <script src="../../../js/lightbox-config.js"></script>
+  <script src="../../../js/code-copy.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ cite_paper_title }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../../../css/site.css">
+
+  <!-- citation information -->
+  <link rel="canonical" href="{{ cite_paper_url }}">
+  <meta name="citation_title" content="{{ cite_paper_title }}">
+  <meta name="citation_date" content="{{ cite_date }}">
+  <meta name="citation_public_url" content="{{ cite_paper_url }}">
+  <meta name="citation_journal_title" content="Anthology of Computers and the Humanities">
+  <meta name="citation_issn" content="">
+  <meta name="citation_volume" content="{{ cite_volume }}">
+  <meta name="citation_firstpage" content="{{ cit_first_page }}">
+  <meta name="citation_lastpage" content="{{ cite_last_page }}">
+  <meta name="citation_doi" content="{{ cite_doi }}">
+  {%- for author in cite_authors %}
+  <meta name="citation_author" content="{{ author.last }}, {{ author.first }}">
+  {%- endfor %}
+  {%- for editor in cite_editors %}
+  <meta name="citation_editor" content="{{ editor.last }}, {{ editor.first }}">
+  {%- endfor %}
+  <meta name="citation_abstract" content="{{ cite_abstract }}">
+  <meta name="citation_language" content="{{ cite_language }}">
+  <meta name="citation_keywords" content="{{ cite_keywords | join('; ') }}">
+  <meta name="citation_fulltext_html_url" content="{{ cite_html_url }}">
+  <meta name="citation_pdf_url" content="{{ cite_pdf_url }}">
+
+  <!-- Lightbox CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" />
+
+  <!-- Pandoc syntax highlighting CSS -->
+  <link rel="stylesheet" href="../../../css/syntax-highlighting.css" />
+  <link rel="stylesheet" href="../../../css/article.css" />
+
+
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://ach.org">
+        <img src="../../../logo/logo.png" alt="ACH Logo">
+      </a>
+
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+
+    <div class="navbar-menu" id="navbarMain">
+      <div class="navbar-start">
+      </div>
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://anthology.ach.org/">
+          <b>Home</b>
+        </a>
+        <a class="navbar-item" href="https://anthology.ach.org/volumes/">
+          <b>Volumes</b>
+        </a>
+        <a class="navbar-item" href="https://anthology.ach.org/about">
+          <b>About</b>
+        </a>
+        <span style="width: 25px"></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container">
+        <p class="subtitle is-6 has-text-grey">Anthology of Computers and the Humanities · <a href="..">Volume {{ volume }}</a></p>
+        <h1 class="title paper-title">{{ title }}</h1>
+
+        <div class="is-size-5 pl-7 has-text-centered">
+          <a href="https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;"><img style="height:25px!important;margin-left:3px;vertical-align:text-bottom;" src="../../../logo/cc-by.png"></a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <section class="section">
+    <div class="container">
+
+      <div class="paper-meta">
+        <div class="authors-container">
+          <div class="authors">
+            <section class="authors-block">
+              <p class="authors">
+                {%- for author in authors %}
+                  {%- set nums = (author.affiliation_numbers | map('int') | list) | sort %}
+                  <span class="author">
+                    {{ author.name }}<sup>
+                      {%- for n in nums -%}
+                        {{ n }}{%- if not loop.last -%},{%- endif -%}
+                      {%- endfor -%}
+                    </sup>{% if author.orcid %}<a class="orcid-link" href="https://orcid.org/{{ author.orcid }}" target="_blank" rel="noopener">
+                        <img class="orcid" src="../../../logo/orcid.png" alt="ORCID">
+                      </a>
+                    {%- endif %}
+                  </span>
+                  {%- if not loop.last %}
+                    {%- if loop.revindex == 2 %} and
+                    {%- else %}, 
+                    {%- endif %}
+                  {%- endif %}
+                {%- endfor %}
+              </p>
+
+              <ul class="affiliations">
+                {%- for affil in affiliations | sort(attribute='number') %}
+                  <li><sup>{{ affil.number }}</sup> {{ affil.text }}</li>
+                {%- endfor %}
+              </ul>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Download Buttons -->
+      <div class="buttons-container">
+        <a href="{{ pdf_path }}" class="button is-primary" target="_blank">
+          <span class="icon">
+            <i class="fas fa-file-pdf"></i>
+          </span>
+          <span>Download PDF</span>
+        </a>
+        <a href="{{ bib_path }}" class="button is-info" target="_blank">
+          <span class="icon">
+            <i class="fas fa-file-code"></i>
+          </span>
+          <span>Download Citation</span>
+        </a>
+        
+      </div>
+
+      <!-- DOI -->
+      <div class="doi-box">
+        <p class="is-size-6">
+          <b>Permanent Link:</b> <a class="doi-link" href="https://doi.org/{{ doi }}" target="_blank">https://doi.org/{{ doi }}</a>
+        </p>
+        <p class="is-size-6">
+          <b>Published:</b> {{ date }}
+        </p>
+      </div>
+
+      <!-- Abstract -->
+      <div class="content">
+         {{ content | safe }}
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="content has-text-centered">
+      <p>
+        <strong>Anthology of Computers and the Humanities</strong> · Association for Computers and the Humanities
+      </p>
+      <p class="is-size-7">
+        Paper © 2025 the authors. All other content © 2025 ACH.
+      </p>
+    </div>
+  </footer>
+
+
+  <!-- Lightbox JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
+
+  <!-- Prism.js for syntax highlighting -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-xml.min.js"></script>
+
+  <!-- Custom JavaScript -->
+  <script src="../../../js/navbar.js"></script>
+  <script src="../../../js/lightbox-config.js"></script>
+  <script src="../../../js/code-copy.js"></script>
+
+</body>
+</html>

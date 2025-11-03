@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Developing Training and Education Resources for Research Software Engineering in DH</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../../../css/site.css">
+
+  <!-- citation information -->
+  <link rel="canonical" href="https://anthology.ach.org/volumes/vol0002/developing-training-education-resources-for-in-dh/">
+  <meta name="citation_title" content="Developing Training and Education Resources for Research Software Engineering in DH">
+  <meta name="citation_date" content="2025">
+  <meta name="citation_public_url" content="https://anthology.ach.org/volumes/vol0002/developing-training-education-resources-for-in-dh/">
+  <meta name="citation_journal_title" content="Anthology of Computers and the Humanities">
+  <meta name="citation_issn" content="">
+  <meta name="citation_volume" content="2">
+  <meta name="citation_firstpage" content="13">
+  <meta name="citation_lastpage" content="18">
+  <meta name="citation_doi" content="10.63744/X9dgVaDTvJHY">
+  <meta name="citation_author" content="Damerow, Julia">
+  <meta name="citation_author" content="Nelson, David Ragnar">
+  <meta name="citation_author" content="Hernandez, Jose">
+  <meta name="citation_editor" content="Damerow, Julia">
+  <meta name="citation_editor" content="Koeser, Rebecca Sutton">
+  <meta name="citation_abstract" content="This paper outlines an in-progress educational resource created by the DHTech Education and Training Working Group. The preliminary resource seeks to fill a gap in the current training materials available to people who work on the technical side of Digital Humanities projects. It will provide resources on high-level core concepts of software development that contextualize, rather than duplicate, existing resources. The contribution outlines the intended workflow for producing this resource and details the anticipated challenges and barriers to implementation.">
+  <meta name="citation_language" content="en">
+  <meta name="citation_keywords" content="pedagogy; training; digital humanities; research software engineering">
+  <meta name="citation_fulltext_html_url" content="https://anthology.ach.org/volumes/vol0002/developing-training-education-resources-for-in-dh/">
+  <meta name="citation_pdf_url" content="https://anthology.ach.org/volumes/vol0002/developing-training-education-resources-for-in-dh/10.63744@X9dgVaDTvJHY.pdf">
+
+  <!-- Lightbox CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" />
+
+  <!-- Pandoc syntax highlighting CSS -->
+  <link rel="stylesheet" href="../../../css/syntax-highlighting.css" />
+  <link rel="stylesheet" href="../../../css/article.css" />
+
+
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://ach.org">
+        <img src="../../../logo/logo.png" alt="ACH Logo">
+      </a>
+
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+
+    <div class="navbar-menu" id="navbarMain">
+      <div class="navbar-start">
+      </div>
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://anthology.ach.org/">
+          <b>Home</b>
+        </a>
+        <a class="navbar-item" href="https://anthology.ach.org/volumes/">
+          <b>Volumes</b>
+        </a>
+        <a class="navbar-item" href="https://anthology.ach.org/about">
+          <b>About</b>
+        </a>
+        <span style="width: 25px"></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container">
+        <p class="subtitle is-6 has-text-grey">Anthology of Computers and the Humanities · <a href="..">Volume 2</a></p>
+        <h1 class="title paper-title">Developing Training and Education Resources for Research Software Engineering in DH</h1>
+
+        <div class="is-size-5 pl-7 has-text-centered">
+          <a href="https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;"><img style="height:25px!important;margin-left:3px;vertical-align:text-bottom;" src="../../../logo/cc-by.png"></a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <section class="section">
+    <div class="container">
+
+      <div class="paper-meta">
+        <div class="authors-container">
+          <div class="authors">
+            <section class="authors-block">
+              <p class="authors">
+                  <span class="author">
+                    Julia Damerow<sup></sup><a class="orcid-link" href="https://orcid.org/0000-0002-0874-0092" target="_blank" rel="noopener">
+                        <img class="orcid" src="../../../logo/orcid.png" alt="ORCID">
+                      </a>
+                  </span>,
+                  <span class="author">
+                    David Ragnar Nelson<sup></sup><a class="orcid-link" href="https://orcid.org/0009-0006-7277-6600" target="_blank" rel="noopener">
+                        <img class="orcid" src="../../../logo/orcid.png" alt="ORCID">
+                      </a>
+                  </span> and
+                  <span class="author">
+                    Jose Hernandez<sup></sup><a class="orcid-link" href="https://orcid.org/0000-0002-0969-1106" target="_blank" rel="noopener">
+                        <img class="orcid" src="../../../logo/orcid.png" alt="ORCID">
+                      </a>
+                  </span>
+              </p>
+
+              <ul class="affiliations">
+                  <li><sup>1</sup> School of Complex Adaptive Systems, Arizona State University, Tempe, AZ, USA</li>
+                  <li><sup>2</sup> Center for Digital Scholarship, American Philosophical Society, Philadelphia, PA, USA</li>
+                  <li><sup>3</sup> Research Computing Center, Florida State University, Tallahassee, FL, USA</li>
+              </ul>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Download Buttons -->
+      <div class="buttons-container">
+        <a href="10.63744@X9dgVaDTvJHY.pdf" class="button is-primary" target="_blank">
+          <span class="icon">
+            <i class="fas fa-file-pdf"></i>
+          </span>
+          <span>Download PDF</span>
+        </a>
+        <a href="10.63744@X9dgVaDTvJHY.bib" class="button is-info" target="_blank">
+          <span class="icon">
+            <i class="fas fa-file-code"></i>
+          </span>
+          <span>Download Citation</span>
+        </a>
+        
+      </div>
+
+      <!-- DOI -->
+      <div class="doi-box">
+        <p class="is-size-6">
+          <b>Permanent Link:</b> <a class="doi-link" href="https://doi.org/10.63744/X9dgVaDTvJHY" target="_blank">https://doi.org/10.63744/X9dgVaDTvJHY</a>
+        </p>
+        <p class="is-size-6">
+          <b>Published:</b> 22 October 2025
+        </p>
+      </div>
+
+      <!-- Abstract -->
+      <div class="content">
+         <div class="abs"><span>Abstract</span><p>This paper outlines an in-progress educational resource created by
+the DHTech Education and Training Working Group. The preliminary
+resource seeks to fill a gap in the current training materials available
+to people who work on the technical side of Digital Humanities projects.
+It will provide resources on high-level core concepts of software
+development that contextualize, rather than duplicate, existing
+resources. The contribution outlines the intended workflow for producing
+this resource and details the anticipated challenges and barriers to
+implementation.</p></div>
+
+<h1 data-number="1" id="introduction"><span
+class="header-section-number">1</span> Introduction</h1>
+<p>In 2025, DHTech<a href="#fn1" class="footnote-ref" id="fnref1"
+role="doc-noteref"><sup>1</sup></a> ran a survey to better understand
+the background and experiences of people working on technical aspects of
+Digital Humanities (DH) projects. According to this survey, 39% of
+respondents received their software development training through
+self-directed learning.<a href="#fn2" class="footnote-ref" id="fnref2"
+role="doc-noteref"><sup>2</sup></a> Additionally, about 70% reported
+that they are at least in part self-taught. There is nothing wrong with
+being a self-taught programmer, and the majority of software developers
+will be self-taught to an extent, whether to become familiar with a new
+framework or learning a new programming language. Small scale
+experiments and experiences suggest, however, that a formal software
+engineering or computer science degree provides a deeper understanding
+of computers and software development concepts <span class="citation"
+data-cites="bartram2016 kimball2023"><a href="#ref-bartram2016"
+role="doc-biblioref">[1]</a>, <a href="#ref-kimball2023"
+role="doc-biblioref">[7]</a></span>. For research software, this lack of
+fundamental knowledge might contribute to some of the difficulties
+researchers face when writing code. Wiese et al. found that 70% of
+respondents to their survey of scientific R developers deal with
+technical difficulties such as software design and maintenance <span
+class="citation" data-cites="wiese2020"><a href="#ref-wiese2020"
+role="doc-biblioref">[14]</a></span>. This is supported by a survey of
+scientific R developers conducted by Pinto et al., which found that 52%
+of respondents indicated they had only a novice understanding or no
+understanding at all of software design <span class="citation"
+data-cites="pinto2018"><a href="#ref-pinto2018"
+role="doc-biblioref">[12]</a></span>. While systematic studies of
+software development skills in the humanities are lacking, Bleeker et
+al. found in a survey on “code literacy” in DH that around two-thirds of
+respondents reported having no, beginner, or intermediate levels of code
+literacy <span class="citation" data-cites="bleeker2022"><a
+href="#ref-bleeker2022" role="doc-biblioref">[3]</a></span>.</p>
+<p>Given this need for self-directed learning, there is a demand for
+training resources for software development. In general, there are two
+types of resources: tool- or technique-specific resources and (research)
+software engineering specific resources. The first type typically
+focuses on a specific problem statement and how to use a certain tool or
+technique to address it; such as the lessons published in the
+Programming Historian<a href="#fn3" class="footnote-ref" id="fnref3"
+role="doc-noteref"><sup>3</sup></a> <span class="citation"
+data-cites="mullen2025 ryan2021"><a href="#ref-mullen2025"
+role="doc-biblioref">[8]</a>, <a href="#ref-ryan2021"
+role="doc-biblioref">[13]</a></span>. Lessons in these resources teach,
+for example, how to create choropleth maps with Python, how to work with
+dates in R, or how to analyze newspapers with R. The second type of
+resource focuses on general software engineering topics and is not
+specifically targeting DH practitioners. The materials developed as part
+of the INTERSECT project<a href="#fn4" class="footnote-ref" id="fnref4"
+role="doc-noteref"><sup>4</sup></a> are one example, as well as the Code
+Refinery project,<a href="#fn5" class="footnote-ref" id="fnref5"
+role="doc-noteref"><sup>5</sup></a> the Carpentries,<a href="#fn6"
+class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a>
+Better Scientific Software,<a href="#fn7" class="footnote-ref"
+id="fnref7" role="doc-noteref"><sup>7</sup></a> and the US-RSE Education
+&amp; Training Seminar Series.<a href="#fn8" class="footnote-ref"
+id="fnref8" role="doc-noteref"><sup>8</sup></a> Topics include how to
+design software, how to use Git and collaborate with others using Git
+and GitHub, and how to document software.</p>
+<p>But there are disciplinary differences that affect the usefulness of
+these resources for software developers in the humanities. This was
+confirmed by the survey conducted by DHTech in 2025 which found that
+over 70% of respondents worked on web applications, projects, or digital
+editions, and 60% used JavaScript. In contrast, in the RSE International
+Survey 2022 only 19% indicated that they used JavaScript <span
+class="citation" data-cites="hettrick2022"><a href="#ref-hettrick2022"
+role="doc-biblioref">[6]</a></span>, suggesting that web application
+development is not the main task of many developers of research software
+outside of the humanities.<a href="#fn9" class="footnote-ref"
+id="fnref9" role="doc-noteref"><sup>9</sup></a> In addition, code and
+software are often not seen as primary research outputs in the
+humanities, which can be a barrier to starting conversations about best
+practices <span class="citation" data-cites="vanzundert2020"><a
+href="#ref-vanzundert2020" role="doc-biblioref">[15]</a></span>. While
+the authors are not aware of any survey or study about the differences
+in required skills between DH developers and developers working in other
+research domains, personal experience and anecdotal evidence suggest
+that there are indeed variations. Although all of the resources listed
+above are highly valuable and widely used, there is a lack of materials
+that contextualize and bring together the separate topics and tutorials
+specifically with DH practitioners in mind. The Education &amp; Training
+Working Group of DHTech<a href="#fn10" class="footnote-ref" id="fnref10"
+role="doc-noteref"><sup>10</sup></a> aims to fill this gap by offering
+lessons that link to existing materials where possible and
+contextualizing them as needed to provide a domain-specific
+perspective.</p>
+<p>The goal of these lessons is to clarify that developing software is a
+multifaceted and complex process, with barriers that are unique to the
+digital humanities. Any large software development project can and
+should be broken down into smaller components; however, knowing how they
+work together in a maintainable and efficient way can be challenging.
+Therefore, we must know how to break down a problem into its constituent
+steps, carry out each step, and verify its success. For example, in a
+complex web application, the integration of different components, such
+as maintaining a database, designing a frontend, and handling a
+well-optimized and indexed search engine, requires sophisticated
+knowledge of software development. The digital humanities has an
+unfortunate history of projects that have disappeared from the web due
+to the creators’ inability to maintain or migrate the project as its
+complexity has grown.<a href="#fn11" class="footnote-ref" id="fnref11"
+role="doc-noteref"><sup>11</sup></a></p>
+<p>In addition to the complexity of web applications, inexperienced
+programmers can introduce bugs or errors into the software. There are
+well-known examples in the hard sciences of bugs in research software
+leading to incorrect results <span class="citation"
+data-cites="neupane2019"><a href="#ref-neupane2019"
+role="doc-biblioref">[9]</a></span>. While no such cases are known yet
+in DH, there is a real possibility for errors and bugs in our field as
+well. Even in a web application, which may not produce hard, verifiable
+results, bugs or errors in the software, such as an improperly designed
+search interface, could mislead end users and introduce errors into
+research. In addition, such errors matter even for researchers who never
+intend to release their code to be reused or as a web application, as
+they could lead to inaccurate or faulty results and conclusions.</p>
+<h1 data-number="2" id="there-is-work-in-working-group"><span
+class="header-section-number">2</span> There is “Work” in “Working
+Group”</h1>
+<p>The DHTech Education and Training Working Group was founded after
+discussions about training and education gaps of DH developers at the
+DH2023 conference. Its mission is two-fold: contextualize and bring
+together existing resources, as well as creating missing resources
+specifically aimed at developers of DH software. Neither of these tasks
+are trivial. Gathering existing resources and contextualizing them comes
+with the inherent risk of linking to outdated resources; outdated both
+in terms of content but also resources that are no longer available.
+While this is not an unsolvable problem, it does require an ongoing
+effort to mark outdated content and potentially even remove broken links
+from the materials. Additionally, while less work than composing new
+materials from scratch, it also requires time to find existing
+resources, vet them, and create a coherent story around them. Creating
+new resources comes with similar challenges, but the effort required for
+writing and reviewing materials is significantly higher.</p>
+<p>The working group has created a website with lessons addressing the
+above mission. The group consists at this point of four volunteer
+editors that decide on the content of the website as well as the
+processes in use. So far, four lessons have been created; of these, two
+are published and two are in draft status. A published lesson is
+considered complete when it has been reviewed by someone other than the
+authors and has received a DOI to make it easily citable. A draft lesson
+is still a work in progress. Additionally, the website implements the
+concept of “pathways” that guide a reader through multiple lessons that
+thematically belong together. While this feature is still under
+development, it provides a powerful tool to provide different entry
+points and suggested learning materials based on the experiences of the
+reader. For instance, a lesson on Git and GitHub might be part of a
+pathway addressing novice programmers and a pathway addressing readers
+seeking materials for web development, allowing for the repurposing of
+materials without duplicating lessons.</p>
+<h1 data-number="3" id="the-technical-details"><span
+class="header-section-number">3</span> The Technical Details</h1>
+<p>The website of the working group is created using the static site
+generator Hugo.<a href="#fn12" class="footnote-ref" id="fnref12"
+role="doc-noteref"><sup>12</sup></a> Hugo is open source and written in
+Go.<a href="#fn13" class="footnote-ref" id="fnref13"
+role="doc-noteref"><sup>13</sup></a> The website code is hosted in a
+GitHub repository<a href="#fn14" class="footnote-ref" id="fnref14"
+role="doc-noteref"><sup>14</sup></a> in the DHTech GitHub organization<a
+href="#fn15" class="footnote-ref" id="fnref15"
+role="doc-noteref"><sup>15</sup></a> and published using GitHub Pages.<a
+href="#fn16" class="footnote-ref" id="fnref16"
+role="doc-noteref"><sup>16</sup></a> There are several benefits of using
+GitHub’s infrastructure, including free website hosting, ease of website
+updates (once changes to the content are made, a GitHub Action
+automatically deploys the new version), and potential future GitHub
+Actions to automate parts of the publication workflow. Additionally,
+GitHub Issues lend themselves to tracking the planning and maintenance
+of lessons as well as general website updates.</p>
+<p>DOIs are generated through Zenodo.<a href="#fn17"
+class="footnote-ref" id="fnref17" role="doc-noteref"><sup>17</sup></a>
+Reviewed and accepted lessons are uploaded as PDFs into a Zenodo
+collection<a href="#fn18" class="footnote-ref" id="fnref18"
+role="doc-noteref"><sup>18</sup></a> and receive a DOI. This DOI is then
+added to the lesson on the working group website, along with the
+finished PDF file. The benefits of depositing finished lessons in Zenodo
+is that even if the working group website becomes unavailable in the
+future, the lessons will still be available.<a href="#fn19"
+class="footnote-ref" id="fnref19" role="doc-noteref"><sup>19</sup></a>
+Additionally, Zenodo allows versioning of lessons if they are updated in
+the future.</p>
+<p>PDFs of lessons are created using Pandoc<a href="#fn20"
+class="footnote-ref" id="fnref20" role="doc-noteref"><sup>20</sup></a>
+and LaTeX. The workflow requires a lesson to be available as a Markdown
+file, which is the default format for Hugo pages. The benefit of this
+process is that the PDF generation could be done automatically using
+GitHub Actions. Setting up such a GitHub Action is planned as a future
+work element of the repository.</p>
+<p>In addition, the working group anticipates that the next step towards
+sustainability and the incorporation of existing outside materials is to
+add a URL checker in a GitHub action, and retire technically outdated
+material in the lessons as modeled by the Programming Historian.<a
+href="#fn21" class="footnote-ref" id="fnref21"
+role="doc-noteref"><sup>21</sup></a></p>
+<h2 data-number="3.1" id="challenges"><span
+class="header-section-number">3.1</span> Challenges</h2>
+<p>In the absence of any formal humanities institution for education and
+training in software development, the project is hindered at the moment
+by being a purely volunteer effort. Creating content takes time, which
+means progress is slow. However, with the infrastructure and processes
+now in place, adding new content is becoming easier. The ultimate goal
+is to create a community around this project to create new lessons and
+maintain existing ones. This requires, however, that there is enough
+incentive for volunteers to contribute which is why the group provides a
+DOI for published lessons: so they can be listed on a CV. In general, DH
+has long grappled with crediting practitioners for research outputs
+other than a traditional paper or article <span class="citation"
+data-cites="nowviskie2011"><a href="#ref-nowviskie2011"
+role="doc-biblioref">[10]</a></span>; the inclusion of a DOI brings
+these training resources closer to a traditional research output. This
+is one approach to encourage contributions, and there may be others that
+could be explored in the future, such as further recognition for
+reviewers, or cataloging lessons for inclusion in other repositories of
+software engineering or digital humanities educational materials. It is
+the hope of this working group that once sufficient community has been
+built around the project, non-volunteer sources of labor may be
+feasible.</p>
+<p>Maintenance of lessons is another challenge. Technologies become
+outdated and resources may become unreachable. The planned approach to
+combat this problem is three-fold. First, focusing more on concepts and
+processes rather than specific technologies may make lessons less likely
+to become obsolete. Second, one task of the editorial team of the
+working group is to periodically evaluate lessons for relevance and, if
+necessary, ask the author or another volunteer to update them. The
+future integration of an automated URL checker for URLs referenced in
+lessons would alleviate some of the workload, as well as, thirdly, the
+development of a lesson retirement policy, as mentioned above.</p>
+<p>One question that many projects creating training resources must
+consider is how AI might change both the creation process and the
+content. Up to this point, the members of the working group see AI as a
+useful tool to be more efficient in developing software, but not as a
+replacement for well-designed, domain-specific training resources.
+Software development in general, and not just in DH, is actively
+grappling with the effects of generative AI on workflows, productivity,
+and training. Recent studies on the impact of AI on software development
+have been inconclusive. Two recent studies <span class="citation"
+data-cites="coutinho2024 cui2025"><a href="#ref-coutinho2024"
+role="doc-biblioref">[4]</a>, <a href="#ref-cui2025"
+role="doc-biblioref">[5]</a></span> found generative AI had a positive
+effect on productivity in large software companies, while another <span
+class="citation" data-cites="becker2025"><a href="#ref-becker2025"
+role="doc-biblioref">[2]</a></span> found a negative effect on
+productivity for open source software developers. In a recent study on
+the use of AI by scientists who write code, O’Brien found that
+scientific programmers without formal education in computer science used
+AI in place of official documentation, and that they often struggled to
+verify the output of AI-generated code <span class="citation"
+data-cites="obrien2025"><a href="#ref-obrien2025"
+role="doc-biblioref">[11]</a></span>. The members of the working group
+are concerned about the effects these tools may have on errors and code
+maintainability, which makes robust training resources even more
+essential. In addition to using AI to write code, other advances in AI
+research could have effects on DH as well. For instance, the rise in the
+training or fine-tuning of LLM models for an ever-increasing number of
+humanities tasks, such as OCR correction,<a href="#fn22"
+class="footnote-ref" id="fnref22" role="doc-noteref"><sup>22</sup></a>
+will obligate the inclusion of AI software development and maintenance
+into the selection of lessons even if it is not used for our content
+creation and maintenance work.</p>
+<h1 data-number="4" id="future-work"><span
+class="header-section-number">4</span> Future Work</h1>
+<p>The most critical next task is to continue writing lessons and
+building out pathway lessons. This might include asking for feedback
+from the community and recruiting volunteers to work through the
+lessons. Furthermore, the editorial team will have to decide what topics
+to cover to ensure a coherent set of lessons.</p>
+<p>Similarly important is the establishment of a community around the
+working group. Once a list of desired lesson topics exists, contributors
+can be recruited to write and review lesson materials. The long-term
+vision for the working group is a standing board of contributors and
+editors that support and maintain the website and materials. From a
+process perspective, while the infrastructure to review lessons is in
+place (utilizing GitHub pull requests), a more formal review process
+still needs to be established. This is particularly important if the
+number of concurrent lessons being developed continues to grow.</p>
+<p>Lastly, the potential for connecting with existing efforts needs to
+be explored. At this moment, the working group is not yet at the point
+where this would be sensible, however, the long-term goal is to produce
+new lessons and materials in collaboration with other initiatives. This
+might include organizing collaboration workshops or similar events,
+which would also allow the group to continue filling the gap of
+materials for software developers in the humanities while reaching a
+wider group of practitioners in the digital humanities, making them
+aware of the hard work needed to keep our software working every
+day.</p>
+<h1 class="unnumbered" id="acknowledgments">Acknowledgments</h1>
+<p>DHTech Education &amp; Training Working Group consists of four
+members, only three of them participating in writing this article.
+Therefore, we want to give our heartfelt thanks to Fernanda Freire who
+is an integral part of this project.</p>
+<h1 class="unnumbered" id="bibliography">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent"
+data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-bartram2016" class="csl-entry" role="listitem">
+[1] Bartram, Ammon. <em>Coding Boot Camp Grads Write Better Code</em>.
+<a
+href="https://www.infoworld.com/article/2250588/coding-boot-camp-grads-write-better-code.html"
+class="uri">https://www.infoworld.com/article/2250588/coding-boot-camp-grads-write-better-code.html</a>,
+2016.
+</div>
+<div id="ref-becker2025" class="csl-entry" role="listitem">
+[2] Becker, Joel, Nate Rush, Elizabeth Barnes, and David Rein.
+<em>Measuring the Impact of Early-2025 AI on Experienced Open-Source
+Developer Productivity</em>. 2025, https://doi.org/<a
+href="https://arxiv.org/abs/2507.09089">https://arxiv.org/abs/2507.09089</a>.
+</div>
+<div id="ref-bleeker2022" class="csl-entry" role="listitem">
+[3] Bleeker, Elli, Marijn Koolen, Kaspar Beelen, Liliana Melgar, Joris
+van Zundert, and Sally Chambers. <span>“A Game of Persistence,
+Self-Doubt, and Curiosity: Surveying Code Literacy in Digital
+Humanities.”</span> <em>DH Benelux Journal</em>, vol. 4, 2022, pp. 1–28.
+</div>
+<div id="ref-coutinho2024" class="csl-entry" role="listitem">
+[4] Coutinho, Mariana, Lorena Marques, Anderson Santos, Marcio Dahia,
+Cesar França, and Ronnie de Souza Santos. <span>“The Role of Generative
+AI in Software Development Productivity: A Pilot Case Study.”</span>
+<em>Proceedings of the 1st ACM International Conference on AI-Powered
+Software (AIware ’24)</em> [Porto de Galinhas, Brazil], 2024, pp. 1–8,
+<a
+href="https://doi.org/10.1145/3664646.3664773">https://doi.org/10.1145/3664646.3664773</a>.
+</div>
+<div id="ref-cui2025" class="csl-entry" role="listitem">
+[5] Cui, Zheyuan, Mert Demirer, Sonia Jaffe, Leon Musolff, Sida Peng,
+and Tobias Salz. <em>The Effects of Generative AI on High-Skilled Work:
+Evidence from Three Field Experiments with Software Developers</em>. <a
+href="http://dx.doi.org/10.2139/ssrn.4945566"
+class="uri">http://dx.doi.org/10.2139/ssrn.4945566</a>, 2025.
+</div>
+<div id="ref-hettrick2022" class="csl-entry" role="listitem">
+[6] Hettrick, Simon, Radovan Bast, Alex Botzki, Jeff Carver, Ian Cosden,
+Steve Crouch, Florencia D’Andrea, Abhishek Dasgupta, William Godoy,
+Alejandra Gonzalez-Beltran, et al. <em>RSE Survey 2022, Pre-Final
+Release for 2022 Results (Version 2022-V0.9.0)</em>. <a
+href="https://softwaresaved.github.io/international-survey-2022/"
+class="uri">https://softwaresaved.github.io/international-survey-2022/</a>,
+2022.
+</div>
+<div id="ref-kimball2023" class="csl-entry" role="listitem">
+[7] Kimball, Danika. <em>Self-Taught Developers Vs. Developers with
+Degrees</em>. <a
+href="https://manilarecruitment.com/manila-recruitment-articles-advice/self-taught-developers-vs-developers-with-degrees-hiring-the-right-fit/"
+class="uri">https://manilarecruitment.com/manila-recruitment-articles-advice/self-taught-developers-vs-developers-with-degrees-hiring-the-right-fit/</a>,
+2023.
+</div>
+<div id="ref-mullen2025" class="csl-entry" role="listitem">
+[8] Mullen, Lincoln A. <em>Computational Historical Thinking</em>. <a
+href="https://dh-r.lincolnmullen.com/"
+class="uri">https://dh-r.lincolnmullen.com/</a>, ongoing.
+</div>
+<div id="ref-neupane2019" class="csl-entry" role="listitem">
+[9] Neupane, Jayanti Bhandari, Ram P. Neupane, Yuheng Luo, Wesley Y.
+Yoshida, Rui Sun, and Philip G. Williams. <span>“Characterization of
+Leptazolines a–d, Polar Oxazolines from the Cyanobacterium Leptolyngbya
+Sp., Reveals a Glitch with the <span>‘Willoughby–Hoye’</span> Scripts
+for Calculating NMR Chemical Shifts.”</span> <em>Organic Letters</em>,
+vol. 21, no. 20, 2019, pp. 8449–53, <a
+href="https://doi.org/10.1021/acs.orglett.9b03216">https://doi.org/10.1021/acs.orglett.9b03216</a>.
+</div>
+<div id="ref-nowviskie2011" class="csl-entry" role="listitem">
+[10] Nowviskie, Bethany. <span>“Where Credit Is Due: Preconditions for
+the Evaluation of Collaborative Digital Scholarship.”</span>
+<em>Profession</em>, 2011, pp. 169–81, <a
+href="https://doi.org/10.1632/prof.2011.2011.1.169">https://doi.org/10.1632/prof.2011.2011.1.169</a>.
+</div>
+<div id="ref-obrien2025" class="csl-entry" role="listitem">
+[11] O’Brien, Gabrielle. <span>“How Scientists Use Large Language Models
+to Program.”</span> <em>Proceedings of the 2025 CHI Conference on Human
+Factors in Computing Systems</em> [New York, NY, USA], 2025, pp. 1–16,
+<a
+href="https://doi.org/10.1145/3706598.3713668">https://doi.org/10.1145/3706598.3713668</a>.
+</div>
+<div id="ref-pinto2018" class="csl-entry" role="listitem">
+[12] Pinto, Gustavo, Igor Wiese, and Luiz Felipe Dias. <span>“How Do
+Scientists Develop Scientific Software? An External Replication.”</span>
+<em>2018 IEEE 25th International Conference on Software Analysis,
+Evolution and Reengineering (SANER)</em>, 2018, pp. 582–91, <a
+href="https://doi.org/10.1109/SANER.2018.8330263">https://doi.org/10.1109/SANER.2018.8330263</a>.
+</div>
+<div id="ref-ryan2021" class="csl-entry" role="listitem">
+[13] Ryan, Yann. <em>A Short Guide to Historical Newspaper Data, Using
+r</em>. <a href="https://bookdown.org/yann_ryan/r-for-newspaper-data/"
+class="uri">https://bookdown.org/yann_ryan/r-for-newspaper-data/</a>,
+2021.
+</div>
+<div id="ref-wiese2020" class="csl-entry" role="listitem">
+[14] Wiese, Igor, Ivanilton Polato, and Gustavo Pinto. <span>“Naming the
+Pain in Developing Scientific Software.”</span> <em>IEEE Software</em>,
+vol. 37, no. 4, 2020, pp. 75–82, <a
+href="https://doi.org/10.1109/MS.2019.2899838">https://doi.org/10.1109/MS.2019.2899838</a>.
+</div>
+<div id="ref-vanzundert2020" class="csl-entry" role="listitem">
+[15] Zundert, Joris van, Smiljana Antonijevic, and Tara Andrews.
+<em>Digital Technology and the Practices of Humanities Research</em>.
+Open Book Publishers, 2020, pp. 123–62, <a
+href="https://doi.org/10.11647/OBP.0192.06">https://doi.org/10.11647/OBP.0192.06</a>.
+</div>
+</div>
+<section id="footnotes" class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://dh-tech.github.io/"
+class="uri">https://dh-tech.github.io/</a><a href="#fnref1"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>The survey results will be published in the coming
+months. A similar survey run in 2020 provided similar results with 37%
+of all respondents reporting to be self-taught. See <a
+href="https://dh-tech.github.io/survey-results-2020/"
+class="uri">https://dh-tech.github.io/survey-results-2020/</a>.<a
+href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p><a href="https://programminghistorian.org/
+" class="uri">https://programminghistorian.org/
+</a><a href="#fnref3" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p><a href="https://intersect-training.org/
+" class="uri">https://intersect-training.org/
+</a><a href="#fnref4" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p><a href="https://coderefinery.org/"
+class="uri">https://coderefinery.org/</a><a href="#fnref5"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p><a href="https://carpentries.org/"
+class="uri">https://carpentries.org/</a><a href="#fnref6"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7"><p><a href="https://bssw.io/
+" class="uri">https://bssw.io/
+</a><a href="#fnref7" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn8"><p><a
+href="https://us-rse.org/wg/education_training/seminar_series/
+" class="uri">https://us-rse.org/wg/education_training/seminar_series/
+</a><a href="#fnref8" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn9"><p>The RSE International Survey 2022 did not ask any
+questions specifically geared towards the type of tasks developers of
+research software worked on. Hence, JavaScript is the strongest
+indicator regarding the question whether the respondent participated in
+web application development.<a href="#fnref9" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn10"><p><a
+href="https://dh-tech.github.io/wg-education-training/"
+class="uri">https://dh-tech.github.io/wg-education-training/</a><a
+href="#fnref10" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn11"><p>See, for instance, Quinn Dombrowski’s reflections on
+failing to accomplish complex Drupal migrations: <a
+href="https://quinndombrowski.com/blog/2019/11/08/sorry-all-drupal-reflections-3rd-anniversary-drupal-humanists/"
+class="uri">https://quinndombrowski.com/blog/2019/11/08/sorry-all-drupal-reflections-3rd-anniversary-drupal-humanists/</a>.<a
+href="#fnref11" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn12"><p><a href="https://gohugo.io/"
+class="uri">https://gohugo.io/</a><a href="#fnref12"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn13"><p><a href="https://go.dev/"
+class="uri">https://go.dev/</a><a href="#fnref13" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn14"><p><a
+href="https://github.com/dh-tech/wg-education-training"
+class="uri">https://github.com/dh-tech/wg-education-training</a><a
+href="#fnref14" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn15"><p><a href="https://github.com/dh-tech"
+class="uri">https://github.com/dh-tech</a><a href="#fnref15"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn16"><p><a href="https://pages.github.com/"
+class="uri">https://pages.github.com/</a><a href="#fnref16"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn17"><p><a href="https://zenodo.org/"
+class="uri">https://zenodo.org/</a><a href="#fnref17"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn18"><p><a
+href="https://zenodo.org/communities/dhtech-education"
+class="uri">https://zenodo.org/communities/dhtech-education</a><a
+href="#fnref18" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn19"><p>Zenodo is part of the CERN data center and promises
+that “your research is stored safely for the future in CERN’s Data
+Centre for as long as CERN exists.”<a href="#fnref19"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn20"><p><a href="https://pandoc.org/"
+class="uri">https://pandoc.org/</a><a href="#fnref20"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn21"><p><a
+href="https://programminghistorian.org/en/lesson-retirement-policy"
+class="uri">https://programminghistorian.org/en/lesson-retirement-policy</a><a
+href="#fnref21" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn22"><p><a href="https://aiforhumanists.com/"
+class="uri">https://aiforhumanists.com/</a><a href="#fnref22"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="content has-text-centered">
+      <p>
+        <strong>Anthology of Computers and the Humanities</strong> · Association for Computers and the Humanities
+      </p>
+      <p class="is-size-7">
+        Paper © 2025 the authors. All other content © 2025 ACH.
+      </p>
+    </div>
+  </footer>
+
+
+  <!-- Lightbox JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
+
+  <!-- Prism.js for syntax highlighting -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-xml.min.js"></script>
+
+  <!-- Custom JavaScript -->
+  <script src="../../../js/navbar.js"></script>
+  <script src="../../../js/lightbox-config.js"></script>
+  <script src="../../../js/code-copy.js"></script>
+
+</body>
+</html>
