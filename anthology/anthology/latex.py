@@ -4,7 +4,6 @@ import os
 import re
 import subprocess
 from pathlib import Path
-from typing import Optional
 
 
 def get_texinputs_env() -> dict:
@@ -24,7 +23,7 @@ def get_texinputs_env() -> dict:
     env = os.environ.copy()
     # Get the absolute path to the data directory from the project root
     project_root = Path(__file__).resolve().parent.parent.parent
-    #data_dir = project_root / "docs" / "resources" / "template-latex"
+    # data_dir = project_root / "docs" / "resources" / "template-latex"
     data_dir = project_root / "data"
     # TEXINPUTS needs a trailing // to search subdirectories
     # Using : separator to append to default search paths
@@ -58,7 +57,6 @@ def fill_value(text: str, command: str, new_value: str) -> str:
     match = re.search(pattern, text)
     if not match:
         raise ValueError(f"No occurrence of '\\{command}{{...}}' found in: {text!r}")
-    old_value = match.group(1)
     return re.sub(pattern, rf"\\{command}{{{new_value}}}", text, count=1)
 
 
@@ -83,7 +81,7 @@ def extract_missing_bibliography_entries(latex_output: str) -> list[str]:
         (biblatex)                LaTeX afterwards.
     """
     missing_entries = []
-    lines = latex_output.split('\n')
+    lines = latex_output.split("\n")
 
     for i, line in enumerate(lines):
         # Look for the warning about missing entries
@@ -93,7 +91,7 @@ def extract_missing_bibliography_entries(latex_output: str) -> list[str]:
                 # Extract the citation key from the continuation line
                 # Format: "(biblatex)                citation_key"
                 citation_line = lines[i + 2]
-                match = re.search(r'\(biblatex\)\s+(\S+)', citation_line)
+                match = re.search(r"\(biblatex\)\s+(\S+)", citation_line)
                 if match:
                     citation_key = match.group(1)
                     if citation_key not in missing_entries:
@@ -187,6 +185,13 @@ def run_xelatex(output_dir: Path, verbose: bool = False) -> bool:
             print(f"\n❌ XeLaTeX compilation failed in {output_dir}")
             for i, result in enumerate([result1, result2, result3, result4], 1):
                 if result.returncode != 0:
-                    step_names = ["XeLaTeX (pass 1)", "Biber", "XeLaTeX (pass 2)", "XeLaTeX (pass 3)"]
-                    print(f"   Failed at step {i}: {step_names[i-1]} (exit code {result.returncode})")
+                    step_names = [
+                        "XeLaTeX (pass 1)",
+                        "Biber",
+                        "XeLaTeX (pass 2)",
+                        "XeLaTeX (pass 3)",
+                    ]
+                    print(
+                        f"   Failed at step {i}: {step_names[i - 1]} (exit code {result.returncode})"
+                    )
         return False

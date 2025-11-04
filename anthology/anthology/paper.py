@@ -4,17 +4,17 @@ import re
 import shutil
 import subprocess
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from pypdf import PdfReader
 
-from .latex_parser import LaTeXMetadataExtractor
-from .utils import slugify, convert_latex_to_unicode, strip_html_tags
-from .doi import is_doi_placeholder, generate_doi, DOI_PREFIX, DOI_SUFFIX_LENGTH
-from .latex import fill_value, run_xelatex
 from .bibtex import write_bibtex_article
+from .doi import DOI_PREFIX, DOI_SUFFIX_LENGTH, generate_doi, is_doi_placeholder
+from .latex import fill_value, run_xelatex
+from .latex_parser import LaTeXMetadataExtractor
 from .metadata import load_paper_metadata, save_paper_metadata
+from .utils import convert_latex_to_unicode, slugify
 
 
 class Paper:
@@ -39,7 +39,13 @@ class Paper:
         include_html: Whether to include full article text in HTML output
     """
 
-    def __init__(self, input_dir: Path, volume_meta: Dict, paper_order: int = 1, include_html: bool = True):
+    def __init__(
+        self,
+        input_dir: Path,
+        volume_meta: Dict,
+        paper_order: int = 1,
+        include_html: bool = True,
+    ):
         """
         Initialize a Paper object from input directory.
 
@@ -74,7 +80,7 @@ class Paper:
             self.output_dir = Path("docs/volumes") / input_dir.relative_to("input")
 
     @classmethod
-    def from_output_dir(cls, output_dir: Path) -> Optional['Paper']:
+    def from_output_dir(cls, output_dir: Path) -> Optional["Paper"]:
         """
         Create a Paper object from an output directory with saved metadata.
 
@@ -104,10 +110,20 @@ class Paper:
 
         return paper
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """Return string representation of the Paper object."""
         return f"Paper Object: {self.output_dir} ({self.volumeid})"
 
-    def __lt__(self, other):
+    def __lt__(self, other: "Paper") -> bool:
+        """
+        Compare papers for sorting by volume ID and paper ID.
+
+        Args:
+            other: Another Paper object to compare with
+
+        Returns:
+            True if this paper should sort before the other
+        """
         if not isinstance(other, Paper):
             return NotImplemented
         return (self.volumeid, self.paperid) < (other.volumeid, other.paperid)
@@ -142,7 +158,7 @@ class Paper:
         paper_content = paper_file.read_text()
         extractor = LaTeXMetadataExtractor()
         pmeta = extractor.extract_all_metadata(paper_content)
-        current_doi = pmeta.get('publication_info', {}).get('doi', '')
+        current_doi = pmeta.get("publication_info", {}).get("doi", "")
 
         if is_doi_placeholder(current_doi):
             new_doi = generate_doi(DOI_PREFIX, DOI_SUFFIX_LENGTH)
@@ -169,22 +185,21 @@ class Paper:
         self.output_dir.mkdir(parents=True, exist_ok=True)
         shutil.copy2(self.input_dir / "paper.tex", self.output_dir / "paper.tex")
         shutil.copy2(
-            self.input_dir / "bibliography.bib",
-            self.output_dir / "bibliography.bib"
+            self.input_dir / "bibliography.bib", self.output_dir / "bibliography.bib"
         )
 
         paper_file = self.input_dir / "paper.tex"
         paper_content = paper_file.read_text()
 
         # Apply text transformations
-        paper_content = paper_content.replace('\\paragraph', '\n\n\\noindent\n\\textbf')
-        paper_content = paper_content.replace('\\textdaggerdbl', '‡')
+        paper_content = paper_content.replace("\\paragraph", "\n\n\\noindent\n\\textbf")
+        paper_content = paper_content.replace("\\textdaggerdbl", "‡")
 
         # Set paper order number
         paper_content = fill_value(paper_content, "paperorder", str(order))
 
         # Find all figure references
-        includegraphics_pattern = r'\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}'
+        includegraphics_pattern = r"\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}"
         matches = re.findall(includegraphics_pattern, paper_content)
 
         if matches:
@@ -204,25 +219,31 @@ class Paper:
                     filename = source_file.name
 
                     # Check if this is a PDF file that needs conversion
-                    if source_file.suffix.lower() == '.pdf':
+                    if source_file.suffix.lower() == ".pdf":
                         # Convert PDF to PNG using ghostscript at 300dpi
-                        png_filename = source_file.stem + '.png'
+                        png_filename = source_file.stem + ".png"
                         dest_file = figures_dir / png_filename
 
                         # Use ghostscript to convert PDF to PNG at 300dpi
-                        gs_result = subprocess.run([
-                            'gs',
-                            '-dNOPAUSE',
-                            '-dBATCH',
-                            '-sDEVICE=png16m',
-                            '-r300',  # 300 DPI
-                            '-sOutputFile=' + str(dest_file),
-                            str(source_file)
-                        ], capture_output=True, text=True)
+                        gs_result = subprocess.run(
+                            [
+                                "gs",
+                                "-dNOPAUSE",
+                                "-dBATCH",
+                                "-sDEVICE=png16m",
+                                "-r300",  # 300 DPI
+                                "-sOutputFile=" + str(dest_file),
+                                str(source_file),
+                            ],
+                            capture_output=True,
+                            text=True,
+                        )
 
                         if gs_result.returncode != 0:
                             if verbose:
-                                print(f"  Warning: Failed to convert {source_file} to PNG: {gs_result.stderr}")
+                                print(
+                                    f"  Warning: Failed to convert {source_file} to PNG: {gs_result.stderr}"
+                                )
                             # Fall back to copying the PDF as-is
                             dest_file = figures_dir / filename
                             shutil.copy2(source_file, dest_file)
@@ -237,8 +258,12 @@ class Paper:
                         new_path = f"figures/{filename}"
 
                     # Update the path in paper content
-                    old_pattern = r'(\\includegraphics(?:\[[^\]]*\])?)\{' + re.escape(figure_path) + r'\}'
-                    new_replacement = r'\1{' + new_path + r'}'
+                    old_pattern = (
+                        r"(\\includegraphics(?:\[[^\]]*\])?)\{"
+                        + re.escape(figure_path)
+                        + r"\}"
+                    )
+                    new_replacement = r"\1{" + new_path + r"}"
                     paper_content = re.sub(old_pattern, new_replacement, paper_content)
 
         # Write updated paper content
@@ -255,7 +280,7 @@ class Paper:
             volume=self.volume,
             volume_meta=self.volume_meta,
             paper_order=order,
-            include_html=self.include_html
+            include_html=self.include_html,
         )
 
     def compile_xelatex(self, verbose: bool = False) -> bool:
@@ -277,13 +302,31 @@ class Paper:
         Removes files with extensions like .aux, .log, .out, etc.
         and directories like _minted.
         """
-        extensions = {".aux", ".log", ".out", ".toc", ".lof", ".lot", ".bbl",
-                      ".bcf", ".blg", ".run.xml", ".fls", ".fdb_latexmk",
-                      ".synctex.gz", ".dvi", ".bak", "-blx.bib", ".spl"}
+        extensions = {
+            ".aux",
+            ".log",
+            ".out",
+            ".toc",
+            ".lof",
+            ".lot",
+            ".bbl",
+            ".bcf",
+            ".blg",
+            ".run.xml",
+            ".fls",
+            ".fdb_latexmk",
+            ".synctex.gz",
+            ".dvi",
+            ".bak",
+            "-blx.bib",
+            ".spl",
+        }
         dirs_to_delete = {"_minted"}
 
         for item in self.output_dir.iterdir():
-            if item.is_file() and any(item.name.lower().endswith(ext) for ext in extensions):
+            if item.is_file() and any(
+                item.name.lower().endswith(ext) for ext in extensions
+            ):
                 item.unlink()
             elif item.is_dir() and item.name in dirs_to_delete:
                 shutil.rmtree(item, ignore_errors=True)
@@ -308,7 +351,7 @@ class Paper:
         Renames paper.pdf to {doi}.pdf where / in DOI is replaced with @.
         """
         pmeta = self.get_latex_metadata()
-        current_doi = pmeta.get('publication_info', {}).get('doi', '')
+        current_doi = pmeta.get("publication_info", {}).get("doi", "")
 
         src = self.output_dir / "paper.pdf"
         dst = self.output_dir / f"{current_doi.replace('/', '@')}.pdf"
@@ -337,15 +380,22 @@ class Paper:
             page_start: Starting page number in the volume
             end_page: Ending page number in the volume
         """
-        pmeta = self.get_latex_metadata()
         paper_file = self.output_dir / "paper.tex"
         paper_content = paper_file.read_text()
 
         updated_paper = paper_content
-        updated_paper = fill_value(updated_paper, "pubvolume", self.volume_meta["pubvolume"])
-        updated_paper = fill_value(updated_paper, "pubyear", self.volume_meta["pubyear"])
-        updated_paper = fill_value(updated_paper, "conferencename", self.volume_meta["conferencename"])
-        updated_paper = fill_value(updated_paper, "conferenceeditors", self.volume_meta["conferenceeditors"])
+        updated_paper = fill_value(
+            updated_paper, "pubvolume", self.volume_meta["pubvolume"]
+        )
+        updated_paper = fill_value(
+            updated_paper, "pubyear", self.volume_meta["pubyear"]
+        )
+        updated_paper = fill_value(
+            updated_paper, "conferencename", self.volume_meta["conferencename"]
+        )
+        updated_paper = fill_value(
+            updated_paper, "conferenceeditors", self.volume_meta["conferenceeditors"]
+        )
         updated_paper = fill_value(updated_paper, "pagestart", str(page_start))
         updated_paper = fill_value(updated_paper, "pageend", str(end_page))
         paper_file.write_text(updated_paper)
@@ -357,18 +407,18 @@ class Paper:
         Creates a .bib file named {doi}.bib in the output directory.
         """
         pmeta = self.get_latex_metadata()
-        doi = pmeta.get('publication_info', {}).get('doi', '')
+        doi = pmeta.get("publication_info", {}).get("doi", "")
 
         write_bibtex_article(
             title=pmeta["title"],
             volume=self.volume_meta["pubvolume"],
-            authors=[x['name'] for x in pmeta["authors"]],
+            authors=[x["name"] for x in pmeta["authors"]],
             year=self.volume_meta["pubyear"],
             journal="Anthology for Computers and the Humanities",
-            editors=self.volume_meta['conferenceeditors'],
+            editors=self.volume_meta["conferenceeditors"],
             pages=f"{pmeta['publication_info']['pagestart']}--{pmeta['publication_info']['pageend']}",
             doi=doi,
-            output_path=(self.output_dir / f"{doi.replace('/', '@')}.bib")
+            output_path=(self.output_dir / f"{doi.replace('/', '@')}.bib"),
         )
 
     def create_html(self, verbose: bool = False) -> None:
@@ -382,32 +432,47 @@ class Paper:
             verbose: If True, print error messages from Pandoc
         """
         pmeta = self.get_latex_metadata()
-        doi = pmeta.get('publication_info', {}).get('doi', '')
+        doi = pmeta.get("publication_info", {}).get("doi", "")
 
         # Extract abstract directly from LaTeX source since Pandoc discards it
         paper_file = self.output_dir / "paper.tex"
         paper_content = paper_file.read_text()
-        abstract_match = re.search(r'\\begin\{abstract\}(.*?)\\end\{abstract\}', paper_content, re.DOTALL)
+        abstract_match = re.search(
+            r"\\begin\{abstract\}(.*?)\\end\{abstract\}", paper_content, re.DOTALL
+        )
         abstract_latex = abstract_match.group(1).strip() if abstract_match else ""
 
         cmd = [
             "pandoc",
             str(self.output_dir / "paper.tex"),
-            "-f", "latex+smart+raw_tex",
-            "-t", "html5",
-            "--bibliography", str(self.output_dir / "bibliography.bib"),
+            "-f",
+            "latex+smart+raw_tex",
+            "-t",
+            "html5",
+            "--bibliography",
+            str(self.output_dir / "bibliography.bib"),
             "--number-sections",
             "--syntax-highlighting=pygments",
-            "--metadata", "reference-section-title=References",
-            "--metadata", "abstract-class=abs",
-            "--metadata", "abstract-title=Abstract",
-            "--metadata", "tableTitle=Table",
-            "--metadata", "listingTitle=Listing",
-            "--metadata", "tableEqns=true",
-            "--metadata", "listingEqns=true",
-            "--metadata", "link-citations=true",
-            "--filter", "pandoc-crossref",
-            "--lua-filter", "docs/resources/combined-filters.lua",
+            "--metadata",
+            "reference-section-title=References",
+            "--metadata",
+            "abstract-class=abs",
+            "--metadata",
+            "abstract-title=Abstract",
+            "--metadata",
+            "tableTitle=Table",
+            "--metadata",
+            "listingTitle=Listing",
+            "--metadata",
+            "tableEqns=true",
+            "--metadata",
+            "listingEqns=true",
+            "--metadata",
+            "link-citations=true",
+            "--filter",
+            "pandoc-crossref",
+            "--lua-filter",
+            "docs/resources/combined-filters.lua",
             "--citeproc",
             "--csl=docs/resources/template-md/mla-numeric.csl",
             "--quiet",
@@ -424,7 +489,7 @@ class Paper:
             return
 
         html_fragment = res.stdout
-        html_fragment.replace('---', '—')
+        html_fragment.replace("---", "—")
 
         # Convert abstract from LaTeX to HTML and prepend to content
         abstract_html = ""
@@ -436,7 +501,7 @@ class Paper:
                     input=abstract_latex,
                     capture_output=True,
                     text=True,
-                    check=True
+                    check=True,
                 )
                 abstract_html = f'<div class="abs"><span>Abstract</span>{abstract_result.stdout.strip()}</div>\n\n'
                 # Prepend abstract to the full HTML content
@@ -451,15 +516,22 @@ class Paper:
             html_fragment = abstract_html
 
         # Prepare author data
-        aff = {item["number"]: convert_latex_to_unicode(item["text"]) for item in pmeta["affiliations"]}
+        aff = {
+            item["number"]: convert_latex_to_unicode(item["text"])
+            for item in pmeta["affiliations"]
+        }
         author_input = []
         for auth in pmeta["authors"]:
-            npart = {"name": convert_latex_to_unicode(auth["name"]), "affiliation": []}
-            if "orcid" in auth['metadata']:
+            affiliation_list: list = []
+            npart: Dict[str, Any] = {
+                "name": convert_latex_to_unicode(auth["name"]),
+                "affiliation": affiliation_list,
+            }
+            if "orcid" in auth["metadata"]:
                 npart["orcid"] = auth["metadata"]["orcid"]
-            for aff_vals in auth['affiliation_numbers']:
-                npart["affiliation"] += [aff[aff_vals]]
-            npart["affiliation"] = ";".join(npart["affiliation"])
+            for aff_vals in auth["affiliation_numbers"]:
+                affiliation_list.append(aff[aff_vals])
+            npart["affiliation"] = ";".join(affiliation_list)
             author_input.append(npart)
 
         converted_affiliations = [
@@ -471,11 +543,15 @@ class Paper:
         cite = f"<i>Anthology of Computers and the Humanities</i>, Vol. {pmeta['publication_info']['pubvolume']}, {self.volume_meta['pubyear']}, Pages {pmeta['publication_info']['pagestart']}-{pmeta['publication_info']['pageend']}."
 
         # Extract abstract for citation metadata from the LaTeX abstract we already extracted
-        abstract_text_clean = convert_latex_to_unicode(abstract_latex) if abstract_latex else ""
+        abstract_text_clean = (
+            convert_latex_to_unicode(abstract_latex) if abstract_latex else ""
+        )
 
         # Parse keywords into a list
         keywords_str = pmeta.get("keywords", "")
-        keywords_list = [kw.strip() for kw in keywords_str.split(",")] if keywords_str else []
+        keywords_list = (
+            [kw.strip() for kw in keywords_str.split(",")] if keywords_str else []
+        )
 
         # Prepare citation authors
         cite_authors = []
@@ -492,9 +568,12 @@ class Paper:
 
         # Prepare citation editors
         cite_editors = []
-        if "conferenceeditors" in self.volume_meta and self.volume_meta["conferenceeditors"]:
+        if (
+            "conferenceeditors" in self.volume_meta
+            and self.volume_meta["conferenceeditors"]
+        ):
             editors_str = self.volume_meta["conferenceeditors"]
-            editor_names = re.split(r'\s+and\s+|,\s*', editors_str)
+            editor_names = re.split(r"\s+and\s+|,\s*", editors_str)
             for editor_name in editor_names:
                 editor_name = editor_name.strip()
                 if editor_name:
@@ -514,18 +593,22 @@ class Paper:
 
         cite_paper_url = f"{base_url}/volumes/{volume_path}/{paper_slug}/"
         cite_html_url = cite_paper_url
-        cite_pdf_url = f"{base_url}/volumes/{volume_path}/{paper_slug}/{doi.replace('/', '@')}.pdf"
+        cite_pdf_url = (
+            f"{base_url}/volumes/{volume_path}/{paper_slug}/{doi.replace('/', '@')}.pdf"
+        )
 
         # If include_html is False, only show abstract in content area
         if not self.include_html:
             # Extract just the abstract from html_fragment
-            abstract_match = re.search(r'<div class="abs">(.*?)</div>', html_fragment, re.DOTALL)
+            abstract_match = re.search(
+                r'<div class="abs">(.*?)</div>', html_fragment, re.DOTALL
+            )
             if abstract_match:
                 # Keep only the abstract div
                 html_fragment = f'<div class="abs">{abstract_match.group(1)}</div>'
             else:
                 # No abstract found, show empty content
-                html_fragment = ''
+                html_fragment = ""
 
         # Render template
         jinja_env = Environment(
@@ -543,15 +626,15 @@ class Paper:
             bib_path=f"{doi.replace('/', '@')}.bib",
             doi=doi,
             cite=cite,
-            date=self.volume_meta['pubdate'],
+            date=self.volume_meta["pubdate"],
             include_full_text=self.include_html,
             # Citation metadata
             cite_paper_url=cite_paper_url,
             cite_paper_title=converted_title,
-            cite_date=self.volume_meta['pubyear'],
+            cite_date=self.volume_meta["pubyear"],
             cite_volume=pmeta["publication_info"]["pubvolume"],
-            cit_first_page=pmeta['publication_info']["pagestart"],
-            cite_last_page=pmeta['publication_info']["pageend"],
+            cit_first_page=pmeta["publication_info"]["pagestart"],
+            cite_last_page=pmeta["publication_info"]["pageend"],
             cite_doi=doi,
             cite_authors=cite_authors,
             cite_editors=cite_editors,
@@ -559,7 +642,7 @@ class Paper:
             cite_language="en",
             cite_keywords=keywords_list,
             cite_html_url=cite_html_url,
-            cite_pdf_url=cite_pdf_url
+            cite_pdf_url=cite_pdf_url,
         )
 
         html_path = self.output_dir / "index.html"

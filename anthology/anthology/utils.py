@@ -88,7 +88,7 @@ def convert_latex_to_unicode(text: str) -> str:
     Returns:
         Text with LaTeX converted to Unicode
     """
-    text = text.replace('---', '—')
+    text = text.replace("---", "—")
     return text
 
 
@@ -112,7 +112,7 @@ def strip_html_tags(text: str) -> str:
         'Plain text'
     """
     # Remove HTML tags using regex
-    clean = re.sub(r'<[^>]+>', '', text)
+    clean = re.sub(r"<[^>]+>", "", text)
     # Clean up multiple spaces and newlines
-    clean = re.sub(r'\s+', ' ', clean)
+    clean = re.sub(r"\s+", " ", clean)
     return clean.strip()

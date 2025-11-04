@@ -1,13 +1,14 @@
 """Command-line interface for the ACH Anthology journal processor."""
 
-import click
 from pathlib import Path
 
+import click
+
 from . import __version__
-from .metadata import get_all_papers, discover_output_papers
-from .html_generator import make_volume_page, make_toc_page
+from .html_generator import make_toc_page, make_volume_page
+from .metadata import discover_output_papers, get_all_papers
+from .sitemap_generator import create_rss_feed, create_sitemap
 from .xml_generator import create_crossref_xml
-from .sitemap_generator import create_sitemap, create_rss_feed
 
 
 @click.group()
@@ -40,7 +41,9 @@ def doi_add(verbose):
 
 @cli.command()
 @click.option("--verbose", "-v", is_flag=True, help="Show detailed output")
-@click.option("--volume", type=str, help="Prepare only a specific volume (e.g., 'vol0001' or '1')")
+@click.option(
+    "--volume", type=str, help="Prepare only a specific volume (e.g., 'vol0001' or '1')"
+)
 def prepare(verbose, volume):
     """Phase 1: Copy input files to output directory and prepare for building.
 
@@ -60,7 +63,7 @@ def prepare(verbose, volume):
     # Filter by volume if specified
     if volume:
         # Normalize volume name (accept 'vol0001', '0001', or '1')
-        if not volume.startswith('vol'):
+        if not volume.startswith("vol"):
             volume_num = int(volume)
             volume = f"vol{volume_num:04d}"
 
@@ -117,20 +120,25 @@ def prepare(verbose, volume):
 
 @cli.command()
 @click.option("--verbose", "-v", is_flag=True, help="Show LaTeX compilation output")
-@click.option("--paper", type=click.Path(exists=True, path_type=Path),
-              help="Compile specific paper directory")
+@click.option(
+    "--paper",
+    type=click.Path(exists=True, path_type=Path),
+    help="Compile specific paper directory",
+)
 def compile(verbose, paper):
     """Compile papers to PDF using XeLaTeX."""
     if paper:
         # Compile specific paper
         from .paper import Paper
-        from .metadata import get_metadata
 
         # Load paper from output directory metadata
         p = Paper.from_output_dir(paper)
         if not p:
             click.echo(f"Error: Could not load paper from {paper}", err=True)
-            click.echo("Make sure the paper has been prepared first with 'anthology prepare'", err=True)
+            click.echo(
+                "Make sure the paper has been prepared first with 'anthology prepare'",
+                err=True,
+            )
             raise click.Abort()
 
         click.echo(f"Compiling: {p.output_dir.name}")
@@ -371,8 +379,12 @@ def generate_all(verbose):
 
 
 @cli.command()
-@click.option("--verbose", "-v", is_flag=True, help="Show detailed output and LaTeX errors")
-@click.option("--volume", type=str, help="Build only a specific volume (e.g., 'vol0001' or '1')")
+@click.option(
+    "--verbose", "-v", is_flag=True, help="Show detailed output and LaTeX errors"
+)
+@click.option(
+    "--volume", type=str, help="Build only a specific volume (e.g., 'vol0001' or '1')"
+)
 def build(verbose, volume):
     """Phase 2: Build papers from output directory (compile, generate HTML, etc.).
 
@@ -404,7 +416,7 @@ def build(verbose, volume):
     # But keep all_papers for sitemap, RSS, and TOC
     if volume:
         # Normalize volume name (accept 'vol0001', '0001', or '1')
-        if not volume.startswith('vol'):
+        if not volume.startswith("vol"):
             volume_num = int(volume)
             volume = f"vol{volume_num:04d}"
 

@@ -2,7 +2,7 @@
 
 import json
 from pathlib import Path
-from typing import Dict, List, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 if TYPE_CHECKING:
     from .paper import Paper
@@ -76,7 +76,7 @@ def save_paper_metadata(
     volume: str,
     volume_meta: Dict,
     paper_order: int,
-    include_html: bool = True
+    include_html: bool = True,
 ) -> None:
     """
     Save paper metadata to the output directory.
@@ -101,7 +101,7 @@ def save_paper_metadata(
         "volume": volume,
         "volume_meta": volume_meta,
         "paper_order": paper_order,
-        "include_html": include_html
+        "include_html": include_html,
     }
 
     meta_file = output_dir / "anthology-meta.json"

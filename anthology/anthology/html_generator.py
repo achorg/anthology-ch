@@ -5,8 +5,8 @@ from typing import List
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from .utils import convert_latex_to_unicode
 from .metadata import get_metadata
+from .utils import convert_latex_to_unicode
 
 
 def make_volume_page(volume: str, papers: List) -> None:
@@ -34,14 +34,17 @@ def make_volume_page(volume: str, papers: List) -> None:
     paper_data = []
     for paper in papers:
         pmeta = paper.get_latex_metadata()
-        doi = pmeta.get('publication_info').get('doi')
-        paper_data.append({
-            "title": convert_latex_to_unicode(pmeta["title"]),
-            "authors": ", ".join([convert_latex_to_unicode(x['name']) for x in pmeta["authors"]]),
-            "url": str(paper.output_dir.name),
-            "pagestart": int(pmeta['publication_info']['pagestart']),
-            "pageend": int(pmeta['publication_info']['pageend'])
-        })
+        paper_data.append(
+            {
+                "title": convert_latex_to_unicode(pmeta["title"]),
+                "authors": ", ".join(
+                    [convert_latex_to_unicode(x["name"]) for x in pmeta["authors"]]
+                ),
+                "url": str(paper.output_dir.name),
+                "pagestart": int(pmeta["publication_info"]["pagestart"]),
+                "pageend": int(pmeta["publication_info"]["pageend"]),
+            }
+        )
 
     # Get volume metadata from the first paper
     volume_meta = papers[0].volume_meta
@@ -53,7 +56,7 @@ def make_volume_page(volume: str, papers: List) -> None:
         pubvolume=volume_meta["pubvolume"],
         conferencename=volume_meta.get("conferencename"),
         conferenceeditors=volume_meta.get("conferenceeditors"),
-        description=volume_meta.get("description")
+        description=volume_meta.get("description"),
     )
 
     # Write to output directory
@@ -110,7 +113,7 @@ def make_toc_page(all_papers: List) -> None:
             "date": volume_meta.get("date", ""),
             "conferenceeditors": conferenceeditors,
             "num_papers": len(volume_papers),
-            "url": f"{volume}/"
+            "url": f"{volume}/",
         }
         volume_data.append(volume_info)
 

@@ -1,15 +1,17 @@
 """Sitemap and RSS feed generation for the anthology website."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import List
-from xml.etree.ElementTree import Element, SubElement, tostring, register_namespace
+from typing import List, Optional
 from xml.dom import minidom
+from xml.etree.ElementTree import Element, SubElement, register_namespace, tostring
 
 from .utils import convert_latex_to_unicode, strip_html_tags
 
 
-def create_sitemap(all_papers: List, output_path: Path = None, verbose: bool = False) -> None:
+def create_sitemap(
+    all_papers: List, output_path: Optional[Path] = None, verbose: bool = False
+) -> None:
     """
     Generate a sitemap.xml file for the anthology website.
 
@@ -75,7 +77,9 @@ def create_sitemap(all_papers: List, output_path: Path = None, verbose: bool = F
         paper_slug = paper.output_dir.name
 
         url_elem = SubElement(urlset, "url")
-        SubElement(url_elem, "loc").text = f"{base_url}/volumes/vol{volume_num:04d}/{paper_slug}/"
+        SubElement(
+            url_elem, "loc"
+        ).text = f"{base_url}/volumes/vol{volume_num:04d}/{paper_slug}/"
         SubElement(url_elem, "changefreq").text = "yearly"
         SubElement(url_elem, "priority").text = "0.6"
 
@@ -85,11 +89,13 @@ def create_sitemap(all_papers: List, output_path: Path = None, verbose: bool = F
             SubElement(url_elem, "lastmod").text = pubdate
 
     # Pretty print XML
-    xml_str = minidom.parseString(tostring(urlset, encoding="unicode")).toprettyxml(indent="  ")
+    xml_str = minidom.parseString(tostring(urlset, encoding="unicode")).toprettyxml(
+        indent="  "
+    )
 
     # Remove extra blank lines
-    xml_lines = [line for line in xml_str.split('\n') if line.strip()]
-    xml_str = '\n'.join(xml_lines) + '\n'
+    xml_lines = [line for line in xml_str.split("\n") if line.strip()]
+    xml_str = "\n".join(xml_lines) + "\n"
 
     # Write to file
     output_path.write_text(xml_str, encoding="utf-8")
@@ -99,7 +105,9 @@ def create_sitemap(all_papers: List, output_path: Path = None, verbose: bool = F
         print(f"  Total URLs: {len(urlset.findall('url'))}")
 
 
-def create_rss_feed(all_papers: List, output_path: Path = None, verbose: bool = False) -> None:
+def create_rss_feed(
+    all_papers: List, output_path: Optional[Path] = None, verbose: bool = False
+) -> None:
     """
     Generate an RSS 2.0 feed for the anthology website.
 
@@ -134,7 +142,9 @@ def create_rss_feed(all_papers: List, output_path: Path = None, verbose: bool = 
         "publishing technical papers, software documentation, and research in digital humanities."
     )
     SubElement(channel, "language").text = "en"
-    SubElement(channel, "lastBuildDate").text = datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S +0000")
+    SubElement(channel, "lastBuildDate").text = datetime.now(timezone.utc).strftime(
+        "%a, %d %b %Y %H:%M:%S +0000"
+    )
 
     # Add atom:link for self-reference
     atom_link = SubElement(channel, "{http://www.w3.org/2005/Atom}link")
@@ -143,7 +153,9 @@ def create_rss_feed(all_papers: List, output_path: Path = None, verbose: bool = 
     atom_link.set("type", "application/rss+xml")
 
     # Sort papers by volume and paper order (most recent first)
-    sorted_papers = sorted(all_papers, key=lambda p: (p.volumeid, p.paper_order), reverse=True)
+    sorted_papers = sorted(
+        all_papers, key=lambda p: (p.volumeid, p.paper_order), reverse=True
+    )
 
     # Add items for each paper
     for paper in sorted_papers:
@@ -163,7 +175,7 @@ def create_rss_feed(all_papers: List, output_path: Path = None, verbose: bool = 
         SubElement(item, "guid").text = paper_url
 
         # Authors
-        authors = [convert_latex_to_unicode(a['name']) for a in pmeta["authors"]]
+        authors = [convert_latex_to_unicode(a["name"]) for a in pmeta["authors"]]
         for author in authors:
             SubElement(item, "{http://purl.org/dc/elements/1.1/}creator").text = author
 
@@ -188,14 +200,18 @@ def create_rss_feed(all_papers: List, output_path: Path = None, verbose: bool = 
         # DOI
         if "publication_info" in pmeta and "doi" in pmeta["publication_info"]:
             doi = pmeta["publication_info"]["doi"]
-            SubElement(item, "{http://purl.org/dc/elements/1.1/}identifier").text = f"https://doi.org/{doi}"
+            SubElement(
+                item, "{http://purl.org/dc/elements/1.1/}identifier"
+            ).text = f"https://doi.org/{doi}"
 
     # Pretty print XML
-    xml_str = minidom.parseString(tostring(rss, encoding="unicode")).toprettyxml(indent="  ")
+    xml_str = minidom.parseString(tostring(rss, encoding="unicode")).toprettyxml(
+        indent="  "
+    )
 
     # Remove extra blank lines
-    xml_lines = [line for line in xml_str.split('\n') if line.strip()]
-    xml_str = '\n'.join(xml_lines) + '\n'
+    xml_lines = [line for line in xml_str.split("\n") if line.strip()]
+    xml_str = "\n".join(xml_lines) + "\n"
 
     # Write to file
     output_path.write_text(xml_str, encoding="utf-8")

@@ -1,7 +1,7 @@
 """BibTeX citation file generation for the anthology journal processor."""
 
 from pathlib import Path
-from typing import Union, List
+from typing import List, Union
 
 
 def write_bibtex_article(
@@ -39,6 +39,7 @@ def write_bibtex_article(
         The citation key is generated from the DOI with '/' replaced by '@'.
         Special LaTeX characters in text fields are automatically escaped.
     """
+
     def _escape_latex(s: str) -> str:
         """Escape special LaTeX characters in a string."""
         repl = {
@@ -72,14 +73,14 @@ def write_bibtex_article(
 
     # Build field list
     fields = [
-        ("title",   _escape_latex(title)),
-        ("author",  _escape_latex(authors_field) if authors_field else None),
-        ("year",    str(year)),
+        ("title", _escape_latex(title)),
+        ("author", _escape_latex(authors_field) if authors_field else None),
+        ("year", str(year)),
         ("journal", _escape_latex(journal)),
-        ("volume",  str(volume)),
-        ("pages",   _escape_latex(pages)),
-        ("editor",  _escape_latex(editors_field) if editors_field else None),
-        ("doi",     str(doi)),
+        ("volume", str(volume)),
+        ("pages", _escape_latex(pages)),
+        ("editor", _escape_latex(editors_field) if editors_field else None),
+        ("doi", str(doi)),
     ]
 
     # Build the BibTeX entry

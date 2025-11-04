@@ -1,9 +1,8 @@
 """DOI (Digital Object Identifier) operations for the anthology journal processor."""
 
-import re
 import random
+import re
 import string
-
 
 # Default DOI prefix for the anthology
 DOI_PREFIX = "10.63744"
@@ -38,16 +37,18 @@ def is_doi_placeholder(doi: str) -> bool:
     if not doi or not doi.strip():
         return True
 
-    if doi.strip() in ['00000/00000', '0', '00000', 'XXXXX']:
+    if doi.strip() in ["00000/00000", "0", "00000", "XXXXX"]:
         return True
 
-    if re.match(r'^[0/@]+$', doi.strip()):
+    if re.match(r"^[0/@]+$", doi.strip()):
         return True
 
     return False
 
 
-def generate_doi(prefix: str = DOI_PREFIX, suffix_length: int = DOI_SUFFIX_LENGTH) -> str:
+def generate_doi(
+    prefix: str = DOI_PREFIX, suffix_length: int = DOI_SUFFIX_LENGTH
+) -> str:
     """
     Generate a new DOI with the given prefix and random suffix.
 
@@ -69,7 +70,7 @@ def generate_doi(prefix: str = DOI_PREFIX, suffix_length: int = DOI_SUFFIX_LENGT
         True
     """
     # Exclude O and l to avoid confusion with 0 and 1
-    letters = ''.join(c for c in string.ascii_letters if c not in 'Ol')
+    letters = "".join(c for c in string.ascii_letters if c not in "Ol")
     numbers = string.digits
 
     # Start with a letter
@@ -77,6 +78,6 @@ def generate_doi(prefix: str = DOI_PREFIX, suffix_length: int = DOI_SUFFIX_LENGT
 
     # Add remaining characters
     allowed_chars = letters + numbers
-    suffix += ''.join(random.choices(allowed_chars, k=suffix_length - 1))
+    suffix += "".join(random.choices(allowed_chars, k=suffix_length - 1))
 
     return f"{prefix}/{suffix}"
