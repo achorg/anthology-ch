@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anthology of Computers and the Humanities</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/site.css">
+
+  <!-- Lightbox CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" />
+
+  <!-- Pandoc syntax highlighting CSS -->
+  <link rel="stylesheet" href="css/syntax-highlighting.css" />
+  <link rel="stylesheet" href="css/article.css" />
+  <link rel="stylesheet" href="css/about.css" />
+
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://anthology.ach.org">
+        <img src="./logo/logo.png" alt="ACH Logo">
+      </a>
+
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMain">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+
+    <div class="navbar-menu" id="navbarMain">
+      <div class="navbar-start">
+      </div>
+      <div class="navbar-end">
+        <a class="navbar-item is-active" href="https://anthology.ach.org/">
+          <b>Home</b>
+        </a>
+        <a class="navbar-item" href="https://anthology.ach.org/volumes/">
+          <b>Volumes</b>
+        </a>
+        <a class="navbar-item" href="https://anthology.ach.org/about">
+          <b>About</b>
+        </a>
+        <span style="width: 25px"></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title volume-title">Anthology of Computers and the Humanities</h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <section class="section">
+    <div class="container">
+
+      <!-- Papers List -->
+      <h3 class="title is-5 mb-1">Welcome!</h3>
+      
+      <p class="has-text-justified py-3">
+        Welcome to <i>Anthology of Computers and the Humanities</i>. The goal of the Anthology is to create a low-cost, open-access, and easy-to-maintain
+        digital archive that hosts peer-reviewed conference papers from digital
+        humanities conferences and workshops. The archive will be indexed across
+        the most popular scholarly indices and include support for persistent
+        identifiers including DOIs (digital object identifier) and ORCID iDs. The first volume is planned to be released in mid-August, so please check back soon for the initial round of publications.
+      </p>
+
+      <h3 class="title is-5 mb-1">Volumes</h3>
+
+    <div class="content toc">
+      <ul>
+        {% for volume in volumes %}
+          <li>
+            <a href="{{ volume.url }}" class="toc-link">
+              <b>Volume {{ volume.pubvolume }}{% if volume.conferencename %}: {{ volume.conferencename }}{% endif %}</b>
+              <span class="icon is-small">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     aria-hidden="true" focusable="false">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                  <polyline points="15 3 21 3 21 9"/>
+                  <line x1="10" y1="14" x2="21" y2="3"/>
+                </svg>
+              </span>
+            </a><br>
+            <span class="has-text-grey">{{ volume.date }}{% if volume.conferenceeditors %} · Edited by {{ volume.conferenceeditors }}{% endif %}</span>
+            {% if volume.num_papers %}
+            <span class="has-text-blue"> · {{ volume.num_papers }} paper{% if volume.num_papers != 1 %}s{% endif %}</span>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="content has-text-centered">
+      <p>
+        <strong>Anthology of Computers and the Humanities</strong> · Association for Computers and the Humanities
+      </p>
+      <p class="is-size-7">
+        Papers © 2025 their authors. All other content © 2025 ACH.
+      </p>
+    </div>
+  </footer>
+  
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  // Get all "navbar-burger" elements
+  const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+  // Add a click event on each of them
+  $navbarBurgers.forEach( el => {
+    el.addEventListener('click', () => {
+
+      // Get the target from the "data-target" attribute
+      const target = el.dataset.target;
+      const $target = document.getElementById(target);
+
+      // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+      el.classList.toggle('is-active');
+      $target.classList.toggle('is-active');
+
+    });
+  });
+
+});
+  </script>
+
+</body>
+</html>

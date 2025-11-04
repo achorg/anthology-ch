@@ -120,3 +120,11 @@ def make_toc_page(all_papers: List) -> None:
     # Write to output directory
     html_path = Path("docs/volumes") / "index.html"
     html_path.write_text(rendered)
+
+    # Also render the main.html template with the same data
+    main_template = jinja_env.get_template("main.html")
+    main_rendered = main_template.render(volumes=volume_data)
+
+    # Write to docs/index.html
+    main_html_path = Path("docs") / "index.html"
+    main_html_path.write_text(main_rendered)

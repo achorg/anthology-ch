@@ -29,7 +29,15 @@ def create_crossref_xml(volume: str, papers: List, verbose: bool = False) -> Non
         The XML file is written to xml/crossref-{volume}.xml
         Schema version: Crossref 4.4.2
         Includes: titles, authors, ORCIDs, abstracts, publication dates, pages, DOIs
+        Only creates the file if it doesn't already exist
     """
+    # Check if the file already exists
+    output_path = Path("data/xml") / f"crossref-{volume}.xml"
+    if output_path.exists():
+        if verbose:
+            print(f"Crossref XML already exists, skipping: {output_path}")
+        return
+
     # Generate batch ID and timestamp
     batch_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=23))
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S%f')[:-3]  # milliseconds precision
@@ -191,8 +199,7 @@ def create_crossref_xml(volume: str, papers: List, verbose: bool = False) -> Non
     lines = [line for line in lines if line.strip()]
     pretty_xml = '\n'.join(lines)
 
-    # Write to file
-    output_path = Path("data/xml") / f"crossref-{volume}.xml"
+    # Write to file (output_path already defined at the start of the function)
     output_path.parent.mkdir(exist_ok=True)
     output_path.write_text(pretty_xml, encoding='utf-8')
 
