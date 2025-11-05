@@ -17,6 +17,51 @@ from .metadata import load_paper_metadata, save_paper_metadata
 from .utils import convert_latex_to_unicode, slugify
 
 
+def fix_table_figure_labels(content: str) -> str:
+    """
+    Move \\label commands to immediately after \\caption in table and figure environments.
+
+    Pandoc-crossref requires labels to immediately follow captions for proper numbering.
+    This function finds table/figure environments where content exists between \\caption
+    and \\label, and moves the label to immediately after the caption.
+
+    Args:
+        content: LaTeX source code
+
+    Returns:
+        Modified LaTeX with labels repositioned
+    """
+    # Pattern to match table or figure environments
+    # Captures: 1) environment type, 2) content before caption, 3) caption,
+    #          4) content between caption and label, 5) label, 6) rest of content
+    pattern = r'(\\begin\{(?:table|figure)\}[^\n]*\n)(.*?)(\\caption\{(?:[^{}]|\{[^{}]*\})*\})\s*(.*?)(\\label\{[^}]+\})(.*?)(\\end\{(?:table|figure)\})'
+
+    def replacer(match):
+        begin = match.group(1)
+        before_caption = match.group(2)
+        caption = match.group(3)
+        between = match.group(4)
+        label = match.group(5)
+        after_label = match.group(6)
+        end = match.group(7)
+
+        # Check if there's actual content between caption and label (not just whitespace)
+        if between.strip():
+            # Move label to immediately after caption, keep the between content after label
+            return f"{begin}{before_caption}{caption}\n  {label}\n{between}{after_label}{end}"
+        else:
+            # Label is already right after caption, no change needed
+            return match.group(0)
+
+    # Apply the transformation repeatedly until no more matches (handles nested cases)
+    prev_content = None
+    while prev_content != content:
+        prev_content = content
+        content = re.sub(pattern, replacer, content, flags=re.DOTALL)
+
+    return content
+
+
 class Paper:
     """
     Represents a single journal article in the anthology.
@@ -194,6 +239,10 @@ class Paper:
         # Apply text transformations
         paper_content = paper_content.replace("\\paragraph", "\n\n\\noindent\n\\textbf")
         paper_content = paper_content.replace("\\textdaggerdbl", "‡")
+
+        # Fix table/figure labels for pandoc-crossref compatibility
+        # Move labels to immediately after captions
+        paper_content = fix_table_figure_labels(paper_content)
 
         # Set paper order number
         paper_content = fill_value(paper_content, "paperorder", str(order))
@@ -431,6 +480,13 @@ class Paper:
         Args:
             verbose: If True, print error messages from Pandoc
         """
+        # Fix table/figure labels for pandoc-crossref compatibility
+        # Move labels to immediately after captions
+        paper_file = self.output_dir / "paper.tex"
+        paper_content = paper_file.read_text()
+        paper_content = fix_table_figure_labels(paper_content)
+        paper_file.write_text(paper_content)
+
         pmeta = self.get_latex_metadata()
         doi = pmeta.get("publication_info", {}).get("doi", "")
 

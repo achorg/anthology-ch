@@ -104,6 +104,7 @@ uv run anthology build [OPTIONS]
 13. Generates main table of contents
 
 **Example:**
+
 ```bash
 # Build all papers
 uv run anthology build
@@ -118,5 +119,7 @@ uv run anthology build --volume 2 --verbose
 
 This project uses pytest for testing.
 
+```
 
+```
 
