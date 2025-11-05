@@ -2,9 +2,7 @@
 
 import re
 
-import pytest
-
-from anthology.anthology.doi import (
+from anthology.anthology.doi import (  # type: ignore[import-not-found]
     DOI_PREFIX,
     DOI_SUFFIX_LENGTH,
     generate_doi,

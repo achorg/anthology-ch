@@ -117,9 +117,14 @@ uv run anthology build --volume 2 --verbose
 
 ## Testing
 
-This project uses pytest for testing.
+This project uses ruff, ty, and pytest for testing and code verification. These
+can be run with the following (run them one by one):
 
 ```
-
+uv run ruff check --select I --fix
+uv run ty check .
+uv run ruff check .
+uv run ruff format .
+uv run pytest
 ```
 

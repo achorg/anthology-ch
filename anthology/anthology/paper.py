@@ -34,7 +34,7 @@ def fix_table_figure_labels(content: str) -> str:
     # Pattern to match table or figure environments
     # Captures: 1) environment type, 2) content before caption, 3) caption,
     #          4) content between caption and label, 5) label, 6) rest of content
-    pattern = r'(\\begin\{(?:table|figure)\}[^\n]*\n)(.*?)(\\caption\{(?:[^{}]|\{[^{}]*\})*\})\s*(.*?)(\\label\{[^}]+\})(.*?)(\\end\{(?:table|figure)\})'
+    pattern = r"(\\begin\{(?:table|figure)\}[^\n]*\n)(.*?)(\\caption\{(?:[^{}]|\{[^{}]*\})*\})\s*(.*?)(\\label\{[^}]+\})(.*?)(\\end\{(?:table|figure)\})"
 
     def replacer(match):
         begin = match.group(1)

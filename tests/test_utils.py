@@ -2,7 +2,7 @@
 
 import pytest
 
-from anthology.anthology.utils import (
+from anthology.anthology.utils import (  # type: ignore[import-not-found]
     convert_latex_to_unicode,
     slugify,
     strip_html_tags,
@@ -68,7 +68,7 @@ class TestSlugify:
     def test_max_width_type_error(self):
         """Test that non-integer max_width raises TypeError."""
         with pytest.raises(TypeError):
-            slugify("Hello World", "20")  # String instead of int
+            slugify("Hello World", "20")  # type: ignore[arg-type]  # String instead of int
 
     def test_multiple_spaces_collapse(self):
         """Test that multiple spaces collapse to single dash."""
