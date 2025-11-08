@@ -202,19 +202,135 @@ def generate():
 
 @generate.command("html")
 @click.option("--verbose", "-v", is_flag=True, help="Show detailed output")
-def generate_html(verbose):
-    """Generate HTML versions of all papers."""
-    papers = get_all_papers()
+@click.option(
+    "--paper",
+    type=click.Path(exists=True, path_type=Path),
+    help="Generate HTML for a specific paper directory",
+)
+def generate_html(verbose, paper):
+    """Generate HTML versions of papers.
 
-    if verbose:
-        click.echo(f"Generating HTML for {len(papers)} papers")
+    If --paper is specified, generates HTML for that paper only.
+    Otherwise, generates HTML for all papers.
+    """
+    if paper:
+        # Generate HTML for specific paper
+        from .paper import Paper
 
-    for paper in papers:
+        # Load paper from output directory metadata
+        p = Paper.from_output_dir(paper)
+        if not p:
+            click.echo(f"Error: Could not load paper from {paper}", err=True)
+            click.echo(
+                "Make sure the paper has been prepared first with 'anthology prepare'",
+                err=True,
+            )
+            raise click.Abort()
+
+        click.echo(f"Generating HTML: {p.output_dir.name}")
+        p.create_html(verbose=verbose)
+        click.echo("✓ HTML generation complete")
+    else:
+        # Generate HTML for all papers
+        papers = get_all_papers()
+
         if verbose:
-            click.echo(f"Generating: {paper.output_dir.name}")
-        paper.create_html(verbose=verbose)
+            click.echo(f"Generating HTML for {len(papers)} papers")
 
-    click.echo("✓ HTML generation complete")
+        for p in papers:
+            if verbose:
+                click.echo(f"Generating: {p.output_dir.name}")
+            p.create_html(verbose=verbose)
+
+        click.echo("✓ HTML generation complete")
+
+
+@generate.command("pdf")
+@click.option("--verbose", "-v", is_flag=True, help="Show LaTeX compilation output")
+@click.option(
+    "--paper",
+    type=click.Path(exists=True, path_type=Path),
+    required=True,
+    help="Paper directory to compile to PDF",
+)
+@click.option(
+    "--pages",
+    type=str,
+    help="Page range for metadata (e.g., '1-10'). If not provided, PDF will be compiled without page metadata.",
+)
+def generate_pdf(verbose, paper, pages):
+    """Generate PDF for a specific paper.
+
+    This command compiles a single paper to PDF using XeLaTeX. Optionally,
+    you can specify page numbers to include in the metadata.
+
+    Examples:
+        anthology generate pdf --paper docs/volumes/vol0001/paper-slug/
+        anthology generate pdf --paper docs/volumes/vol0001/paper-slug/ --pages 1-15
+    """
+    from .paper import Paper
+
+    # Load paper from output directory metadata
+    p = Paper.from_output_dir(paper)
+    if not p:
+        click.echo(f"Error: Could not load paper from {paper}", err=True)
+        click.echo(
+            "Make sure the paper has been prepared first with 'anthology prepare'",
+            err=True,
+        )
+        raise click.Abort()
+
+    click.echo(f"Generating PDF: {p.output_dir.name}")
+
+    # First compilation
+    click.echo("  Compiling with XeLaTeX (pass 1)...")
+    success = p.compile_xelatex(verbose=verbose)
+    if not success:
+        click.echo("✗ Compilation failed", err=True)
+        raise click.Abort()
+
+    # If pages are specified, add metadata and recompile
+    if pages:
+        try:
+            page_parts = pages.split("-")
+            if len(page_parts) != 2:
+                click.echo(
+                    "Error: Page range must be in format 'start-end' (e.g., '1-10')",
+                    err=True,
+                )
+                raise click.Abort()
+
+            page_start = int(page_parts[0])
+            page_end = int(page_parts[1])
+
+            if page_start > page_end:
+                click.echo("Error: Start page must be <= end page", err=True)
+                raise click.Abort()
+
+            click.echo(f"  Adding metadata (pages {page_start}-{page_end})...")
+            p.add_metadata(page_start, page_end)
+
+            click.echo("  Recompiling with metadata (pass 2)...")
+            success = p.compile_xelatex(verbose=verbose)
+            if not success:
+                click.echo("✗ Recompilation failed", err=True)
+                raise click.Abort()
+
+        except ValueError as e:
+            click.echo(f"Error: Invalid page range '{pages}': {e}", err=True)
+            raise click.Abort()
+
+    # Clean auxiliary files
+    p.clean_xelatex()
+
+    # Rename PDF to DOI-based filename
+    p.move_pdf()
+
+    # Report final location
+    pmeta = p.get_latex_metadata()
+    doi = pmeta.get("publication_info", {}).get("doi", "")
+    pdf_path = p.output_dir / f"{doi.replace('/', '@')}.pdf"
+    click.echo(f"✓ PDF generated: {pdf_path}")
 
 
 @generate.command("bibtex")
