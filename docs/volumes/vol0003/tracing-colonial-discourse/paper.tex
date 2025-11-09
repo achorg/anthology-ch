@@ -1,0 +1,790 @@
+% Anthology of Computers and the Humanities. ADD THE OPTION
+% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
+% *Anthology of Computers and the Humanities*. ADD THE OPTION
+% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
+% DO NOT change the documentclass
+% \documentclass[final]{anthology-ch} % for the final version
+\documentclass[final]{anthology-ch}         % for the submission
+
+% LOAD LaTeX PACKAGES
+\usepackage{booktabs}
+\usepackage[toc,page,titletoc,title]{appendix}
+%\usepackage[titletoc,title]{appendix}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{geometry}
+\usepackage{caption}
+\usepackage{multicol}
+\geometry{margin=1in}
+\usepackage{tabularx}
+\usepackage{caption}
+\captionsetup[table]{skip=5pt}
+\usepackage{multirow} % if using the second version
+% ADD your own packages using \usepackage{}
+% \usepackage{orcidlink}
+\usepackage{todonotes}
+\ExecuteBibliographyOptions{maxbibnames=99}
+%\usepackage[nomarkers]{endfloat}
+% \usepackage{draftwatermark}
+% \SetWatermarkText{Under Review}
+% \SetWatermarkScale{1}
+% \SetWatermarkColor{gray!30}
+% \SetWatermarkAngle{45}
+
+% TITLE OF THE SUBMISSION
+% Change this to the name of your submission
+%\title{Tracing Colonial Discourse in Dutch Colonial Categorisations: A Computational Analysis of Semantic Change in Dutch Historical Newspapers, 1860-1960}
+\title{Tracing Colonial Discourse in Dutch Historical Newspapers}
+
+% AUTHOR AND AFFILIATION INFORMATION
+% For each author, include a new call to the \author command, with
+% the numbers in brackets indicating the associated affiliations 
+% (next section) and ORCID-ID for each author.  
+
+% then in the author block — DO NOT use the broken orcid= option
+
+\author[1]{Jiaqi Zhu}[orcid=0009-0005-2812-232X]
+\author[1]{Teresa Paccosi}[orcid=0009-0009-2348-7556]
+\author[1]{Marieke van Erp}[orcid=0000-0001-9195-8203]
+
+%\affiliation{1}{DHLab, KNAW Humanities Cluster, Amsterdam, the Netherlands}
+
+% KEYWORDS
+% Provide one or more keywords or key phrases seperated by commas
+% using the following command
+\keywords{Diachronic Semantic Change, Word Embeddings, Colonial Categorisations, Digitised Newspapers, Computational History}
+
+% METADATA FOR THE PUBLICATION
+% This will be filled in when the document is published; the values can
+% be kept as their defaults when the file is submitted
+\pubyear{2025}
+\pubvolume{3}
+\pagestart{1261}
+\pageend{1261}
+\conferencename{Computational Humanities Research 2025}
+\conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
+\doi{10.63744/SwkybkCCvmsj}  
+\paperorder{79}
+
+\addbibresource{bibliography.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HERE IS THE START OF THE TEXT
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+{The expansion of colonialism often involves categorisations of colonised people based on their race, language, social status, and perceived level of ``civilisation''. While such categorisations may seem fixed, the language used to describe colonised populations is dynamic, shifting in meaning and connotation as colonial relationships and power structures change over time. We investigate diachronic semantic changes in Dutch colonial terminology through newspaper articles from 1860 to 1960 using word embeddings. 
+This period witnessed major colonial expansion, the implementation of ``ethical imperialism'' (the Dutch ``Ethical Policy'' promoting education and welfare while maintaining colonial control), and eventual decolonisation. We combine computational semantic change detection with a more fine-grained analysis of the associated adjectives, demonstrating how the combination of distant and closer techniques can reveal patterns of linguistic transformation that reflect broader societal and political changes in Dutch colonial discourse.}
+\end{abstract}
+
+\textbf{Disclaimer}: This paper contains derogatory sentences and words. They are provided solely as illustrations of the research results and do not reflect the opinions of the authors or their organisations. In-text examples of derogatory and potentially offensive language are presented in \textit{italics}.
+
+\section{Introduction} 
+Throughout history, colonisers frequently categorised colonised people based on their race, occupation, religion, class, and legal status. These categorisations helped maintain social hierarchies in colonial societies that benefited the colonisers or constituted the legitimising discourse of colonialism \cite{raben2020colonial}. During Dutch colonial rule, some words that already existed in the Dutch lexicon shifted from their original meanings in referring to a specific group of people under the colonial kaleidoscope. For example, \textit{inboorling}, which originally means ``someone born in the land'', was for a very long time a neutral word in the Dutch language. However, since the 19\textsuperscript{th} century, it has been used to refer to Indigenous people from colonies, who were considered primitive and wild by colonisers~\cite{Philippa_et_al_EWN_2003_2009}. Meanwhile, some terms from the colonised societies' language entered the Dutch lexicon as they were adopted by colonisers such as \textit{koelie} (meaning ``day worker'', which is thought to be derived from the Hindi word \textit{quli}) \cite{etymologiebank_koelie}. %and \textit{kaffer} (derived from the Arabic term \textit{kafir}, which means "one without religion") \cite{etymologiebank_kaffer}. 
+
+%The legacy of colonial categorisations and the stereotypes that emerged under them continues to affect Dutch societies \cite{weiner2014colonized} in ongoing debates, such as the Zwarte Piet controversy—a contentious discussion about the blackface character in Dutch Christmas traditions, which many argue perpetuates colonial-era racial stereotypes \cite{RodenbergandWagenaar2016,lemmens2017dark,fischer2022colonialism}.
+Newspapers serve as a valuable source for studying such linguistic changes because they mirror societal attitudes of their time \cite{bell1991language}, making them ideal for tracing how certain terminology or concepts evolved in public usage. The press may have documented official colonial policies, public debates about colonial affairs, and everyday references to colonial subjects, providing a comprehensive record of how language adapted to changing colonial realities. This paper contributes to understanding Dutch colonial discourse by computationally analysing the semantic evolution of colonial terminology in newspaper discourse between 1860 and 1960. Our approach provides empirical evidence for semantic change patterns in terms identified as problematic by contemporary cultural heritage institutions, offering historical context for current decolonisation efforts.
+
+We use \textit{Words Matter: an unfinished guide to word choices in the cultural sector}~\cite{WordsMatter2025_en},\footnote{\url{https://amsterdam.wereldmuseum.nl/en/about-wereldmuseum-amsterdam/research/words-matter-publication}} a lexicon developed in 2018 by the National Museum of World Cultures in the Netherlands to identify problematic terms in Dutch Cultural Heritage collections. We choose to analyse newspaper discourse as, unlike museum collections that reflect curatorial practices, newspapers captures how these terms were actively used and evolved in real-time public consciousness. By applying this lexicon to historical Dutch newspaper data, we can trace the semantic evolution of these terms and understand their changing social meanings over time.
+
+%By computationally analysing the diachronic semantic evolution of selected Words Matter terminology in Dutch newspaper discourse, we provide historical context for contemporary decolonisation efforts in cultural heritage institutions.
+
+% take De Telegraaf and Algemeen Handelsblad as example; how newspaper political and religious orientations influenced colonial discourse and racial terminology. The research reveals a gap in studies directly examining how liberal versus conservative newspaper political orientations affected colonial discourse and racial terminology. Most available studies focus on either general media bias without colonial context, or colonial discourse analysis without systematic comparison of ideological differences.}
+
+The remainder of this paper is organised as follows. In  Section \ref{relatedwork}, we discuss related work, followed by a description of our data in Section \ref{data}. In Section \ref{methodology}, we present the methodology. We present the results of our analyses and discussion in Section \ref{results}. Conclusions, limitations, and directions for future work are discussed in Section \ref{conclusion}.
+
+\section{Related Work}
+\label{relatedwork}
+%Recent computational humanities research has developed sophisticated methods for analysing how vocabulary evolution reflects broader social, cultural, and technological transformations \cite{hamilton-etal-2016-diachronic,kutuzov-etal-2018-diachronic}. This field combines computational linguistics, digital humanities, and sociolinguistic approaches to provide quantitative evidence for connections between language change and societal evolution  \cite{tahmasebi2018study,hengchen2021data}. Within this broader landscape, computational approaches to semantic change detection have emerged as particularly powerful tools for understanding how politically and socially sensitive terminology evolves over time.
+
+Computational semantic change detection has predominantly relied on distributional semantics, particularly word embeddings, to trace how word meanings shift across historical periods. Several studies have demonstrated the effectiveness of these methods for examining politically contentious terminology~\cite{park-cordell-2025-data,soni2021abolitionist,pedrazzini-mcgillivray-2022-machines,tahmasebi2018study,wevers-2019-using}. %\cite{Garg_2018} analyses changes in ethnic stereotypes in the 20th and 21st century United States.  
+\textcite{park-cordell-2025-data}'s analysis of ``slave'' and ``servant'' related terminology exemplifies how newspaper data can reveal euphemistic language shifts that reflect broader social attitudes, employing similar methods to our investigation of Dutch colonial terms. \textcite{soni2021abolitionist}'s study of abolitionist networks demonstrates how newspaper discourse captures the evolution of activist terminology over time, while \textcite{pedrazzini-mcgillivray-2022-machines}'s examination of mechanisation vocabulary in British newspapers and \textcite{tahmasebi2018study}'s diachronic analysis of Swedish newspaper language illustrate the temporal analytical potential that we apply to Dutch colonial discourse. Wevers' study~\cite{wevers-2019-using}, which used Dutch historical newspapers to analyse language changes in gender bias, is the most directly related to our work. It uses a selection of the same corpus we used in this paper, demonstrating its suitability for semantic change detection.
+
+%The use of digitised historical newspapers as large-scale research data offers particular advantages for tracing semantic evolution, providing both temporal depth and diverse publication contexts. Studies using newspaper corpora have proven especially relevat to our approach: 
+Research specifically addressing Dutch colonial categorisations has predominantly taken qualitative approaches, examining questions similar to ours but through different methodological lenses. These studies have explored how mixed-race classifications such as ``Indo-European'' functioned in colonial power structures and contemporary identity negotiations  \cite{DoornbosEtAl2022}, how the measurement and classification of racial ``mixedness'' reflected broader colonial administrative practices \cite{JonesDeHart2020},  and how ethnographic encounters shaped colonial categorisation systems \cite{vanMeersbergen2021}. \cite{brate-etal-2023-contextual} represents the closest precedent to our work, conducting computational word co-occurrence analysis of sensitive terms in Dutch newspapers, sharing both our methodological approach and dataset source, though this analysis focused on a more recent period (1950s-1990s) and employed different analytical techniques.
+
+This paper addresses the methodological and temporal gap by applying computational semantic change detection methods to Dutch colonial terminology across the 1860-1960 period, combining the computational approaches demonstrated effective in international contexts with the Dutch newspaper corpus used by previous studies, while extending the temporal scope to cover the critical colonial expansion and decolonisation period. The methodology is mainly inspired by Menini et al.'s work~\cite{menini2023scent}, addressing the olfactory domain. This study investigates the way specific olfactory objects were perceived over time, analysing evaluative changes from a perceptual, cultural, and historical perspective. %  that remains computationally understudied.
+
+\section{Data}
+\label{data}
+
+%In this section, we outline our data collection and pre-processing strategy. 
+
+%We conduct analyses on all racial and social categories that are used to refer to people in colonial contexts from the Words Matter vocabulary. To eliminate terms with insufficient frequency for robust diachronic analysis and ensure statistically reliable semantic change detection, we make a frequency analysis of the 1860-1960 Delpher corpus, which reveals substantial variation across these terms, ranging from highly frequent terms (\textit{indisch}, 519,226
+%occurrences) to rare occurrences (\textit{njai}, 159 occurrences). The words we applied analysis on in this paper are in Table 2.
+
+%\subsection{Data Collection}
+%\label{data_coll}
+
+The historical Dutch newspapers data used in this study were collected from Delpher,\footnote{\url{https://delpher.nl}} the Dutch National Library (KB) digitised newspaper and magazine portal. We selected newspaper articles spanning the period 1860-1960. Although Dutch colonial rule began long before this period and semantic changes might have occurred with earlier contact, our analysis starts from 1860 due to the availability and consistency of the digitised corpus. While the KB collection includes newspapers dating back to the seventeenth century, the number of digitised newspapers before the nineteenth century is extremely limited. As shown in Figure~\ref{fig:delpher}, the volume of digitised newspapers remains negligible until the mid-nineteenth century and only from 1860s onward the number of available newspapers become substantial and stable, exceeding 6,000 newspapers per year. Starting from 1860 thus ensures adequate data coverage and temporal consistency,  providing a reliable basis for tracing linguistic and semantic patterns in newspapers.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.8\linewidth]{images/Figure 1.png}
+  \caption{Number of digitised newspapers per year in the KB’s \textit{Delpher} collection (1618–1995). \textit{Source: Koninklijke Bibliotheek (Delpher portal).} https://www.delpher.nl/nl/kranten}
+  \label{fig:delpher}
+\end{figure}
+
+% We employed a hybrid collection approach: manual download for the public domain period (1860-1879) and automated API-based harvesting for the restricted period (1880-1960). We process articles year by year and filter the data by using a filtering configuration that allows for selective extraction based on newspaper titles, publication dates, content types, geographic coverage, and article characteristics. 
+% \todo[inline]{Teresa: we need to do a comment on the fact that telegraaf starts from 1883 and the fact the data are imbalanced -- also think if we want to put the tokens count in a plot (as melvin did, because he also had imbalanced data)}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.8\linewidth]{images/Figure 2.png}
+  \caption{Number of articles over 1860-1960}
+  \label{fig:article_counts}
+\end{figure}
+
+% However, this limitation primarily impacts the first period (1860-1899), which is used as the reference period, and does not compromise the core comparative analysis across the main periods of colonial discourse.
+% }
+
+We specifically target two major Dutch national newspapers, namely \textit{Algemeen Handelsblad} and \textit{De Telegraaf}, because of the contrast in their editorial positions during this period: \textit{Algemeen Handelsblad} represents a more liberal perspective, \textit{De Telegraaf} takes a more conservative to far-right direction, especially during World War II~\cite{kuitenbrouwer2014propaganda}.
+% , and receiving criticisms for its positions in the .
+%We chose this setup for a comparative analysis of how different ideological viewpoints employed colonial terminology. 
+Furthermore, both newspapers maintained high circulation and similar distribution rates during the study period of 1860-1960, ensuring representative coverage of public discourse during this historical period. We only include articles while excluding other types of content, such as advertisements and announcements, to focus on editorial and news content rather than commercial material. See Figure~\ref{fig:article_counts} and Table \ref{tab:newscount} for statistics on the number of articles and tokens we collected. 
+
+% We process articles year by year, sending structured queries to retrieve batches of 200 records at a time to manage API load and ensure stable data retrieval. For each year, we use a date-based query that specifically targets articles published between January 1st and December 31st of that year, ensuring comprehensive temporal coverage of the selected period.
+
+%Geographic filtering is implemented to focus on articles with specific spatial coverage, as not all newspapers were published in Dutch or published in Dutch-speaking regions (for example, some were published in the US and Belgium). To only work with Dutch-language data, we include national (Landelijk) content, colonial territories such as Nederlands-Indië (Dutch East Indies, now Indonesia), Nederlandse Antillen (Dutch Antilles), and Suriname. This geographic scope reflects the extent of Dutch influence and interest during the colonial period, allowing for analysis of both domestic and imperial concerns in the Dutch press. 
+
+%The Delpher archive comprises a diverse range of newspaper content, including articles, advertisements, and announcements. We filter content by type, prioritising articles while excluding other types of content such as advertisements and announcements to focus on editorial and news content rather than commercial material. This filtering approach follows \cite{hiltunen2021subregister}'s analysis in corpus linguistics, as different newspaper sections represent distinct sub-registers with systematic linguistic variation that can confound semantic change detection. Based on this, we hypothesise that newspaper articles, as journalistic and editorial content, provide more consistent and standardised linguistic patterns essential for isolating genuine semantic change from genre-specific language variation. %Our operational choices of content filtering were also supported by \cite{hengchen2021data}, as they conducted data filtering by Delpher metadata tags and only worked with articles that are in Dutch, as the research data for studying changing vocabularies in historical newspaper collections. 
+
+%For each qualifying article, we access the OCR URL provided in the metadata and download the complete text content. This OCR text undergoes quality filtering based on length parameters, ensuring that only articles with substantial content (between 100 and 50,000 characters) are retained, thereby excluding brief notices while maintaining comprehensive articles. Each successfully processed article is saved as an individual XML file with a structured format that preserves both metadata and content. 
+
+We segment the collected dataset into three time periods: 1860-1899, 1900-1939, and 1940-1960. Due to the establishment of \textit{De Telegraaf} in 1893, the temporal spans are not fully balanced across newspapers: \textit{Algemeen Handelsblad} covers the full period (1860-1960), while \textit{De Telegraaf} starting its coverage from 1893. The temporal imbalance between newspapers, with \textit{De Telegraaf} missing the initial 33 years of the study period, may affect direct comparisons of early semantic patterns. However, we hypothesise that the number of tokens in this period is enough to draw some relevant conclusions from the data. We chose 1900 as a breaking point, as before this year, Dutch colonialism in the East Indies was fundamentally oriented toward commercial exploitation \cite{vanschendel2017embedding}. The implementation of the Ethical Policy in 1901 introduced new frameworks that marked a transition in official colonial ideology \cite{0594bdf3af1e4b43b99f5a19ae5c8d1b}. The Japanese occupation (1942-1945) and subsequent decolonisation struggles may have created contested semantic environments in which colonial terminology was challenged, redefined, or abandoned. 
+\begin{table}[t]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Newspaper} & \textbf{1860–1889} & \textbf{1900–1939} & \textbf{1940–1960} \\
+\midrule
+\textit{De Telegraaf} & 54,908,714 & 362,705,143 & 73,323,824 \\
+\textit{Algemeen Handelsblad} & 215,533,509 & 510,985,442 & 108,149,025 \\
+\bottomrule
+\addlinespace
+\end{tabular}
+\caption{Newspaper tokens count per period}
+\label{tab:newscount}
+\end{table}
+
+%\subsection{Data Segmentation}
+%\label{ssec:segmentation}
+
+%While Dutch colonialism began in the 17\textsuperscript{th} century with the establishment of the Dutch East India Company (VOC), we focus on 1860-1960 as this period encompasses major transformations in Dutch colonial policy and discourse that we hypothesise produced systematic semantic changes in colonial terminology. Each transformation created new discursive patterns that likely required linguistic adaptation of existing colonial vocabulary.
+
+%\begin{itemize}
+%    \item \textbf{Before 1900 -- Reference Period}  Before 1900, Dutch colonialism in the East Indies was fundamentally oriented toward commercial exploitation \cite{vanschendel2017embedding}. Meanwhile, during the 19\textsuperscript{th} century, the Dutch fought numerous wars in their imperial expansion, and their territorial control reached its greatest extent in the early 20\textsuperscript{th} century with the occupation of Western New Guinea \cite{ricklefs2008modern}. During this reference period, we expect that colonial terminology reflected administrative and exploitative needs, sometimes with semantic precision of colonial categorisations becoming regularised for administrative purposes as the Dutch intensified control over colonies. For example, it is documented in \textit{Words Matter} that \textit{inboorling} shifted from describing `all Indonesians' in the early 19\textsuperscript{th} century to only referring to so-called tribal peoples by the 1880s, suggesting increasing semantic precision.
+%    \item \textbf{First Transformation (1900-1940) -- Ethical Policy Era} The implementation of the Ethical Policy in 1901 introduced new frameworks that marked a transition in official colonial ideology \cite{0594bdf3af1e4b43b99f5a19ae5c8d1b}. We expect this policy shift required semantic adaptation of existing terminology to accommodate paternalistic rather than purely exploitative colonial relationships, as its implementation aimed to promote the welfare of the indigenous people \cite{locher1994dutch}. According to \cite{gouda1995dutch}, this involved the establishment of order and the rule of law throughout the archipelago, the building of modern public infrastructure, and better conditions for the health, education, housing and economic activities of the "natives". In this ethical context, the Dutch also began to train a native elite of doctors, architects, lawyers, teachers, soldiers and colonial administrators. This ideological transformation likely necessitated linguistic frameworks that could justify colonial control through humanitarian rather than purely exploitative rhetoric. Simultaneously, the rapid growth of Indonesian nationalism and anticolonial resistance movements may have created competing discourses that began challenging colonial terminology~\cite{kuitenbrouwer2014propaganda}.
+%    \item \textbf{Second Transformation (1940-1960) -- Decolonisation and Contested Discourse} . The Japanese occupation (1942-1945) and subsequent decolonisation struggles may have created contested semantic environments in which colonial terminology was challenged, redefined, or abandoned. We expect to find evidence of semantic instability and competing usages during this period as established colonial categories broke down. For example, \textit{neger}, which according to \textit{Words Matter} became associated with racial pseudoscience during the 18th and 19th centuries, likely exhibits semantic tension as it simultaneously functioned within both colonial racial hierarchies and emerging anti-colonial resistance movements. This period should show the breakdown of stable colonial semantic categories as decolonisation challenged the legitimacy of colonial categorisations, with terms either being abandoned, reclaimed by independence movements, or redefined in post-colonial contexts.
+%\end{itemize}
+
+%The 1860-1960 time frame captures these distinct transformation periods while providing sufficient temporal resolution to detect gradual semantic evolution.  
+
+%\subsection{Data pre-processing}
+%\label{data_preprocessing}
+
+%We divide the data between the two newspapers and for each newspaper (\textit{De Telegraaf and Algemeen Handelsblad}), we separate the data into the three temporal spans selected in Section~\ref{pre-proc}, namely 1860-1899, 1900-1940, and 1940-1960.
+% to train separate word embedding models for each period, allowing us to track semantic changes over time. 
+%These newspaper corpora are meant to be used to train embedding models for each period, as well as for PoS-related analysis of selected target words. %In the case of embeddings, we obtained a txt file for each newspaper in a specific temporal span, having at least 50 characters per row. For what concerns instead the PoS analysis, we created a tsv file with the year and the content of each article. 
+We applied text pre-processing procedures to remove noise and standardise the corpus, eliminating punctuation marks, symbols, and numerical characters, as well as filtering out words shorter than three characters to reduce the impact of abbreviations and typographical artefacts commonly found in historical newspaper digitisation. We removed function words (articles, prepositions, conjunctions, auxiliary verbs) because they serve primarily grammatical rather than semantic functions, and their high frequency could mask the semantic relationships between content words that are central to our analysis of colonial terminology evolution.
+
+% For each temporal period, we all individual XML article files into a single TSV file, creating unified corpora for each period. 
+
+%We divided the collected newspaper data into temporal bins spanning decades or 25-year periods, which allows us to train separate word embedding models for each time period and track semantic changes across temporal boundaries. For each temporal period, we consolidated all individual XML article files into a single text file, creating unified corpora for each decade or 25-year span. We applied text preprocessing procedures to remove noise and standardise the corpus. This included eliminating punctuation marks, symbols, and numerical characters, as well as filtering out words shorter than three characters to reduce the impact of abbreviations and typographical artefacts commonly found in historical newspaper digitisation. To optimise the corpus for embedding training, we reformatted each temporal text file so that each line contains approximately 50 tokens, equivalent to roughly three sentences per line. Before model training, we removed function words (articles, prepositions, conjunctions, auxiliary verbs) from the corpus. 
+
+% \textcolor{red}{add two figures here, the first one is the frequency of all the words in the two newspapers we look at during the period, the second one is the total number of words per embedding model for each individual newspaper}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.8\textwidth]{images/Figure 3.png}
+  \caption{Analysis Workflow}
+  \label{fig:book-converter}
+\end{figure}
+
+
+\section{Methodology}
+\label{methodology}
+
+% As stated above, this study analyses historical Dutch newspaper discourse using data from two prominent newspapers: \textit{Algemeen Handelsblad} and \textit{De Telegraaf}. The dataset comprises six time-segmented files spanning three distinct periods: 1860-1899, 1900-1939, and 1940-1959, with separate files for each newspaper within each timeframe. This temporal segmentation enables diachronic analysis of linguistic change over the century-long period.
+After the pre-processing step, we conducted two separate analyses, illustrated in Figure \ref{fig:book-converter}. We first use embeddings to examine the evolution of selected target words through changes in their neighbouring words (i.e., the words used in the most similar contexts). Secondly, we perform a connotative analysis of the adjectives most frequently used to describe the same words.
+
+Our analysis focuses on terminology from the Words Matter lexicon, specifically terms that were used as race and social classifications. Table \ref{tab:wordsmatter_vocabulary} presents our selection of Words Matter terminology, where word forms of each term are aggregated and collected under their stemmed forms (shown in bold italics). This aggregation approach accounts for morphological variations while maintaining semantic coherence. The frequency distribution of these selected terms across both newspapers and time periods is presented in Figure \ref{fig:termocc}, which reveals considerable variation in usage patterns, with some terms appearing frequently throughout the corpus, while others show more sporadic occurrence.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.5\linewidth]{images/Figure 4.png}
+    \caption{Term occurrences in \textit{De Telegraaf} and \textit{Algemeen Handelsblad} (sorted by frequency)}
+    \label{fig:termocc}
+\end{figure}
+
+
+\subsection{Embeddings-based analysis}
+\label{embedd}
+%This step is crucial because some racial and ethnic terms can function as both nouns (referring to groups of people) and adjectives (describing characteristics). Since this study focuses specifically on references to human groups rather than descriptive attributes, only instances where target terms are tagged as nouns are retained for analysis.
+Following the methodology presented in \cite{pedrazzini-mcgillivray-2022-machines}, we trained three separate Word2Vec~\cite{mikolov2013efficient} models for each newspaper, one per period, %using the Gensim library, testing different settings, 
+testing different numbers of training epochs (3, 5, 10) and vector sizes (100, 300). To determine the optimal hyperparameters, we conducted a grid search evaluation comparing the quality of models trained with different parameter combinations. The best-performing configuration, which was selected for the final models, evaluated with a set of synonyms and spelling variations, used 3 training epochs and a vector size of 300. 
+% with hyperparameters optimised through grid search evaluation. \textcolor{red}{We compared skip-gram and continuous-bag-of-words algorithms across different configurations of epochs (), vector dimensions (), context windows (), and minimum word counts (). Model quality was assessed by    , selecting the configuration that   . Our final models employed the skip-gram architecture with .}
+Since models for each temporal period are trained independently, the resulting embeddings exist in different vector spaces and cannot be directly compared. We aligned the different semantic spaces using the Orthogonal Procrustes method \cite{schonemann1966generalized}. After aligning all embedding spaces, we first measured semantic change by calculating the cosine similarity of the same word embedding across the different periods. Specifically, we set the cosine similarity in the first period to 1, using it as a reference point to observe how much the word representation changed in the subsequent periods. To assess whether the results obtained were not due to model artefacts, we conducted a control analysis using 10 neutral Dutch words, for which we did not expect significant changes. The average cosine similarity compared to the reference period for these words is 0.82 for \textit{De Telegraaf} and 0.78 for \textit{Algemeen Handelsblad}, while the average change in cosine similarity between period 1 (1900-1939) an period 2 (1940-1959) is 0.06 for \textit{De Telegraaf} and 0.03 for \textit{Algemeen Handelsblad}. These results show the stability of the meanings of these neutral words, and support the validity of the model. We then conducted a nearest neighbours analysis to further investigate this type of change. %A nearest neighbours analysis helps reveal semantic change by tracking how the most similar words to a target word change over time, indicating shifts in meaning and usage context.
+
+
+% \subsubsection{Cosine similarity and nearest neighbours analysis}
+% \label{cosinesimilarity}
+We first analysed variations in \textbf{cosine similarity} of the selected keywords (see Table \ref{tab:wordsmatter_vocabulary}) across the chosen time periods, with the goal of identifying potential patterns of semantic change. Based on this analysis, we identified three main scenarios: \textit{divergence}, \textit{stability}, and \textit{parallel} change across newspapers. Divergence occurs when the cosine similarity of a given keyword remains relatively stable in one newspaper but notably shifts in the other. We interpret this as an indication of diverging usage patterns, potentially influenced by the newspapers’ different ideological orientations. In the case of stability, cosine similarity scores remain consistent in both newspapers, suggesting a possible, relatively stable semantic representation of the keyword over time. Parallel change refers to instances in which both newspapers exhibit similar degrees of semantic shift. This pattern may indicate the influence of broader historical phenomena on language use, independent of editorial perspective.
+% To capture the diverse patterns of semantic change and stability across newspapers and time periods, we selected words representing three distinct categories of cosine similarity patterns, subsequently analysing whether neighbour changes support or contradict these similarity trajectories.
+% \subsubsection{Near Neighbours Analysis Validation}
+% \label{nearestneighbours}
+To support our hypotheses, we also conducted a \textbf{nearest neighbours analysis} for the keywords in which we observed one of the semantic change scenarios. %This step aims to provide further insights into the possible causes of such change. 
+%Nearest neighbours indeed offer a proxy for the semantic context in which a word is used during a specific period. 
+By comparing the nearest neighbours across time slices and newspapers, we sought to provide additional support to the patterns individuated with the cosine similarity analysis. 
+% For each category, we examined whether neighbour changes substantiate the cosine similarity patterns. By analysing the semantic neighbourhoods in each period and assigning thematic topics where possible, we can construct narratives that explain whether the neighbouring terms support the observed similarity trajectories, revealing whether apparent stability masks underlying semantic shifts, or whether dramatic similarity changes reflect genuine meaning transformation versus mere contextual repositioning.
+
+\begin{table}[t]
+\centering
+\begin{tabular}{p{2cm}p{13cm}}
+\toprule
+\textbf{Category} & \textbf{Terminology (translation)}\\
+\midrule
+Race & \textbf{\textit{blanke}}(n) (eng., “white person”); \textbf{\textit{bosneger}}(s) (eng., “bush negro”); \textbf{\textit{creool}}, creolen (eng., “creole”); \textbf{\textit{gekleurd}}(en) (eng., “colored”); \textbf{\textit{halfbloed}}(en) (eng., “half-blood”); \textbf{\textit{Hottentot}}(ten) (eng., “Khoikhoi people”); \textbf{\textit{inboorling}}(en) (eng., “primitive native”); \textbf{\textit{indisch}}(e) (this word doesn't have a strict translation in English); \textbf{\textit{indo}}('s) (eng., “Indo-European”); \textbf{\textit{indiaan}}, indianen (eng., “Indian”); \textbf{\textit{inheems}}(en) (eng., “indigenous”); \textbf{\textit{inlander}}(s) (eng., “native”); \textbf{\textit{kaffer}}(s) (eng., “black African”); \textbf{\textit{Khoi}} (eng., “Khoisan people”); \textbf{\textit{kleurling}}(en) (eng., “colored”); \textbf{\textit{moor}}, moren (eng., “Muslim person of Arab or Amazigh descent”); \textbf{\textit{marron}}(s) (eng., “maroon”); \textbf{\textit{mesties}} (eng., “person of mixed-race background”); \textbf{\textit{mulat}}(ten) (eng., “mulatto”); \textbf{\textit{neger}}(s, in, innen) (eng., “negro (m/f)”); \textbf{\textit{njai}} (eng., “Indonesian mistress to coloniser”); \textbf{\textit{primitief}}, primitieven (eng., “primitive”); \textbf{\textit{wildeman}}(nen) (eng., “uncivilized man”).\\
+\addlinespace
+Social & \textbf{\textit{barbaar}}, barbaren (eng., “barbarian”); \textbf{\textit{koeli}}(es) (eng., “contract worker”).\\
+\bottomrule
+\end{tabular}
+\caption{Selection of \textit{Words Matter} terminology by category (Race and Social). Word forms of each term are aggregated, and each aggregation is collected under its stemmed form (in bold italics).}
+\label{tab:wordsmatter_vocabulary}
+\end{table}
+
+\subsection{Connotation analysis}
+\label{connotationana}
+While the previous analyses provide an overview of which words have undergone relevant semantic change and the kinds of context in which they tend to appear, they do not offer information on their connotative dimension. To address this limitation, we conducted an analysis of the \textbf{connotative adjectives} (specification and evaluation) most frequently used to modify the identified keywords across the different time periods, aiming to explore potential connotative shifts of these concepts. Indeed, given that one of the main differences between the two newspapers lies in their ideological orientation, we expect connotation to play a key role in shaping the distinct uses of language. We therefore assigned part-of-speech (PoS) tags to both corpora, using SpaCy v3.7.\footnote{\url{https://spacy.io/models/nl}} We isolated the selected keywords when used as nouns and extracted the adjectives occurring as their modifiers in each time period. We further identified connotative adjectives and analysed their frequency over time for each relevant keyword. %Analysing the frequency of these adjectives over time and across newspapers offers a valuable perspective on how political or ideological positions may influence the semantic trajectory of specific terms. 
+
+% \begin{table}[t]
+% \centering
+% \small
+% \begin{tabular}{|l|r|r|}
+% \hline
+% \textbf{Word} & \textbf{\textit{De Telegraaf}} & \textbf{\textit{Algemeen Handelsblad}} \\
+% \hline
+% barbaar      & 1303  & 1837  \\
+% blanke       & 20345 & 37593 \\
+% bosneger     & 78    & 107   \\
+% creool       & 208   & 516   \\
+% gekleurd     & 4509  & 7850  \\
+% halfbloed    & 467   & 636   \\
+% hottentot    & 360   & 858   \\
+% inboorling   & 5157  & 10870 \\
+% indiaan      & 4877  & 7755  \\
+% indisch      & 121360 & 218544 \\
+% indo         & 8844  & 14231 \\
+% inheems      & 596   & 926   \\
+% inlander     & 10008 & 29206 \\
+% kaffer       & 2119  & 4778  \\
+% kleurling    & 1323  & 2441  \\
+% koeli        & 5948  & 11397 \\
+% khoi         & 130   & 27    \\
+% marron       & 319   & 225   \\
+% mesties      & 37    & 38    \\
+% moor         & 10410 & 10842 \\
+% mulat        & 586   & 392   \\
+% neger        & 10254 & 15868 \\
+% njai         & 30    & 74    \\
+% primitief    & 3496  & 6147  \\
+% wildeman     & 3381  & 4530  \\
+% \hline
+% \end{tabular}
+% \caption{Term occurrences in \textit{De Telegraaf} and \textit{Algemeen Handelsblad} (sorted alphabetically)}
+% \label{tab:term-occurrences}
+% \end{table}
+
+
+\section{Results and Discussion}
+\label{results}
+
+In this section, we present the results of our analyses on some selected colonial terms. We first present the result of the cosine similarity comparison in Subsection~\ref{cosinesimilarity},  quantifying the degree of semantic stability or change for each term across periods and newspapers, and providing a broader overview of which words underwent the most significant transformations. We then describe the nearest neighbours analysis (Subsection~\ref{nearestneighboursanalysis}) to examine the specific semantic contexts and thematic associations surrounding these terms, addressing the observed changes from a qualitative perspective, to possibly support the results of the previous cosine analysis. 
+% and whether similarity patterns reflect genuine meaning shifts or not. 
+Finally, we illustrate the connotation analysis of these terms in Subsection~\ref{connotationanalysis}, exploring how ideological differences between newspapers may have shaped the affective and judgmental aspects of colonial discourse. Together, these three analytical approaches provide both quantitative measures of semantic change and qualitative insights into the mechanisms driving linguistic transformation in colonial contexts.
+From the set of \textit{Words Matter} terminology in Table~\ref{tab:wordsmatter_vocabulary}, we selected some that underwent one of the selected changes, for which we conduct a more fine-grained analysis, combining the insights
+coming from the three different analyses.
+
+\subsection{Cosine Similarity}
+\label{cosinesimilarity}
+
+As introduced in Subsection~\ref{embedd}, the cosine similarity analysis reveals three distinct patterns of semantic change across the selected colonial terminology (see Table \ref{tab:cosine_similarity}). In the case of \textit{divergence}, we identified \textbf{\textit{koeli}} and\textbf{ \textit{mesties}} as exemplar cases where similarity remains stable in one newspaper while showing changes in another, with \textit{koeli}  maintaining consistent scores across periods in \textit{De Telegraaf} but dropping substantially in the third period in \textit{Algemeen Handelsblad}, while \textit{mesties} shows an inverse pattern with declining scores in \textit{De Telegraaf} but growth in \textit{Algemeen Handelsblad}'s final period. Such divergences suggest different editorial approaches or audience orientations toward colonial terminology. In contrast, \textbf{\textit{neger}}, \textbf{\textit{barbaar}}, and \textbf{\textit{moor}} maintain relatively stable cosine similarity across both newspapers and all three periods, appearing to retain consistent semantic positioning despite the changing historical context and suggesting rather fixed usage patterns even as surrounding discourse evolved (\textit{stability}). Finally, \textbf{\textit{primitief}} and\textbf{ \textit{marron}} demonstrate parallel changes occurring in both newspapers, indicating broader shifts in semantic meaning that transcend individual newspaper contexts and likely reflect society-wide transformations in conceptual understanding rather than newspaper-specific editorial decisions (\textit{parallel}).  
+
+\begin{table}[t]
+\centering  
+\begin{tabular}{lcccc}
+\toprule
+\multirow{2}{*}{\textbf{Word}} & \multicolumn{2}{c}{\textbf{\textit{De Telegraaf}}} & \multicolumn{2}{c}{\textbf{\textit{Algemeen Handelsblad}}} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+& \textbf{1900--1939} & \textbf{1940--1959} & \textbf{1900--1939} & \textbf{1940--1959} \\
+\midrule
+koeli     & 0.480 & 0.481 & 0.514 & 0.260 \\
+mestjes   & 0.704 & 0.585 & 0.487 & 0.640 \\
+moor      & 0.258 & 0.238 & 0.283 & 0.244 \\
+barbaar   & 0.545 & 0.585 & 0.556 & 0.581 \\
+neger     & 0.428 & 0.421 & 0.445 & 0.454 \\
+primitief & 0.549 & 0.373 & 0.479 & 0.370 \\
+marron    & 0.309 & 0.509 & 0.439 & 0.665 \\
+\bottomrule
+\end{tabular}
+\caption{Cosine similarity of target words across different periods, with 1860–1899 as the reference period. In this reference period, the cosine similarity of each word is set to 1.}
+\label{tab:cosine_similarity}
+\end{table}
+
+\subsection{Nearest Neighbours Analysis}
+\label{nearestneighboursanalysis}
+
+In this and the following subsection,  we focus on four words (\textit{koeli}, \textit{moor}, \textit{neger}, \textit{primitief}) that appear with sufficient frequency across all periods and newspapers to enable reliable analysis, see Figure \ref{fig:termocc}. \textit{Barbaar}, \textit{marron}, and \textit{mesties }were excluded from these detailed analyses as they lack adequate contextual data in the present corpus for meaningful neighbour extraction and adjective co-occurrence patterns. 
+
+\begin{table}[t]
+\centering
+%\footnotesize  % Uncomment if you want to make the text smaller for fitting
+\begin{tabular}{@{}p{2cm}p{4cm}p{4cm}p{4cm}@{}}
+\toprule
+\textbf{Target Word} & \textbf{1860--1899} & \textbf{1900--1939} & \textbf{1940--1959} \\
+\midrule
+koeli & koelie, drager, chinese, indische, arbeid & 
+       djohan, oemar, ebak, daiar, huisbediende & 
+       kenyase, gratiebesluit, vergaderverbod, iokja, krijgsscholen \\
+\addlinespace
+moor & arabier, mohammedaan, moren, noord-afrikaan, turk & 
+      aooll, omke, latne, rfnt, axy & 
+      denoue, othelio, hondenhuizen, lerscl, stnrimans \\
+\addlinespace
+neger & inboorling, kaffer, hottentot, mulat, slavernij & 
+       kaffer, limbus, polkan, caid, ameer & 
+       kazemiera, moorc, koesewitski, strasberg, alcc \\
+\addlinespace
+primitief & stam, inheems, natuurvolk, woestijnvolk, barbaars & 
+           primitieve, ingenieus, onpraktisch, ouderwets, rustiek & 
+           animaal, onsamenhangend, systeemloos, laboreerde, onvertroebeld \\
+\bottomrule
+\end{tabular}
+\caption{Nearest neighbours in \textit{De Telegraaf}. Each word is normalised, considering possible spelling variations to focus on semantic relationships rather than historical spelling conventions.}
+\label{tab:nearest_neighbours_dt}
+\end{table}
+
+\begin{table}[t]
+\centering
+%\footnotesize
+\begin{tabular}{@{}p{2cm}p{4cm}p{4cm}p{4cm}@{}}
+\toprule
+\textbf{Target Word} & \textbf{1860--1899} & \textbf{1900--1939} & \textbf{1940--1959} \\
+\midrule
+koeli & bubber, otting, javanen, werkovereenkomst, immigranten & 
+       contractarbeiders, poenale, chinees, ordonnantie, mandoer & 
+       geisa, desaman, walglijk, kameeldrijvers, vteen \\
+\addlinespace
+moor & borah, laerte, rodolpho, germont, cassio & 
+      ananias, andreus, saathoff, falconer, fricker & 
+      sohroder, chrlstlaan, tiaan, pieok, asselyn \\
+\addlinespace
+neger & kleurling, kabyl, kokkin, mestietzen, negermeisje & 
+       kaffer, roodhuid, elroy, alarik, uncle & 
+       kleurling, alabama, negerjongen, chuster, folsom \\
+\addlinespace
+primitief & primitieve, heffingspercentage, kohier, degressief, intomen & 
+           primitieve, suppletoir, kohier, straatgeld, ingericht & 
+           armetierig, primitieve, sensibel, seerend, aartsvaderlijk \\
+\bottomrule
+\end{tabular}
+\caption{Nearest neighbours in \textit{Algemeen Handelsblad} (spelling variations normalised).}
+\label{tab:nearest_neighbours_ah}
+\end{table}
+
+
+The nearest neighbour analysis reveals that cosine similarity patterns alone provide insufficient evidence for understanding semantic change, as identical similarity scores can mask fundamentally different semantic trajectories between newspapers. \textbf{\textit{Koeli} }shows contrasting patterns, with neighbours in \textit{De Telegraaf} evolving from labour-focused terms to institutional contexts, suggesting gradual semantic broadening that supports stable similarity scores, while \textit{Algemeen Handelsblad} demonstrates a dramatic change from labour contracts to administrative terms and finally discriminatory contexts such as \textit{walglijk} (``disgusting''). This divergence is particularly noteworthy as the more liberal newspaper shifts toward derogatory content, possibly reflecting increasing social tensions around labour migration. Meanwhile, \textit{\textbf{neger}} and\textbf{ \textit{moor} }exhibit stable similarity scores, hiding different underlying changes, with\textbf{ \textit{neger} }shifting from Dutch colonial racial discourse toward American racial contexts in both newspapers, while\textbf{ \textit{moor} }shows identical similarity scores despite completely different semantic contexts—ethnic-geographic terms in \textit{De Telegraaf} versus literary references in \textit{Algemeen Handelsblad}—revealing how quantitative stability can conceal qualitative divergence. In contrast,\textbf{ \textit{primitief} }demonstrates convergent semantic evolution across both newspapers, transitioning from racialised colonial descriptors to general temporal adjectives, reflecting broader societal shifts away from explicit racial categorisation. These findings challenge assumptions about newspaper ideology, with the more liberal \textit{Algemeen Handelsblad} sometimes showing shifts toward more derogatory content than the conservative \textit{De Telegraaf}. The list of neighbours for each keyword across newspapers and periods is provided in Table \ref{tab:nearest_neighbours_dt} and Table~\ref{tab:nearest_neighbours_ah}.
+
+\subsection{Connotation Analysis}
+\label{connotationanalysis}
+
+The connotation analysis validates and enriches the patterns identified through cosine similarity and nearest neighbour analysis. \textbf{\textit{Koeli} }demonstrates subtle connotational shifts that support the nearest neighbour analysis findings, with adjectives in \textit{De Telegraaf} remaining relatively stable across periods, dominated by regional descriptors like \textit{chineesche} (Chinese) and \textit{javaansche} (Javanese), though some negative undertones emerge in later periods, such as \textit{flauwe} (weak/poor quality) and \textit{matige} (moderate). While regional descriptors also dominate in \textit{Algemeen Handelsblad}, the much higher frequency of \textit{vrije} (free) compared to \textit{De Telegraaf} aligns with the liberal newspaper's ideological orientation. \textit{\textbf{Neger}} demonstrates consistent connotative stability across both newspapers, with persistent references to geographical origins (\textit{amerikaansche/amerikaanse
+}[American], \textit{afrikaansche/afrikaanse} [African]), demographic descriptors (\textit{jonge} [young], \textit{oude} [old]), and racial contrasts (\textit{blanken} [whites], \textit{zwart} [black]), though \textit{Algemeen Handelsblad} shows slightly more positive connotations in the final period with terms like \textit{vrije} (free) and \textit{gelijkstelling} (equality), suggesting evolving social attitudes without fundamental semantic change. \textbf{\textit{Moor} }exhibits similar connotative stability, with the consistent appearance of \textit{Othello} across periods in both newspapers confirming the literary contextualization revealed in the neighbour analysis. Finally, \textit{\textbf{primitief}} shows clear connotative evolution, transforming from racially-charged colonial descriptors to neutral temporal and aesthetic categories, with early periods showing minimal evaluative content but later periods shifting toward cultural-geographical references (\textit{vlaamsche} [Flemish], \textit{italiaanse} [Italian]) and aesthetic judgments (\textit{moderne} [modern], \textit{mooie} [beautiful]), supporting the parallel deracialisation identified in Subsection~\ref{nearestneighboursanalysis}.
+
+\subsection{Discussion}
+The nearest neighbour analysis across all four words reveals that cosine similarity patterns alone provide insufficient evidence for understanding semantic change trajectories. \textbf{\textit{Koeli}} exemplifies how identical similarity measures can conceal opposing semantic developments, with stable scores in \textit{De Telegraaf} masking gradual institutional broadening while dramatic drops in \textit{Algemeen Handelsblad} reflect deteriorating discourse toward discriminatory contexts. Words exhibiting apparent stability (\textbf{\textit{neger}, \textit{moor})} often mask fundamental shifts in semantic positioning, while words showing dramatic similarity changes can reflect fragmentation (\textbf{\textit{primitief}}) in their usages. Beyond these within-newspaper complexities, identical similarity patterns between newspapers can conceal entirely different semantic contexts, as demonstrated by\textbf{ \textit{moor}}'s ethnic-geographic associations in one newspaper versus literary references in another. These findings underscore that nearest neighbour analysis is essential for distinguishing between generic statistical patterns and semantic transformations, revealing whether apparent stability represents true consistency or underlying repositioning within discourse. The connotation analysis further demonstrates that associated adjective shifts often occur more gradually than nearest neighbour changes might suggest, with newspapers maintaining relatively neutral descriptive language even as semantic contexts evolve. This reveals that ideological differences between newspapers may manifest more subtly in their linguistic choices than initially hypothesised, requiring multi-layered analysis to capture the full spectrum of semantic change.
+
+%\textbf{Trajectory Variance and Semantic Instability}: Both words demonstrate dramatic changes across the three periods in both newspapers. Their semantic neighbourhoods undergo substantial transformations across all three periods in both newspapers. (see Figures~\ref{fig:inboorling-neighborhood}, \ref{fig:koeli-neighborhood}, \ref{fig:semantic_neighborhood_telegraafinboorling}, \ref{fig:semantic_neighborhood_telegraafkoeli} for detailed information)
+
+%\textbf{High Frequency and Representativeness}: The frequency of both terms ensures statistical robustness for our analysis. In \textit{De Telegraaf}, \textit{koeli} appears 5,948 times across three periods and \textit{inboorling} 5,157 times, while in \textit{Algemeen Handelsblad}, the frequencies are even higher with \textit{koeli} at 11,397 occurrences across three periods and \textit{inboorling} at 10,870. This high frequency across both newspapers indicates that these words were representative of broader semantic trends among others. See \ref{tab:term-occurrences}
+
+%\textbf{Cross-newspaper Divergence}: The two words reveal contrasting patterns of editorial or audience differences between the newspapers. Most notably, \textit{koeli} exhibits markedly different similarity trajectories: while its cosine similarity remains stable across periods in \textit{De Telegraaf}, it drops dramatically in the third period (1940-1959) compared to the second (1900-1939) in \textit{Algemeen Handelsblad}. This divergence suggests distinct editorial approaches or audience orientations toward colonial labour terminology. Conversely, \textit{inboorling} maintains relatively stable similarity scores across both newspapers (ranging from 0.51 to 0.582), yet still shows the neighbour changes mentioned above, indicating that while overall semantic consistency was maintained, the specific contextual usage evolved significantly.
+
+% \section*{Cosine Similarity Analysis: Compared to First Period (1860--1899 as Baseline)}
+
+% \textbf{Connotation Analysis}: Examining the semantic associations of the interested terms
+
+% \textbf{Near Neighbours Analysis}: Identifying words that appear in similar contexts to target terms, revealing discourse patterns and semantic fields, complementing the quantitative similarity measures with interpretable evidence of contextual and meaning changes.
+
+%Train of the emebeddings and alignment based on pedrazzini/mc gillivray paper. We train models for each 10/25 years and align the spaces with orthogonal procrustes. near neighbours per model to trace semantic change -- I think the changepoint detection does not have significant results (perplexity too low to obtain results). 
+
+
+%\textbf{{Comparative Analysis}}
+%In general, we found that \textit{De Telegraaf}'s discourse consistently emphasises colonial hierarchy, political control, and threat, while \textit{Algemeen Handelsblad} emphasises legal frameworks, comparative analysis, and recognition of indigenous agency. This difference reveals distinct editorial attitudes toward colonial subjects.
+
+
+\label{pos}
+% The analysis follows a pipeline as follows:
+
+% \textbf{POS Tagging}: All textual content undergoes part-of-speech tagging using the Dutch spaCy model (\verb|nl_core_news_sm|) to identify grammatical functions of target terms. 
+
+
+%\section{Quality Control}
+
+%Embedding methods have been proven effective in capturing certain semantic changes in large-scale corpora for socio-historical research. However, detecting semantic change in humanities data presents unique challenges beyond those faced in general corpora. As \cite{wevers2020digital} pointed out, word embedding models are dependent on the size, quality, and bias in training data. On one hand, the sparsity of humanities data often necessitates extending time‑slices to ensure sufficient training data per period— \cite{hamilton-etal-2016-diachronic} found that \~100 million words per time slice are needed for reliable embeddings. On the other hand, the segmentation of data into temporal slices demands careful balancing, according to \cite{kutuzov-etal-2018-diachronic}.  There is a trade‑off between granularity and robustness in semantic change studies: using smaller time spans enables the detection of fine-grained socio-cultural shifts, but raises challenges in data sufficiency and model stability. 
+
+%say what we did in terms of taking these into consideration, so, size, quality, and bias in data; the machine paper mainly talks about dealing with bias in this section but not much on size and quality; for example, for the data size we can say that we have experimented first with only extracted contexts but there is too few data so we decided to work on the entire corpus}
+
+% also,  we can say that we used external sources to validate our results such as dutch dictionary, DiaMaNT (Diachronic semantic lexicon of the Dutch language) etc
+
+\section{{Conclusions, Limitations, and Future Directions}}
+\label{conclusion}
+
+This study has demonstrated how computational semantic change detection can reveal patterns of linguistic transformation in Dutch colonial terminology that reflect broader societal and political changes between 1860 and 1960. By applying word embedding techniques to digitised newspapers from Delpher, we provided empirical evidence for how colonial categorisations evolved in public discourse during a critical period of colonial expansion, ethical imperialism, and eventual decolonisation. Our methodology combined distant reading approaches through cosine similarity analysis with closer examination of semantic neighbourhoods, revealing distinct patterns of semantic change across different types of colonial terminology. Across all examined words, we find that cosine similarity patterns alone provide insufficient evidence for understanding semantic change trajectories, as words exhibiting stability often mask shifts in semantic positioning, while words showing big similarity changes can reflect fragmentation or specialisation in their usages. Most importantly, identical similarity patterns between newspapers can conceal entirely different semantic contexts, demonstrating that nearest neighbour analysis is essential for distinguishing between generic statistical patterns and semantic transformations. These findings contribute to computational approaches for studying historical language change while offering quantitative insights that complement existing qualitative scholarship on Dutch colonial categorisations. 
+
+Several limitations should be acknowledged. First of all, our corpus may not represent a complete collection of articles from \textit{De Telegraaf} and \textit{Algemeen Handelsblad} during 1860-1960. Several factors can contribute to potential data gaps: not all historical newspapers have been digitised by the Koninklijke Bibliotheek (KB), some are only digitised for specific periods, and API access limitations may have affected data retrieval. Additionally, the temporal imbalance between newspapers—with \textit{De Telegraaf} established only in 1893—creates unequal coverage. However, as shown in Table \ref{tab:newscount}, the substantial token counts provide enough data to support the validity of our semantic change analysis despite these limitations. On average, \textit{De Telegraaf }contains 163.6 million tokens per period, and the \textit{Algemeen Handelsblad } 278.2 million. It should be noted that the middle period (1900–1939) spans 40 years compared to 30 years for the first period and 21 years for the last period, which accounts for the higher token counts in this period. Additionally, although the analysis focused on two major newspapers that have high circulation compared to others, the corpus selection might imply that semantic variations that occurred in other newspapers could have been missed. Another limitation is represented by the relatively small sample of terms that we selected from the \textit{Words Matter} collection, which is enough as a proof of concept, but requires further analyses to assess the degree of generalisability of our findings. Finally, the digitisation of the Dutch historical newspaper corpus used in this study relies on Optical Character Recognition (OCR) technology, which may introduce noise that affects embedding quality and potentially impacts semantic change detection. While we applied text pre-processing procedures to remove obvious noise, systematic assessment of OCR quality and its impact on diachronic semantic change analysis remains a limitation of this study. We used `nl\_core\_news\_sm' from spaCy for POS tagging, in our pre-processing of data, which reports accuracy of 0.96 on modern Dutch text. However, its performance on historical Dutch may be lower, which potentially introduces systematic errors that could affect semantic analysis quality.
+
+Future research could address these limitations through several methodological 
+improvements. Incorporating newspapers from different regions, political 
+orientations, and target audiences would enhance the representativeness of 
+our findings. Expanding the lexical sample to include a broader range of 
+colonial terms might increase generalisability and enable more comprehensive 
+claims about colonial discourse evolution. The temporal scope could be extended beyond our current span to investigate how colonial terminology continued evolving in pre- and post-colonial contexts, contributing to 
+contemporary discussions about decolonisation in cultural heritage institutions. 
+Systematic OCR quality assessment and correction strategies should be implemented 
+to reduce the potential impacts of digitisation artefacts. Further analyses could include linguistic investigations into the influence of evaluative content on semantic change, for instance, examining whether pejorative colonial 
+terms shift toward neutral/positive meanings following the same patterns as 
+neutral terms acquiring negative connotations. Given recent advances in language 
+representation, we also plan to investigate the capabilities of Large Language Models (LLMs) in capturing the semantic changes of colonial terms, exploiting token-based embeddings and generative approaches.
+
+
+\section*{Data Release}
+The code to train the embeddings, and perform the cosine similarity and connotation analyses is available at \url{https://github.com/trifecta-project/Dutch\_Colonial\_Terms\_in\_Newspapers}, together with the embedding models we trained. 
+%Our code and data will be made available upon publication at 
+
+\section*{Acknowledgments}
+
+Funded by the European Union under grant agreement 101088548 - TRIFECTA. Views and opinions expressed are however those of the author only and do not necessarily reflect those of the European Union or the European Research Council. Neither the European Union nor the granting authority can be held responsible for them. We thank our HuC colleagues Manjusha Kuruppath and Jelle van Lottum for their discussions and suggestions. We also thank Mirjam Cuper from the KB Data Services for her help with the API. 
+
+\section*{Author Contributions}
+
+Author contributions (by author initials) are listed according to the Contributor Roles Taxonomy (CRediT). Conceptualization: JZ; Data Curation: JZ, TP; Funding Acquisition: MvE; Investigation: JZ, TP; Methodology: JZ, TP, MvE; Project administration: MvE; Software: JZ, TP; Supervision: MvE, TP;  Visualization:  JZ, TP; Writing (original draft): JZ, TP; Writing (review and editing): JZ, TP, MvE
+
+\section*{Declaration on Generative AI} 
+
+During the preparation of this work, the author(s) used ChatGPT and Claude for formatting assistance, grammar, and spelling checks, as well as rephrasing sentences.
+
+% Here is an example of the first section of the paper. You may modify \texttt{paper.tex} by renaming, deleting, or adding sections of your own and substituting our instructional text with the text of your paper. Add references to previous work to \texttt{biblography.bib} as BibTeX entries. Refer to the Conference Call for Papers (CfP) for details about submission types and paper lengths. Do \textit{not} modify \texttt{anthology-ch.cls} when editing this template. 
+
+% \subsection{Details} \label{sec:intro_details}
+
+% You may also include subsections if they help organize your text, but they
+% are not required. Use as many sections and subsections with whatever names work
+% for your submission!
+
+% \paragraph{Another tip.} In some cases, it may be helpful to use \texttt{paragraph} to title individual paragraphs. For example, if a section describes features for a classifier, you can optionally title each paragraph with the name of each feature. 
+
+% \section{Elements}
+
+% \subsection{Citing elements}
+
+% Here are some examples of how to construct and reference common elements in LaTeX. References to elements such as tables, figures, equations and sections make use of \texttt{label} names that you set. References to citations should use the labels you indicate in \texttt{bibliography.bib}. Change all of these examples and values with your own data. 
+
+% We can cite Table~\ref{tab:example} as well as Figure~\ref{fig:example}, and we also cite an example paper \cite{tettoni2024discoverability}.
+% We can also include mathematical notations, such as:
+% \begin{align}
+% f(y) &= x^2. \label{fig:squared}
+% \end{align}
+% The line number of the equation can be cited as
+% Equation~\ref{fig:squared}. You can also cite multiple papers together \cite{barré2024latent, levenson2024textual, bambaci2024steps}, and reference figures or tables indirectly in parentheses (Figure~\ref{fig:example_bigger}). You can also cite other sections or subsections of your paper, such as \S\ref{sec:intro_details}. 
+
+
+% \begin{table}[h]
+%   \centering 
+%   \begin{tabular}{cc}
+%     \toprule
+%     Column Name 1 & Column Name 2\\
+%     \midrule
+%     d1 & d2 \\
+%     d1 & d2 \\
+%     d1 & d2 \\
+%     \bottomrule
+%   \end{tabular}
+%   \caption{Example table and table caption.}
+%   \label{tab:example}
+% \end{table}
+
+
+% \subsection{Required specifications}
+
+% Tables and figures should \textit{not} appear at the top of the first page above the paper title and abstract, but can be placed within the main text, as exemplified by Table~\ref{tab:example}. They may also be placed at the top of non-first pages, as exemplified by Figures~\ref{fig:example} and \ref{fig:example_bigger}. Figures and tables discussed in the main text should appear \textit{before} the References section. Supplementary materials should be referenced by their relevant Appendix section, such as Appendix~\ref{appdx:first}. 
+
+% Do \textit{not} change the font size of table and figure captions, or the spacing between text lines, section/subsection titles, tables, figures, and captions. You should size your figures and tables so that they stay within the \texttt{linewidth} of the paper. 
+
+% \begin{figure}[t!]
+%   \centering
+%   \includegraphics[width=0.4\linewidth]{640x480.png}
+%   \caption{Example figure and figure caption.}
+%   \label{fig:example}
+% \end{figure}
+
+% \begin{figure}[t!]
+%   \centering
+%   \includegraphics[width=0.4\linewidth]{640x480.png}
+%   \includegraphics[width=0.4\linewidth]{640x480.png}
+%   \caption{Example figure, where two \texttt{.png} are placed side by side.}
+%   \label{fig:example_bigger}
+% \end{figure}
+
+% \section*{Acknowledgements}
+
+% This unnumbered section should be blank when submitting your paper. After review, you may include lists of people and organizations who supported the work.
+
+% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
+\printbibliography
+
+
+\end{document}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  Move to Github 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% You can include an appendix using the following command
+\appendix
+
+% \section{First Appendix Section} \label{appdx:first}
+
+% Appendix sections should be ordered by letters rather than numbers, and their contents do not count towards the paper's length limit. Appendix sections may also contain additional tables and figures.  
+
+\section{Most Similar Words Analysis in \textit{De Telegraaf} (Variants Filtered, the dashes "---" represent that the word did not occur in that period)}
+\begin{longtable}{|p{1.5cm}|p{4.5cm}|p{4.5cm}|p{4.5cm}|}
+\hline
+\textbf{Target Word} & \textbf{1860--1899} & \textbf{1900--1939} & \textbf{1940--1959} \\
+\hline
+%\endhead
+\hline
+%\endfoot
+\hline
+%\endlastfoot
+
+barbaar & wildeman, woesteling, primitief, onbeschaafd, kannibaal & verafschuw, bloeddorst, medemen, koketterie, domkoppen & glimlachenden, honingzoet, artistenbloed, gevaarlek, vervloek \\
+\hline
+blanke & kleurling, europeaan, javaan, negerin, kolonist & klewangs, voorladers, manke, bukten, inboorlingen & slavinnen, osceola, bianke, blanka, mensengroepen \\
+\hline
+bosneger & --- & --- & heldensage, herenbehuizing, profee, aaneenvoegen, godsdien \\
+\hline
+creool & mulat, kleurling, mesties, neger, halfbloed & magerheid, koekenbakker, ayma, maagdelijkheid, klaproos & hoekske, iuchtig, schorpioenman, vermakelijks, schorpioentje \\
+\hline
+gekleurd & gekleurd, bruinachtig, donker, grauw, vaal & kleurd, gespikkeld, groenachtig, roodachtig, bruinachtig & groenig, staalblauw, roomkleurig, gekleurde, vuilwit \\
+\hline
+halfbloed & mesties, mulat, creool, kwartier, indiaan & sabreur, cowboys, strogoff, nabob, upin & muurbloem, paradija, hannoc, quantaro, woestim \\
+\hline
+hottentot & bosjesman, kaffer, hottentotten, neger, inboorling & meinsma, wildera, weidema, worcum, stelwagen & kantour, naamkraam, overzetting, guliker, hartwerd \\
+\hline
+inboorling & neger, inlanders, wilde, hottentot, beschaving & volksstam, maleier, europeaan, dorpeling, opperhoofd & brognar, merziere, zeeschildpad, vissersman, onzeewaardig \\
+\hline
+indiaan & wigwam, bison, pelsjager, prairie, tipi & thornhill, kassala, montezuma, draco, lesbos & hannoc, weerwolf, woudloper, bambi, nieuwendij \\
+\hline
+indisch & indische, nederlandsch-indie, javaan, koloniale, indonesisch & indiscbe, lndisch, indisehe, indisrhe, indisohe & lndisch, nimzo, grunfeld, lndische, maleisch \\
+\hline
+indo & europeaan, totok, indo-europeaan, oosterling, blanke & lndo, tndo, jndo, ohina, kormosa & nesia, nesische, chlna, lndo, indochina \\
+\hline
+inheems & volksstam, primitief, stam, inlandsch, neger & inheem, chaving, volksplantingen, natuurweten, staatsvormen & etruscische, bataks, natuurvolken, eenheidstaal, bahasa \\
+\hline
+inlander & javaan, inboorling, maleier, europeaan, hollander & javaan, europeaan, kromo, javanen, maleier & gebiedster, bedevaartganger, gespierden, ineengedrongen, pombal \\
+\hline
+kaffer & hottentot, neger, bosjesman, inboorling, zwarten & neger, verkoopsren, abdullah, albertine, creutz & jokkebrok, slimmerstein, katrientje, kaspartje, snoepgraag \\
+\hline
+khoi & san, khoisan, hottentot, bosjesman, ethnonym & ockholm, kholm, bolm, hkiu, nhat & hangkok, ngkok, arendsdiik, gusrdafui, natai \\
+\hline
+kleurling & creool, blanke, mulat, mesties, halfbloed & maleier, slavenhandelaar, sloebers, pauper, lijfwachten & schouwburgplaats, ezau, ongeluksgodin, kleurlinge, afgiftebewijs \\
+\hline
+koeli & koelie, drager, chinese, indische, arbeid & djohan, oemar, ebak, daiar, huisbediende & kenyase, gratiebesluit, vergaderverbod, iokja, krijgsscholen \\
+\hline
+marron & bosneger, weggelopen, plantage, afstammeling, slavernij & paeiftc, ntck, mouni, ither, olam & blou, koraalrood, ninoflex, tabaksbruin, tabaksbruine \\
+\hline
+mesties & mulat, creool, halfbloed, kwartier, indiaan & vleienden, hondenkop, verwijlend, vergramd, derwisch & myrta, kampersteur, hinne, baerch, maclennan \\
+\hline
+moor & arabier, mohammedaan, moren, noord-afrikaan, turk & aooll, omke, latne, rfnt, axy & denaar, othelio, hondenhuizen, lerscl, stnrimans \\
+\hline
+mulat & mesties, creool, halfbloed, kleurling, negerin & peurde, mesties, khama, achaduw, volver & topenaar, rrpen, bijlsrna, aapte, itiit \\
+\hline
+neger & inboorling, kaffer, hottentot, mulat, slavernij & kaffer, limbus, polkan, caid, ameer & kazemiera, moorc, koesewitski, strasberg, alcc \\
+\hline
+primitief & stam, inheems, natuurvolk, woestijnvolk, barbaars & primitieve, ingenieus, onpraktisch, ouderwets, rustiek & animaal, onsamenhangend, systeemloos, laboreerde, onvertroebeld \\
+\hline
+wildeman & barbaar, woesteling, roofdier, kannibaal, monster & zwijndr, doyenne, brederode, beurre, merode & winterjan, gieser, gleser, wijnkoperij, provisiepeer \\
+\hline
+\end{longtable}
+
+
+\section*{Most Similar Words Analysis in \textit{Algemeen Handelsblad} (Variants Filtered)}
+\begin{longtable}{|p{1.5cm}|p{4.5cm}|p{4.5cm}|p{4.5cm}|}
+\hline
+\textbf{Target Word} & \textbf{1860--1899} & \textbf{1900--1939} & \textbf{1940--1959} \\
+\hline
+%\endfirsthead
+%\hline
+%\textbf{Target Word} & \textbf{1860--1899} & \textbf{1900--1939} & \textbf{1940--1959} \\
+%\hline
+%\endhead
+%\hline
+%\endfoot
+%\hline
+%\endlastfoot
+
+barbaar & verafschuw, wellusteling, mickey, snoever, dwepend & wreedaard, plebea, verachtelijks, verdrukker, behaagziek & jagerslatijn, vrouwenverleider, bakvisje, halfgod, uitjubelen \\
+\hline
+blanke & bianke, lichtbruine, geelachtige, vleezige, grijsachtige & bianke, donderbus, scalpen, blanka, punthoeden & negers, inlandse, gekleurden, negerkinderen, inheemse \\
+\hline
+bosneger & --- & --- & koekplank, batakker, sharrard, omhingen, spookkasteel \\
+\hline
+creool & verachtelijken, gasparo, framlingham, verontschuldigenden, aanstarend & soedanees, negerras, negerbloed, soendalanden, soendanees & quet, errant, maame, cachucha, gepommadeerde \\
+\hline
+gekleurd & gemarmerd, grondkleur, kalfsleer, blauwgroen, lichtgeel & cobaltblauw, witachtig, grijsblauw, vleeschkleur, gemarmerd & gehoogd, geplasticeerd, hoofdkleuren, blauwgroen, bladgoud \\
+\hline
+halfbloed & snelvoetige, mestiezen, volbloeds, cowboys, afstammende & appelschimmel, wolfshond, colibri, halfbroer, llttle & apitol, corao, rnxy, plaz, roxv \\
+\hline
+hottentot & vleeschdrager, stoeide, afranselde, ommelet, slagersjongen & stender, senus, opgezwommen, rootselaar, delaval & psyeh, klumpenaar, khiem, huyssoon, cobbs \\
+\hline
+inboorling & europeaan, madoerees, arabier, muzelman, mongool & aziaat, europeaan, kolonist, kleurling, stamgenoot & geisa, kokospalm, autochtoon, ijscoventers, zejt \\
+\hline
+indiaan & roodhuid, straatroover, menscheneter, mongool, kannibaal & andros, manzanilla, valancia, cygnet, fornebo & hannoc, mamzelle, plara, wazuri, rialtn \\
+\hline
+indisch & lndisch, indisoh, oostindisch, indiseh, ndisch & lndisch, indisoh, indiseh, nederlanasch, indisehe & pakistaans, indiseh, indisoh, birmaansch, ladak \\
+\hline
+indo & ludo, indoa, britach, xndie, britsoh & peanen, tonkin, lndo, tndo, indoa & indochina, chlna, lndo, nesia, chtna \\
+\hline
+inheems & inheemsch, knolgewas, weligst, klappercultuur, aangekweekte & inheemsch, soendalanden, gekoloniseerde, houtrijke, ontbolsterd & indiaans, inheemsch, bosneger, somalia, negerdorp \\
+\hline
+inlander & javaan, sumatraan, cultuurarbeid, roofbouw, individucelen & javaan, europeaan, soendanees, maleier, javanen & zelfbevestigingswil, verdrukker, regeringsapparaten, vredesstichter, onafwijsbaren \\
+\hline
+kaffer & negermeisje, kaaiman, boschjesmannen, neger, hottentot & neger, alarik, goudmijn, nesbitt, allouez & wadmore, katjager, pluisman, slaapkop, mltzl \\
+\hline
+khoi & --- & --- & --- \\
+\hline
+kleurling & neger, transvaler, mestiezen, squaws, negerras & inboorling, negers, naturellen, inboorlingen, mulatten & paardrijdster, steekwapen, heideplantje, naaigerei, aanwijzend \\
+\hline
+koeli & bubber, otting, javanen, werkovereenkomst, immigranten & contractarbeiders, poenale, chinees, ordonnantie, mandoer & geisa, desaman, walglijk, kameeldrijvers, vteen \\
+\hline
+marron & cytha, pointes, diada, linon, matelot & partisan, hopeful, alby, pursuit, follet & imprime, tonkinoise, cravate, perruques, albouy \\
+\hline
+mesties & japonrok, simpelen, dendrobium, getjes, voorbijglijden & frederique, stauffenberg, salcedo, fresneau, bedilt & cordillo, erotomaan, menschengedaante, geitenhoedster, bradomin \\
+\hline
+moor & borah, laerte, rodolpho, germont, cassio & ananias, andreus, saathoff, falconer, fricker & sohroder, chrlstlaan, tiaan, pieok, asselyn \\
+\hline
+mulat & geronimo, niko, jaekson, roan, derick & pareja, appelschimmel, dolls, fanti, inboorling & podagra, wipneusje, opengesperden, kauwtje, salamandertje \\
+\hline
+neger & kleurling, kabyl, kokkin, mestiezen, negermeisje & kaffer, roodhuid, elroy, alarik, uncle & kleurling, alabama, negerjongen, chuster, folsom \\
+\hline
+njai & rahim, kasim, joesoef, hasjim, lajang & ratoe, kwing, mohammad, batakker, hamangkoe & mceder, moncrieff, zuiplap, susie, bradomin \\
+\hline
+primitief & primitieve, heffingspercentage, kohier, degressief, intomen & primitieve, suppletoir, kohier, straatgeld, ingericht & armetierig, primitieve, sensibel, seerend, aartsvaderlijk \\
+\hline
+wildeman & tiktak, molenberg, jonkie, geldorp, medendorp & wijnholt, emden, sloots, tattje, wopke & gieser, ijsbouten, ijsbout, harmspeer, herfstsulkerpeer \\
+\hline
+\end{longtable}
+
+
+
+
+%%%%%%% 
+% Figure out where to put these 
+%%%%%%%
+
+\begin{longtable}{|p{1.5cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|}
+\caption{Cosine similarity of target words across the different periods, with 1860--1899 as reference period. In this reference period, the cosine similarity of each word is set at 1.} \\
+\hline
+\textbf{Word} & \multicolumn{2}{c|}{\textbf{\textit{De Telegraaf}}} & \multicolumn{2}{c|}{\textbf{\textit{Algemeen Handelsblad}}} \\
+\cline{2-5}
+ & \textbf{1900--1939} & \textbf{1940--1959} & \textbf{1900--1939} & \textbf{1940--1959} \\
+\hline
+\endfirsthead
+
+\hline
+\textbf{Word} & \multicolumn{2}{c|}{\textbf{\textit{De Telegraaf}}} & \multicolumn{2}{c|}{\textbf{\textit{Algemeen Handelsblad}}} \\
+\cline{2-5}
+ & \textbf{1900--1939} & \textbf{1940--1959} & \textbf{1900--1939} & \textbf{1940--1959} \\
+\hline
+\endhead
+
+\hline
+\endfoot
+
+blanke      & 0.505 & 0.422 & 0.449 & 0.390 \\
+creool      & 0.442 & 0.483 & 0.433 & 0.480 \\
+gekleurd    & 0.538 & 0.545 & 0.641 & 0.577 \\
+halfbloed   & 0.448 & 0.330 & 0.541 & 0.381 \\
+hottentot   & 0.393 & 0.664 & 0.383 & 0.465 \\
+inboorling  & 0.582 & 0.525 & 0.555 & 0.515 \\
+indisch     & 0.524 & 0.440 & 0.495 & 0.387 \\
+indo        & 0.441 & 0.422 & 0.468 & 0.436 \\
+indiaan     & 0.526 & 0.445 & 0.509 & 0.351 \\
+inheems     & 0.606 & 0.537 & 0.543 & 0.448 \\
+inlander    & 0.575 & 0.369 & 0.630 & 0.520 \\
+kaffer      & 0.343 & 0.459 & 0.360 & 0.414 \\
+khoi        & 0.287 & 0.461 & ---   & ---   \\
+kleurling   & 0.503 & 0.420 & 0.502 & 0.462 \\
+moor        & 0.258 & 0.238 & 0.283 & 0.244 \\
+marron      & 0.309 & 0.509 & 0.439 & 0.665 \\
+mesties     & 0.704 & 0.585 & 0.487 & 0.640 \\
+mulat       & 0.352 & 0.438 & 0.280 & 0.332 \\
+neger       & 0.428 & 0.421 & 0.445 & 0.454 \\
+primitief   & 0.549 & 0.373 & 0.479 & 0.370 \\
+wildeman    & 0.338 & 0.216 & 0.436 & 0.218 \\
+barbaar     & 0.545 & 0.585 & 0.556 & 0.581 \\
+koeli       & 0.480 & 0.481 & 0.514 & 0.260 \\
+njai        & ---   & ---   & 0.437 & 0.530 \\
+\end{longtable}
+
+
+
+\begin{table}[htbp]
+\centering
+\caption{Term Occurrences in \textit{De Telegraaf} and \textit{Algemeen Handelsblad} (sorted alphabetically by the word}
+\begin{tabular}{|l|r|r|}
+\hline
+\textbf{Word} & \textbf{\textit{De Telegraaf}}& \textit{\textbf{Algemeen Handelsblad}}
+\\
+\hline
+barbaar      & 1303  & 1837  \\
+blanke       & 20345 & 37593 \\
+bosneger     & 78    & 107   \\
+creool       & 208   & 516   \\
+gekleurd     & 4509  & 7850  \\
+halfbloed    & 467   & 636   \\
+hottentot    & 360   & 858   \\
+inboorling   & 5157  & 10870 \\
+indiaan      & 4877  & 7755  \\
+indisch      & 121360 & 218544 \\
+indo         & 8844  & 14231 \\
+inheems      & 596   & 926   \\
+inlander     & 10008 & 29206 \\
+kaffer       & 2119  & 4778  \\
+kleurling    & 1323  & 2441  \\
+koeli        & 5948  & 11397 \\
+khoi         & 130   & 27    \\
+marron       & 319   & 225   \\
+mesties      & 37    & 38    \\
+moor         & 10410 & 10842 \\
+mulat        & 586   & 392   \\
+neger        & 10254 & 15868 \\
+njai         & 30    & 74    \\
+primitief    & 3496  & 6147  \\
+wildeman     & 3381  & 4530  \\
+\hline
+\end{tabular}
+\label{tab:term-occurrences}
+\end{table}
+
+
+
+
+\end{document}

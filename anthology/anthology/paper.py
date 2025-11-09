@@ -170,6 +170,136 @@ def fix_table_figure_labels(content: str) -> str:
     return content
 
 
+def remove_footnotes_and_citations(content: str) -> str:
+    """
+    Remove footnotes and citations from LaTeX content for HTML generation.
+
+    This function removes:
+    - \\footnote{...} commands and their content
+    - \\cite, \\citep, \\citet, \\citeauthor, \\citeyear and similar citation commands
+    - Cleans up any extra whitespace left behind
+
+    Args:
+        content: LaTeX source code
+
+    Returns:
+        Modified LaTeX with footnotes and citations removed
+    """
+    def find_balanced_braces(text: str, start: int) -> tuple[int, int]:
+        """Find the content between balanced braces starting at position start."""
+        if start >= len(text) or text[start] != '{':
+            return -1, -1
+
+        brace_count = 0
+        content_start = start + 1
+        i = start
+
+        while i < len(text):
+            if text[i] == '\\' and i + 1 < len(text):
+                # Skip escaped characters
+                i += 2
+                continue
+            elif text[i] == '{':
+                brace_count += 1
+            elif text[i] == '}':
+                brace_count -= 1
+                if brace_count == 0:
+                    return content_start, i
+            i += 1
+
+        return -1, -1
+
+    # Remove footnotes
+    result = []
+    i = 0
+    while i < len(content):
+        # Look for \footnote
+        match_pos = content.find('\\footnote{', i)
+        if match_pos == -1:
+            # No more matches, append rest of content
+            result.append(content[i:])
+            break
+
+        # Append content before the match
+        result.append(content[i:match_pos])
+
+        # Find the balanced braces for the footnote content
+        footnote_start, footnote_end = find_balanced_braces(content, match_pos + 9)  # 9 = len('\\footnote')
+        if footnote_start == -1:
+            # Malformed, keep the command and continue
+            result.append(content[match_pos:match_pos + 10])
+            i = match_pos + 10
+            continue
+
+        # Skip the entire footnote (don't append it)
+        i = footnote_end + 1
+
+    content = ''.join(result)
+
+    # Remove various citation commands
+    # Handles: \cite, \citep, \citet, \citeauthor, \citeyear, \citealt, \citealp, etc.
+    # With optional arguments like \cite[see][page 5]{key}
+    citation_commands = [
+        'cite', 'citep', 'citet', 'citeauthor', 'citeyear',
+        'citealt', 'citealp', 'Cite', 'Citep', 'Citet'
+    ]
+
+    for cmd in citation_commands:
+        result = []
+        i = 0
+        pattern = f'\\{cmd}'
+
+        while i < len(content):
+            match_pos = content.find(pattern, i)
+            if match_pos == -1:
+                result.append(content[i:])
+                break
+
+            # Check if this is actually the command (followed by { or [)
+            check_pos = match_pos + len(pattern)
+            if check_pos < len(content) and content[check_pos] in '{[':
+                # Append content before the match
+                result.append(content[i:match_pos])
+
+                # Skip optional arguments [...]
+                current_pos = check_pos
+                while current_pos < len(content) and content[current_pos] == '[':
+                    # Find the closing bracket
+                    bracket_end = content.find(']', current_pos)
+                    if bracket_end == -1:
+                        break
+                    current_pos = bracket_end + 1
+                    # Skip whitespace
+                    while current_pos < len(content) and content[current_pos] in ' \t\n':
+                        current_pos += 1
+
+                # Now handle the required argument {...}
+                if current_pos < len(content) and content[current_pos] == '{':
+                    _, brace_end = find_balanced_braces(content, current_pos)
+                    if brace_end != -1:
+                        i = brace_end + 1
+                    else:
+                        i = current_pos + 1
+                else:
+                    i = current_pos
+            else:
+                # Not a citation command, keep it
+                result.append(content[i:match_pos + len(pattern)])
+                i = match_pos + len(pattern)
+
+        content = ''.join(result)
+
+    # Clean up extra whitespace
+    # Remove multiple consecutive spaces
+    content = re.sub(r' +', ' ', content)
+    # Remove spaces at the beginning of lines
+    content = re.sub(r'^\s+', '', content, flags=re.MULTILINE)
+    # Remove multiple consecutive blank lines (keep max 2 newlines = 1 blank line)
+    content = re.sub(r'\n\n+', '\n\n', content)
+
+    return content
+
+
 class Paper:
     """
     Represents a single journal article in the anthology.
@@ -699,10 +829,13 @@ class Paper:
         abstract_html = ""
         if abstract_latex:
             try:
+                # Remove footnotes and citations from abstract for HTML
+                cleaned_abstract = remove_footnotes_and_citations(abstract_latex)
+
                 # Use Pandoc to convert just the abstract from LaTeX to HTML
                 abstract_result = subprocess.run(
-                    ["pandoc", "-f", "latex", "-t", "html5"],
-                    input=abstract_latex,
+                    ["pandoc", "-f", "latex", "-t", "html5", "--wrap=none"],
+                    input=cleaned_abstract,
                     capture_output=True,
                     text=True,
                     check=True,
@@ -724,6 +857,7 @@ class Paper:
                 "latex+smart+raw_tex",
                 "-t",
                 "html5",
+                "--wrap=none",
                 "--bibliography",
                 str(self.output_dir / "bibliography.bib"),
                 # Note: --number-sections is now handled by our Lua filter
