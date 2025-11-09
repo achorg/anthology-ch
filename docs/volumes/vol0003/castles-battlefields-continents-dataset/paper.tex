@@ -56,8 +56,8 @@
 % be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
-\pagestart{278}
-\pageend{278}
+\pagestart{280}
+\pageend{280}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
 \doi{10.63744/oYbvYsUA743D}  
@@ -150,6 +150,7 @@ We created a finetuning dataset by selecting maps from nonfiction volumes within
  %\hline
 \end{tabular}
 \caption{\label{tab:efnet}Evaluation metrics for each classifier in the ensemble. Models were finetuned, then, among the models with the highest accuracy, the one with the highest recall was chosen for each model size. If there was a tie, models that misclassified different maps were prioritized.}
+  \label{false_negatives}
 \end{table}
 
 We finetuned three image classifiers on this training data to create an ensemble approach to evaluating page images. These classifiers use the EfficientNet architecture at three different model sizes and image sizes: EfficientNet\_b0 and 512x512 images, EfficientNet\_b7 and 768x768 images, and EfficientNet\_V2\_l and 1024x1024 images. This approach is designed to optimize recall, which is why a single classifier is not used. The recall for each model on the finetuning dataset was: b0 = 0.960, b7 = 0.960, and V2\_l = 0.961. Maps can come in a variety of different styles with complex features, which may be easier to identify at different image sizes and may be captured with different network sizes. We processed images in grayscale, as most pages are published in black and white, regardless of whether the image was saved as color or grayscale.
@@ -159,7 +160,7 @@ In addition to recall, we used these specific models because they minimize overl
 
 
 \begin{figure}
-    \label{false_negatives}
+    
     \centering
     \setlength{\fboxsep}{0pt} % Adjust the padding
     \subfloat[]{\fbox{\includegraphics[width=0.16\textwidth]{images/b0_wrong_1.jpg}\includegraphics[width=0.16\textwidth]{images/b0_wrong_2.jpg}}}
@@ -282,6 +283,7 @@ Henty's maps often depict a specific moment in time, one that the average reader
  Total & 24.83\% & 75.17\% & \\
 \end{tabular}
 \caption{\label{tab:fict-scale}Fictional maps appear infrequently at the medium scale, while real maps become increasingly represented as the scale becomes larger.}
+  \label{fig:illustr_graphs}
 \end{table}
 
 Overall, we found that most (70.9\%) maps were of the largest scale. Medium-scale maps make up 21.1\% of the total and small-scale maps, 8.0\%. This does not support the Henty hypothesis, as we would expect readers to be more familiar with larger areas, such as countries or continents, than very small areas, like a specific city or household. If unfamiliarity explained the need for a map, then there would not be any maps of larger areas of real places. This suggests that maps have some other purpose than to be assistive to readers. Table \ref{tab:fict-scale} shows the breakdown of scale and fiction among all maps. Although small-scale maps are uncommon regardless of fictionality, medium-scale maps are much more likely to be of real places than fictional places. Fictional maps mostly depict large areas.
@@ -296,7 +298,7 @@ We found that illustrations were much more common than maps and followed a simil
     \centering
     \includesvg[width=\linewidth]{images/FINAL_illustration_stats.svg}
     \caption{Frequency of illustrations compared to maps and all novels (left) and the counts of map novels and illustration novels normalized by total novels published per year (right).}
-    \label{fig:illustr_graphs}
+  \label{tab:sp_lang}
 \end{figure}
 
 
@@ -326,7 +328,8 @@ We counted the number of each entity type per 10,000 tokens for each novel, then
  N-PREP & 961.83 & 969.45 & -0.052 \\ 
  PER & 447.46 & 467.08 & -0.174 \\ 
 \end{tabular}
-\caption{\label{tab:sp_lang}Frequency of each entity per 10,000 words in map novels and non-map novels. CARD, GPE, LOC, and S-PREP represent the spatial entities of interest, which occur more frequently in map novels than non-map novels.}
+\caption{Frequency of each entity per 10,000 words in map novels and non-map novels. CARD, GPE, LOC, and S-PREP represent the spatial entities of interest, which occur more frequently in map novels than non-map novels.}
+  \label{appdx:first}
 \end{table}
 
 \section{Conclusion, Limitations, and Future Work}
@@ -351,7 +354,7 @@ We thank Alina Shah for assisting with data annotation tasks. We also thank Fede
 % You can include an appendix using the following command
 \appendix
 
-\section{CLIP Prompts} \label{appdx:first}
+\section{CLIP Prompts} 
 \hfill\\*\noindent\textbf{Map prompt:} 
 \begin{verbatim}
 "Maps contain top-down views of cartographic features, 
