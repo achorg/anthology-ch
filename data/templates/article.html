@@ -81,7 +81,7 @@
     <div class="hero-body">
       <div class="container">
         <p class="subtitle is-6 has-text-grey">Anthology of Computers and the Humanities · <a href="..">Volume {{ volume }}</a></p>
-        <h1 class="title paper-title">{{ title }}</h1>
+        <h1 class="title paper-title">{{ title | safe }}</h1>
 
         <div class="is-size-5 pl-7 has-text-centered">
           <a href="https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;"><img style="height:25px!important;margin-left:3px;vertical-align:text-bottom;" src="../../../logo/cc-by.png"></a>
@@ -103,7 +103,7 @@
                 {%- for author in authors %}
                   {%- set nums = (author.affiliation_numbers | map('int') | list) | sort %}
                   <span class="author">
-                    {{ author.name }}<sup>
+                    {{ author.name | safe }}<sup>
                       {%- for n in nums -%}
                         {{ n }}{%- if not loop.last -%},{%- endif -%}
                       {%- endfor -%}
@@ -122,7 +122,7 @@
 
               <ul class="affiliations">
                 {%- for affil in affiliations | sort(attribute='number') %}
-                  <li><sup>{{ affil.number }}</sup> {{ affil.text }}</li>
+                  <li><sup>{{ affil.number }}</sup> {{ affil.text | safe }}</li>
                 {%- endfor %}
               </ul>
             </section>
@@ -157,12 +157,16 @@
         <p class="is-size-6">
           <b>Published:</b> {{ date }}
         </p>
+        <p class="is-size-6">
+          <b>Keywords:</b> {{ kwords | safe }}
+        </p>
       </div>
 
       <!-- Abstract -->
       <div class="content">
          {{ content | safe }}
       </div>
+
     </div>
   </section>
 

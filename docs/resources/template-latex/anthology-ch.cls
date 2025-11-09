@@ -326,6 +326,20 @@
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CONFIGURE PDF METADATA
+\AtBeginDocument{%
+  \hypersetup{
+    pdftitle={\@title},
+    pdfauthor={\@authornames},
+    pdfsubject={Anthology of Computers and the Humanities, Vol. \@pubvolume},
+    pdfkeywords={\@keywords},
+    pdfcreator={XeLaTeX with anthology-ch.cls},
+    pdfproducer={XeLaTeX with hyperref},
+  }
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % DEFINE THE SECTION, SUBSECTION, and SUBSUBSECTION FORMATS
 \renewcommand{\section}{\@startsection{section}{1}{\z@}%
   {-3.5ex \@plus -1ex \@minus -.2ex}%
@@ -430,6 +444,13 @@
   \RequirePackage[french, english]{babel}
 \fi
 \RequirePackage{csquotes}
+
+\AtBeginDocument{%
+  \renewcommand*{\multicitedelim}{\addsemicolon\space} 
+  \renewcommand*{\textcitedelim}{\addsemicolon\space}  
+  \renewcommand*{\supercitedelim}{\addsemicolon\space}
+  \renewcommand*{\compcitedelim}{\addsemicolon\space}
+}
 
 % MLA style customizations for biblatex
 \DeclareNameAlias{sortname}{family-given}

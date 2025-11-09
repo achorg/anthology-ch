@@ -68,7 +68,7 @@
           {% set author_text = paper.authors if paper.authors is string else (paper.authors|join(', ')) %}
           <li>
             <a href="{{ paper.url }}" class="toc-link">
-              <b>{{ paper.title|e }}</b>
+              <b>{{ paper.title | safe }}</b>
               <span class="icon is-small">
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -79,8 +79,8 @@
                 </svg>
               </span>
             </a><br>
-            <span class="has-text-grey">{{ author_text|e }}.</span>
-            <span class="has-text-blue">{{ paper.pagestart|e }}&ndash;{{ paper.pageend|e }}.</span>            
+            <span class="has-text-grey">{{ author_text| safe }}.</span>
+            <span class="has-text-blue">{{ paper.pagestart| safe }}&ndash;{{ paper.pageend| safe }}.</span>            
           </li>
         {% endfor %}
       </ul>

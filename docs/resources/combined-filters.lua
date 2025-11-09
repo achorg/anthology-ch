@@ -21,6 +21,7 @@ local figure_count = 0
 local table_count = 0
 local section_counters = {0, 0, 0, 0, 0, 0}  -- Track section numbers at each level
 local appendix_scan_counter = 0  -- Separate counter for scanning appendix headers in PASS 2
+local current_appendix_letter = nil  -- Track current appendix letter during PASS 2
 
 -- ============================================================================
 -- HELPER FUNCTIONS
@@ -133,14 +134,30 @@ local function scan_figures_and_tables(el)
       label_to_num[id] = figure_count
       label_to_id[id] = id
     end
-  elseif el.t == "Table" or el.t == "Div" and el.attr and el.attr.identifier and el.attr.identifier:match("^tab:") then
+  elseif el.t == "Table" then
+    -- Standalone table element
     if el.attr and el.attr.identifier and el.attr.identifier ~= "" then
       local id = el.attr.identifier
-      if id:match("^tab:") then
-        table_count = table_count + 1
-        label_to_num[id] = table_count
-        label_to_id[id] = id
+      table_count = table_count + 1
+      label_to_num[id] = table_count
+      label_to_id[id] = id
+    end
+  elseif el.t == "Div" then
+    -- Check if this Div contains a table
+    local has_table = false
+    for i, block in ipairs(el.content) do
+      if block.t == "Table" then
+        has_table = true
+        break
       end
+    end
+
+    -- If the Div contains a table and has an identifier, treat it as a labeled table
+    if has_table and el.attr and el.attr.identifier and el.attr.identifier ~= "" then
+      local id = el.attr.identifier
+      table_count = table_count + 1
+      label_to_num[id] = table_count
+      label_to_id[id] = id
     end
   elseif el.t == "Header" then
     -- Check if this is a truly unnumbered section (not appendix with letter numbering)
@@ -155,9 +172,39 @@ local function scan_figures_and_tables(el)
 
       -- Check if this header has a data-number attribute set by process_appendix_header in PASS 1
       -- Appendix sections will have data-number="A", "B", etc. (letters, not starting with digit)
-      if has_data_number and not has_data_number:match("^%d") then
+      if has_data_number and not has_data_number:match("^%d") and level == 1 then
         -- This is an appendix section with letter numbering already set in PASS 1
         sec_num = has_data_number
+        -- Update the current appendix letter for subsections
+        current_appendix_letter = has_data_number
+        -- Reset section counters for subsections
+        for i = 1, 6 do
+          section_counters[i] = 0
+        end
+      elseif current_appendix_letter then
+        -- This is a subsection/subsubsection within an appendix, OR a level-1 appendix
+        if level == 1 then
+          -- This is another level-1 appendix header (should have data-number, but handle gracefully)
+          -- This case should not normally occur if PASS 1 worked correctly
+          sec_num = current_appendix_letter
+        else
+          -- This is a subsection/subsubsection within an appendix
+          -- Increment counter at this level
+          section_counters[level] = section_counters[level] + 1
+
+          -- Reset all deeper levels
+          for i = level + 1, 6 do
+            section_counters[i] = 0
+          end
+
+          -- Build section number string starting with the appendix letter
+          -- (e.g., "A.1" or "A.2.3")
+          local sec_parts = {current_appendix_letter}
+          for i = 2, level do
+            table.insert(sec_parts, tostring(section_counters[i]))
+          end
+          sec_num = table.concat(sec_parts, ".")
+        end
       else
         -- Regular numeric section numbering
         -- Increment counter at this level
@@ -189,7 +236,56 @@ local function scan_figures_and_tables(el)
 end
 
 -- ============================================================================
--- PASS 3: Process Figures for Lightbox (HTML Only)
+-- PASS 3: Add section numbers to all headers
+-- ============================================================================
+
+local function add_section_numbers(el)
+  -- Check if this is a truly unnumbered section (like "Acknowledgments")
+  local has_unnumbered_class = el.classes and el.classes:includes("unnumbered")
+  local has_data_number = el.attributes and el.attributes["data-number"]
+  local is_truly_unnumbered = has_unnumbered_class and not has_data_number
+
+  if not is_truly_unnumbered and el.attr and el.attr.identifier and el.attr.identifier ~= "" then
+    local id = el.attr.identifier
+    local sec_num = label_to_num[id]
+
+    if sec_num then
+      -- Check if this header already has a section number span (from PASS 1 appendix processing)
+      local already_has_number = false
+      for i, v in ipairs(el.content) do
+        if v.t == "Span" and v.classes and v.classes:includes("header-section-number") then
+          already_has_number = true
+          break
+        end
+      end
+
+      -- Only add numbering if it doesn't already have it
+      if not already_has_number then
+        -- Add the data-number attribute
+        if not el.attributes then
+          el.attributes = {}
+        end
+        el.attributes['data-number'] = tostring(sec_num)
+
+        -- Add the section number span to the header content
+        local new_content = pandoc.List({
+          pandoc.Span({pandoc.Str(tostring(sec_num))}, {class = "header-section-number"}),
+          pandoc.Space()
+        })
+        for i, v in ipairs(el.content) do
+          new_content:insert(v)
+        end
+
+        el.content = new_content
+        return el
+      end
+    end
+  end
+  return nil
+end
+
+-- ============================================================================
+-- PASS 4: Process Figures for Lightbox (HTML Only)
 -- ============================================================================
 
 local function add_lightbox_to_figure(fig)
@@ -267,12 +363,12 @@ local function add_lightbox_to_figure(fig)
 end
 
 -- ============================================================================
--- PASS 4: Add Table Numbers to Captions
+-- PASS 5: Add Table Numbers to Captions
 -- ============================================================================
 
 local function add_table_numbers(el)
-  -- Only process Divs that contain tables with tab: prefix
-  if el.t == "Div" and el.attr and el.attr.identifier and el.attr.identifier:match("^tab:") then
+  -- Process Divs that contain tables and have a table number assigned
+  if el.t == "Div" and el.attr and el.attr.identifier and el.attr.identifier ~= "" then
     local id = el.attr.identifier
     local table_num = label_to_num[id]
 
@@ -308,20 +404,36 @@ local function add_table_numbers(el)
 end
 
 -- ============================================================================
--- PASS 5: Replace References (RawInline)
+-- PASS 6: Replace References (RawInline)
 -- ============================================================================
 
 local function replace_refs_inline(el)
   if el.format ~= "latex" then return nil end
   local t = el.text
 
-  -- \autoref{label} -> "Listing N" linked to #id
+  -- Strip \textzh{...} and just keep the content
+  -- This allows CJK characters to pass through to HTML without the LaTeX macro
+  t = t:gsub("\\textzh%s*{([^}]*)}", "%1")
+
+  -- \autoref{label} -> "Figure N" or "Table N" or "Section N" linked to #id
   t = t:gsub("\\autoref%s*%b{}", function(braces)
     local label = braces:match("{(.*)}")
     if label and label_to_num[label] and label_to_id[label] then
       local N = label_to_num[label]
       local id = label_to_id[label]
-      return string.format('<a href="#%s">Listing %d</a>', id, N)
+
+      -- Determine the type based on the label prefix
+      local ref_type = "Listing"  -- default
+      if label:match("^fig:") then
+        ref_type = "Figure"
+      elseif label:match("^tab:") then
+        ref_type = "Table"
+      elseif label:match("^sec:") or label:match("^appdx:") or type(N) == "string" then
+        -- Section references (including appendix sections)
+        ref_type = "Section"
+      end
+
+      return string.format('<a href="#%s">%s %s</a>', id, ref_type, tostring(N))
     else
       return braces  -- leave unknown autorefs unchanged
     end
@@ -346,7 +458,7 @@ local function replace_refs_inline(el)
 end
 
 -- ============================================================================
--- PASS 6: Fill Link References
+-- PASS 7: Fill Link References
 -- ============================================================================
 
 local function fill_link_refs(el)
@@ -365,7 +477,7 @@ local function fill_link_refs(el)
 end
 
 -- ============================================================================
--- PASS 7: Process Headers for Appendix
+-- PASS 8: Process Headers for Appendix (handled in PASS 1)
 -- ============================================================================
 
 local function process_appendix_header(el)
@@ -429,6 +541,7 @@ function Pandoc(doc)
   figure_count = 0
   table_count = 0
   section_counters = {0, 0, 0, 0, 0, 0}
+  current_appendix_letter = nil
 
   -- PASS 1: RawBlock processing (appendix detection + listing conversion)
   --         AND Header processing for appendix numbering
@@ -441,16 +554,19 @@ function Pandoc(doc)
   -- PASS 2: Scan for figures, tables, and headers to build label map
   doc = walk_doc_with_block(doc, { Block = scan_figures_and_tables })
 
-  -- PASS 3: Add lightbox to figures (HTML only)
+  -- PASS 3: Add section numbers to all headers
+  doc = walk_doc_with_block(doc, { Header = add_section_numbers })
+
+  -- PASS 4: Add lightbox to figures (HTML only)
   doc = walk_doc_with_block(doc, { Figure = add_lightbox_to_figure })
 
-  -- PASS 4: Add table numbers to captions
+  -- PASS 5: Add table numbers to captions
   doc = walk_doc_with_block(doc, { Block = add_table_numbers })
 
-  -- PASS 5: Replace refs in raw inline LaTeX
+  -- PASS 6: Replace refs in raw inline LaTeX
   doc = walk_doc_with_block(doc, { RawInline = replace_refs_inline })
 
-  -- PASS 6: Fill in Link elements for refs
+  -- PASS 7: Fill in Link elements for refs
   doc = walk_doc_with_block(doc, { Link = fill_link_refs })
 
   return doc
