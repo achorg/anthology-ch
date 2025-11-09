@@ -11,6 +11,38 @@ from .sitemap_generator import create_rss_feed, create_sitemap
 from .xml_generator import create_crossref_xml
 
 
+def update_paper_ordering(papers, verbose=False):
+    """
+    Update paper ordering in LaTeX files and metadata.
+
+    This function recalculates paper order numbers based on the current
+    sorting of papers (by volumeid and paperid) and updates both the
+    LaTeX files (\\paperorder{}) and anthology-meta.json files.
+
+    This is called during both the prepare and build phases to ensure
+    paper ordering stays synchronized even if papers are reordered.
+
+    Args:
+        papers: List of Paper objects (must be sorted)
+        verbose: Whether to print detailed output
+
+    Note:
+        Paper order is reset to 1 for each new volume.
+    """
+    cur_volume = 0
+    paper_order = 1
+
+    for p in papers:
+        # Reset paper order for each volume
+        if cur_volume != p.volumeid:
+            paper_order = 1
+            cur_volume = p.volumeid
+
+        # Update the paper's order
+        p.update_paper_order(paper_order, verbose=verbose)
+        paper_order += 1
+
+
 @click.group()
 @click.version_option(version=__version__)
 def cli():
@@ -633,12 +665,13 @@ def build(verbose, volume):
 
     Steps:
     1. Discover papers in output directory
-    2. Compile papers with XeLaTeX
-    3. Add metadata (page numbers, volume info)
-    4. Recompile with final metadata
-    5. Clean auxiliary files
-    6. Rename PDFs
-    7. Generate BibTeX, HTML, volume pages, Crossref XML, sitemap, RSS feed, and TOC
+    2. Update paper ordering in LaTeX files and metadata
+    3. Compile papers with XeLaTeX
+    4. Add metadata (page numbers, volume info)
+    5. Recompile with final metadata
+    6. Clean auxiliary files
+    7. Rename PDFs
+    8. Generate BibTeX, HTML, volume pages, Crossref XML, sitemap, RSS feed, and TOC
     """
     click.echo("Phase 2: Building papers from output directory...")
     click.echo()
@@ -675,8 +708,14 @@ def build(verbose, volume):
 
     click.echo()
 
+    # Update paper ordering before compilation
+    click.echo("Step 1: Updating paper ordering...")
+    update_paper_ordering(papers, verbose=verbose)
+    click.echo("✓ Paper ordering updated")
+    click.echo()
+
     # Compile and add metadata
-    click.echo("Step 1: Compiling papers and adding metadata...")
+    click.echo("Step 2: Compiling papers and adding metadata...")
     page_start = 1
     cur_volume = 0
     failed_papers = []

@@ -393,6 +393,42 @@ class Paper:
 
         return paper
 
+    def update_paper_order(self, order: int, verbose: bool = False) -> None:
+        """
+        Update the paper order in both the LaTeX file and metadata.
+
+        This method updates the \\paperorder{} value in the paper.tex file
+        and saves the new order to anthology-meta.json. This is used during
+        the build phase to ensure paper ordering is synchronized.
+
+        Args:
+            order: New paper order number
+            verbose: Whether to print detailed output
+        """
+        self.paper_order = order
+
+        # Update the LaTeX file
+        paper_file = self.output_dir / "paper.tex"
+        if paper_file.exists():
+            paper_content = paper_file.read_text(encoding="utf-8")
+            paper_content = fill_value(paper_content, "paperorder", str(order))
+            paper_file.write_text(paper_content, encoding="utf-8")
+
+            if verbose:
+                print(f"  Updated \\paperorder to {order} in {paper_file}")
+
+        # Update the metadata file
+        save_paper_metadata(
+            output_dir=self.output_dir,
+            input_dir=self.input_dir,
+            paperid=self.paperid,
+            volumeid=self.volumeid,
+            volume=self.volume,
+            volume_meta=self.volume_meta,
+            paper_order=order,
+            include_html=self.include_html,
+        )
+
     def __str__(self) -> str:
         """Return string representation of the Paper object."""
         return f"Paper Object: {self.output_dir} ({self.volumeid})"
