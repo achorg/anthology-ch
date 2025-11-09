@@ -142,6 +142,10 @@ def compile(verbose, paper):
             raise click.Abort()
 
         click.echo(f"Compiling: {p.output_dir.name}")
+
+        # Clean auxiliary files before compilation
+        p.clean_xelatex()
+
         success = p.compile_xelatex(verbose=verbose)
 
         if success:
@@ -172,6 +176,10 @@ def compile(verbose, paper):
                 click.echo(f"Compiling: {paper.output_dir.name}", nl=False)
 
             paper.copy_to_output(verbose=verbose, order=paper_order)
+
+            # Clean auxiliary files before compilation
+            paper.clean_xelatex()
+
             success = paper.compile_xelatex(verbose=verbose)
 
             if success:
@@ -207,12 +215,20 @@ def generate():
     type=click.Path(exists=True, path_type=Path),
     help="Generate HTML for a specific paper directory",
 )
-def generate_html(verbose, paper):
+@click.option(
+    "--volume", type=str, help="Generate HTML for a specific volume (e.g., 'vol0001' or '1')"
+)
+def generate_html(verbose, paper, volume):
     """Generate HTML versions of papers.
 
     If --paper is specified, generates HTML for that paper only.
+    If --volume is specified, generates HTML for all papers in that volume.
     Otherwise, generates HTML for all papers.
     """
+    if paper and volume:
+        click.echo("Error: Cannot specify both --paper and --volume", err=True)
+        raise click.Abort()
+
     if paper:
         # Generate HTML for specific paper
         from .paper import Paper
@@ -228,21 +244,66 @@ def generate_html(verbose, paper):
             raise click.Abort()
 
         click.echo(f"Generating HTML: {p.output_dir.name}")
-        p.create_html(verbose=verbose)
-        click.echo("✓ HTML generation complete")
+        try:
+            p.create_html(verbose=verbose)
+            click.echo("✓ HTML generation complete")
+        except Exception as e:
+            click.echo(f"✗ HTML generation failed: {e}", err=True)
+            raise click.Abort()
     else:
-        # Generate HTML for all papers
-        papers = get_all_papers()
+        # Generate HTML for all papers (or filtered by volume)
+        papers = discover_output_papers()
 
-        if verbose:
+        if not papers:
+            click.echo("✗ No papers found in output directory!", err=True)
+            click.echo("Run 'anthology prepare' first to copy files from input/", err=True)
+            raise click.Abort()
+
+        # Filter by volume if specified
+        if volume:
+            # Normalize volume name (accept 'vol0001', '0001', or '1')
+            if not volume.startswith("vol"):
+                volume_num = int(volume)
+                volume = f"vol{volume_num:04d}"
+
+            # Filter papers by volume
+            papers = [p for p in papers if p.volume.startswith(volume)]
+
+            if not papers:
+                click.echo(f"✗ No papers found for volume {volume}!", err=True)
+                raise click.Abort()
+
+            if verbose:
+                click.echo(f"Generating HTML for {len(papers)} papers in {volume}")
+            else:
+                click.echo(f"Generating HTML for volume {volume}")
+        elif verbose:
             click.echo(f"Generating HTML for {len(papers)} papers")
 
+        html_failed = []
         for p in papers:
             if verbose:
-                click.echo(f"Generating: {p.output_dir.name}")
-            p.create_html(verbose=verbose)
+                click.echo(f"Processing: {p.output_dir.name}")
+            else:
+                click.echo(f"Processing: {p.output_dir.name}", nl=False)
 
-        click.echo("✓ HTML generation complete")
+            try:
+                p.create_html(verbose=verbose)
+                if not verbose:
+                    click.echo(" ✓")
+            except Exception as e:
+                if not verbose:
+                    click.echo(" ✗")
+                click.echo(f"  Warning: HTML generation failed for {p.output_dir.name}: {e}", err=True)
+                html_failed.append(p.output_dir.name)
+
+        if html_failed:
+            click.echo(f"\n⚠ {len(html_failed)} paper(s) failed HTML generation:", err=True)
+            for name in html_failed:
+                click.echo(f"  - {name}", err=True)
+            click.echo("✓ HTML generation complete (with warnings)")
+        else:
+            click.echo("✓ HTML generation complete")
 
 
 @generate.command("pdf")
@@ -281,6 +342,9 @@ def generate_pdf(verbose, paper, pages):
         raise click.Abort()
 
     click.echo(f"Generating PDF: {p.output_dir.name}")
+
+    # Clean auxiliary files before compilation
+    p.clean_xelatex()
 
     # First compilation
     click.echo("  Compiling with XeLaTeX (pass 1)...")
@@ -326,6 +390,9 @@ def generate_pdf(verbose, paper, pages):
     # Rename PDF to DOI-based filename
     p.move_pdf()
 
+    # Add metadata to PDF
+    p.add_pdf_metadata()
+
     # Report final location
     pmeta = p.get_latex_metadata()
     doi = pmeta.get("publication_info", {}).get("doi", "")
@@ -337,7 +404,12 @@ def generate_pdf(verbose, paper, pages):
 @click.option("--verbose", "-v", is_flag=True, help="Show detailed output")
 def generate_bibtex(verbose):
     """Generate BibTeX citation files for all papers."""
-    papers = get_all_papers()
+    papers = discover_output_papers()
+
+    if not papers:
+        click.echo("✗ No papers found in output directory!", err=True)
+        click.echo("Run 'anthology prepare' first to copy files from input/", err=True)
+        raise click.Abort()
 
     if verbose:
         click.echo(f"Generating BibTeX for {len(papers)} papers")
@@ -354,7 +426,13 @@ def generate_bibtex(verbose):
 @click.option("--verbose", "-v", is_flag=True, help="Show detailed output")
 def generate_volumes(verbose):
     """Generate volume index pages."""
-    papers = get_all_papers()
+    papers = discover_output_papers()
+
+    if not papers:
+        click.echo("✗ No papers found in output directory!", err=True)
+        click.echo("Run 'anthology prepare' first to copy files from input/", err=True)
+        raise click.Abort()
+
     volumes = list(set([x.volume for x in papers]))
 
     if verbose:
@@ -373,7 +451,12 @@ def generate_volumes(verbose):
 @click.option("--verbose", "-v", is_flag=True, help="Show detailed output")
 def generate_toc(verbose):
     """Generate the main table of contents page."""
-    papers = get_all_papers()
+    papers = discover_output_papers()
+
+    if not papers:
+        click.echo("✗ No papers found in output directory!", err=True)
+        click.echo("Run 'anthology prepare' first to copy files from input/", err=True)
+        raise click.Abort()
 
     if verbose:
         click.echo("Generating main table of contents")
@@ -387,7 +470,13 @@ def generate_toc(verbose):
 @click.option("--verbose", "-v", is_flag=True, help="Show detailed output")
 def generate_xml(verbose):
     """Generate Crossref XML metadata files."""
-    papers = get_all_papers()
+    papers = discover_output_papers()
+
+    if not papers:
+        click.echo("✗ No papers found in output directory!", err=True)
+        click.echo("Run 'anthology prepare' first to copy files from input/", err=True)
+        raise click.Abort()
+
     volumes = list(set([x.volume for x in papers]))
 
     if verbose:
@@ -405,7 +494,12 @@ def generate_xml(verbose):
 @click.option("--verbose", "-v", is_flag=True, help="Show detailed output")
 def generate_sitemap(verbose):
     """Generate sitemap.xml for the website."""
-    papers = get_all_papers()
+    papers = discover_output_papers()
+
+    if not papers:
+        click.echo("✗ No papers found in output directory!", err=True)
+        click.echo("Run 'anthology prepare' first to copy files from input/", err=True)
+        raise click.Abort()
 
     if verbose:
         click.echo("Generating sitemap.xml")
@@ -418,7 +512,12 @@ def generate_sitemap(verbose):
 @click.option("--verbose", "-v", is_flag=True, help="Show detailed output")
 def generate_rss(verbose):
     """Generate RSS feed for the website."""
-    papers = get_all_papers()
+    papers = discover_output_papers()
+
+    if not papers:
+        click.echo("✗ No papers found in output directory!", err=True)
+        click.echo("Run 'anthology prepare' first to copy files from input/", err=True)
+        raise click.Abort()
 
     if verbose:
         click.echo("Generating rss.xml")
@@ -433,16 +532,40 @@ def generate_all(verbose):
     """Generate all outputs (HTML, BibTeX, volumes, TOC, XML, sitemap, RSS)."""
     click.echo("Generating all outputs...")
 
-    papers = get_all_papers()
+    papers = discover_output_papers()
+
+    if not papers:
+        click.echo("✗ No papers found in output directory!", err=True)
+        click.echo("Run 'anthology prepare' first to copy files from input/", err=True)
+        raise click.Abort()
 
     # Generate HTML
     if verbose:
         click.echo(f"\nGenerating HTML for {len(papers)} papers")
+    html_failed = []
     for paper in papers:
         if verbose:
-            click.echo(f"  HTML: {paper.output_dir.name}")
-        paper.create_html(verbose=verbose)
-    click.echo("✓ HTML generation complete")
+            click.echo(f"Processing: {paper.output_dir.name}")
+        else:
+            click.echo(f"Processing: {paper.output_dir.name}", nl=False)
+
+        try:
+            paper.create_html(verbose=verbose)
+            if not verbose:
+                click.echo(" ✓")
+        except Exception as e:
+            if not verbose:
+                click.echo(" ✗")
+            click.echo(f"  Warning: HTML generation failed for {paper.output_dir.name}: {e}", err=True)
+            html_failed.append(paper.output_dir.name)
+
+    if html_failed:
+        click.echo(f"\n⚠ {len(html_failed)} paper(s) failed HTML generation:", err=True)
+        for name in html_failed:
+            click.echo(f"  - {name}", err=True)
+        click.echo("✓ HTML generation complete (with warnings)")
+    else:
+        click.echo("✓ HTML generation complete")
 
     # Generate BibTeX
     if verbose:
@@ -569,6 +692,9 @@ def build(verbose, volume):
         else:
             click.echo(f"Processing: {p.output_dir.name}", nl=False)
 
+        # Clean auxiliary files before compilation
+        p.clean_xelatex()
+
         # First compilation
         success = p.compile_xelatex(verbose=verbose)
         if not success:
@@ -598,6 +724,9 @@ def build(verbose, volume):
         # Rename PDF
         p.move_pdf()
 
+        # Add metadata to PDF
+        p.add_pdf_metadata()
+
         if not verbose:
             click.echo(" ✓")
 
@@ -624,11 +753,30 @@ def build(verbose, volume):
 
     # Step 7: Generate HTML
     click.echo("Step 4: Generating HTML...")
+    html_failed = []
     for p in papers:
         if verbose:
-            click.echo(f"  {p.output_dir.name}")
-        p.create_html(verbose=verbose)
-    click.echo("✓ HTML generation complete")
+            click.echo(f"Processing: {p.output_dir.name}")
+        else:
+            click.echo(f"Processing: {p.output_dir.name}", nl=False)
+
+        try:
+            p.create_html(verbose=verbose)
+            if not verbose:
+                click.echo(" ✓")
+        except Exception as e:
+            if not verbose:
+                click.echo(" ✗")
+            click.echo(f"  Warning: HTML generation failed for {p.output_dir.name}: {e}", err=True)
+            html_failed.append(p.output_dir.name)
+
+    if html_failed:
+        click.echo(f"\n⚠ {len(html_failed)} paper(s) failed HTML generation:", err=True)
+        for name in html_failed:
+            click.echo(f"  - {name}", err=True)
+        click.echo("✓ HTML generation complete (with warnings)")
+    else:
+        click.echo("✓ HTML generation complete")
     click.echo()
 
     # Step 8: Generate volume pages

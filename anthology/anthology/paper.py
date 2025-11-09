@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from pypdf import PdfReader
+from pypdf import PdfReader, PdfWriter
 
 from .bibtex import write_bibtex_article
 from .doi import DOI_PREFIX, DOI_SUFFIX_LENGTH, generate_doi, is_doi_placeholder
@@ -15,6 +15,114 @@ from .latex import fill_value, run_xelatex
 from .latex_parser import LaTeXMetadataExtractor
 from .metadata import load_paper_metadata, save_paper_metadata
 from .utils import convert_latex_to_unicode, slugify
+
+
+def fix_adjustbox_syntax(content: str) -> str:
+    """
+    Convert adjustbox syntax for Pandoc compatibility.
+
+    Pandoc has limited adjustbox support:
+    1. It doesn't handle command syntax \\adjustbox{options}{content}
+       but does understand \\begin{adjustbox}{options}...\\end{adjustbox}
+    2. It only supports 'width=' parameter, not 'max width='
+
+    This function:
+    - Converts command syntax to environment syntax
+    - Replaces 'max width=' with 'width='
+
+    Args:
+        content: LaTeX source code
+
+    Returns:
+        Modified LaTeX with adjustbox in Pandoc-compatible form
+    """
+    # First, replace 'max width=' with 'width=' in adjustbox parameters
+    content = re.sub(
+        r'\\(begin\{)?adjustbox(\})?{max width=',
+        r'\\\1adjustbox\2{width=',
+        content
+    )
+    # Pattern to match \adjustbox{options}{...content...}
+    # This handles the case where adjustbox wraps a tabular environment
+    # We need to find balanced braces for both the options and content
+
+    def find_balanced_braces(text: str, start: int) -> tuple[int, int]:
+        """Find the content between balanced braces starting at position start."""
+        if start >= len(text) or text[start] != '{':
+            return -1, -1
+
+        brace_count = 0
+        content_start = start + 1
+        i = start
+
+        while i < len(text):
+            if text[i] == '\\' and i + 1 < len(text):
+                # Skip escaped characters
+                i += 2
+                continue
+            elif text[i] == '{':
+                brace_count += 1
+            elif text[i] == '}':
+                brace_count -= 1
+                if brace_count == 0:
+                    return content_start, i
+            i += 1
+
+        return -1, -1
+
+    # Find all \adjustbox{options}{content} occurrences
+    result = []
+    i = 0
+    while i < len(content):
+        # Look for \adjustbox
+        match_pos = content.find('\\adjustbox{', i)
+        if match_pos == -1:
+            # No more matches, append rest of content
+            result.append(content[i:])
+            break
+
+        # Append content before the match
+        result.append(content[i:match_pos])
+
+        # Extract options (first braced group)
+        options_start, options_end = find_balanced_braces(content, match_pos + 10)  # 10 = len('\\adjustbox')
+        if options_start == -1:
+            # Malformed, skip this one
+            result.append(content[match_pos:match_pos + 11])
+            i = match_pos + 11
+            continue
+
+        options = content[options_start:options_end]
+
+        # Check if this is followed by another braced group (the content)
+        next_brace = options_end + 1
+        while next_brace < len(content) and content[next_brace] in ' \t\n':
+            next_brace += 1
+
+        if next_brace < len(content) and content[next_brace] == '{':
+            # Extract content (second braced group)
+            wrapped_start, wrapped_end = find_balanced_braces(content, next_brace)
+            if wrapped_start != -1:
+                # We have both options and content - convert to environment form
+                wrapped_content = content[wrapped_start:wrapped_end]
+
+                # Check if there's a trailing %
+                check_pos = wrapped_end + 1
+                trailing = ''
+                if check_pos < len(content) and content[check_pos] == '%':
+                    trailing = '%'
+                    check_pos += 1
+
+                replacement = f'\\begin{{adjustbox}}{{{options}}}\n{wrapped_content}\n\\end{{adjustbox}}{trailing}'
+                result.append(replacement)
+                i = check_pos
+                continue
+
+        # If we get here, it's not the pattern we're looking for
+        result.append(content[match_pos:options_end + 1])
+        i = options_end + 1
+
+    return ''.join(result)
 
 
 def fix_table_figure_labels(content: str) -> str:
@@ -407,6 +515,75 @@ class Paper:
         if src.exists():
             shutil.move(str(src), str(dst))
 
+    def add_pdf_metadata(self) -> None:
+        """
+        Add metadata to the PDF file.
+
+        Adds author, title, conference, date, journal, and DOI metadata
+        to the PDF without losing existing structure (table of contents, hyperlinks).
+        """
+        pmeta = self.get_latex_metadata()
+        doi = pmeta.get("publication_info", {}).get("doi", "")
+        pdf_path = self.output_dir / f"{doi.replace('/', '@')}.pdf"
+
+        if not pdf_path.exists():
+            return
+
+        # Read the existing PDF
+        writer = PdfWriter(clone_from=str(pdf_path))
+
+        # Prepare metadata
+        # Convert authors list to a string
+        authors = pmeta.get("authors", [])
+        author_names = ", ".join([auth["name"] for auth in authors])
+
+        # Get title
+        title = pmeta.get("title", "")
+
+        # Get conference/volume info
+        conference = self.volume_meta.get("conferencename", "")
+        journal = "Anthology of Computers and the Humanities"
+
+        # Get publication date
+        pub_date = self.volume_meta.get("pubdate", "")
+
+        # Create subject line with conference and journal info
+        subject_parts = []
+        if conference:
+            subject_parts.append(conference)
+        subject_parts.append(journal)
+        if self.volume_meta.get("pubvolume"):
+            subject_parts.append(f"Vol. {self.volume_meta['pubvolume']}")
+        subject = ", ".join(subject_parts)
+
+        # Get keywords
+        keywords = pmeta.get("keywords", "")
+
+        # Add metadata to the PDF
+        metadata_dict = {
+            "/Title": convert_latex_to_unicode(title),
+            "/Author": convert_latex_to_unicode(author_names),
+            "/Subject": convert_latex_to_unicode(subject),
+            "/Keywords": convert_latex_to_unicode(keywords) if keywords else "",
+            "/Creator": "XeLaTeX with anthology-ch.cls",
+            "/Producer": f"pypdf {PdfWriter.__module__}",
+        }
+
+        # Add custom metadata for DOI and other information
+        if doi:
+            metadata_dict["/doi"] = doi
+            # Also add DOI URL as a custom field for better accessibility
+            metadata_dict["/doi_url"] = f"https://doi.org/{doi}"
+
+        if pub_date:
+            metadata_dict["/CreationDate"] = pub_date
+
+        writer.add_metadata(metadata_dict)
+
+        # Write the updated PDF
+        with open(pdf_path, "wb") as output_file:
+            writer.write(output_file)
+
     def num_pages(self) -> int:
         """
         Count the number of pages in the compiled PDF.
@@ -477,13 +654,33 @@ class Paper:
         Uses Pandoc to convert LaTeX to HTML, then wraps it in a template
         with metadata, author information, and citation data.
 
+        Checks both paper-level and volume-level include_html flags:
+        - If volume has include_html=false, skip full HTML regardless of paper flag
+        - Otherwise, respect the paper-level include_html flag
+
         Args:
             verbose: If True, print error messages from Pandoc
         """
+        # Check volume-level include_html flag first
+        # Load fresh metadata from data/metadata.json to get current volume settings
+        from .metadata import get_metadata
+
+        current_metadata = get_metadata()
+        volume_meta = current_metadata.get(self.volume, {})
+        volume_include_html = volume_meta.get("include_html", True)
+
+        # If volume disables HTML, override paper setting
+        if not volume_include_html:
+            effective_include_html = False
+        else:
+            effective_include_html = self.include_html
+
         # Fix table/figure labels for pandoc-crossref compatibility
         # Move labels to immediately after captions
+        # Also fix adjustbox command syntax to environment syntax
         paper_file = self.output_dir / "paper.tex"
         paper_content = paper_file.read_text()
+        paper_content = fix_adjustbox_syntax(paper_content)
         paper_content = fix_table_figure_labels(paper_content)
         paper_file.write_text(paper_content)
 
@@ -498,56 +695,7 @@ class Paper:
         )
         abstract_latex = abstract_match.group(1).strip() if abstract_match else ""
 
-        cmd = [
-            "pandoc",
-            str(self.output_dir / "paper.tex"),
-            "-f",
-            "latex+smart+raw_tex",
-            "-t",
-            "html5",
-            "--bibliography",
-            str(self.output_dir / "bibliography.bib"),
-            "--number-sections",
-            "--syntax-highlighting=pygments",
-            "--metadata",
-            "reference-section-title=References",
-            "--metadata",
-            "abstract-class=abs",
-            "--metadata",
-            "abstract-title=Abstract",
-            "--metadata",
-            "tableTitle=Table",
-            "--metadata",
-            "listingTitle=Listing",
-            "--metadata",
-            "tableEqns=true",
-            "--metadata",
-            "listingEqns=true",
-            "--metadata",
-            "link-citations=true",
-            "--filter",
-            "pandoc-crossref",
-            "--lua-filter",
-            "docs/resources/combined-filters.lua",
-            "--citeproc",
-            "--csl=docs/resources/template-md/mla-numeric.csl",
-            "--quiet",
-        ]
-
-        try:
-            res = subprocess.run(cmd, check=True, capture_output=True, text=True)
-        except subprocess.CalledProcessError as e:
-            if verbose:
-                print("❌ Pandoc failed!")
-                print("Return code:", e.returncode)
-                print("STDOUT:\n", e.stdout)
-                print("STDERR:\n", e.stderr)
-            return
-
-        html_fragment = res.stdout
-        html_fragment.replace("---", "—")
-
-        # Convert abstract from LaTeX to HTML and prepend to content
+        # Convert abstract from LaTeX to HTML
         abstract_html = ""
         if abstract_latex:
             try:
@@ -560,16 +708,73 @@ class Paper:
                     check=True,
                 )
                 abstract_html = f'<div class="abs"><span>Abstract</span>{abstract_result.stdout.strip()}</div>\n\n'
-                # Prepend abstract to the full HTML content
-                html_fragment = abstract_html + html_fragment
             except subprocess.CalledProcessError:
                 # If abstract conversion fails, skip it
                 pass
 
-        # If include_html is False, we'll only include the abstract, not the full text
-        if not self.include_html:
-            # Only keep the abstract
+        # If include_html is False, only convert the abstract and skip the full document
+        if not effective_include_html:
             html_fragment = abstract_html
+        else:
+            # Convert the full document with Pandoc
+            cmd = [
+                "pandoc",
+                str(self.output_dir / "paper.tex"),
+                "-f",
+                "latex+smart+raw_tex",
+                "-t",
+                "html5",
+                "--bibliography",
+                str(self.output_dir / "bibliography.bib"),
+                # Note: --number-sections is now handled by our Lua filter
+                # to properly support appendix numbering (A.1, A.2, etc.)
+                "--syntax-highlighting=pygments",
+                "--metadata",
+                "reference-section-title=References",
+                "--metadata",
+                "abstract-class=abs",
+                "--metadata",
+                "abstract-title=Abstract",
+                "--metadata",
+                "tableTitle=Table",
+                "--metadata",
+                "listingTitle=Listing",
+                "--metadata",
+                "tableEqns=true",
+                "--metadata",
+                "listingEqns=true",
+                "--metadata",
+                "link-citations=true",
+                "--filter",
+                "pandoc-crossref",
+                "--lua-filter",
+                "docs/resources/combined-filters.lua",
+                "--citeproc",
+                "--csl=docs/resources/template-md/mla-numeric.csl",
+                "--quiet",
+            ]
+
+            try:
+                res = subprocess.run(cmd, check=True, capture_output=True, text=True)
+            except subprocess.CalledProcessError as e:
+                error_msg = f"Pandoc conversion failed with return code {e.returncode}"
+                if verbose:
+                    print("❌ Pandoc failed!")
+                    print("Return code:", e.returncode)
+                    print("STDOUT:\n", e.stdout)
+                    print("STDERR:\n", e.stderr)
+                else:
+                    # Show brief error message in non-verbose mode
+                    stderr_lines = e.stderr.strip().split('\n')
+                    # Show first error line if available
+                    if stderr_lines:
+                        error_msg += f": {stderr_lines[0]}"
+                raise RuntimeError(error_msg) from e
+
+            html_fragment = res.stdout
+            html_fragment.replace("---", "—")
+            # Prepend abstract to the full HTML content
+            html_fragment = abstract_html + html_fragment
 
         # Prepare author data
         aff = {
@@ -582,6 +787,7 @@ class Paper:
             npart: Dict[str, Any] = {
                 "name": convert_latex_to_unicode(auth["name"]),
                 "affiliation": affiliation_list,
+                "affiliation_numbers": auth["affiliation_numbers"],
             }
             if "orcid" in auth["metadata"]:
                 npart["orcid"] = auth["metadata"]["orcid"]
@@ -684,6 +890,7 @@ class Paper:
             cite=cite,
             date=self.volume_meta["pubdate"],
             include_full_text=self.include_html,
+            kwords=", ".join(keywords_list) if keywords_list else "",
             # Citation metadata
             cite_paper_url=cite_paper_url,
             cite_paper_title=converted_title,

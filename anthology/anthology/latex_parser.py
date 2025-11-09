@@ -208,7 +208,7 @@ class LaTeXMetadataExtractor:
         """
         Extract affiliation macros with number and text.
 
-        Parses \\affiliation{number}{text} commands.
+        Parses \\affiliation{number}{text} commands, excluding commented-out lines.
 
         Args:
             text: LaTeX source text containing \\affiliation commands
@@ -219,6 +219,7 @@ class LaTeXMetadataExtractor:
         affiliations = []
 
         # Pattern for \affiliation{number}{text}
+        # We need to check that it's not commented out
         affiliation_pattern = (
             r"\\affiliation\s*\{([^}]*)\}\s*\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}"
         )
@@ -226,9 +227,16 @@ class LaTeXMetadataExtractor:
         matches = re.finditer(affiliation_pattern, text, re.DOTALL)
 
         for match in matches:
-            affiliations.append(
-                {"number": match.group(1).strip(), "text": match.group(2).strip()}
-            )
+            # Check if this match is on a commented line
+            # Find the start of the line containing this match
+            line_start = text.rfind('\n', 0, match.start()) + 1
+            # Get the text from line start to the match
+            prefix = text[line_start:match.start()]
+            # If the prefix contains only whitespace and then %, it's commented
+            if not re.match(r'^\s*%', prefix):
+                affiliations.append(
+                    {"number": match.group(1).strip(), "text": match.group(2).strip()}
+                )
 
         return affiliations
 

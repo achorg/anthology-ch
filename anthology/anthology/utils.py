@@ -2,7 +2,7 @@
 
 import re
 import unicodedata
-
+import subprocess
 
 def slugify(text: str, max_width: int) -> str:
     """
@@ -75,6 +75,26 @@ def slugify(text: str, max_width: int) -> str:
     return "-".join(slug_parts)
 
 
+
+def latex_to_html(text: str) -> str:
+    # Run pandoc
+    result = subprocess.run(
+        ["pandoc", "-f", "latex", "-t", "html"],
+        input=text,
+        text=True,
+        capture_output=True,
+        check=True
+    )
+
+    html = result.stdout.strip()
+
+    # Remove leading <p> and trailing </p> if present
+    if html.startswith("<p>") and html.endswith("</p>"):
+        html = html[3:-4]
+
+    return html
+
+
 def convert_latex_to_unicode(text: str) -> str:
     """
     Convert LaTeX special characters to Unicode equivalents.
@@ -88,8 +108,12 @@ def convert_latex_to_unicode(text: str) -> str:
     Returns:
         Text with LaTeX converted to Unicode
     """
-    text = text.replace("---", "—")
-    return text
+    #text = text.replace("``", "“")
+    #text = text.replace("''", "”")
+    #text = text.replace("`", "‘")
+    #text = text.replace("'", "’")
+    #text = text.replace("---", "—")
+    return latex_to_html(text)
 
 
 def strip_html_tags(text: str) -> str:
