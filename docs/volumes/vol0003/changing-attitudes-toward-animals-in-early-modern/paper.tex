@@ -1,0 +1,387 @@
+% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
+% *Anthology of Computers and the Humanities*. ADD THE OPTION
+% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
+% DO NOT change the documentclass
+\documentclass[final]{anthology-ch} % for the final version
+%\documentclass{anthology-ch}         % for the submission
+
+% LOAD LaTeX PACKAGES
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{changepage}
+
+% ADD your own packages using \usepackage{}
+
+\title{Changing Attitudes Toward Animals in Early Modern Dutch Literature}
+
+% AUTHOR AND AFFILIATION INFORMATION
+% For each author, include a new call to the \author command, with
+% the numbers in brackets indicating the associated affiliations 
+% (next section) and ORCID-ID for each author.  
+\author[1]{Arjan van Dalfsen}[
+ orcid=0000-0002-4209-4063
+]
+
+% There should be one call to \affiliation for each affiliation of
+% the authors. Multiple affiliations can be given to each author
+% and an affiliation can be given to multiple authors. 
+\affiliation{1}{Department of Language, Literature and Communication, Utrecht University, Utrecht, the Netherlands}
+
+\keywords{animal studies, environmental humanities, large language models, natural language processing, historical text, cultural history}
+
+\pubyear{2025}
+\pubvolume{3}
+\pagestart{1057}
+\pageend{1071}
+\conferencename{Computational Humanities Research 2025}
+\conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
+\doi{10.63744/F43QSIdqLBts}  
+\paperorder{64}
+
+\addbibresource{bibliography.bib}
+
+% HERE IS THE START OF THE TEXT
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Historical scholarship characterizes the early modern period as a time of profound change in Western attitudes toward animals. Supposedly, the change was brought about by humans positioning themselves differently -- less superiorly -- in relation to animals, resulting in a growing scientific interest in animals and greater hesitance to exploit animals. We test these claims quantitatively by applying a framework from Environmental Psychology that categorizes human attitudes toward nature to a historical Dutch literature corpus. We first identify textual representations of animals using a fine-tuned language model, and then classify these representations into the categories of the Environmental Psychology framework. To assess trends over time, we apply the Mann-Kendall test for monotonic change. We report an increase in attitudes relating to Reason and Exploitation, no change in Moralistic attitudes, and a decrease in Spiritual and Symbolic attitudes. Our findings are partly in accordance with existing scholarship, but challenge the assumptions of Moralistic attitudes toward animals, and also detect a hitherto unnoticed change in the attitude system: the decrease of Symbolic and Spiritual attitudes. This suggests a transformation not only in how animals were treated, but also in the cultural and representational roles they played.
+\end{abstract}
+
+\section{Introduction}
+In the second half of the twentieth century, prompted by the unfolding of environmental crises, humanities scholars have directed attention to human attitudes toward nature in general and animals in particular, to critically assess what they perceive to be at the root of these crises: human attitudes toward nature and animals~\cite{Emmett2017Environmental, ritvo2007ontheanimal}. The attitudes were long, and perhaps still are, characterized by feelings of human superiority over nature. Historians have made a specific contribution to these studies by claiming there was a significant change in these attitudes during the early modern period. Historical scholarship indicates that in this period the exploitation of animals was problematized, resulting in a growing intellectual interest in nature, and ethical concerns about animal treatment~\cite{thomas1984naturalworld, davids1989dieren}. These findings were based on qualitative analyses of early modern sources, mainly representations of animals in images and texts. Although qualitative scholarship in this field has been insightful, there remain open questions when it comes to pervasiveness (does the balance of attitudes shift dramatically or are the differences relatively minor?) and granularity (how did these changes play out from year to year?). Quantitative or computational approaches now offer an additional perspective.
+
+This study aims to quantitatively study the hypotheses of change in human attitudes toward animals. We do this by (1) adopting a widely tested framework of attitudes toward animals from Environmental Psychology (Kellert's Nature Attitude Typology ~\cite{kellert1976perceptions, ross2018stephen}); (2) express the claims of traditional historical scholarship in terms of Kellert's framework; (3) classify textual representations of animals according to Kellert's typology; and (4)  establish the presence of monotonic change in the time series of these attitudes.
+
+\section{Related Work}
+\subsection{Human attitudes towards animals}
+\label{sec:Human-attitudes-towards-animals}
+With the Animal Turn~\cite{ritvo2007ontheanimal}, the focus of the study of animals shifted from agricultural to relational. Scholarly interest arose for the historical, present, and conceivable future of relationships between humans and animals. Keith Thomas posed a theorem that has become the leading hypothesis~\cite{thomas1984naturalworld}. According to Thomas, between 1500 and 1800, the English perception of nature underwent many changes, notably:
+%
+\begin{enumerate}
+\item The relationship of humans with other species was redefined. Where human uniqueness and human ascendancy over animals were established facts at the start of the period, this changed over time. 
+\item The right of humans to exploit other species was sharply challenged. There were lively debates on what humans were allowed to do with animals. 
+\item An intense interest in the natural world arose. People became interested in various details of animal life.
+\end{enumerate}
+
+\noindent The changes in attitudes toward animals during the early modern period are not unique to England, Dutch historian Karel Davids maintained~\cite{davids1989dieren}. He identified two periods in Dutch culture, 1300-1600 and 1600-1850, in which a similar change in the relationship between humans and animals occurred. Davids establishes an intensification of animal exploitation in the first period; hence a growing distance between humans and animals. He detects a growing ambiguity in the relationships in the 1600-1850 period: on the one hand, a further intensification of animal use, with large-scale campaigns targeting unwanted species and the introductions of animal testing, whale hunting, and dogs as draft animals. On the other hand, a closer relationship, with a growing intellectual interest in the life of animals, the problematization of the human-animal divide, the birth of veterinary medicine, the growing popularity of pets, and moralistic initiatives against animal abuse~\cite{davids1989dieren}. It should be noted that, compared to Thomas, Davids makes a more nuanced point about exploitation: while it is challenged sharply, it is also intensified between 1600 and 1800.
+
+Thomas as well as Davids assume industrialization was at the root of these novel relationships~\cite[pp. 66-69]{davids1989dieren}~\cite[pp. 181-190]{thomas1984naturalworld}. Notions of non-exploitative relationships with animals had always been present in Christianity in general and Calvinism -- the dominant denomination in the Dutch context -- in particular. With city economies becoming less dependent on animals, due to the start of industrialization, these notions had the opportunity to germinate, resulting in the proliferation of non-exploitative attitudes~\cite{thomas1984naturalworld, davids1989dieren}.
+
+\subsection{Universal typology of attitudes towards nature}
+Social-ecologist Stephen Kellert developed a fundamental typology of attitudes toward animals that ground and define these relationships based on extensive interviews~\cite{kellert1976perceptions}. His typology was expanded to nature in general~\cite{ross2018stephen}, resulting in a typology of nature-related attitudes. This version of the typology recognizes ten separate attitudes: 
+
+{\tiny
+\renewcommand{\arraystretch}{1.3}
+\begin{longtable}{|p{1.2cm}|p{2cm}|p{5cm}|p{5cm}|}
+\hline
+\textbf{Attitude} & \textbf{Definition} & \textbf{Example (Dutch)} & \textbf{Example (Translation)} \\
+\hline
+\endfirsthead
+\hline \textbf{Attitude} & \textbf{Definition} & \textbf{Example (Dutch)} & \textbf{Example (Translation)} \\ \hline
+\endhead
+Moralistic & ethical concern for nature & \textit{Gebruykt geen stok of haek, om Meeuwen door te smyten, / Wilt uwen tyd op Zee daar mee dog niet verslyten / Gy zondigt meenigmaal als gy haar vangt of slaat}~\cite{metaal1735maas} & Do not use stick or hook to hurl at gulls, Do not waste your time at sea with such troubles, You sin manifold when you catch or strike them \\
+\hline
+Affection & strong emotional attachment and love for aspects of nature & \textit{ik gevoel dat 'er een schepzel is, dat mij bemint; ik spreek hem aan; zijne vreugd is onbepaald; hij trekt mijne gedachten af, en verstrooit de nevels, die mij bedwelmden: zoo veel dienst doet mij de stomme taal van eenen vriendschaplijken hond?}~\cite{post1791reinhart} & I feel that there is a creature who loves me; I speak to him; his joy is boundless; he draws away my thoughts and dispels the mists that had dazed me: such is the service rendered me by the mute language of a friendly dog. \\
+\hline
+Exploitation & practical and material exploitation of nature & \textit{de Wol, welke men jaarlyks van dit Beest scheert, en dus van eene vragt verlost, die het anderzins zoude laaten vallen, ons tot verscheidenerlei soort van dekzel en kleeding dient}~\cite{vaderlandsche1793} & The wool, which is shorn yearly from this animal, and thus removes a burden it would otherwise shed, serves us for various kinds of covering and clothing. \\
+\hline
+Reason & systematic study of structure, function and relationships of nature & \textit{De Pimpel-Mees, die onder onze kleinste Vogelen geteld moet worden, haalt in zyn geheele lengte iets meerder dan vier duimen.}~\cite{vaderlandsche1793} & The Blue Tit, which must be counted among our smallest birds, measures just over four inches in total length. \\
+\hline
+Naturalistic & direct experience and exploration of nature & \textit{Als ik dus op 't water lag, / Quam een Kabbeljauw nog swemme, / Dichte by my dog seer temme, / Die ik voor mijn oogen zag}~\cite{metaal1735maas} & As I lay upon the water, A codfish came swimming, Very close to me, quite tame, Whom I saw before my eyes. \\
+\hline
+Attraction &  physical appeal and beauty of nature &  \textit{kleine voogelen laat ik, tot vermaak van 't gehoor, over al vry vliegen}~\cite{lairesse1712groot} & I let small birds fly freely everywhere, for the pleasure of the ear. \\
+\hline
+Aversion & fear, aversion, alienation from nature & \textit{In de eerste plaats haalde ik myn boot op den wal, bykans geheel uit het water, om te voorkomen, dat de Krokodillen dien niet omwierpen, of ten grond deeden zinken;}~\cite{vaderlandsche1793}  & First of all, I pulled my boat up onto the shore, almost entirely out of the water, to prevent the crocodiles from capsizing it or causing it to sink. \\
+\hline
+Spiritual & spiritual reverence for nature &  \textit{Ofte spreeckt tot de aerde, ende sy sal het u leeren: oock sullen ’t u de visschen der zee vertellen. Wie en weet niet uyt alle dese, dat de hant des HEEREN dit doet?}~\cite{statenbijbel1657} & Or speak to the earth, and it shall teach you; and the fish of the sea shall declare it to you. Who does not know from all these that the hand of the LORD has done this? \\
+\hline
+Dominionistic & mastery, physical control, dominance over nature & \textit{Wanneer ge, ô schoone kunne! een briesschend ros durft dwingen, En in een' vollen ren de haagen overspringen,}~\cite{winter1769jaargetyden} & When you, o women! can master a snorting steed, And in full gallop leap over the hedges, \\
+\hline
+Symbolic & use of nature in language and thought & \textit{Als leeuwen sij tot mi lopen / Soe rasen en grimmen sij.}~\cite{zuylen1540souterliedekens} & When like lions they come at me, They rage and roar with fury. \\
+\hline
+\end{longtable}
+\captionsetup{type=table}
+\caption{Kellert's nature attitude typology: definitions and examples.}
+\label{tab:attitudes}
+}
+
+
+\noindent The typology is assumed to be universal and has been widely tested, although mainly in Western contexts~\cite{ross2018stephen}.
+
+In this study, we translate the findings from historical scholarship into the terms used by Kellert. According to Thomas and Davids, this period features ethical debates about what one is allowed to do with animals. In Kellert's typology, this should be reflected in an increase in the Moralistic attitude. Thomas and Davids also describe the rise of scientific interest in animals. In terms of Kellert's attitude, this can be translated in a surge in Reason (i.e., the systematic study of structure, function and relationships of nature). Lastly, when it comes to exploitation, Thomas and Davids offer slightly different takes. Thomas argues that exploitation is sharply challenged; Davids agrees, but simultaneously sees an intensification of the exploitation itself. Given that Davids writes about the Dutch situation, we take his position as a starting point. In short, we hypothesize an increase of (i) the Moralistic, (ii) the Reason and (iii) the Exploitation attitude. 
+
+\section{Method}
+
+\subsection{Data Preparation}
+Our study used the public domain data dump of the Digitale Bibliotheek voor de Nederlandse Letteren (DBNL). DBNL is a collection of texts deemed important for Dutch culture~\cite{dbnl2023digitale}. We selected texts printed between 1600 and 1800 (before 1600 the data is scarce, 1800 is the end of the early modern period), comprising about 1305 Dutch texts of a diversity of text types (plays, poems, religious texts, etc.)~\cite{dbnl2023digitale, kb2024overons}. To divide the texts into as large as possible semantic units, we used the LangChain library's RecursiveCharacterTextSplitter (which recursively splits texts, using common separators such as new lines until reaching the target chunk size)~\cite{langchain22documentation} resulting in \textasciitilde1.15 million chunks with a maximum of 500 characters.
+
+\subsection{Token Classification: Model Training}
+We fine-tuned a BERT model optimized for historical Dutch (GysBERT~\cite{Manjacavas22}) on the token-classification task of identifying animals in early modern Dutch text. We defined animals as whole organisms, including multitudes (``herd'', ``cattle'') but excluding parts of organisms (``wing'', ``claw''); the annotation guidelines of Van Dalfsen et al.\ were applied~\cite{dalfsen2024direct}. The model was trained following the LLMs as Active Annotators framework~\cite{Zhang23, dalfsen2024direct}, with the addition that we manually checked the automated annotations. With these data, we fine-tuned the GysBERT model. Here, we used the \textit{token} classification model as a \textit{text} classification model: if a chunk contains at least one animal, it is classified as positive. On the test set from the LLM as Active Annotators procedure (250 examples), the fine-tuned model had a precision of .94, a recall of .91, and a F1 of .92 (see Appendix~\ref{sec:encoder-training}).
+
+\subsection{Text Classification: Model and Prompt Selection}
+For the classification task of assigning the obtained chunks-with-animals following Kellert's typology (plus options for animal absence and unclear attitudes), a decoder model was used. To establish the performance of various options for model and prompt, we built a test set of 143 randomly selected examples.
+
+First, the performance of multiple decoder models (such as Gemma, Qwen, Claude) was compared, resulting in the selection of gemini-2.5-flash-preview-05-20 (thinking mode disabled; see Appendix \ref{sec:decoder-comparison}). Then, we wrote a minimal prompt and five conceivably beneficial modular additions (additional definitions; examples; additional information on nature-related attitudes; repetition of important information; instruction of steps to be taken). The 32 ($2^5$) possible combinations of the minimal prompt and the five modules (Appendix \ref{sec:prompt-comparison}) were compared, resulting in the selection of the combination with additional information on attitudes related to nature, the repetition of important parts and the instructions for steps. The resulting combination of model and prompt had an micro-F1 of 0.79 in this 12 label (10 Kellert attitudes plus 2 labels for `No Attitude' and `Attitude Unclear') text classification task. See Appendix \ref{sec:performance-per-attitude} for the performance per class, and Appendix~\ref{sec:performance-over-time} for the distribution of (in)correct classifications over time.
+
+\section{Results}
+\subsection{Attitudes plots}
+Figure~\ref{fig:plot_attitude_vs_all} and Figure~\ref{fig:plot_attitude_vs_attitudes} show the development of Kellert's nature attitudes over time. Figure~\ref{fig:plot_attitude_vs_all} shows the frequency of the attitudes relative to all DBNL chunks, while Figure~\ref{fig:plot_attitude_vs_attitudes} shows the frequency relative to all chunks with nature attitudes. Thus, the plots show different phenomena: to increase in the first plot, it is enough to have a higher frequency in the DBNL, to increase in the second plot, the attitude needs to become more frequent relative to other attitudes. In both cases the lines are the result of LOWESS smoothing the data points. Generally, the figures show:
+\begin{itemize}
+    \item The presence of animals hovering around 10\% throughout the period (Figure~\ref{fig:plot_attitude_vs_all});
+    \item A strong difference in the relative frequency of the various attitudes. Symbolic, Reason, and Exploitation are common between 1600 and 1800, while the others are much less common;
+    \item A change in the ranking of the attitudes. For example, Reason starts low but ends up being among the most frequent attitudes at the end.
+\end{itemize}
+
+See Appendix~\ref{sec:attitudes-lowess-and-raw} for raw data points of the frequency plots. 
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/denominator-all_bin-10_combined.png}
+  \caption{Frequency of chunks with specific nature-related attitudes relative to all chunks, 10 year bins. Left: LOWESS smoothed line plot. Right: LOWESS smoothed stacked band plot.}
+  \label{fig:plot_attitude_vs_all}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/denominator-attitude_bin-10_combined.png}
+  \caption{Frequency of chunks with specific nature-related attitudes relative to total number of chunks with nature-related attitudes, 10 year bins. Left: LOWESS smoothed line plot. Right: LOWESS smoothed stacked band plot. Due to smoothing, the stacked band does not always add up to 1.}
+  \label{fig:plot_attitude_vs_attitudes}
+\end{figure}
+
+\subsection{Monotonic change}
+To test the time series data of the attitudes for significance, the Mann-Kendall (MK) Trend Test was applied (reporting both the standardized Z-value and its associated $p$-value). MK tests for monotonic change (i.e., consistent change in one direction), but makes no assumptions about a specific distribution underlying the data~\cite{mann1945nonparametric, kendall1975rank, helsel2020trend}. Importantly, MK is rank-based (it does not look at the exact values but rather at whether the later values are consistently higher/lower than the earlier ones), which decreases the influence of outliers in the data. This makes MK well-suited with both the hypotheses (which concern long-term change) and the data (which represent a selection of important Dutch texts, with expected irregularities). Additionally, we report Sen's slope~\cite{sen1968estimates, helsel2020trend}, which provides an estimate of the magnitude and direction of the trend detected by MK.
+
+Before examining changes in the relative distribution of attitudes toward animals, we first tested whether any changes among attitudes might be caused by varying amounts of animal discourse over time. Table~\ref{tab:mk-all} shows attitude frequencies relative to all DBNL chunks. Here, we only see significant changes in Reason (Z=2.04, increase) and Symbolic (Z=-2.95, decrease). However, as our hypotheses concern how people relate animals \textit{when they write about them} (rather than how often they write about animals), we need to examine changes relative to all chunks containing attitudes. As shown in Table~\ref{tab:mk-attitudes}, Exploitation (Z=2.24) and Reason (Z=2.95) increase significantly, while Spiritual (Z=-2.11) and Symbolic (Z=-3.93) attitudes decrease.  
+
+For all attitudes with significant change, except Symbolic in Table~\ref{tab:mk-attitudes}, the rate of increase or decrease is small (e.g., Sen's slope = -0.2 percentage point per decade for Symbolic in Table~\ref{tab:mk-all}).
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\begin{tabular}{llllllll}
+\toprule
+Attitude & Sen's Slope & 95\% CI (Slope) & MK Z-Value & MK p-Value & Trend & Significance \\
+& (\%pt/decade) & (\%pt/decade) & & & Direction & \\
+\midrule
+Affection & 0.01 & [-0.0, 0.0] & 1.78 & 0.074 & $\circ$ & ns \\
+Attraction & -0.00 & [-0.0, 0.0] & 1.01 & 0.31 & $\circ$ & ns \\
+Aversion & -0.01 & [-0.0, 0.0] & -1.20 & 0.23 & $\circ$ & ns \\
+Dominionistic & -0.00 & [-0.0, 0.0] & -0.36 & 0.72 & $\circ$ & ns \\
+Exploitation & 0.05 & [-0.1, 0.2] & 1.14 & 0.26 & $\circ$ & ns \\
+Moralistic & 0.00 & [-0.0, 0.0] & 1.07 & 0.28 & $\circ$ & ns \\
+Naturalistic & -0.00 & [-0.0, 0.0] & -0.03 & 0.97 & $\circ$ & ns \\
+Reason & 0.11 & [0.0, 0.2] & 2.04 & 0.041 & $\uparrow$ & * \\
+Spiritual & -0.01 & [-0.0, 0.0] & -1.65 & 0.098 & $\circ$ & ns \\
+Symbolic & -0.20 & [-0.3, -0.1] & -2.95 & 0.0032 & $\downarrow$ & ** \\
+\bottomrule
+\end{tabular}
+\caption{Mann-Kendall Z-values, $p$-values,  and Sen's slope for label frequency relative to the whole dataset. $p$-values smaller than 0.05, 0.01, 0.001 are, respectively, marked with one, two, or three asterisks. Sen's slope is calculated in terms of percentage points per decade, with 95\% confidence intervals. Positive MK Z-values indicate upward trends; negative values indicate downward trends.}
+\label{tab:mk-all}
+\end{table}
+
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\begin{tabular}{llllllll}
+\toprule
+Attitude & Sen's Slope & 95\% CI (Slope) & MK Z-Value & MK p-Value & Trend & Significance \\
+& (\%pt/decade) & (\%pt/decade) & & & Direction & \\
+\midrule
+Affection & 0.06 & [-0.0, 0.1] & 1.52 & 0.13 & $\circ$ & ns \\
+Attraction & 0.05 & [-0.0, 0.1] & 1.46 & 0.14 & $\circ$ & ns \\
+Aversion & -0.07 & [-0.2, 0.0] & -1.52 & 0.13 & $\circ$ & ns \\
+Dominionistic & -0.02 & [-0.1, 0.0] & -0.62 & 0.54 & $\circ$ & ns \\
+Exploitation & 0.51 & [0.1, 1.5] & 2.24 & 0.025 & $\uparrow$ & * \\
+Moralistic & 0.01 & [-0.0, 0.0] & 1.14 & 0.26 & $\circ$ & ns \\
+Naturalistic & 0.03 & [-0.1, 0.1] & 0.42 & 0.67 & $\circ$ & ns \\
+Reason & 1.15 & [0.5, 2.2] & 2.95 & 0.0032 & $\uparrow$ & ** \\
+Spiritual & -0.11 & [-0.2, -0.0] & -2.11 & 0.035 & $\downarrow$ & * \\
+Symbolic & -2.04 & [-2.9, -1.2] & -3.93 & 0.0001 & $\downarrow$ & *** \\
+\bottomrule
+\end{tabular}
+\caption{Mann-Kendall Z-values, $p$-values,  and Sen's slope for label frequency relative to all attitudes. $p$-values smaller than 0.05, 0.01, 0.001 are, respectively, marked with one, two, or three asterisks. Sen's slope is calculated in terms of percentage points per decade, with 95\% confidence intervals. Positive MK Z-values indicate upward trends; negative values indicate downward trends.}
+\label{tab:mk-attitudes}
+\end{table}
+
+
+\section{Discussion}
+The purpose of this study was to quantitatively assess changing attitudes toward animals in the early modern Dutch context. Based on historical scholarship, and in the terms of Kellert's nature attitude typology, we hypothesized growth in the attitudes Reason (i.e., scientific interest in animals),  Moralistic (ethical concern about animals), and Exploitation (use of animals).
+
+We studied the frequencies of Kellert's nature-related attitudes, (1) relative to all chunks in the dataset, as well as (2) relative to only the chunks with an attitude toward animals. Relative to all chunks, we report an increase in the Reason attitude and a decline in the Symbolic attitude (i.e., figurative use of animals). Relative to chunks with attitudes toward animals, we do find the same trends for Reason and Symbolic, but we also find an increase in Exploitation and a decrease for the Spiritual attitude (having transcendental experiences through nature). We see the latter result, the frequency of an attitude relative to all other attitudes, as the most informative for our purpose, as it isolates how animals are perceived from how often they are mentioned. 
+
+The increase in Reason is in line with traditional scholarship by Thomas~\cite{thomas1984naturalworld} and Davids~\cite{davids1989dieren} on this topic: they have argued that scientific interest in animals grew in this period. However, the absence of significant increase in the Moralistic attitude is not in line with the established idea that human exploitation of animals and the position of humans among animals was challenged. Thomas and Davids differ on the point of exploitation: Thomas describes the problematization of exploitation; Davids concurs but also sees an intensification of exploitation. The current analysis suggests a growth in Exploitation, which corroborates Davids point.  
+
+A finding we did not hypothesize is the decrease of the Symbolic and Spiritual attitudes. In fact, the decrease of the Symbolic attitude has the strongest slope in our corpus. These trends might be interpreted as a demystification of nature, since Spiritual and Symbolic have in common that in these attitudes nature is something ``more that itself''. This might touch on what literary historians, in the English context, have described as the decline of allegory in the seventeenth and eighteenth centuries, although that narrative is not uncontroversial~\cite{honig1959, gulya2016}. However, there are alternative explanations, such as corpus effects or the possibility of more general decreases in the use of figurative speech in language or knowledge about nature.
+
+Beyond the statistical detection of attitude shifts, this study also contributes to historical scholarship by offering a sense of proportionality. As shown in  Fig.~\ref{fig:plot_attitude_vs_attitudes}, while the early modern period might indeed bring some change into animal attitudes, most changes are not too dramatic. With the exception of Reason, attitudes that are marginal at the start of the period, are still marginal at the end. In the case of changing attitudes toward animals, change is not the same as a revolution.
+
+We note several methodological caveats and natural extensions. First, the use of two classification models introduces compounded uncertainty: errors in the animal identification model propagate to the attitude classification stage, potentially amplifying misclassification rates. Second, the uneven distribution of Kellert's values across the dataset limits our ability to obtain robust precision and recall estimates for rare attitudes, such as Moralistic. Third, the DBNL dataset consists primarily of culturally significant literary works, which may not be representative of broader societal discourse. We might expect everyday texts to reveal more practical attitudes, such as Exploitation. Fourth, the Mann-Kendall test detects only monotonic change, so other types of change (e.g., abrupt shifts) may go undetected. Fifth, our analysis treated each attitude as independent, whereas some attitudes might co-occur or have inverse correlation. Sixth, we approached classification as a single label task on a single chunk; which means that the presence of multiple attitudes in the same chunk will be missed, as well as attitudes that emerge on the level of the text as a whole. Seventh, we have examined monotonic change without separating factors that might explain observed trends, such as genre, author gender, or the presence of specific animals.
+
+These limitations highlight important directions for future research, including testing on broader corpora (e.g., newspapers~\cite{delpher2025} or parliamentarian records~\cite{tweedekamer2025, goetgevonden2025}) extending the approach to other periods or languages, refining classification models to account for ambiguity and context, and incorporating genre- and animal-specific effects. 
+
+\section*{Acknowledgments}
+This research was supported by Utrecht University AI Labs and the Meertens Instituut. The author thanks Thirza van Engelen for her assistance with data annotation, and Els Stronks, Ayoub Bagheri, and Folgert Karsdorp for their supervision and valuable feedback throughout the project. The author also thanks the anonymous reviewers for their helpful comments.
+
+% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
+\printbibliography
+
+%TC:ignore
+\section{Appendices}
+\appendix
+
+\section{Encoder model training}\label{sec:encoder-training}
+GysBERT parameters: Maximum sequence length = 512; Batch size = 8; Learning rate = 2e-5; Training epochs = 10 (early stopping with patience = 5).
+
+For an implementation, see the code repository. 
+\section{Decoder selection}\label{sec:decoder-comparison}
+Performance was benchmarked on a manually labeled test set (143 text fragments).
+
+Ultimately, gemini-2.5-flash-preview-05-20 was chosen because it shows high performance and is relatively inexpensive and fast. For per-class performance of the eventually used model-prompt combination, see Appendix \ref{sec:performance-per-attitude}.
+
+\begin{table}[H]
+\begin{tabular}{ll}
+\toprule
+Model & Accuracy \\
+\midrule
+openrouter:anthropic/claude-3.7-sonnet & 0.840 \\
+openrouter:deepseek/deepseek-chat-v3-0324 & 0.722 \\
+openrouter:deepseek/deepseek-r1 & 0.778 \\
+\textbf{openrouter:google/gemini-2.5-flash-preview}& \textbf{0.806} \\
+openrouter:google/gemma-3-12b-it & 0.472 \\
+openrouter:google/gemma-3-27b-it & 0.424 \\
+openrouter:google/gemma-3-4b-it & 0.222 \\
+openrouter:google/gemma-3n-e4b-it& 0.347 \\
+openrouter:meta-llama/llama-3.3-70b-instruct & 0.806 \\
+openrouter:openai/gpt-4.1-mini & 0.771 \\
+openrouter:openai/o4-mini & 0.840 \\
+openrouter:qwen/qwen3-0.6b-04-28 & 0.424 \\
+openrouter:qwen/qwen3-14b & 0.799 \\
+openrouter:qwen/qwen3-235b-a22b & 0.736 \\
+openrouter:qwen/qwen3-30b-a3b & 0.743 \\
+openrouter:qwen/qwen3-32b & 0.729 \\
+openrouter:qwen/qwen3-8b & 0.611 \\
+\bottomrule
+\end{tabular}
+\caption{Test set accuracy for various models.}
+  \label{sec:prompt-comparison}
+\end{table}
+
+\section{Prompt comparison}
+Performance was benchmarked on a manually labeled test set (143 text fragments). We decided it was not necessary to do both a development set and a test set, as the scores for various prompt variants were very similar and, hence, overfitting unlikely.
+
+Although the optimal prompt would have been \textit{definition\_examples\_extralabelinfo\_important\_steps}, a human error resulted in \textit{extralabelinfo\_important\_steps} being used as a prompt. For per-class performance of the eventually used model-prompt combination, see Appendix \ref{sec:performance-per-attitude}.
+\begin{table}[H]
+\begin{tabular}{ll}
+\toprule
+Prompt & Accuracy \\
+\midrule
+definition & 0.764 \\
+definition\_examples & 0.799 \\
+definition\_examples\_extralabelinfo & 0.778 \\
+definition\_examples\_extralabelinfo\_important & 0.778 \\
+definition\_examples\_extralabelinfo\_important\_steps & 0.826 \\
+definition\_examples\_extralabelinfo\_steps & 0.785 \\
+definition\_examples\_important & 0.778 \\
+definition\_examples\_important\_steps & 0.778 \\
+definition\_examples\_steps & 0.778 \\
+definition\_extralabelinfo & 0.660 \\
+definition\_extralabelinfo\_important & 0.667 \\
+definition\_extralabelinfo\_important\_steps & 0.778 \\
+definition\_extralabelinfo\_steps & 0.799 \\
+definition\_important & 0.701 \\
+definition\_important\_steps & 0.757 \\
+definition\_steps & 0.819 \\
+examples & 0.743 \\
+examples\_extralabelinfo & 0.792 \\
+examples\_extralabelinfo\_important & 0.771 \\
+examples\_extralabelinfo\_important\_steps & 0.778 \\
+examples\_extralabelinfo\_steps & 0.757 \\
+examples\_important & 0.750 \\
+examples\_important\_steps & 0.750 \\
+examples\_steps & 0.736 \\
+extralabelinfo & 0.743 \\
+extralabelinfo\_important & 0.729 \\
+\textbf{extralabelinfo\_important\_steps} & \textbf{0.785} \\
+extralabelinfo\_steps & 0.771 \\
+important & 0.438 \\
+important\_steps & 0.778 \\
+min & 0.549 \\
+steps & 0.715 \\
+\bottomrule
+\end{tabular}
+\caption{Test set accuracy for various prompts.}
+  \label{sec:performance-per-attitude}
+\end{table}
+
+\section{Prompt-model combination performance per attitude}
+Per category performance was benchmarked on a manually labeled test set (143 text fragments).
+
+As some attitudes are very scarce in the dataset, for 3 of the 12 possible labels, no true positives were present.
+
+\begin{table}[H]
+\label{tab:extralabelinfo-important-steps}
+\begin{tabular}{llrrrrrrr}
+\toprule
+Prompt & Category & TP & FP & FN & TN & Precision & Recall & F1 \\
+\midrule
+extralabelinfo\_important\_steps & Attraction & 0 & 0 & 0 & 143 & NaN & NaN & NaN \\
+extralabelinfo\_important\_steps & Dominionistic & 3 & 1 & 0 & 139 & 0.750 & 1.000 & 0.857 \\
+extralabelinfo\_important\_steps & Reason & 8 & 1 & 1 & 133 & 0.889 & 0.889 & 0.889 \\
+extralabelinfo\_important\_steps & Affection & 1 & 1 & 0 & 141 & 0.500 & 1.000 & 0.667 \\
+extralabelinfo\_important\_steps & Moralistic & 0 & 0 & 0 & 143 & NaN & NaN & NaN \\
+extralabelinfo\_important\_steps & Naturalistic & 0 & 0 & 0 & 143 & NaN & NaN & NaN \\
+extralabelinfo\_important\_steps & Aversion & 1 & 0 & 2 & 140 & 1.000 & 0.333 & 0.500 \\
+extralabelinfo\_important\_steps & Spiritual & 1 & 2 & 1 & 139 & 0.333 & 0.500 & 0.400 \\
+extralabelinfo\_important\_steps & Symbolic & 15 & 15 & 1 & 112 & 0.500 & 0.938 & 0.652 \\
+extralabelinfo\_important\_steps & Exploitation & 13 & 8 & 5 & 117 & 0.619 & 0.722 & 0.667 \\
+extralabelinfo\_important\_steps & No Animal & 69 & 2 & 19 & 53 & 0.972 & 0.784 & 0.868 \\
+extralabelinfo\_important\_steps & Attitude Unclear & 2 & 0 & 1 & 140 & 1.000 & 0.667 & 0.800 \\
+\bottomrule
+\end{tabular}
+\caption{Results per nature-related attitude for used prompt-model combination.}
+  \label{sec:performance-over-time}
+\end{table}
+
+\section{Performance on test set, over time}
+Figure~\ref{fig:test-performance-per-year} shows the distribution of correct and incorrect classifications over time. Every dot is one prediction: green dots are correctly predicted, red dots are incorrectly predicted. The data spans a wider period than the one studied in this paper.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{figures/test_performance_per_year.png}
+  \caption{Distribution of correct and incorrect classifications over time. Every dot is one prediction: green dots are correctly predicted, red dots are incorrectly predicted.}
+  \label{fig:test-performance-per-year}
+\end{figure}
+
+\section{Development of attitudes over time, with raw data points}\label{sec:attitudes-lowess-and-raw}
+Figure \ref{fig:frequency_datapoints_all} and Figure \ref{fig:frequency_datapoints_attitude} show the development of attitude frequencies relative to, respectively, the whole data set and all attitudes. Both a LOWESS smoothed line and raw data points of the 10-year bins are included. Note that y-axis scale differs per attitude.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{figures/denominator-all_bin-10_appendix.png}
+  \caption{
+  Frequency of chunks with specific nature-related attitudes relative to all chunks, 10 year bins. Smoothed lines and raw data points.}
+  \label{fig:frequency_datapoints_all}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{figures/denominator-attitude_bin-10_appendix.png}
+  \caption{
+  Frequency of chunks with specific nature-related attitudes relative to all attitudes, 10 year bins. Smoothed lines and raw data points.}
+  \label{fig:frequency_datapoints_attitude}
+\end{figure}
+
+\section{Online Resources}\label{sec:appendix-resources}
+Code and data used in this study can be found here:
+\begin{itemize}
+\item Data: \url{https://www.dbnl.org/letterkunde/pd/index.php},
+\item Code and annotations: \href{https://github.com/trister95/kellert-attitudes-in-dbnl}{GitHub Repository}.
+\end{itemize}
+
+%TC:endignore
+\end{document}

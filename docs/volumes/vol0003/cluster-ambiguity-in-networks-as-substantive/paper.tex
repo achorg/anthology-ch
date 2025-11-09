@@ -1,0 +1,553 @@
+% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
+% *Anthology of Computers and the Humanities*. ADD THE OPTION
+% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
+% DO NOT change the documentclass
+\documentclass[final]{anthology-ch} % for the final version
+%\documentclass{anthology-ch}         % for the submission
+
+% LOAD LaTeX PACKAGES
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+% ADD your own packages using \usepackage{}
+
+% TITLE OF THE SUBMISSION
+% Change this to the name of your submission
+\title{Cluster Ambiguity in Networks as Substantive Knowledge}
+
+% AUTHOR AND AFFILIATION INFORMATION
+% For each author, include a new call to the \author command, with
+% the numbers in brackets indicating the associated affiliations 
+% (next section) and ORCID-ID for each author.  
+\author[1]{Mathieu Jacomy}[
+  orcid=0000-0002-6417-6895
+]
+\author[2]{Tommaso Elli}[
+  orcid=0000-0002-9818-1991
+]
+\author[3]{Andrea Benedetti}[
+  orcid=0000-0001-7121-459X
+]
+\author[4]{Guillaume Plique}[
+  orcid=0000-0003-4916-8472
+]
+\author[4]{Benjamin Ooghe-Tabanou}[
+  orcid=0000-0001-7698-3507
+]
+\author[5]{Paul Girard}[
+  orcid=0000-0001-9332-3308
+]
+\author[5]{Alexis Jacomy}[
+  orcid=0009-0008-3797-2985
+]
+% There should be one call to \affiliation for each affiliation of
+% the authors. Multiple affiliations can be given to each author
+% and an affiliation can be given to multiple authors. 
+\affiliation{1}{Tantlab \& MASSHINE, Aalborg University, Copenhagen, Denmark}
+\affiliation{2}{Dipartimento di Design, Politecnico di Milano, Italy}
+\affiliation{3}{Università degli Studi di Milano, Italy}
+\affiliation{4}{médialab, Sciences Po, Paris, France}
+\affiliation{5}{OuestWare, Nantes, France}
+
+
+% KEYWORDS
+% Provide one or more keywords or key phrases seperated by commas
+% using the following command
+\keywords{visual network analysis, ambiguity, community detection, hermeneutics
+}
+
+% METADATA FOR THE PUBLICATION
+% This will be filled in when the document is published; the values can
+% be kept as their defaults when the file is submitted
+\pubyear{2025}
+\pubvolume{3}
+\pagestart{100}
+\pageend{111}
+\conferencename{Computational Humanities Research 2025}
+\conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
+\doi{10.63744/f3L9hsFcGqVc}  
+\paperorder{8}
+
+
+\addbibresource{bibliography.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HERE IS THE START OF THE TEXT
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Visual network analysis has become increasingly used by scholars in the social sciences and humanities (SSH). While ambiguity is an inherent characteristic of this methodology, most currently available tools lack strategies to make such ambiguity transparent, particularly in relation to non-deterministic algorithmic results. The Louvain modularity algorithm, commonly used to detect communities within networks, is a good example of the issue: repeated executions can result in different community assignments for the same nodes. This paper introduces a novel technique for the visual inspection of results produced by the Louvain modularity algorithm. The proposed method involves an edge-centric analysis that evaluates how consistently pairs of connected nodes are assigned to the same community. This consistency metric is then visualised through a dedicated technique that uses colour-coding to highlight both stable and ambiguous relationships between nodes and clusters. The paper demonstrates the effectiveness of this approach with a proof-of-concept applied to benchmark datasets frequently used in the evaluation of network analysis tools. Finally, the contribution reflects on how this visual technique can support and enhance the heuristic practices of SSH scholars.
+\end{abstract}
+
+\section{Introduction} 
+
+Network analysis has become a valuable tool for humanities scholars
+seeking to understand complex relationships within cultural, historical,
+and literary phenomena. Like with any other applied computational
+method, scholars face the challenge of meaningfully engaging with
+algorithmic processes while maintaining the interpretive depth that
+characterizes humanistic inquiry.
+
+Community detection algorithms, which identify clusters of densely
+connected nodes within networks, exemplify this challenge. While these
+methods can reveal meaningful patterns in humanities data, they are
+\emph{non-deterministic}: the same algorithm applied to identical data
+may produce different community structures, reflecting the complex and
+often ambiguous nature of the underlying relationships.
+
+This article demonstrates how to measure and visualize ambiguity in the
+specific case of cluster detection in networks. We argue that ambiguity
+is not a secondary qualification of the results but constitutes primary
+knowledge about data and algorithmic processes. We address the problem
+of its quantification and visualization in ways relevant to humanities
+scholars. Our approach recognizes that variability in computational
+processes is a substantive aspect of knowledge production that warrants
+systematic investigation and representation.
+
+This perspective requires shifting from a broad understanding of
+uncertainty, which often encompasses ambiguity in existing literature,
+to a more specific definition distinct from ambiguity. For us,
+uncertainty refers to the limitations of observations and measurements,
+including issues of accuracy and completeness, while ambiguity refers to
+properties of phenomena that resist definitive categorization.
+Crucially, ambiguity is measurable, as it is inherent to a phenomenon,
+while uncertainty qualifies the measurement process itself. To
+illustrate this distinction: a blurry picture of a sharp thing must not
+be confused with a sharp picture of a blurry thing. Studying fuzzy
+realities requires distinguishing between uncertain observations of
+well-defined phenomena and accurate observations of inherently ambiguous
+phenomena.
+
+By making the ambiguity of community detection interpretable, we propose
+that it constitutes knowledge relevant to a hermeneutic approach to
+network analysis. This perspective shifts the focus from seeking
+singular, definitive answers to exploring the range of plausible
+interpretations that computational methods can generate.
+
+Our computational approach involves running a non-deterministic
+community detection algorithm multiple times and building ambiguity
+metrics by analyzing result variations. We then compile these metrics
+into a visualization designed to be actionable by humanities scholars,
+enabling them to identify areas of stability and ambiguity within their
+network data. This methodology provides researchers with a more nuanced
+understanding of network structures.
+
+This short paper presents a design exploration and proof-of-concept
+implementation. It allows us to establish conceptual and practical
+landmarks necessary for future empirical validation while contributing
+immediately to the ongoing dialogue about ambiguity representation in
+computational humanities.
+
+\section{Related work}
+
+Humanities scholars encounter uncertainty in both their data and
+methods, requiring them to engage with it to make sound methodological
+decisions and communicate their findings effectively. Uncertainty,
+understood broadly to include ambiguity, has been identified as worthy
+of visualization, provided that its evaluation is ``performed by
+objective and reproducible methodologies'' \cite{Levontin_et_al_2020}.
+This requires systematic characterization and framing of uncertainty
+(ibid). However, uncertainty visualization remains poorly understood
+within humanities scholarship \cite{Therón_Wandl-vogt_2018}.
+
+Some humanists have proposed and discussed practical solutions to
+visualize uncertainty \cite{Drucker_2011, Windhager_Salisu_Mayr_2019},
+but importantly, those scholars also often contest that the humanities
+should have the same goals as the natural sciences, notably when it
+comes to minimizing uncertainty. Less certainty might on the contrary
+bring us ``closer to the practice of humanistic hermeneutic
+traditions'', as ``visual argument structures such as contradiction,
+ambiguity, parallax, \ldots{} are fundamentally hermeneutic in
+character'' \cite{Drucker_2018}.
+
+Uncertainty in networks in particular has been discussed. Venturini et
+al.~have argued that it could be an asset for network analysis
+\cite{Venturini_Jacomy_Jensen_2021}. Different solutions for visualizing
+uncertainty at the level of nodes and edges have been explored
+\cite{Guo_Huang_Laidlaw_2015,
+Wang_Shen_Archambault_Zhou_Zhu_Yang_Qu_2016} and more recently,
+the discussion has been extended to other kinds of uncertainty and more
+visual variables \cite{Conroy_Gillmann_et_al_2024}. They identify two
+main strategies, uncertainty integrated into the graph, or visualized as
+a supplement to the network. Our work draws on the former.
+
+While those works aim to discuss the visualization of uncertainty in a
+relatively broad manner, we target the specific case of variability in
+the outcome of a community detection algorithm, in this case the
+``Louvain'' method \cite{Blondel_Guillaume_Lambiotte_Lefebvre_2008}.
+
+Many humanities scholars are unaware that popular cluster detection
+algorithms produce non-deterministic results. Existing user interfaces
+and visualization techniques do not indicate which nodes fluctuate
+between different clusters across multiple runs. Yet this variability
+has been documented by network analysis researchers. We know that the
+landscape of modularity clustering solutions is ``degenerate''
+\cite{Good_De_Montjoye_Clauset_2010}, meaning that many equally
+valid\footnote{``Valid'' meaning, in this context, maximizing a network
+  partition metric known as ``modularity'' \cite{Newman_2006}.} yet distinct
+solutions exist for the same network. These solutions typically cannot
+be unified into a single compromise because they are too heterogeneous
+\cite{Peixoto_2021}, and any single solution may miss relevant structural
+information \cite{Calatayud_Bernardo-Madrid_Neuman_Rojas_Rosvall_2019}.
+
+However, this research has not emphasized that degeneracy in modularity
+maximization is unevenly distributed across the network. Not all nodes
+and edges participate equally in the variation between solutions. Some
+subgraphs consistently appear in the same community across multiple
+runs, which reveals stable structural features of the network. Building
+on our argument that ambiguity represents knowledge relevant to
+hermeneutic inquiry rather than noise to be mitigated, we propose a
+method for visualizing community detection ambiguity as an integral
+component of network analysis.
+
+\section{Method}
+
+\subsection{Metric computations}
+
+The steps of the metric computations are: (1) sample the community
+detection solution landscape; (2) compute the ``edge co-membership
+score'' for each edge; (3) compute the ``ambiguity score'' for each
+edge; (4) aggregate it into the ``ambiguity score'' for each node.
+
+
+
+\noindent
+\textbf{Sampling the solution landscape.} Set sample size \(n\)
+(default 50) and run \(n\) instances of the Louvain method in its
+non-deterministic variant \cite{Lambiotte_Delvenne_Barahona_2014}, which
+is the implementation featured in the popular network analysis tool
+\emph{Gephi} \cite{Bastian_Heymann_Jacomy_2009}. This presents unexpected
+challenges (cf. section~\ref{discussion}).
+
+
+
+\noindent
+\textbf{Compute edge co-membership score.} This score  \(c_{ij}\) in
+the {[}0, 1{]} range measures the probability that the two nodes of an
+edge get placed in the same cluster across the sampled partitions. It
+could be computed on any node pair, but we only compute it for connected
+pairs (cf. section~\ref{discussion}).
+
+\begin{equation}
+c_{ij} = \frac{1}{n}\sum_{k<=n}\delta_{ij}(k)
+\end{equation}
+
+Where \(i\) and \(j\) are connected nodes; \(k\) is a sample partition;
+\(\delta_{ij}(k)\) is 1 if \(i\) and \(j\) are in the same cluster in partition \(k\), and 0
+else.
+
+
+
+\noindent
+\textbf{Compute edge-level ambiguity.} We use a straightforward
+heterogeneity metric that can be seen as the Gini coefficient for two
+populations. The underlying idea is that ambiguity is null at the two
+ends of the spectrum: whether the two nodes are \emph{always} in the
+same cluster or \emph{always} in different clusters. Ambiguity is
+maximal in-between, when the chances are equal. This score \(a_{ij}\)
+is normalized to range in {[}0,1{]}.
+
+\begin{equation}
+a_{ij} = c_{ij} * (1-c_{ij}) * 4
+\end{equation}
+
+Where \(i\) and \(j\) are connected nodes.
+
+
+
+\noindent
+\textbf{Compute node-level ambiguity.} We simply aggregate the
+edge-level score at the node level by averaging it. It therefore also
+ranges in {[}0,1{]}.
+
+\begin{equation}
+a_{i} = \sum_{j \ \text{connected to}\  i} \frac{a_{ij}}{d_i}
+\end{equation}
+
+Where \(d_i\) is the degree of node \(i\).
+
+\subsection{Visualization}
+
+Our solution aims to communicate at the same time which clusters are consistent and where (i.e. for which nodes and edges) clusters are ambiguous.
+\clearpage
+
+\begin{table}[]
+\caption{visual variables}
+  \label{fig:figure1}
+\centering 
+\begin{tabular}{lllll}
+\toprule
+\textbf{Visual variable} & \textbf{Represented quantity or quality}                                                                                               &  &  &  \\
+\midrule
+Node size                & Ambiguity \(a_{i}\)                                                                                                                         &  &  &  \\
+Edge hue                 & \begin{tabular}[c]{@{}l@{}}If \((c_{ij} > 0.5)\): cluster-specific hue\\ Else: black (no hue) (the edge is a bridge)\end{tabular} &  &  &  \\
+Edge lightness           & Ambiguity \(a_{ij}\) (high score in white)                                                                                                  &  &  &  \\
+Edge thickness           & Ambiguity \(a_{ij}\) (high score thicker)                                                                                                   &  &  &  \\
+Edge drawing order       & Ambiguity \(a_{ij}\) (high score on top)                                                                                                    &  &  & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+In addition, the background is set to gray and all nodes set to white.
+
+Remarks:
+
+\begin{itemize}
+\item
+  We need to commit to a given partition to determine the edge hue, and
+  for that we use one of the samples chosen arbitrarily. Remark that
+  this choice is most problematic for edges with a low co-membership or
+  a high ambiguity, but the former are visualized in black and the
+  latter in white, which circumvents the problem (black and white have
+  no hue, and therefore do not visualize any cluster).\\
+\item
+  The edge drawing order is not technically a visual variable, but it is
+  key to the success of the demonstrated technique.\\
+\item
+  Conversely, node placement (spatial proximity) does not appear in this
+  table even though it is a prominent visual variable, because the
+  layout is technically independent of our design. However, it interacts
+  strongly with it (cf. section~\ref{discussion}).
+\end{itemize}
+
+
+
+\noindent
+\textbf{Perceptive rationale.} For simplicity, let us assume a sharp
+distinction between bridging edges, in-cluster edges, and ambiguous
+edges (fig.~\ref{fig:figure1}). In reality, the distinction is continuous and determined
+by \(c_{ij}\) and \(a_{ij}\). First, the bridging edges can be
+identified because they contrast in black over the gray background.
+Second, the in-cluster edges contrast in color over the gray background.
+The cluster-specific hue gives a sense of where each \emph{stable}
+cluster is located. Third, the ambiguous edges contrast in white over
+the gray background, the black bridging edges, and the colored
+in-cluster edges. Fourth and finally, the ambiguous nodes contrast in
+white over everything else except ambiguous edges. Like ambiguous edges,
+they indicate where community detection produces inconsistent results.
+We do not display non-ambiguous nodes (size set to zero).
+
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=1\linewidth]{figures/image1.png}
+  \caption{Principle of the visualization. Black edges are consistently bridging over different clusters. Colored nodes and edges are consistently within the same cluster. White nodes and edges are sometimes bridging, sometimes within the same cluster, depending on random factors in the community detection algorithm.}
+  \label{fig:figure2}
+\end{figure}
+
+
+
+\section{Results}
+
+Our method provides new insights to interpret cluster detection results.
+It offers to contextualize cluster attribution outputs by displaying
+which edges are in-cluster, bridging, or ambiguous. Our design maintains
+a basic notion of communities but prioritizes the identification of
+ambiguity over it. It is not meant as a replacement, but as a complement
+to the usual community visualization where ambiguity is typically
+absent.
+
+The resulting visualizations follow the intuition of experts while
+communicating simple facts to beginners. When the network consists of
+well-defined clusters (fig.~\ref{fig:figure2}), community detection is typically stable
+and few nodes will be ambiguous (fig.~\ref{fig:figure2} has few white nodes and edges).
+There is nevertheless value in identifying those nodes for further
+investigation.
+
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=1\linewidth]{figures/image4.png}
+  \caption{Visualization of the ambiguity of modularity clustering on the network from Divided they Blog \cite{Adamic_Glance_2005}, representing the US political blogosphere in 2024, structured in two clusters. Layout Force Atlas 2 \cite{Jacomy_et_al_2014}.}
+  \label{fig:figure3}
+\end{figure}
+
+When the network does not have well-defined clusters (fig.~\ref{fig:figure3}), ambiguous
+nodes and edges are much more common (fig.~\ref{fig:figure3} has more white than
+fig.~\ref{fig:figure2}). Nevertheless, the ambiguity is unevenly distributed and often
+concentrated in the middle of the network, while some areas, often on
+the sides, remain relatively stable (colored subclusters in fig.~\ref{fig:figure3}).
+This follows the intuition that nodes in the middle are disputed by
+different clusters.
+
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=1\linewidth]{figures/image3.png}
+  \caption{Visualization of the ambiguity of modularity clustering on the C. Elegans network, consisting of a nematode's neurons and their connections \cite{Watts_Strogatz_1998}. Layout Force Atlas 2.}
+  \label{fig:figure4}
+\end{figure}
+
+The effect can be seen more clearly in fig.~\ref{fig:figure4}, representing a finite
+square lattice, where communities are consistently found in each corner
+(color in fig.~\ref{fig:figure4}) while the middle and sides are ambiguous (white in
+fig.~\ref{fig:figure4}).
+
+
+
+Our visualization's most immediate impact is revealing how clustering
+results are far more ambiguous than users typically recognize. Rather
+than viewing clusters as fixed underlying structures that algorithms
+struggle to capture accurately, users we observed came to understand
+clusters as inherently fluid realities that resist complete
+categorization. The visualization also prompted them to examine
+``fluctuant nodes'' more carefully, improving the accuracy of their
+analysis.
+
+When users can interpret the visual encoding effectively, they can
+quickly identify which nodes shift most frequently between clusters and
+evaluate how consistent the detected communities actually are. This
+leads to more accurate network interpretation and creates valuable
+opportunities for a more hermeneutic dialogue with the data and the
+computational processes mediating them.
+
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=0.6\linewidth]{figures/image2.png}
+  \caption{Visualization of the ambiguity of modularity clustering on a square lattice (a simple mathematical grid). Layout Force Atlas 2.}
+  
+\end{figure}
+
+We implemented our method in an open access interactive network visualization web application whose code source is licensed under the GPL-3.\footnote{https://lite.gephi.org/}
+
+\section{Discussion} \label{discussion}
+
+\subsection{Interactions between layout and visual variables}
+
+It is worth remarking that the visualization draws effectiveness from
+the fact that in-cluster edges and bridging edges are often spatially
+separated. Our graphic design is harder to read when in-cluster edges
+and bridging edges overlap. Those situations are typically rare because
+community detection is consistent with force-driven layout algorithms
+\cite{Noack_2009} which isolates communities in separate spatial regions.
+Consequently, other layout algorithms like Hive Plot
+\cite{Krzywinski_Birol_Jones_Marra_2012} may not be compatible with our
+graphic design.
+
+\subsection{Omitting disconnected node pairs}
+
+Sampling all node pairs is quadratic and therefore computationally
+expensive, but we can focus instead on all edges, seeing them as node
+pairs (i.e., omit the disconnected pairs). We made this choice to keep
+the algorithm's computational budget in check, but also because we
+visualize the metric on edges, which prevents rendering it on
+disconnected pairs anyway.
+
+As a result, the ambiguity score at the node level reflects the
+ambiguity of the pairs it forms with its neighbors, not with every other
+node. This bias is aligned with the bias of modularity clustering, which
+aims to bring \emph{connected} nodes in the same cluster, but it is not
+aligned with other forms of clustering like the stochastic block model.
+This is not a problem since our algorithm is specific to the Louvain
+method anyway.
+
+It has at least another identified drawback. The ambiguity of any orphan
+node cannot be computed, because it has no neighbors. Similarly, the
+ambiguity of poorly connected nodes is measured less accurately than
+highly connected nodes.
+
+\subsection{Sampling Louvain results is unexpectedly challenging}
+
+Despite the high-level description offered by the Louvain method article
+\cite{Blondel_Guillaume_Lambiotte_Lefebvre_2008}, implementation is
+mostly an exercise left to the reader. We had to engage with it and
+change the implementation. We report here on why and how.
+
+Let us start by remarking that anyone implementing this algorithm has to
+think carefully about which data structures to use and which computation
+strategies to leverage in order to avoid dramatically deteriorating its
+performance guarantees. We observed that implementers had relied on
+common techniques to optimize running time all while ensuring result
+accuracy, notably in the Gephi version.
+
+Unfortunately for us, this had the effect of narrowing down the solution
+landscape, presumably unintentionally. This problem is neither
+concerning nor apparent if you run the algorithm only once, because
+modularity remains effectively and demonstrably maximized. However, when
+we endeavored to sample the landscape of results, we realized that the
+samples were unexpectedly contained within a region around local
+optimum, albeit a good one. Although this was not a problem to the user
+seeking a single result, it meant that our sampling was sensibly biased
+and far from representative.
+
+Acknowledging that implementing the Louvain algorithm for sampling is
+not equivalent to implementing it for one-shot clustering, we had to
+make three interventions:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+
+\item
+  Optimizations that tie-break neighboring communities when they yield
+  an equivalent modularity delta in a deterministic way had to be made
+  random.\\
+\item
+  We had to make the graph traversal truly random, i.e.~over a
+  permutation of the node list. Multiple implementations (notably in
+  Gephi) only select the starting node at random and then iterate over
+  the node list in source data order, which is far from random.\\
+\item
+  As introduced in \cite{Traag_Waltman_Van_Eck_2019}, some
+  implementations maintain a queue of neighbors that are relevant to
+  visit later, in order to avoid needless delta computations when
+  performing multiple traversals of the graph at each iteration of the
+  algorithm. This optimization has to be dropped to correctly sample the
+  landscape of solutions.
+\end{enumerate}
+
+The necessity of such intervention yields a valuable lesson. Visualizing
+ambiguity as foreground information conflicts with the common practice
+of arbitrarily reducing sources of randomness for optimization purposes.
+Indeed, in our situation, randomness is not an inconvenience to mitigate
+but a valuable source of knowledge about algorithmic behavior. We
+leverage randomness as a proxy for degrees of freedom within the
+algorithm that we aim to probe, and it is therefore important to
+preserve them in order to study the algorithm's behavior accurately.
+
+\subsection{Extending our design to other clustering methods}
+
+Our algorithm could be easily extended to algorithms that use similar
+strategies to the Louvain method, which includes the Leiden method \cite{Traag_Waltman_Van_Eck_2019} and Bayesian inference \cite{Zhang_Peixoto_2020}. The two requirements for applying our approach
+are the non-deterministic nature of the algorithm, and its goal to
+capture \emph{assortative} clusters.
+
+\subsection{Applications}
+
+Our system allows identifying whether a network is self-consistently
+partitioned by a given clustering algorithm, and if there is inconsistency,
+where it lies. First, as context for node classification, it highlights
+areas of the network that should not be considered
+accurately classified (e.g., which neurons should not be reduced to
+a role in a local cluster?). Second, and more importantly, it allows
+identifying areas of interest for scholars whose research questions
+involve the ambiguity, polyvalence, or contradiction of node categories
+(e.g., which parliamentarians vote unlike their political affiliation?).
+In both cases, it brings nuance to the interpretation of the network's
+community structure.
+
+\section{Conclusion}
+
+This work demonstrates that ambiguity in community detection algorithms
+can constitute substantive knowledge rather than incidental context. By
+systematically measuring and visualizing the variability in clustering
+outcomes, we provide humanities scholars with a tool to embrace
+interpretive multiplicity rather than seeking singular, definitive
+categories to describe the multifaceted phenomena they study.
+
+Our visualization method reveals what is typically hidden: algorithmic
+degrees of freedom that produce variability in the presence of undefined
+cluster boundaries. This transparency enables more nuanced
+interpretations of network structures and encourages scholars to engage
+critically with computational methods. Rather than treating algorithmic
+ambiguity as a limitation to overcome, we propose it as a valuable
+dimension of analysis that can deepen the hermeneutic understanding of
+relational phenomena.
+
+Future work should extend this approach to other clustering methods,
+conduct empirical studies to refine our design, and explore how
+ambiguity visualization can be integrated into the hermeneutic practices
+that define humanistic scholarship.
+
+\printbibliography %Prints bibliography
+
+\end{document}

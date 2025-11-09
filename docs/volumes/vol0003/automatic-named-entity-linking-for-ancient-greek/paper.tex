@@ -1,0 +1,458 @@
+% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
+% *Anthology of Computers and the Humanities*. ADD THE OPTION
+% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
+% DO NOT change the documentclass
+\documentclass[final]{anthology-ch} % for the final version
+%\documentclass{anthology-ch}         % for the submission
+
+% LOAD LaTeX PACKAGES
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{multirow}
+
+
+% ADD your own packages using \usepackage{}
+
+% TITLE OF THE SUBMISSION
+% Change this to the name of your submission
+\title{Automatic Named Entity Linking for Ancient Greek with a Domain-Specific Knowledge Base}
+
+% AUTHOR AND AFFILIATION INFORMATION
+% For each author, include a new call to the \author command, with
+% the numbers in brackets indicating the associated affiliations 
+% (next section) and ORCID-ID for each author.  
+\author[1]{Marijke Beersmans}[
+  orcid=0009-0002-0826-7319
+]
+
+\author[1]{Evelien de Graaf}[
+  orcid=0009-0006-8650-1595
+]
+
+\author[1]{Alek Keersmaekers}[
+  orcid=0000-0003-4403-1143
+]
+
+ \author[1]{Mark Depauw}[
+   orcid=0000-0003-0460-3987
+ ]
+
+\author[1]{Tim Van de Cruys}[
+  orcid=0000-0002-4650-0444
+]
+
+% While we encourage including ORCID-IDs for all authors, you can
+% include authors that do not have one by definining an empty ID.
+\author[1]{Margherita Fantoli}[
+  orcid=0000-0003-3191-4860
+]
+
+
+% There should be one call to \affiliation for each affiliation of
+% the authors. Multiple affiliations can be given to each author
+% and an affiliation can be given to multiple authors. 
+\affiliation{1}{Faculty of Arts, KU Leuven, Leuven, Belgium}
+% \affiliation{2}{Faculty of Arts, KU Leuven, Leuven, Belgium}
+
+% KEYWORDS
+% Provide one or more keywords or key phrases seperated by commas
+% using the following command
+\keywords{Named Entity Linking, Ancient Greek, Persons, BLINK, Paulys Realencyclopädie}
+
+% METADATA FOR THE PUBLICATION
+% This will be filled in when the document is published; the values can
+% be kept as their defaults when the file is submitted
+\pubyear{2025}
+\pubvolume{3}
+\pagestart{507}
+\pageend{523}
+\conferencename{Computational Humanities Research 2025}
+\conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
+\doi{10.63744/kYt0eVdjxjnt}  
+\paperorder{32}
+
+\addbibresource{bibliography.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HERE IS THE START OF THE TEXT
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Named Entity Linking, or disambiguating named entities by linking them to a knowledge base, is an important Natural Language Processing task, especially in the humanities. In this paper, we examine the performance of the state-of-the-art entity linking model BLINK in connecting Ancient Greek person mentions to a domain-specific German-language knowledge base. To train the model, we create both gold-standard data through manual annotation and noisier silver data through automatic extraction. We then evaluate whether incorporating the latter improves performance. Our findings suggest that, overall, the results remain suboptimal for Ancient Greek. Increasing training data, even through automatic methods, shows promise. However, as it stands, using BLINK directly would be ill-suited for Named Entity Linking in the target setting. We discuss possible causes and suggest areas for improvement.
+\end{abstract}
+
+\section{Introduction}\label{introduction}
+
+Named Entity Linking (NEL), also known as Named Entity Disambiguation (NED), is a Natural Language Processing (NLP) task that involves automatically linking named entities, often people, locations, and organizations, to entries in a predefined knowledge base (KB), such as Wikipedia or Wikidata. This process disambiguates the entities, supporting various information retrieval tasks, including Question Answering \cite{Shen_Wang_Han_2015}. However, NEL remains challenging due to its reliance on extra-textual contextual information and the scarcity of annotated training data, which often requires expert knowledge to produce \cite{vollmers-etal-2025-contextual}.
+
+In the humanities, particularly in digital classics, entity-based indexing is in high demand. Disambiguated entity information can enhance text accessibility for researchers, streamline historians’ workflows, and support the otherwise time-intensive process of manual semantic annotation \cite{Ehrmann_Hamdi_Pontes_Romanello_Doucet_2021}.
+
+This paper explores the challenges and limitations of automating NEL for individuals from antiquity on a corpus of Ancient Greek literary texts, in conjunction with a domain-specific database. As such, our experiment presents three main challenges:
+
+\begin{itemize}
+  \item Ancient Greek is rarely included in pre-trained language models used by modern NEL systems.
+  \item There is no Ancient Greek Wikipedia, the typical KB target for such systems. The task is therefore inherently cross-lingual.
+  \item We rely on a domain-specific KB whose digitization is incomplete, limiting coverage and consistency. Unlike generic KBs like Wikidata, there are also fewer associated resources available, such as an internal hyperlink structure or attributed metadata.
+\end{itemize}
+
+In addition, we examine the potential for integrating automatic NEL into a human-in-the-loop verification process. This work is part of a broader project aimed at performing large-scale quantitative analysis of person mentions in Ancient Greek and Latin texts via Social Network Analysis.
+
+We focus on two main research questions:
+
+\begin{itemize}
+   \item How accurately can a retrieval-and-ranking approach based on transformer models (viz. BLINK \cite{Wu_Petroni_Josifoski_Riedel_Zettlemoyer_2020}) perform NEL on Ancient Greek texts, and what are its limitations?
+  \item Does the inclusion of more, yet noisier data created through rule-based means enhance performance compared to relying solely on a smaller, human-annotated dataset?
+\end{itemize}
+
+The paper is structured as follows: Section \ref{sec:related_work} reviews the related work in automated NEL and its limited application in classical studies. Section \ref{sec:prelim} details three important preliminaries for this research: the Trismegistos (TM) database, the GLAUx corpus, and the Knowledge Base that was created based on the Wikisource version of Paulys Realencyclopädie. Section \ref{sec:set-up} explains our experimental set-up. Section \ref{sec:data} details the data creation process. Section \ref{sec:models} describes the BLINK model. Sections \ref{sec:results}, \ref{sec:analysis}, and \ref{sec:discussion} present results, error analysis, and performance discussion, respectively. Finally, Section \ref{sec:conclusion} summarizes our findings and outlines future work. The code and data will be published on \href{https://github.com/MarijkeBeersmans/CHR_code_Greek_NEL.git}{GitHub}.
+
+\section{Related Work}\label{sec:related_work}
+Wikification -the process of linking entities in a text to their corresponding Wikipedia entries- has received significant attention over the past two decades. Early experiments in the 2000s relied on hand-crafted features \cite{bunescu-pasca-2006-using, cucerzan-2007-large}, while later approaches adopted deep learning techniques that use vector representations of entity mentions and KB entries to identify the most likely candidate via similarity measures \cite{yamada-etal-2016-joint}.
+
+More recently, pre-trained transformer models have been integrated into this pipeline and fine-tuned to optimize the similarity between mentions and their corresponding KB entries \cite{yamada_global_2022, chen_improving_2020}, as reviewed in \cite{sevgili_neural_2022}. BLINK is a prominent example of this class of models \cite{Wu_Petroni_Josifoski_Riedel_Zettlemoyer_2020}. In parallel, generative approaches have emerged, where models generate the correct entity label as a string, restricted to valid entries in the KB, as exemplified by GENRE \cite{cao2021autoregressive}.
+
+Our experiment constitutes a case of cross-lingual entity linking, as it involves linking mentions in Ancient Greek to a German-language KB. While most research on cross-lingual entity linking has focused on linking low-resource languages to the English Wikipedia, due to the limited size or absence of other language-specific Wikipedias, models often fail to generalize to texts outside of Wikipedia, which is typically their training domain \cite{fu_design_2020}. Recent multilingual approaches aim to address this by making the task language-agnostic with respect to the KB \cite{botha_entity_2020, tsai_multilingual_2024}. Multilingual adaptations of transformer-based NEL models have been developed for this purpose \cite{Plekhanov_Kassner_Popat_Martin_Merello_Kozlovskii_Dreyer_Cancedda_2023, de_cao_multilingual_2022}.
+
+Despite these advances, NEL has rarely been applied to historical data. When it has, the focus has primarily been on historical newspapers, as in the HIPE 2020 shared task, which included NER and NEL for 19th- and 20th-century newspapers in French, German, and English \cite{Ehrmann_Romanello_Flückiger_Clematide_2020, franke-maier_named_2021}. More closely aligned with our work is the HIPE 2022 task, which also included 19th-century commentaries on classical texts in these three languages \cite{Ehrmann_Romanello_Najem-Meyer_Doucet_Clematide_2022}. More recently, \textcite{graciotti_musical_2025} applied entity linking to English historical documents on musical heritage, proposing the integration of knowledge-base-derived constraints to improve the historical plausibility of predictions.
+
+Beyond the case of 19th-century commentaries, automated entity linking has not yet been applied to texts from antiquity. However, NEL’s precursor task, Named Entity Recognition (NER), has been the subject of several studies in classical languages \cite{Palladino_Yousef_2024, Erdmann_Brown_Joseph_Janse_Ajaka_Elsner_2016, Chastang_Aguilar_Tannier_2021}.\footnote{This imbalance between NER and NEL datasets and models is common across many languages, as shown by \textcite{guellil_entity_2024}.} Some annotation tools, such as Recogito, offer automated NER for places and suggest candidate entities using authority files, primarily through surface-form matching. In most cases, however, NEL in the field of classics is still performed manually. 
+In this paper, we apply a state-of-the-art NEL model to an Ancient Greek corpus for the first time. We also introduce the first dataset for Ancient Greek NEL created through an automated approach that leverages interlinked resources.
+
+\section{Preliminaries} \label{sec:prelim}
+The following section will detail three important resources we used to build and annotate our datasets and assess our Named Entity Linking pipeline: databases from the Trismegistos (TM, henceforth) project, the GLAUx corpus, and the knowledge base used to link the entities to: \textit{Paulys Realencyclopedie der Classischen Altertumswissenschaft}.
+
+\subsection{TM database} \label{sec:TM}
+TM is an expansive metadata platform that focuses on the Ancient World. Particularly relevant for this study are its TM Nam IDs and TM NamVar IDs, unique name and name variants identifiers based on onomastic gazetteers the TM team has gathered over the years. For an example of the TM information we incorporate, see Table \ref{tab:RE_nam_namvar}.
+
+\subsection{The GLAUx corpus} \label{sec:GLAUx}
+The GLAUx corpus \cite{Keersmaekers_2021} contains Ancient Greek texts of various genres from the 8th century BCE to the 4th century CE (about 20 million tokens). All texts have been linguistically enriched with morphological tags, lemmas and dependency information largely automatically. 
+
+\subsection{A domain-specific KB} \label{sec:kb} 
+At present, there is no dedicated KB for Ancient Greek and Latin for NEL of people \cite{broux_cooperation_2025}. There are several \textit{separate} resources that collect people or names of entities, for example the \href{https://search.lgpn.ox.ac.uk/index.html}{Lexicon of Greek Personal Names} (LGPN) \cite{LGPN}, \href{https://manto.unh.edu/viewer.p/60/2616/scenario/1/geo/}{MANTO} \cite{MANTO} for mythological people, \href{https://pir.bbaw.de/}{Prosopographia Imperii Romani} (PIR) \cite{DigitalPIR} for persons alive during the Roman Empire, and \href{https://trismegistos.org/}{Trismegistos} (TM) \cite{depauw_trismegistos_2014} for a wide array of attestations of named entities. As all of these resources have specific topical, chronological, or geographic focuses, they are not suitable as a comprehensive KB for identifying \textit{all individuals} mentioned in a large portion of Ancient Greek and Latin literature. Other annotation projects that have linked people in Ancient Greek and Latin texts have relied on project specific identifiers,\footnote{E.g. the \href{https://github.com/STEPBible/STEPBible-Data/blob/master/TIPNR\%20-\%20Translators\%20Individualised\%20Proper\%20Names\%20with\%20all\%20References\%20-\%20STEPBible.org\%20CC\%20BY.txt}{STEPBible} identifiers.}  Wikipedia,\footnote{E.g. The \href{https://beyond-translation.scaife-viewer.org/reader/urn:cts:greekLit:tlg0012.tlg002.perseus-grc2:1}{Odyssey}, featuring mythical people, annotated by Josh Kemp \cite{kempTranslationBuildingBetter2021}.} and Wikidata\footnote{E.g. \href{https://www.lagl.org/tools/harpocration}{Digital Harpocration}.} for disambiguation. 
+ 
+No specific preference appears to be present in the community, but \textcite{degraafNescioCarneadesIste2024} demonstrated that \textit{Paulys Realencyclopädie der classischen Altertumswissenschaft} (\textit{RE}) is suitable for NEL purposes.\footnote{However, this study also stressed certain limitations of the \textit{RE} as a KB, albeit affecting only a minority of cases.  First and foremost, the \textit{RE} is not fully exhaustive for people mentioned. In addition, several examples of duplication and conflation of entities in the \textit{RE} can be found.}
+
+The \textit{RE} (published between 1893 and 1978) is an expansive reference work on classical antiquity and it comprises around 100,000 entries contributed by leading classical philologists. A significant portion of this work has already been digitized through the German Wikisource project.
+As of now, the full work is available as scans, alongside access to the so-called \textit{Volltext} (full text) of over 65,000 articles. Additionally, a searchable index or \textit{Register} of keywords (\textit{Stichwörter}) with brief summaries for all entries (\textit{Kurztext}) is provided to facilitate navigation. Figure~\ref{fig:RE_kurz_voll} illustrates the different components of the entry for the hero Abas (\href{https://de.wikisource.org/wiki/RE:Abas_3}{Abas 3}).
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.95\linewidth]{figures/RE_kurz_voll_Abas_3.png}
+  \caption{"Abas 3" in the Wikisource edition, highlighting \textit{Volltext} in red and \textit{Kurztext} in green.}
+  \label{fig:RE_kurz_voll}
+\end{figure}
+
+In collaboration with the developers of the TM database, a local version of the \textit{RE} was developed based on this \href{https://de.wikisource.org/wiki/Paulys_Realencyclop%C3%A4die_der_classischen_Altertumswissenschaft/Register}{Wikisource Register}, which was integrated into the TM database and pre-processed semi-automatically.\footnote{A search tool facilitating access to the \textit{RE} based on this work is available at \url{https://www.trismegistos.org/real}.} The process focused primarily on identifying entries that describe individuals. For the purpose of linking, we employ a broad definition of a \textbf{person} as any identifiable single individual, including deities and anthropomorphic mythological figures. This decision was made to ensure interoperability of our annotation with NER systems \cite{Beersmansetal_2024, beersmans-etal-2023-training}. The currently available training data for NER in antiquity rarely, if ever, make a distinction between people and gods. Beside this, it would be conceptually challenging to distinguishing the two categories, for instance in cases such as Herakles and Jesus. After this filtering, our KB contains in total 54,180 entries manually identified as persons.
+For these, we restored the complete name, where possible, and split it into its constituent elements. Each of these was linked by members of the TM team to the corresponding TM name variant and name, TM NamVar and TM Nam ID respectively \cite{broux2015onomastic}. Table \ref{tab:RE_nam_namvar} shows these additions, while Figure \ref{fig:flowchart_kb} shows the contributions that the various projects have made to the final knowledge base used in this paper.  
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.7\linewidth]{figures/flowchar_kb_Paper_CHR_final.png}
+  \caption{Overview of contributions to the \textit{RE} Knowledge Base}
+  \label{fig:flowchart_kb}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\begin{tabular}{ll}
+\hline
+\textbf{Entity} & Abaskantos 3 \\
+\hline
+\textbf{Complete Name} & Flavius Abascantus \\
+\hline
+\textbf{Name Components} & \begin{tabular}[c]{@{}l@{}}Flavius \\ Abascantus\end{tabular} \\
+\hline
+\textbf{Flavius} & \begin{tabular}[c]{@{}l@{}}TM Nam ID: 11846 \\ TM NamVar ID: 30829\end{tabular} \\
+\hline
+\textbf{Abascantus} & \begin{tabular}[c]{@{}l@{}}TM Nam ID: 8279 \\ TM NamVar ID: 120213\end{tabular} \\
+\hline
+\end{tabular}
+\caption{Complete name, Nam ID and NamVar ID for Abaskantos 3 as added to the \textit{RE}}
+\label{tab:RE_nam_namvar}
+\end{table}
+
+We are committed to maintaining our local instance in close alignment with the online version, ensuring consistency. In addition, we are constantly refining the structured attributes associated with person entities, such as relations to other entities or temporal information.
+
+\section{Experimental set-up} \label{sec:set-up}
+\textcite{Shen_Wang_Han_2015} defined NEL as follows: given a set of entities $E$ in a predefined KB and a set of textual mentions $M$ in a text corpus, the objective is to link each mention $m\in M$ to its corresponding entity $e \in E$. This definition assumes that the mention boundaries in the texts are known or defined beforehand, for example, through NER. In the present study, gold-standard mention boundaries were available to the entity linking model. The example below uses the \textit{[Ms]} (mention start) and \textit{[Me]} (mention end) tokens to indicate them. End-to-end entity linking, which also includes the step of identifying the entity mentions, is beyond the scope of this paper.
+\begin{itemize}
+\item \textbf{Example mention}: \emph{...γὰρ ἡ Κύπρις πικρά [Ms] Ἀχαιóς [Me] φησιν ἐν Αἴθωνι σατυρικῷ. παρ’ οὗ ὁ σοφὸς Εὐριπίδης λαβὼν ἔφη...} \\ 
+(`...since Cypris is a cruel goddess [...] Achaeus says in the satyric drama \textit{Aethon}. From him the wise Euripides has borrowed the idea and has said...', Athenaeus \textit{Deipnosophistae}, VI 270C, Transl. Charles Burton Gulick)
+\item \textbf{Example entity (Kurztext)}: Achaios 6, A. von Eretria, das grosse Dionysosfeste feierte, Tragiker im 5. Jh. v. Chr. \\(Achaios 6, A. from Eretria, who celebrated the Great Dionysia, tragedian in the 5th century B.C., Transl. our own)
+\end{itemize}
+As previously discussed, our aim is to specifically link individuals from antiquity. Our entity set $E$ concerns the filtered people from the Wikisource version of the German-language standard work \textit{Paulys Realencyclopädie der classischen Altertumswissenschaft} (\textit{RE}, henceforth). This KB is comprehensive and crafted by experts, but it lacks certain features typically found in more widely used, digital born resources, such as Wikipedia’s internal hyperlink structure. Since, mainly for reasons of copyright, not all the entries in the \textit{RE} have been fully digitized, we trained different models using two different entity sets: one where we only use a short summarizing description, usually between 5 and 10 words, which is available for nearly every entity (the \textit{Kurztext}) and one where we include the full entry text (\textit{Volltext}) where available and the \textit{Kurztext} otherwise (see Section \ref{sec:kb} for more information). We will refer to them as the \textit{Kurztext} model and the \textit{Volltext} model below.
+
+We use two different ways of creating data for this setup, exploiting both manual annotation (see Section \ref{sec:gold_data}) and existing linked identifiers present in the GLAUx corpus to create linked mentions (see Section \ref{sec:silver_data}). However, even using both strategies, we are still operating in a low-data setting (~10,000 mentions or less).
+
+\section{Data} \label{sec:data}
+Given the KB's specificity, no annotated data were available for this task. Because it is time-consuming and resource-intensive, we only created a limited number of human-annotated ("gold") data for this study. We also explored ways to supplement it using automatic, rule-based annotation ("silver" data). 
+
+Inherently, the silver data were of lower quality than that of a human-annotated gold standard. As such, we decided to compare two training scenarios. In the first, we used only the gold data. In the second, both the gold and the silver data were including at training time. This allowed us to assess whether more, but slightly noisier data would improve the model's performance. In this section, we discuss the data creation process and the final dataset.
+
+\subsection{Gold data} \label{sec:gold_data} 
+
+The gold data was developed as part of a case study focusing on people co-occurring with the philosopher Plato. The texts included in the gold corpus are listed in Table~\ref{tab:gold_plato}. In these texts, all person mentions were manually linked to their corresponding entries in the \textit{RE} by two domain experts, Evelien de Graaf and Herbert Verreth. This annotation process initially yielded 17,415 person mentions, corresponding to 2,749 unique individuals. However, the final gold dataset includes significantly fewer mentions and individuals due to several exclusion criteria. First, mentions linked to individuals not recorded in the \textit{RE} (i.e., unlinkable or NIL mentions) were excluded. These account for 994 NIL entities and 3,686 mentions. An example of such a NIL mention is \emph{Βακχεῖος ὁ τὴν ἐπιστολὴν φέρων} (`Baccheius, who carries this letter', Plato, \textit{Epistulae}, 390c, Transl. our own). This individual has no entry in the RE.\footnote{A full paper by E. de Graaf on the annotation process is forthcoming. Complexity for this task is caused primarily by historical uncertainty, ie. it is not always easy to identify an individual in the text. In cases like these, we have always followed the identification as made by the authors of the \textit{RE} to assure consistency. An example of this is the individual Echecrates mentioned in Plato \textit{Epistulae}, 9.358b, where scholars have argued that the description as νεανίσκον, a youth, makes identification with Echecrates from Phleius impossible \cite{nailsPeoplePlatoProsopography2002, helferPlatoLettersPolitical2023}. However, the editors of the \textit{RE} entry Echekrates 3 do consider the identification probable (Wellmann:"schwerlich ein anderer"/ Oldfather: "wohl richtig"). Although the identification proposed by Nails and Helfer is both more recent and arguably more plausible, we retain the earlier identification with Echekrates 3 found in the \textit{RE} to maintain consistency. The vast majority of cases of uncertainty, however, belongs to the NIL category and will therefore not be of any concern for this paper.}
+
+Second, we removed annotations that were marked as groups (e.g. `the platonists') or as entities named after people or containing personal names (e.g. the Aeneid). While they do in fact contain a reference to an individual (Plato, Aeneas), the primary target of the mention is not the person but the group or work, and this might have a negative effect on the model's performance.
+
+Third, we excluded nearly 5,000 mentions simply because they hadn’t yet been processed as multi-token entities (e.g., “Iulius Caesar” was still annotated as two separate mentions). This was a practical decision based on the current state of processing, not due to selective filtering. Our goal is to consistently annotate all multi-token mentions, and these will be included as such in the final version.
+
+After applying these filters, the resulting dataset comprises 8,440 mentions and 1,230 unique individuals. A breakdown of these counts by work is provided in Table~\ref{tab:gold_plato}.
+
+\begin{table}[ht]
+\centering
+    \begin{tabular}{llc}
+        \textbf{Author} & \textbf{Work} & \textbf{Mentions}\\
+        \toprule
+        Plato & \textit{Epistulae} & 322\\
+        Aristoteles & \textit{Metaphysica} & 224 \\
+        Strabo & \textit{Geographica} & 430\\
+        Dionysius Halicarnassensis & \textit{De Demosthenis dictione} & 270 \\
+        Plutarchus & \textit{Quaestiones convivales} & 1,138 \\
+        Claudius Aelianus & \textit{Varia historia} & 907 \\
+        Clemens Alexandrinus & \textit{Stromata} & 1,205\\
+        Origenes & \textit{Contra Celsum} & 1,723\\
+        Diogenes Laertius & \textit{Vitae philosophorum} & 2,221 \\
+        \midrule
+        & Total mentions: & 8,440\\
+        & of which unique entities: & 1,230\\
+        \bottomrule
+\end{tabular}
+    \caption{Gold data "Plato case study": manually annotated person mentions for a case study on Plato.
+    }
+    \label{tab:gold_plato}
+\end{table}
+
+\newpage
+\subsection{Silver data} \label{sec:silver_data} %Marijke & Margherita
+The following section details the silver (automatically linked) data, which were included as training data in the final experiments to ascertain whether more, yet noisier data would improve model performance. The silver data were created following the pipeline presented in Figure~\ref{fig:silver_pipeline}. 
+
+First, cited works from the \textit{Volltexts} of \textit{RE} entries were retrieved automatically, to then be expanded and identified using experimental algorithms created by the TM team\footnote{The rule-based algorithms are part of the internal workflow of the TM database and are not currently published. An article by M. Depauw, B. Thijs, F. Pietowski and L. Benrais is in preparation. We were able to use preliminary version through an API.}. 
+If the relevant text was available in the GLAUx corpus, the expanded form could be linked to it. When source metadata concerning the specific text passage was provided, meaning information about which book, chapter, paragraph etc. the \textit{RE} entry is said to appear in, it was included and used to match to the correct passage in GLAUx.
+
+Every entry in the \textit{RE} was linked to the full name of the person using the TM Nam IDs, as described in Section \ref{sec:kb},\footnote{The database TM Names collects all names attested for the Ancient Graeco-Roman world and links them to all the attested variants. Because of this, even if a text registers a different variant of the name than the one chosen by the \textit{RE}, the matching is still possible. See \url{https://www.trismegistos.org/ref/about_naw.php} for more information.} which are in turn linked to the lemma ID of the GLAUx corpus. Because of this, it was possible to retrieve the words in the passage of the GLAUx corpus which corresponded to the mention(s) of the name of the person described in the \textit{RE} entry. If there were multiple mentions in a single passage, all were regarded as separate mentions of the entity, which is why there are more mentions (5,290) than passages found (4,961) in Table \ref{tab:pipeline_overview}.
+
+The approach made it possible to go from the entry of the \textit{RE} discussing the Ancient Greek tragedian Achaios (Achaios 6), who, based on the \textit{RE Volltext} entry, is mentioned in the sixth book, section 270C, of Athenaeus \textit{Deipnosophistae}, to the corresponding passage in the GLAUx corpus; we could then annotate the token Ἀχαιóς (Achaiòs)  as a mention of Achaios 6 of the \textit{RE}.\footnote{We excluded the cases in which the specific passage only gave information about the book in which the person was mentioned, because it is a very broad unit that could potentially introduce errors in the pipeline.}
+
+Completing the full pipeline was nevertheless only possible in a minority of cases, due to errors in the retrieval phase and lack of standardization between the divisions of the texts used in the \textit{RE} and in the GLAUx corpus: this significantly reduced the final number of silver annotations.
+A short error analysis of 50 randomly selected entity mentions from the final set revealed that this approach establishes correct links from a Greek text to the KB in 41 out of 50 cases. Mistakes occurred most often due to mentions of entities with the same name appearing in the same passage. Table \ref{tab:pipeline_overview} describes the final numbers for the silver data creation.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.95\linewidth]{figures/pipeline silver data.png}
+  \caption{Schematic of the silver (automatically linked) data creation pipeline.}
+  \label{fig:silver_pipeline}
+\end{figure}
+
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lr}
+ & \# of (potential) links  \\
+\toprule 
+expanded sources from the \textit{RE} entries & 68,241  \\
+Of which in GLAUx corpus & 20,706 \\
+Of which nam ID and lemma ID could be linked & 13,880 \\
+Of which passage found (\textit{books} excluded) & 4,961\\
+\midrule
+Total mentions & 5,290 \\
+Of which unique entities & 2,104 \\
+\bottomrule
+\end{tabular}
+\caption{Overview of the different components of the automated pipeline for data creation and the number of results they yielded.}
+\label{tab:pipeline_overview}
+\end{table}
+
+\subsection{Final dataset} %Marijke
+The models were trained according to two different data scenarios; one where only the gold data was used and one where the silver data was additionally included. Since some entities appeared very frequently in the gold dataset, due to it being created for a narrowly focused case study, we decided to cap their occurrences at 50 to prevent them from skewing the overall distribution.\footnote{Hence the different counts in this part compared to those reported in Section \ref{sec:gold_data}.} Finally, we split the mentions into train, validation, and test sets, ensuring that there was no overlap in entities between them. This way, the model would have to link mentions exclusively to unseen entities during test time, and we could fully assess the generalizing capabilities of the model. Final mention counts for each set can be found in Table \ref{tab:final_entity_counts}.
+
+\begin{table*}[ht]
+\centering
+\begin{tabular}{lrrrrrr}
+\toprule
+& \multicolumn{2}{c}{{\bf train}} & \multicolumn{2}{c}{{\bf validation}} & \multicolumn{2}{c}{{\bf test}}\\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7}
+ & gold + silver & gold & gold + silver & gold & gold + silver & gold \\
+\midrule 
+Mention count & 9,066 & 4,851 & 1,143 & 597 & 1,010 & 567 \\ 
+Of which unique entities & 2,552 & 984 & 319 & 123 & 319 & 123 \\ 
+\bottomrule     
+\end{tabular}
+\caption{Number of mentions in the train, validation and test set for both data quality scenario's}
+\label{tab:final_entity_counts}
+\end{table*}
+\newpage
+
+\section{Model: BLINK}\label{sec:models}
+In this section, we introduce the model we used for this task, its training procedure, and hyperparameters.
+
+Given the reliance on a domain-specific KB with only textual descriptions of the entities (i.e. no structured data like, for instance, Wikidata), we chose to test the BLINK system \cite{Wu_Petroni_Josifoski_Riedel_Zettlemoyer_2020}. BLINK (entity linking with BERT) is a conceptually simple entity linking approach that nonetheless performs well compared to other, more complex and/or resource-intensive systems \cite{sevgili_neural_2022}. The model is transformer-based and makes no assumptions about the nature of the KB, except that a description of each entity should be present. 
+
+BLINK uses a two-stage entity linking approach. In the first stage, both the mentions and the entity descriptions in the KB are encoded using two separate BERT encoders, commonly referred to as a bi-encoder or dual encoder strategy. The mention encoding is then compared to all the entity encodings using dot product similarity. Subsequently, the top $k$ most similar entities are retrieved for the second step. At training time, the bi-encoder is optimized to maximize the similarity of the mention and the correct entity compared to the mention and in-batch negatives. 
+
+During the second stage, the mention is concatenated to each of the top $k$ most similar entities. Those concatenations are then jointly encoded (cross-encoder). They are subsequently fed through an added linear layer, which outputs a score for each mention-entity combination, making the final decision. The second step is slower and more resource-intensive, but it produces more accurate results by allowing the system to attend jointly between the mention and the entity. 
+
+Bi-encoder performance is evaluated using \textit{recall@topk} (whether or not the correct entity is present in the retrieved set). For all our experiments, the top $k$ was fixed to 64, following the original paper. Other hyperparameters can be found in Table \ref{tab:combined_hyperparameters}. We follow the hyperparameters used by \textcite{Wu_Petroni_Josifoski_Riedel_Zettlemoyer_2020} in their zero-shot setting, not because we operate in a zero-shot setting ourselves, but because their setup involved training a transformer model comparable in size to ours. In the \textit{Volltext} scenario, it was necessary to extend the bi-encoder training to ten epochs. Training for only five epochs resulted in suboptimal model convergence.
+
+BLINK was originally tested in an English-only setting, although it needs to be mentioned that a multilingual implementation of the bi-encoder exists \cite{Plekhanov_Kassner_Popat_Martin_Merello_Kozlovskii_Dreyer_Cancedda_2023}. The full system can be adapted to a multilingual setting using multilingual transformers. 
+
+We used a multilingual base transformer instead of BERT: UGARIT-grc alignment \cite{Yousef_Yousef_Palladino_Shamsian} (below UGARIT). This is an XLM-RoBERTa model that contains German in its pre-training data and was then further trained using various tasks on Ancient Greek texts. While other multilingual encoder-only transformers that contain Ancient Greek exist (e.g. PhilBerta \cite{Riemenschneider_Frank_2023}), this is the only one that has seen both Ancient Greek and German during its training stages. To improve representations, we added another stage of MLM training on the \textit{RE} texts and on the GLAUx corpus, similar to \textcite{Logeswaran_Chang_Lee_Toutanova_Devlin_Lee_2019}, before finetuning the models for NEL.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lr}
+\toprule
+\multicolumn{2}{c}{\textbf{Bi-encoder hyperparameters}} \\
+\midrule
+context length & 128 \\
+epochs & 5 (10)\\
+learning\_rate & 2e-5 \\
+batch size & 32 \\
+top $k$ & 64 \\
+\midrule
+\multicolumn{2}{c}{\textbf{Cross-encoder hyperparameters}} \\
+\midrule
+context length & 256 \\
+epochs & 2 \\
+learning rate & 1e-5 \\
+batch size & 1 \\
+\bottomrule
+\end{tabular}
+\caption{Bi-encoder and cross-encoder hyperparameters of the BLINK model}
+\label{tab:combined_hyperparameters}
+\end{table}
+
+\subsection{Baseline}\label{sec:baseline}
+The bi-encoder approach was tested against the following baseline: its recall@top64 was compared to a method that backlinked the mention’s lemma ID to its Nam ID, retrieving all associated \textit{RE} entities. In other words, the baseline tries to retrieve all entities in the RE that match the target name in the text, allowing us to assess whether the bi-encoder could outperform a simple rule-based match. Linking via the TM Nam ID instead of via the surface form, allowed us to bypass the difference in scripts between Ancient Greek and German (TM Nam IDs are linked to surface forms both in latinized and Ancient Greek script). In cases where the resulting list contained more than 64 entities, a random subset of 64 was selected. For multi-token mentions, all lemmas and Nam IDs of the individual tokens were considered.
+
+\section{Results}\label{sec:results}
+
+\begin{table*}[ht]
+\centering
+\begin{tabular}{lrrrr}
+        \toprule
+        & & \multicolumn{3}{c}{{\bf gold test set (567 entities)}} \\
+        \cmidrule(lr){3-5}
+             & & rc@64 & cross acc & overall acc\\
+         \midrule
+\multirow{2}{*}{\bf gold} & Kurz (5 epochs) & 51 \% & 45 \% & 23 \% \\ 
+                                & Voll (10 epochs) & 58 \% & 30 \% & 17 \% \\ 
+\multirow{2}{*}{\bf gold + silver} & Kurz (5 epochs) & 71 \% & 50 \% & 35 \% \\ 
+                   & Voll (10 epochs) & 64 \% & 35 \% & 23 \% \\
+                   \midrule
+\bf baseline & & 56 \% & N/A & N/A \\ 
+\bottomrule     
+\end{tabular}
+\caption{Results of the BLINK model (bi-encoder recall@64, cross-encoder accuracy and total accuracy) in the \textit{Kurztext}/\textit{Volltext} scenarios on the gold-standard test set}
+\label{tab:results BLINK}
+\end{table*}
+
+Table \ref{tab:results BLINK} shows the results of the BLINK models for the gold test set. For completeness sake, the results on the test set including the silver test data are reported in Appendix \ref{appdx:a}. We do not base our analysis on them because the silver test data was automatically created and therefore not entirely reliable for testing purposes, as discussed in Section \ref{sec:data}. For the bi-encoder, we report the recall when retrieving the top 64 entities (rc@64), for the cross-encoder we report the accuracy on the entities it received from the bi-encoder. Finally, we report the overall accuracy. 
+
+The results are significantly worse those than benchmarked performance on unseen mentions for English data (76.8 \% total accuracy, as reported in \textcite{Wu_Petroni_Josifoski_Riedel_Zettlemoyer_2020}). Some performance drops are expected given the lower-data scenario and the multilingual setting. However, even in the best performing setting the model reaches only 35.44\% overall accuracy. Adding the lower-quality silver data does improve performance considerably, especially bi-encoder recall. Surprisingly, the \textit{Kurztext}-only model outperforms the \textit{Volltext}-where-available model in all data scenarios, both in bi-encoder recall (+7\% points) and cross-encoder accuracy (+15\% points), which now outperforms the baseline more convincingly.\footnote{Although the poor performance of the baseline can partially be explained by the fact that the TM Nam IDs have not been added for the gods in the \textit{RE}.} This could indicate that the model fails to utilize the additional contextual information effectively. The potential reasons for this are discussed in Section \ref{sec:analysis}.
+
+\section{Error Analysis}\label{sec:analysis}
+
+In this section, we explore the predictions of the BLINK models in more detail, focusing exclusively on the models trained on the full dataset as they demonstrated superior performance. We discuss general trends and evaluate the results for a human-in-the-loop workflow.
+
+Firstly, since most \textit{RE} entries are composed of a base name and a numerical identifier (The entry for Augustus, for example, is Iulius 132), we can utilize the number of entries sharing a base name (below \textit{RE}-basenames) as a proxy of the ubiquity of the name and, by extension, how challenging the disambiguation task is for a given entity. 
+
+Building on this, we can first observe that both when using the \textit{Kurztext} and the \textit{Volltext}-where-available model, the correctly predicted entities are the less ambiguous and less challenging ones. The average number of entities with the same \textit{RE}-basename in the gold test dataset is 15.84, while for the correctly predicted entities it is 4.64 and 7.82 for the \textit{Kurztext} and the \textit{Volltext} models, respectively. Within a human-in-the-loop framework, this insight can be leveraged to prioritize mentions for manual verification, specifically those associated with entities that exhibit a high number of homonyms. However, this does not imply that mentions linked to entities with fewer homonyms can be considered reliably correct. Given the overall low accuracy of the models, it remains uncertain whether even the surface name of the matched entity is accurate.
+
+Additionally, 171 mentions in the test set link to entities that only have a single \textit{RE}-basename. It is mainly on this subset of unambiguous names that the \textit{Kurztext}-only model outperforms the \textit{Volltext} model. If these mentions are not taken into consideration, the performance gap is reduced, as seen in Table \ref{tab:re_basename_accuracy}. This could indicate that the \textit{Kurztext} model's main strength is being a better surface matcher between the Latinized \textit{RE}-entries and the Ancient Greek mentions, and that the extra contextual information detracts from this, perhaps because it introduces noise or patterns that the model cannot consistently leverage in this lower-resource multilingual setting.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lcc}
+\hline
+ & \textbf{1 \textit{RE}-basename} & \textbf{>1 \textit{RE}-basename} \\
+\hline
+Acc Voll & 33 \% &  18 \% \\
+Acc Kurz &  64 \% & 23 \%\\
+Support & 171 & 396 \\
+\hline
+\end{tabular}
+\caption{BLINK accuracy comparison across \textit{RE}-basename subsets}
+\label{tab:re_basename_accuracy}
+\end{table}
+
+Second, we examine whether the model's confidence (certainty), as indicated by the cross-encoder output score, correlates with prediction accuracy. This analysis is motivated by potential human-in-the-loop applications, where high-confidence predictions could be accepted automatically while low-confidence ones are flagged for manual review. Figure \ref{fig:kurz_score_accuracy} and \ref{fig:voll_score_accuracy}, show the prediction accuracy (blue line) at different confidence thresholds, together with the number of mentions where the prediction has a confidence of this threshold or higher (red line).
+
+From this, it is apparent that while the accuracy improves the more confident the model is (at least for the \textit{Kurztext} model), high confidence does not guarantee a correct prediction. For the \textit{Volltext} model, the increase in accuracy is minimal. As for \textit{Kurztext} model, the accuracy remains at 50 \% even if we limit ourselves to mentions where the model's prediction has a score of 0.99 or higher. These findings suggest that, in its current form, BLINK may not be directly suitable for human-in-the-loop entity linking in this setting.
+
+\begin{figure}[ht!]
+  \centering
+  \begin{minipage}[b]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{figures/plot_score_accuracy_only_gold.png}
+    \caption{Accuracy and remaining number of mentions across various score thresholds, BLINK Kurztext model}
+    \label{fig:kurz_score_accuracy}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{figures/plot_score_accuracy_only_gold_voll.png}
+    \caption{Accuracy and remaining number of mentions across various score thresholds, BLINK Volltext model}
+    \label{fig:voll_score_accuracy}
+  \end{minipage}
+\end{figure}
+
+
+
+\section{Discussion} \label{sec:discussion}
+The results presented above provide a clearer understanding of the challenges involved in applying a state-of-the-art NLP model to domain-specific Ancient Greek entity linking. Several factors likely contribute to the observed suboptimal performance.
+
+One limitation is the relatively small size of the dataset, particularly in terms of the number of unique entities, which may restrict the model's ability to generalize, especially if all entities are to remain unseen at test time. The inclusion of additional data, even though it is noisy, appeared to improve performance, suggesting that data sparsity is a bottleneck.
+
+Another issue is the lack of surface similarity between mentions and candidate entities, largely due to differences in language and script, since the \textit{RE} contains a Latinized version of the name and the mention is in Ancient Greek. Since surface similarity appears to be important for disambiguation, it might be worth looking into ways of enhancing it, such as transliteration or, in this specific case, including (a) Latinized version(s) based on the TM Namvar if the associated lemma ID of the mention in GLAUx has one.
+
+Finally, many mentions in the corpus are inherently ambiguous. The \textit{RE} frequently includes individuals who share the same name, family lineage, and professional role, such as political or military titles, and who are often discussed in close textual proximity. This may confuse a model that relies on contextual disambiguation. For instance, the \textit{RE} entries \textit{Aratos 2} and \textit{Aratos 3} refer to a father and a son who not only share their name but also hold the same office in the Acheaen league. Given a mention such as
+οἱ μὲν οὖν Ἀχαιοὶ συνεληλυθóτες εἰς Αἴγιον ἐκεῖ τὸν Ἄρατον ἐκάλουν., (Accordingly, the Achaeans came together at Aegium and invited Aratus thither, Plutarch \textit{Aratus}, 42.1, Transl. Bernadotte Perrin) the model may struggle to distinguish between these two entities, because this context does not provide sufficiently distinctive features. This suggests that richer forms of context, such as temporal metadata, may be necessary to resolve these ambiguities reliably.
+
+\section{Conclusion and Future Work} \label{sec:conclusion}
+
+In this paper, we explored the use of the transformer-based retrieval-and ranking model BLINK to link Ancient Greek named entities to a German-language KB. Our focus was on data creation strategies, including both manual annotation and automatic generation, and we investigated whether the inclusion of noisier, automatically generated data could improve model performance. We found that BLINK's performance was insufficient for reliable entity linking in the target domain.
+
+Future work could explore several directions to address this. First, incorporating domain-specific constraints, such as historical consistency checks, as was done by \textcite{graciotti_musical_2025}, may help guide the model toward more plausible entity candidates. 
+
+Second, we could address the atypicality of the language combination (Greek-German) either by automatically translating the \textit{RE} to English or by using language distillation techniques to augment transformers that contain more specialized knowledge of Ancient Greek (such as PhilBerta) with knowledge of German \cite{gao-etal-2021-simcse}. 
+
+Third, we are also experimenting with the generative approach mGENRE \cite{de_cao_multilingual_2022}, testing various hyperparameter combinations and  exploring strategies to enhance its performance; however, it currently struggles to converge well in this domain. 
+
+Finally, recent techniques in contextual augmentation using large language models, as in \textcite{vollmers-etal-2025-contextual} may help improve candidate generation and disambiguation in low-resource settings such as Ancient Greek.
+
+% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
+\printbibliography
+
+% You can include an appendix using the following command
+\appendix
+
+\section{Appendix A: results on the silver + gold test sets} \label{appdx:a}
+
+\begin{table*}[h!]
+\centering
+\begin{tabular}{lrrrr}
+        \toprule
+        & &  \multicolumn{3}{c}{{\bf silver + gold test set}} \\
+        \cmidrule(lr){3-5} 
+             & & rc@64 & cross acc & overall acc  \\
+         \midrule
+\multirow{2}{*}{\bf gold} & Kurz (5 epochs)  & 47 \% & 32 \% & 16 \% \\ 
+                                & Voll (10 epochs) & 57 \% & 21 \% & 12 \% \\ 
+\multirow{2}{*}{\bf gold + silver} & Kurz (5 epochs)  & 71 \% & 43 \% & 31 \% \\ 
+                   & Voll (10 epochs) & 68 \% & 38 \% & 26 \% \\
+                   \midrule
+\bf baseline & & 68 \% & N/A & N/A \\
+\bottomrule     
+\end{tabular}
+\caption{Results of the BLINK model (bi-encoder recall@64, cross-encoder accuracy and total accuracy) in the different Kurztext/Volltext scenarios, silver test set added}
+\label{tab:results BLINK silver}
+\end{table*}
+
+% Appendix sections should be ordered by letters rather than numbers, and their contents do not count towards the paper's length limit. Appendix sections may also contain additional tables and figures. 
+
+% \section{First Appendix Section} \label{appdx:first}
+
+% Appendix sections should be ordered by letters rather than numbers, and their contents do not count towards the paper's length limit. Appendix sections may also contain additional tables and figures.  
+
+\end{document}

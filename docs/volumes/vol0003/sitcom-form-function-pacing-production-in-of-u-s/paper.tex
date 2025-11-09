@@ -1,0 +1,834 @@
+% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
+% *Anthology of Computers and the Humanities*. ADD THE OPTION
+% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
+% DO NOT change the documentclass
+\documentclass[final]{anthology-ch} % for the final version
+%\documentclass{anthology-ch}         % for the submission
+
+% LOAD LaTeX PACKAGES
+\usepackage{booktabs}
+\usepackage{graphicx}
+% ADD your own packages using \usepackage{}
+
+% TITLE OF THE SUBMISSION
+% Change this to the name of your submission
+\title{Sitcom Form and Function: Pacing and Production in a Collection of Thirty U.S. Series}
+
+% AUTHOR AND AFFILIATION INFORMATION
+% For each author, include a new call to the \author command, with
+% the numbers in brackets indicating the associated affiliations 
+% (next section) and ORCID-ID for each author.  
+\author[1]{Taylor Arnold}[
+  orcid=0000-0003-0576-0669
+]
+
+\author[2]{Lauren Tilton}[
+  orcid=0000-0003-4629-8888
+]
+
+% There should be one call to \affiliation for each affiliation of
+% the authors. Multiple affiliations can be given to each author
+% and an affiliation can be given to multiple authors. 
+\affiliation{1}{Data Science and Linguistics, University of Richmond, U.S.A.}
+\affiliation{2}{Rhetoric and Communication Studies, University of Richmond, U.S.A.}
+
+% KEYWORDS
+% Provide one or more keywords or key phrases seperated by commas
+% using the following command
+\keywords{computational television studies, multimodal analysis, situational comedies, distant viewing, digital humanities}
+
+% METADATA FOR THE PUBLICATION
+% This will be filled in when the document is published; the values can
+% be kept as their defaults when the file is submitted
+\pubyear{2025}
+\pubvolume{3}
+\pagestart{230}
+\pageend{246}
+\conferencename{Computational Humanities Research 2025}
+\conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
+\doi{10.63744/yHo626es4FhQ}  
+\paperorder{16}
+
+\addbibresource{bibliography.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HERE IS THE START OF THE TEXT
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Using an original corpus of thirty U.S. situational comedies (sitcoms) spanning over 4,500 episodes, we investigate how visual and aural pacing evolve over time and across modes of production. We find a clear trend toward faster pacing in visual editing, spoken dialogue, and textual density throughout the decades. While this shift correlates strongly with changes between multi-camera and single-camera setups, it is also shaped by the narrative goals of each series. For example, \textit{Seinfeld} and \textit{Frasier}, despite sharing visual and production similarities with other 1990s multi-camera sitcoms, feature markedly faster dialogue that reflects a narrative emphasis on wit and language. In contrast, single-camera series such as \textit{Modern Family} and \textit{The Office (US)} combine rapid dialogue with long takes and visual pauses that support physical and situational humor.
+
+By combining large-scale computational analysis with close attention to aesthetic and narrative function, this study contributes to ongoing debates in television theory regarding the relationship between form and meaning. Whereas some scholars have emphasized the sitcom's formal conservatism and narrative stability, our findings reveal a more dynamic interaction between production technology, pacing, and storytelling strategy. Drawing from media-specific approaches and cultural theory, we argue that sitcom style emerges through a negotiation between material affordances and discursive intentions. This approach reframes how we understand the evolution of sitcom aesthetics and offers new empirical insight into the genre's formal diversity and cultural significance.
+\end{abstract}
+
+\section{Introduction} 
+
+In the post-World War II era, television rapidly emerged as a dominant medium for both
+news and entertainment throughout the United States. By the late 1950s, a majority
+of U.S. households owned a television set \cite{boddy1990fifties}. The 
+technology evolved dramatically over subsequent decades: transitioning from small black-and-white receivers with signals transmitted over airwaves to color television becoming standard by the late 1960s, followed by cable television in the 1980s, 
+high-definition broadcasting in the 2000s, and most recently streaming services
+such as Netflix and Hulu. Despite these technological transformations, the medium has proven remarkably
+resilient in its fundamental structures. Even contemporary direct-to-stream productions typically conform to established temporal formats (approximately 22 or 44 minutes of content) and fit within
+familiar genre categories inherited from broadcast television.
+
+Among television's most enduring formats, situational comedies, commonly known as sitcoms, have maintained consistent popularity from the 1950s to the 
+present day. These comedic series employ a narrative structure centered on a core set of characters and
+locations, with common configurations revolving around family units (\textit{Fresh Prince of Bel-Air}), friendship groups (\textit{Living Single}), or workplace environments (\textit{The Office}). Sitcoms traditionally feature an episodic structure wherein each
+episode functions independently and most plotlines reach resolution within 
+a single installment. This format proved ideally suited to the Network-Era concept of a ``least objectionable program,'' an idea from NBC executive Paul L. Klein which prioritized content designed to minimize viewer objections across the broadest possible audience. Series such as \textit{The Donna Reed Show} and \textit{The Dick Van Dyke Show}, with focuses on domestic situations and broadly appealing humor, exemplify this approach.
+
+The proliferation of channels during the multi-channel transition era (mid-1980s to late 1990s) transformed rather than diminished the sitcom's cultural significance. This period witnessed an explosion of series targeted at increasingly specific demographic segments defined by gender, age, race, and geographic location. Subsequently, the shift toward what Jason Mittell identifies as ``complex TV'' has further evolved the sitcom format without displacing it \cite{mittell2015complex}. Contemporary series including \textit{Arrested Development} and \textit{Community} have successfully integrated intricate serialized narratives and experimental production techniques into the traditional sitcom framework, demonstrating the format's continued capacity for innovation.
+
+Despite sitcoms' seven-decade dominance in American entertainment, their formal qualities remain understudied due to multiple factors\cite{jullier2024series}. First, sitcoms have historically been dismissed as formulaic and stylistically uninteresting, particularly those produced during the Network Era. Second, and perhaps more significantly, the sheer scale of television presents formidable methodological challenges. A complete viewing of a single long-running series can require 50 to 100 hours or more; systematic analysis of even a modest collection of series demands thousands of hours of viewing time. These practical constraints have limited most television scholarship to selective sampling, plot summaries, or reliance on secondary sources.
+
+The emergence of computational methods for analyzing audiovisual media offers a solution to these longstanding limitations. Recent advances in computer vision, speech processing, and machine learning now enable researchers to extract and analyze rich multimodal features across extensive corpora at scales previously impossible. In this paper, we demonstrate how computational techniques, combined with traditional close analysis and historical contextualization, can reveal patterns in the formal evolution of television sitcoms that have remained difficult to discern using conventional scholarly methods. By examining visual elements (shot duration, face presence), aural features (speech rates, turn-taking patterns), and their relationships across thirty series spanning seven decades, we uncover how sitcoms have adapted their formal strategies to changing production contexts, audience expectations, and cultural dynamics while maintaining their fundamental appeal as a television format.
+
+\section{Prior Work} 
+
+Influenced by literary studies and art history, film studies has long
+embraced close analysis of form, style, and content in feature-length films \cite{eisenstein1949film}.
+Research has integrated quantitative
+measurements into film analysis, with scholars including
+David Bordwell \cite{bordwell06},
+Gunars Civjans \cite{tsivian2005cinemetrics},
+Barbara Flueckiger \cite{flueckiger2017digital},
+Daria Khitrova \cite{baxter2017exploring},
+Barry Salt \cite{salt1974statistical},
+and Yuri Tsivian \cite{tsivian1992cutting} pioneering computational approaches.
+This work primarily focused on shot duration analysis and
+textual analysis of subtitles and transcripts. While early studies used manual annotation, recent research incorporates automatically generated
+features, such as gender-based character presence detection \cite{bamman2024measure}.
+
+Beyond simple measurements of shot length or face counts, researchers have shown
+interest in more complex features, though data annotation challenges have limited
+such investigations. Barry Salt's analysis of split edits across 33 films exemplifies
+this challenge \cite{Salt01092011}. He manually coded J-edits
+(audio from the next scene preceding the visual cut) and L-edits (audio
+continuing after the visual cut) as binary features. Despite never achieving
+the capacity for large-scale analysis, Salt's \textit{Statistical Style Analysis
+of Motion Pictures} provides detailed descriptions of features such as
+camera movement, angle, and audio characteristics that would prove highly
+insightful if studied at scale \cite{salt1974statistical}. 
+
+Television's influence on American political, social, and cultural life has been
+extensively documented
+\cite{mcluhan1962gutenberg, mcluhan1964understanding, lotz2010redesigning,
+lotz2014television, spigel1992make}.
+Numerous series and episodes have contributed significantly to national
+discourse on issues ranging from feminism to civil rights to urban-rural divides
+\cite{brunsdon2007feminist, emami2014make, tueth2000fun}. However, unlike film
+studies, television scholarship has relied primarily on archival studio
+records, plot summaries, historic reviews, and other textual documents rather
+than analyzing the audiovisual content itself. This reliance on paratextual
+sources has shaped the kinds of questions that television scholars are able to
+pursue. Because these materials emphasize narrative, production history, and
+reception, they tend to foreground themes, character arcs, and industry context
+while leaving aside the formal features of the medium. As a result, elements such
+as pacing, shot duration, editing rhythm, and audiovisual density
+have often received less sustained attention.
+When these aspects are addressed, they are frequently discussed
+through anecdotal close readings, without a broader framework for
+comparison across series or time periods.
+
+Although computational approaches to television are gaining attention, most
+existing work has focused narrowly on dialogue transcripts and narrative
+content. These studies often adapt methods from computational literary
+analysis and tend to overlook the visual and formal dimensions that are
+central to the medium \cite{chang2024subversive}. As a result, features
+such as shot composition, editing pace, and audiovisual rhythm remain
+largely unexamined at scale. Jeremy Butler stands out as one of the few
+scholars applying computational analysis to
+television's visual components. His shot-length analysis of
+\textit{Happy Days} (1974--1984) provides particularly insightful observations
+about editing style in sitcoms \cite{butler2014statistical}. Similarly,
+Arnold, Berke, and Tilton examined how shot types signify character
+relationships in \textit{Bewitched} (1964--1972) and
+\textit{I Dream of Jeannie} (1965--1970) \cite{arnold2023distant}. To our
+knowledge, no previous computational studies of narrative television have
+approached the scale of our current investigation, nor have any examined
+the interplay between visual and aural structures using computational methods.
+
+\begin{table}[ht!]
+  \centering 
+\begin{tabular}{lllrrrrlr}
+\toprule
+Series & Years & Camera & S\# & E\# & Dur. & Cast & Type & FPS \\
+\midrule
+\textit{I Love Lucy} & 1951-1957 & Multi & 6 & 179 & 26.1 & 4 & SD & 24 \\
+\textit{Donna Reed Show} & 1958-1966 & Single & \textsuperscript{\textdagger}5 & 186 & 25.6 & 4 & SD & 30 \\
+\textit{Dick Van Dyke Show} & 1961-1966 & Single & 5 & 158 & 25.5 & 5 & HD & 24 \\
+\textit{My Living Doll} & 1964-1965 & Single & 1 & \textsuperscript{\textdagger}10 & 25.3 & 4 & SD & 30 \\
+\textit{Bewitched} & 1964-1972 & Single & 8 & 254 & 25.3 & 5 & SD & 30 \\
+\textit{I Dream of Jeannie} & 1965-1970 & Single & 5 & 138 & 25.0 & 4 & SD & 24 \\
+\textit{Mary Tyler Moore Show} & 1970-1977 & Multi & 6 & 144 & 25.5 & 4 & SD & 24 \\
+\textit{All in the Family} & 1971-1979 & Multi & 9 & 202 & 25.1 & 4 & SD & 30 \\
+\textit{Sanford and Son} & 1972-1977 & Multi & 6 & 135 & 24.9 & 2 & SD & 30 \\
+\textit{Good Times} & 1974-1979 & Multi & 6 & 133 & 25.2 & 4 & SD & 30 \\
+\textit{Cheers} & 1982-1993 & Multi & 12 & 270 & 24.0 & 8 & SD & 24 \\
+\textit{Seinfeld} & 1989-1998 & Multi & 9 & 165 & 22.8 & 4 & SD & 24 \\
+\textit{Fresh Prince} & 1990-1996 & Multi & 6 & 146 & 22.6 & 6 & SD & 30 \\
+\textit{Living Single} & 1993-1998 & Multi & 5 & 118 & 22.4 & 6 & SD & 30 \\
+\textit{Frasier} & 1993-2004 & Multi & 11 & 256 & 22.1 & 5 & SD & 30 \\
+\textit{Friends} & 1994-2004 & Multi & 10 & 228 & 23.4 & 6 & SD & 30 \\
+\textit{Everyb. Loves Raymond} & 1996-2005 & Multi & 9 & 207 & 22.4 & 6 & SD & 24 \\
+\textit{That '70s Show} & 1998-2006 & Multi & 8 & 200 & 21.9 & 9 & SD & 30 \\
+\textit{Arrested Development} & 2003-2006 & Single & 3 & 52 & 22.0 & 9 & SD & 24 \\
+\textit{The Office (US)} & 2005-2013 & Single & 9 & 185 & 22.1 & 14 & SD & 24 \\
+\textit{How I Met Your Mother} & 2005-2014 & Multi & 9 & 205 & 21.5 & 5 & SD & 24 \\
+\textit{30 Rock} & 2006-2013 & Single & 7 & 133 & 21.3 & 8 & HD & 24 \\
+\textit{The Big Bang Theory} & 2007-2019 & Multi & 12 & 279 & 20.4 & 7 & SD & 24 \\
+\textit{Community} & 2009-2014 & Single & 6 & 98 & 21.3 & 9 & SD & 24 \\
+\textit{Parks and Recreation} & 2009-2015 & Single & 8 & 122 & 21.5 & 8 & SD & 24 \\
+\textit{Modern Family} & 2009-2020 & Single & 11 & 249 & 21.6 & 11 & SD & 24 \\
+\textit{Brooklyn 99} & 2013-2021 & Single & 8 & 153 & 21.6 & 9 & HD & 24 \\
+\textit{Black-ish} & 2014-2022 & Single & \textsuperscript{\textdagger}1 & 24 & 21.5 & 9 & SD & 24 \\
+\textit{The Good Place} & 2016-2020 & Single & 4 & 48 & 24.5 & 6 & HD & 24 \\
+\bottomrule
+\end{tabular}
+  \caption{Summary statistics for the situational comedies in our dataset,
+  sorted by the first year of distribution. Indicates the camera setup type, total number of seasons (S\#), the total number of episodes (E\#), the median episode duration in minuates (Dur.), the main cast size (Cast), the screen resolution of our data, and the median frames per second. Further details are given in the text. When available, we include data from the original run of each show. Counts with a \textsuperscript{\textdagger} indicate that our set is only a subset of the full show due to data availability.}
+  \label{tab:table1}
+\end{table}
+
+\section{Data} 
+
+We have assembled an original dataset containing the audiovisual contents of 
+episodes from thirty U.S. sitcoms. Data collection involved transcoding DVDs and
+Blu-ray discs purchased through our institution, utilizing the research exemption
+to DMCA \S 1201 under U.S. copyright law, which permits breaking digital rights
+management systems for academic research \cite{dombrowski2024access}. The thirty
+series were selected based on three criteria: commercial availability of DVDs or
+Blu-ray disks,
+representation in existing scholarship, and coverage of popular sitcom
+types from the mid-1950s to the present. While achieving a truly ``random'' sample
+of all U.S. sitcoms would be impossible, our collection includes many of the most
+historically significant series and provides a robust foundation for analyzing
+the medium's evolution.
+
+Table~\ref{tab:table1} lists all shows in our corpus chronologically by premiere
+date. We included every available episode, though three shows are incomplete due to availability constraints. \textit{The Donna Reed Show}
+has only its first five seasons commercially available. \textit{Black-ish} released
+only its first season on DVD before transitioning exclusively to streaming platforms.
+\textit{My Living Doll} (1964-1965) survives with only ten episodes from its
+single season. Despite commercial failure, we include it for historical importance and connections to other fantasy-based sitcoms in our collection. We
+also include \textit{The Good Place}, which, though more fantasy-comedy than
+traditional sitcom, provides valuable comparison to early fantasy series
+(\textit{Bewitched}, \textit{I Dream of Jeannie}, and \textit{My Living Doll}).
+Notably, its creator Michael Schur also produced three other sitcoms in our
+collection (\textit{The Office (U.S.)}, \textit{Parks and Recreation}, and
+\textit{Brooklyn Nine-Nine}), which also places it as an interesting case-study
+to understand the limits of using a sitcom format to tell complex narratives.
+
+Before jumping into further computational analysis, the
+metadata in Table~\ref{tab:table1} already reveals several compelling patterns.
+Episode duration has steadily decreased from 25-26 minutes in the 1950s-1960s to
+20-21 minutes by the mid-2010s, reflecting changing commercial practices and
+audience expectations. Main cast sizes have generally increased over time, with
+recent shows featuring notably large ensembles: \textit{The Office (U.S.)} (14
+members) and \textit{Modern Family} (11 members). Technical specifications,
+including HD availability and frame rates, largely depend on original production
+methods. Shows shot on tape (common in the 1980s-1990s) exist only in standard
+definition, while DVD sets predating Blu-ray dominance have rarely been reissued
+except for the most popular series. Fortunately, as our
+results demonstrate, video resolution does not significantly affect our analytical
+outcomes.
+
+Perhaps the most significant metadata distinction involves camera setup, which
+profoundly impacts writing and production approaches \cite{butler2010television}.
+Single-camera setups record from one camera position at a time, requiring
+repositioning of equipment between shots. This approach offers maximum control
+over visual aesthetics and enables location shooting, producing a more cinematic
+style. Multi-camera setups operate three or four cameras simultaneously, capturing
+different angles and shot scales in real time. While requiring more equipment,
+this method reduces production time and costs significantly. The format's
+theatrical quality stems from actors performing entire scenes continuously,
+making it ideal for live audiences.
+\textit{I Love Lucy} pioneered the multi-camera approach for scripted comedy
+\cite{schatz1990desilu}, establishing it as the dominant sitcom format from the
+1970s through early 2000s. Today's productions utilize both formats, with the
+choice significantly influencing each show's visual and narrative style.
+
+\begin{figure}[t!]
+  \centering 
+  \includegraphics[width=0.8\textwidth]{figures/figure01.png}
+  \caption{Example of shot detection, face detection, speech detection, speaker diarization, and transcription from a clip of an episode of \textit{Black-ish} (Season 1, Ep. 9; 06:00-06:04).}
+  \label{fig:figure1}
+.
+  
+\end{figure}
+
+\section{Methods}
+
+\subsection{Algorithms}
+
+After standardizing our corpus to MP4 format, we applied audiovisual algorithms to every episode. Figure~\ref{fig:figure1} illustrates the complete pipeline of our analytical process.
+
+We began with shot boundary detection,
+ultimately selecting the TransnetV2 algorithm after extensive testing confirmed
+its reliability across our diverse collection \cite{soucek2024transnet}. The
+algorithm generates frame-specific predictions with associated probability scores.
+After shot detection, we extracted middle frames and applied
+face detection using the \texttt{buffalo-large} algorithm from the InsightFace
+module with a 0.7 confidence threshold \cite{hast2023age}. We chose middle-frame
+extraction to avoid biasing results toward longer shots, which would naturally
+accumulate more face detections. To eliminate spurious background detections, our
+final counts include only faces comprising at least 70\% of the width of the
+largest face in each frame.
+
+For audio analysis, we extracted MP3 files from each video to generate aural
+features. The Whisper \texttt{large-v3} model provided time-stamped
+transcriptions,
+with English specified as the target language \cite{radford2023robust}. Results
+include predicted words, word-level timestamps, and confidence scores. We then
+applied PyAnnote's speaker diarization model \cite{Bredin2020}. This model
+generates utterance timestamps, confidence scores, and categorical codes linking
+utterances from the same speaker. While an open-source variant exists, the
+commercial API demonstrated significantly superior accuracy. Processing over 1,800
+hours of material through the advanced model cost \$272.
+
+\subsection{Evaluation}
+
+\begin{table}[t!]
+  \centering 
+\begin{tabular}{lrrl}
+\toprule
+Algorithm & Class. Rate (Overall) & Class. Rate (Series Range) & Hardest Series \\
+\midrule
+Shot Boundary Detection & 99.3\% & 90\%--100\% & \textit{That 70s Show} \\
+Number of Faces & 98.3\% & 95\%--100\% & \textit{The Good Place} \\
+&&& \textit{Living Single} \\
+Number of Speakers & 93.0\% & 80\%--100\% &  \textit{All in the Family} \\
+Speaker Gap & 95.2\% & 85\%--100\% & \textit{30 Rock} \\
+&&& \textit{Sanford and Son} \\
+&&& \textit{Good Times} \\
+Transcription  & 99.5\% & 97.2\%--99.7\% & \textit{Good Times} \\
+\bottomrule
+\end{tabular}
+  \caption{Classification rates of algorithms according to hand-labeled data consisting
+  of 20 samples from each of the 30 series in the corpus. Classification rates are
+  word-level error rates for the transcription task and binary error rates for
+  the other tasks.}
+  \label{tab:table2}
+\end{table}
+
+While our chosen models demonstrate high accuracy on their original training data,
+our corpus presents unique challenges absent from typical benchmarks. Our
+collection includes black-and-white footage, low-resolution images compared to HD
+training sets, and significantly more background noise than standard speaker
+detection datasets. These differences necessitate additional validation to ensure
+algorithm reliability on our source material.
+
+We created an evaluation dataset by randomly selecting 20 detected
+shots from each of our 30 series, generating short video segments for each shot.
+The authors annotated: (1) shot detection accuracy, (2) foreground
+face count in the middle frame, and (3) unique speaker count within each shot. To
+evaluate audio algorithms, we additionally selected 20 detected utterances per
+series. Authors assessed word error rates in transcriptions and verified speech
+detection accuracy within \textpm50 milliseconds. 
+
+Table~\ref{tab:table2} presents algorithm error rates compared to our hand-labeled
+ground truth.
+The algorithms all had acceptable accuracy rates, with some algorithms performing
+better than others. The shot boundary detection and transcription tasks both had
+classification rates of over 99\% over the whole corpus. The face detection algorithm and 
+speaker gap detection were also fairly accurate, with values of 98.3\% and 95.2\%
+respectively. Detecting the number of speakers detection proved to be the most
+difficult task, with an accuracy rate of 93\%. The majority of these errors 
+were the result of laughter or other sound effects being classified as an
+additional speaker. Looking at the range of error rates across all series, as
+well as those series with the worst classification rates, shows that for no
+series are the classification rates noticiably worse than the average rates.
+
+\subsection{Statistical Summaries} 
+
+Following established practice in shot duration research, which has documented
+heavy-tailed distributions with substantial outliers (often approximating
+log-normal distributions) we employ robust statistical measures throughout our
+analysis. We calculate median shot length (MSL) as our primary metric, consistent
+with film studies conventions. For other counts and durations, we use 10\%
+symmetrically trimmed means to minimize outlier influences.
+To characterize the variability in these metrics, we report median absolute deviation (MAD) with normal correction for the MSL values and for
+trimmed means, we calculate trimmed standard deviations using the same 10\%
+threshold.\footnote{MAD is defined as the median value of the absolute difference
+of each value from the median of the sample. The normal correction multiplies this
+by $1.4826$, a theoretically derived constant ensuring convergence to standard
+deviation for Gaussian distributions.}
+
+Our results focus on series-level summary statistics. While we include
+variability measures, we avoid statistical inference at the series level
+since, for all but three shows, we possess complete populations rather
+than samples. Beyond individual series, we deliberately avoid aggregated
+statistics across all 30 shows, recognizing that our dataset does not represent
+anything close to a random sample from all U.S. sitcoms. The only cross-series
+statistics we present are correlations examining relationships between aural,
+visual, and textual elements across our full collection, providing insight into
+how these components interact within the medium.
+
+\begin{table}[ht!]
+  \centering 
+  \begin{tabular}{lr|rrr|rrr|rrr}
+  \toprule
+   &  & \multicolumn{3}{|c|}{1 Speaker} & \multicolumn{3}{|c|}{2 Speakers} & \multicolumn{3}{|c}{3+ Speakers} \\
+  Series & MSL & F1 & F2 & F3 & F1 & F2 & F3 & F1 & F2 & F3 \\
+  \midrule
+  \textit{Brooklyn 99} & 2.0 & 2.0 & 2.0 & 1.9 & 2.3 & 2.5 & 2.4 & 2.4 & 2.9 & 2.9 \\
+  \textit{Kim's Convenience} & 2.1 & 2.1 & 2.3 & 2.2 & 2.3 & 3.1 & 2.8 & 2.6 & 4.0 & 3.7 \\
+  \textit{30 Rock} & 2.1 & 2.1 & 2.1 & 2.0 & 2.5 & 2.9 & 2.4 & 2.7 & 3.4 & 2.9 \\
+  \textit{Fresh Off The Boat} & 2.1 & 2.3 & 2.3 & 2.2 & 2.6 & 3.0 & 2.8 & 2.6 & 3.7 & 3.0 \\
+  \textit{Community} & 2.2 & 2.2 & 2.0 & 1.9 & 2.5 & 2.8 & 2.6 & 2.7 & 3.6 & 3.4 \\
+  \textit{Black-ish} & 2.2 & 2.1 & 2.1 & 2.0 & 2.4 & 2.6 & 2.5 & 2.7 & 3.4 & 2.7 \\
+  \textit{Parks and Recreation} & 2.3 & 2.3 & 2.1 & 2.0 & 2.6 & 2.9 & 2.7 & 3.4 & 3.7 & 3.8 \\
+  \textit{Arrested Development} & 2.3 & 2.1 & 2.3 & 2.2 & 2.8 & 3.5 & 3.4 & 3.5 & 4.6 & 4.0 \\
+  \textit{The Good Place} & 2.3 & 2.3 & 2.4 & 2.3 & 2.7 & 3.0 & 2.8 & 2.5 & 3.2 & 3.0 \\
+  \textit{How I Met Your Mother} & 2.3 & 2.4 & 2.3 & 2.1 & 2.7 & 3.3 & 3.0 & 3.4 & 4.5 & 4.0 \\
+  \textit{The Big Bang Theory} & 2.6 & 3.0 & 3.0 & 2.7 & 3.0 & 3.8 & 3.5 & 3.0 & 4.3 & 4.2 \\
+  \textit{The Office (US)} & 2.7 & 2.6 & 2.5 & 2.4 & 3.1 & 3.6 & 3.2 & 4.8 & 5.6 & 4.9 \\
+  \textit{Seinfeld} & 2.8 & 2.8 & 3.0 & 3.1 & 2.8 & 4.0 & 4.4 & 4.0 & 6.0 & 6.9 \\
+  \textit{Friends} & 2.8 & 2.9 & 3.0 & 2.9 & 3.2 & 4.3 & 4.2 & 4.4 & 5.5 & 5.1 \\
+  \textit{Modern Family} & 2.9 & 2.6 & 2.6 & 2.4 & 3.1 & 3.9 & 3.5 & 5.2 & 5.8 & 5.9 \\
+  \textit{I Dream of Jeannie} & 3.0 & 2.6 & 3.1 & 3.7 & 3.8 & 8.6 & 7.8 & 14.8 & 20.7 & 17.0 \\
+  \textit{Cheers} & 3.2 & 2.8 & 3.0 & 2.9 & 3.9 & 5.3 & 5.0 & 5.9 & 7.9 & 7.8 \\
+  \textit{Bewitched} & 3.3 & 3.2 & 3.8 & 4.4 & 4.5 & 8.5 & 8.7 & 9.1 & 14.5 & 14.5 \\
+  \textit{Frasier} & 3.3 & 3.0 & 3.4 & 3.4 & 3.5 & 4.9 & 4.8 & 4.9 & 6.7 & 6.8 \\
+  \textit{Everyb. Loves Raymond} & 3.4 & 2.9 & 3.3 & 3.2 & 4.6 & 5.6 & 4.6 & 6.5 & 8.5 & 7.2 \\
+  \textit{That '70s Show} & 3.8 & 4.0 & 4.2 & 4.3 & 4.4 & 6.2 & 5.8 & 7.6 & 8.6 & 8.5 \\
+  \textit{Mary Tyler Moore Show} & 3.8 & 3.4 & 3.9 & 3.9 & 4.0 & 6.6 & 5.7 & 6.7 & 9.9 & 9.2 \\
+  \textit{Living Single} & 3.8 & 4.0 & 4.4 & 3.9 & 4.6 & 6.9 & 5.7 & 6.8 & 9.3 & 8.3 \\
+  \textit{My Living Doll} & 3.9 & 3.4 & 3.8 & 3.1 & 5.6 & 10.3 & 7.1 & 7.8 & 19.0 & 14.4 \\
+  \textit{Donna Reed Show} & 3.9 & 3.3 & 3.8 & 4.3 & 4.2 & 9.4 & 9.4 & 15.4 & 20.3 & 19.8 \\
+  \textit{Fresh Prince} & 4.0 & 3.7 & 4.5 & 4.0 & 4.6 & 7.6 & 7.0 & 9.1 & 10.5 & 9.6 \\
+  \textit{Dick Van Dyke Show} & 4.1 & 3.1 & 3.2 & 4.3 & 4.4 & 6.1 & 6.7 & 10.0 & 10.3 & 11.0 \\
+  \textit{I Love Lucy} & 4.4 & 3.0 & 3.6 & 4.6 & 4.1 & 5.8 & 6.1 & 6.3 & 9.6 & 10.8 \\
+  \textit{Good Times} & 4.5 & 4.1 & 4.4 & 4.0 & 4.6 & 7.1 & 5.9 & 7.5 & 10.0 & 10.3 \\
+  \textit{Sanford and Son} & 5.1 & 4.3 & 5.2 & 4.8 & 4.8 & 8.8 & 7.0 & 9.0 & 12.7 & 11.3 \\
+  \textit{All in the Family} & 5.3 & 4.6 & 4.9 & 4.8 & 5.3 & 8.8 & 7.5 & 9.7 & 12.8 & 13.1 \\
+  \bottomrule
+  \end{tabular}
+  \caption{Summary of the median shot length (MSL) in seconds by the number of faces present in the shot. The first column gives the overall MSL. The next three columns give the MSL for shots with one detect speaker according to the number of faces: F1 is one one face, F2 is two faces, and F3 is three or more faces. The next three columns give the same breakdown of MSL for shots with two speakers and the last three columns give the breakdown of MSL for shots with three or more speakers. The corresponding median absolute deviations are give in the appendix. The results are ordered by the overall MSL.}
+  \label{tab:table3}
+\end{table}
+
+\begin{table}[ht!]
+  \centering 
+\begin{tabular}{lr|rrr|rrr|rrr}
+\toprule
+ &  & \multicolumn{3}{|c|}{1 Speaker} & \multicolumn{3}{|c|}{2 Speakers} & \multicolumn{3}{|c}{3+ Speakers} \\
+Series & MSL & F1 & F2 & F3 & F1 & F2 & F3 & F1 & F2 & F3 \\
+\midrule
+\textit{Brooklyn 99} & 2.0 & 36 & 11 & 4 & 22 & 7 & 2 & 2 & 1 & 0 \\
+\textit{Kim's Convenience} & 2.1 & 39 & 6 & 1 & 24 & 5 & 1 & 2 & 1 & 0 \\
+\textit{30 Rock} & 2.1 & 48 & 7 & 2 & 19 & 3 & 1 & 2 & 1 & 0 \\
+\textit{Fresh Off The Boat} & 2.1 & 44 & 9 & 4 & 14 & 4 & 1 & 1 & 1 & 0 \\
+\textit{Community} & 2.2 & 33 & 10 & 4 & 17 & 6 & 2 & 3 & 2 & 1 \\
+\textit{Black-ish} & 2.2 & 36 & 10 & 4 & 22 & 7 & 2 & 3 & 2 & 1 \\
+\textit{Parks and Recreation} & 2.3 & 41 & 11 & 5 & 18 & 6 & 2 & 1 & 1 & 0 \\
+\textit{Arrested Development} & 2.3 & 40 & 7 & 2 & 20 & 4 & 1 & 4 & 1 & 0 \\
+\textit{The Good Place} & 2.3 & 43 & 13 & 6 & 14 & 5 & 2 & 1 & 1 & 0 \\
+\textit{How I Met Your Mother} & 2.3 & 35 & 17 & 7 & 12 & 7 & 2 & 1 & 1 & 1 \\
+\textit{The Big Bang Theory} & 2.6 & 37 & 13 & 4 & 12 & 6 & 2 & 1 & 1 & 0 \\
+\textit{The Office (US)} & 2.7 & 35 & 8 & 3 & 18 & 6 & 2 & 3 & 2 & 1 \\
+\textit{Seinfeld} & 2.8 & 31 & 10 & 3 & 21 & 9 & 2 & 2 & 2 & 1 \\
+\textit{Friends} & 2.8 & 38 & 12 & 4 & 14 & 7 & 2 & 2 & 2 & 1 \\
+\textit{Modern Family} & 2.9 & 28 & 10 & 3 & 23 & 11 & 3 & 3 & 3 & 1 \\
+\textit{I Dream of Jeannie} & 3.0 & 28 & 7 & 2 & 11 & 7 & 2 & 2 & 3 & 2 \\
+\textit{Cheers} & 3.2 & 28 & 15 & 7 & 14 & 9 & 4 & 2 & 2 & 1 \\
+\textit{Bewitched} & 3.3 & 35 & 8 & 2 & 12 & 7 & 2 & 1 & 2 & 1 \\
+\textit{Frasier} & 3.3 & 34 & 10 & 4 & 20 & 9 & 3 & 3 & 2 & 1 \\
+\textit{Everyb. Loves Raymond} & 3.4 & 29 & 9 & 3 & 19 & 8 & 3 & 3 & 2 & 1 \\
+\textit{That '70s Show} & 3.8 & 37 & 14 & 7 & 9 & 6 & 3 & 1 & 1 & 1 \\
+\textit{Mary Tyler Moore Show} & 3.8 & 28 & 8 & 2 & 21 & 9 & 2 & 4 & 4 & 2 \\
+\textit{Living Single} & 3.8 & 34 & 12 & 5 & 11 & 8 & 3 & 2 & 2 & 1 \\
+\textit{My Living Doll} & 3.9 & 31 & 9 & 2 & 11 & 11 & 2 & 1 & 3 & 2 \\
+\textit{Donna Reed Show} & 3.9 & 28 & 7 & 2 & 16 & 9 & 2 & 3 & 4 & 2 \\
+\textit{Fresh Prince} & 4.0 & 30 & 12 & 5 & 10 & 9 & 3 & 2 & 3 & 1 \\
+\textit{Dick Van Dyke Show} & 4.1 & 25 & 10 & 3 & 18 & 12 & 3 & 4 & 5 & 3 \\
+\textit{I Love Lucy} & 4.4 & 17 & 7 & 3 & 20 & 11 & 4 & 7 & 7 & 4 \\
+\textit{Good Times} & 4.5 & 25 & 9 & 4 & 17 & 11 & 4 & 4 & 4 & 3 \\
+\textit{Sanford and Son} & 5.1 & 25 & 7 & 2 & 19 & 12 & 3 & 3 & 4 & 2 \\
+\textit{All in the Family} & 5.3 & 29 & 5 & 1 & 23 & 10 & 2 & 5 & 4 & 2 \\
+\bottomrule
+\end{tabular}
+  \caption{The distribution of shots by the number of speakers, with the shots with no speakers removed. The first column gives the overall MSL in seconds, which was used to order the results and correspond with Table~\ref{tab:table3}. 
+  All other results are given as percentages. The three columns under `Speaker 1' give the distribution of shots with one speaker and the following number of faces: F1 for one face, F2 for two faces, and F3 for three or more faces. The next three columns give the same for shots with two speakers and the last trhee columns give the distribution for shots with three or more speakers.}
+  \label{tab:table4}
+\end{table}
+
+\begin{table}[ht!]
+  \centering 
+\begin{tabular}{lcccc}
+\toprule
+Series & \multicolumn{2}{c}{Words Per Minute} & Turn Duration & Gap Size \\
+       & \multicolumn{1}{c}{Speaking} & \multicolumn{1}{c}{Overall} &  &  \\
+\midrule
+\textit{That '70s Show} & 229 (17) & 120 ( 8) & 3.42 (2.76) & 1.32 (1.22) \\
+\textit{I Love Lucy} & 242 (21) & 123 (18) & 1.81 (1.53) & 0.31 (0.50) \\
+\textit{My Living Doll} & 240 (15) & 130 (28) & 2.66 (2.19) & 0.49 (0.50) \\
+\textit{Bewitched} & 240 (18) & 131 (13) & 2.61 (2.31) & 0.58 (0.63) \\
+\textit{Friends} & 240 (11) & 136 (10) & 2.36 (2.09) & 0.71 (0.86) \\
+\textit{I Dream of Jeannie} & 262 (17) & 139 (14) & 2.12 (1.81) & 0.40 (0.51) \\
+\textit{Cheers} & 237 (14) & 144 (10) & 2.63 (2.36) & 0.65 (0.79) \\
+\textit{Living Single} & 241 (11) & 144 (12) & 2.89 (2.57) & 0.78 (0.90) \\
+\textit{Everyb. Loves Raymond} & 238 (15) & 144 (16) & 2.51 (2.00) & 0.77 (0.98) \\
+\textit{Fresh Prince} & 250 (17) & 149 ( 8) & 2.85 (2.40) & 0.81 (0.93) \\
+\textit{The Big Bang Theory} & 255 (11) & 150 (12) & 2.88 (2.15) & 0.91 (0.95) \\
+\textit{Donna Reed Show} & 251 (14) & 150 (17) & 2.31 (1.99) & 0.46 (0.52) \\
+\textit{Sanford and Son} & 259 (19) & 150 (19) & 2.55 (2.06) & 0.42 (0.57) \\
+\textit{The Office (US)} & 245 (18) & 153 (10) & 2.35 (2.13) & 0.39 (0.53) \\
+\textit{How I Met Your Mother} & 251 (16) & 156 (13) & 2.90 (2.55) & 0.48 (0.59) \\
+\textit{Good Times} & 239 (11) & 157 ( 8) & 2.55 (2.21) & 0.40 (0.60) \\
+\textit{Fresh Off The Boat} & 242 (13) & 157 (11) & 2.98 (2.36) & 0.43 (0.58) \\
+\textit{Community} & 249 (21) & 160 (13) & 2.28 (2.22) & 0.29 (0.45) \\
+\textit{All in the Family} & 237 (16) & 161 (14) & 2.79 (2.19) & 0.39 (0.64) \\
+\textit{30 Rock} & 248 (15) & 162 (12) & 2.99 (2.63) & 0.28 (0.44) \\
+\textit{Seinfeld} & 257 (12) & 164 ( 8) & 2.04 (1.70) & 0.49 (0.61) \\
+\textit{Mary Tyler Moore Show} & 246 (12) & 164 (10) & 2.10 (1.84) & 0.39 (0.50) \\
+\textit{Dick Van Dyke Show} & 268 (21) & 164 (25) & 1.98 (1.58) & 0.32 (0.41) \\
+\textit{The Good Place} & 226 ( 5) & 165 ( 7) & 4.22 (3.48) & 0.31 (0.45) \\
+\textit{Frasier} & 260 (16) & 166 (11) & 2.55 (2.17) & 0.47 (0.65) \\
+\textit{Parks and Recreation} & 257 (23) & 172 ( 9) & 3.10 (2.54) & 0.31 (0.40) \\
+\textit{Modern Family} & 267 (11) & 180 ( 8) & 2.50 (1.99) & 0.21 (0.33) \\
+\textit{Black-ish} & 243 (12) & 180 (10) & 2.21 (2.12) & 0.14 (0.25) \\
+\textit{Arrested Development} & 259 (10) & 186 (14) & 2.25 (2.07) & 0.24 (0.32) \\
+\textit{Brooklyn 99} & 265 (15) & 187 ( 8) & 2.50 (2.14) & 0.12 (0.22) \\
+\bottomrule
+\end{tabular}
+  \caption{Summary of speech within the corpus of U.S. sitcoms. The first two columns of results show the words per minute, with the moments of speech and the total show as denominators, respectively. The second two columns provide the length of a speech turn taken by a speaker and the duration between speakers. Both of these are measured in seconds. All results are given as the trimmed means and trimmed standard deviations (10\%).}
+  \label{tab:table5}
+\end{table}
+
+\section{Results}
+
+The main results are in
+Tables~\ref{tab:table3}--\ref{tab:table6}. In this section, we give
+an overview of what data is represented in these tables and a summary of
+the patterns and outliers represented within them.
+Implications of these findings relative to existing television scholarship
+are further explored in the following section.
+
+To examine the relationship between shot composition and editing rhythm, we
+analyzed median shot length (MSL) across different categories of visual character
+presence within shots and the number of speakers heard during the shot.
+Table~\ref{tab:table3} presents the resulting MSL values. These explore pacing decisions based on visual and aural character quantities per shot.
+Results are arranged by ascending MSL for comparison. To measure the variability of these measurements,
+Table~\ref{tab:table6} in the appendix provides the normally-adjusted
+median absolute deviation scores. The relationships shown in
+Table~\ref{tab:table3} reveal several
+distinct patterns between the temporal rhythm of the visual material as a
+function of shot length. Following other stylometric analyses
+of film and television, we see a general trend toward increasing shot lengths
+over time \cite{butler2014statistical, salt1974statistical}. This is
+not entirely a deterministic relationship, as we see, for example, several 1970s 
+series with slower shot pacing than all of those from our set in the 1950s and
+1960s. Examining the MSL scores by the number of faces and speakers allows us
+to explore this relationship in greater depth.
+
+Unsurprisingly, the MSL increases when there are more
+speakers in a shot. We see that this pattern is particularly resilient. In 
+every single series and for every category of the number of faces, the
+MSL increases between 1 and 2 speakers.
+These gaps can be relatively small. On the low end we have a 15\% increase
+(0.3 seconds) for the difference between one and two speakers with one face
+in \textit{Brooklyn 99}. In \textit{The Donna Reed Show}, 
+we see a 250\% increase (5.6 seconds) in the MSL of shots with two faces when
+comparing the difference between one and two speakers. There is also an increase in MSL
+for every number of faces when comparing the difference between 2 and 3 speakers, with the
+sole exception being shots with one face in \textit{The Good Place}, where
+2.7 seconds (1 face and two speakers) decreases to 2.5 seconds
+(1 face and three speakers). Modern single-camera series such as
+\textit{Brooklyn 99} and \textit{Community} again show only modest increases of 
+a few hundred milliseconds. On the high end, a few gaps are particularly large,
+though these correspond to relatively rare shot types, such as three speakers
+with only one face.
+
+The MSL of shots in which the number of speakers is equal to the number of
+faces present in the middle frame (or both are greater than three) reveals
+another consistent pattern. Across all of the series, the MSL of one speaker and
+one face is less than or equal to the MSL for two speakers and two faces, which
+is itself less than or equal to the MSL of three or more speakers and three or
+more faces. While these all show a general increase, the variability in the
+differences between these three MSL values appears to be a strong differentiator
+in style across our corpus. For example, \textit{Cheers} and \textit{Bewitched}
+have similar overall MSL values of 3.2 and 3.3 seconds. However, for
+\textit{Cheers} the MSL values for matching face and speaker scores are
+2.8, 5.3, and 7.8 seconds. For \textit{Bewitched}, these values increase
+substantially to 3.2, 8.5, and 14.5 seconds. In general, there
+is a strong temporal pattern in values of two speakers with two faces and three
+or more speakers with three or more faces. All of the shows that 
+premiered before 1980 have an MSL for two faces with two speakers of 5.8 seconds
+or greater and an MSL for the corresponding case with three or more speakers
+and faces of 10.3 seconds or greater. All of the shows from the 1990s onward, 
+regardless of the camera type, have an MSL of less than 3.9 seconds for the two 
+character case and less than 5.9 seconds for the three or more character case.
+For shows from the 1980s and 1990s, these two values tend to fall somewhere
+between these ranges.
+
+For a fixed number of speakers, the relationship between shot length and the number
+of faces present is less stable across the corpus. One clear pattern that
+emerges is that in the case of two speakers, the MSL with one face present
+is less than the MSL with two faces present for every series in the corpus. For
+one speaker, there seems to be little overall difference between the shot length
+and the number of faces. For two and three speakers, other than the one
+relationship already mentioned, no clear pattern emerges. This is likely in part
+due to the different ways that a single face can be present. For example,
+\textit{Brooklyn 99} features a large number of panning shots, so only having 
+one face in the central frame of the shot may still correspond to multiple 
+characters being visible at some point during the shot. In the case of
+the multi-camera shows, two faces corresponds to two different, but both popular,
+shot types: the over-the-shoulder shot and the two-shot. Additional work could
+help reveal more patterns relative to these more granular shot types. Another
+influence is the lower number of examples of certain combinations of speakers 
+and faces. We can look at the distribution of these shots, in addition to their
+length, to further understand the style of the sitcoms in our collection.
+
+There is a general pattern toward more shots with one speaker over time.
+In Table~\ref{tab:table4}, we show the percentage of shots from each series that
+have a given number of faces and speakers. For every series other than
+\textit{I Love Lucy}, the most common shot type has a single speaker and a 
+single face. Other combinations of one to two speakers and one to two faces are
+the next most common for all of the series.  The differences across
+shows can be striking. \textit{I Love Lucy} has only 25\% of the shots
+having a single speaker compared to the 70\% rate for \textit{Fresh Off the Boat}.
+These are also extremes in terms of the percentage of shots with three or more
+speakers, with 35\% and 3\%, respectively. The increase in the percentage of
+one speaker seems to be less closely related to shot type compared to the number
+of faces. Several multi-camera shows from the 2000s such as
+\textit{That '70s Show} and \textit{How I Met Your Mother} have higher rates of
+a single speaker than about half of the modern single-camera shows.
+The post-2000 single-camera sitcoms reveal a unique pattern:
+they are the only shows that have more than 66\% of their shots with only a single
+face. Looking back at Table~\ref{tab:table3}, these also tend to be the
+series with the lowest MSL values overall, with the mockumentaries
+\textit{The Office (US)} and \textit{Parks and Recreation} being slightly slower.
+In general, we see that the increasing pace of series over time is a two-fold 
+process, resulting from both having more shots with a single character in the
+foreground (in particular, for the single-camera shows) and having faster shots
+even when two characters are present.
+
+The rate of speech in a sitcom series is both a confounding factor for the 
+relationship between MSL and the number of speakers, as well as an interesting
+feature in its own right for the analysis of pacing and production.
+Speech delivery patterns within the U.S. sitcom corpus exhibit
+distinctive characteristics that reflect both genre conventions and performance
+practices in television comedy. Table~\ref{tab:table5} characterizes the
+verbal landscape of these programs through multiple complementary measures of
+dialogue intensity and pacing. The metrics encompass both the density of spoken
+content, calculated against active speech time and total program duration,
+and the temporal structure of conversational exchanges. This includes the
+duration of individual speaking turns and the intervals that separate them.
+Using robust statistical measures that minimize the influence of extreme values,
+these findings capture the central tendencies and variation in how sitcom
+dialogue unfolds. 
+
+The overall words per minute spoken on each series shows strong stylistic
+differences across their textual densities. We see that the series' overall
+words per minute range from 120 to 187. This range corresponds to
+natural rates of speech that have been observed in spoken English
+\cite{kowal1983storytelling}. In general, the series with the highest
+textual density are modern single-camera sitcoms. However, there is substantial
+variation that appears to be related to the specific narrative aims of each
+series. The witty single-camera sitcoms \textit{Seinfeld} and
+\textit{Frasier} have higher words per minute than the modern single-camera
+series \textit{Community}, \textit{30 Rock}, and \textit{The Office (US)}.
+\textit{The Dick Van Dyke Show} and \textit{The Mary Tyler Moore Show} also have
+higher average words per minute than the other Network Era sitcoms. It is 
+possible that this is due to the inclusion of music and simulated news broadcasts,
+respectively, both of which tend to have a higher density of speech
+\cite{laver1994principles}. The rate of
+speech when characters are speaking is more compressed and less variable. With
+the exception of \textit{That '70s Show}, the rate is between 240 and 267 words
+per minute, with a modest increase correlated with the overall density of speech
+in each series. The most interesting aspects of the average turn duration and
+gaps between speech are the outliers, which also fall within reported
+corpus-based data of natural speech
+\cite{tian2024corpus, corps2022gaps, levinson2016turn}.
+We again see that speech on \textit{That '70s Show} is unique, being delivered
+in long slow chunks, with the second-largest turn length and largest gap size.
+\textit{The Good Place} has the largest turn
+length, which may be due to its non-episodic structure and the need for longer
+turns to move the plot forward over each episode. Otherwise, the turns all seem
+on average to be around 2 to 3 seconds long with no clear production or temporal
+pattern. Additional annotations are likely needed to untangle this complex 
+relationship. 
+
+The statistical results are one way to under production, form, and narrative of
+television series. While television studies has generally paid less attention to
+close analysis of specific formal elements, there are several debates about the
+relationship between production style and narrative structure that our
+statistics offer a len into.  We now turn to how the numerical results can make
+contributions to TV scholarship.
+
+\section{Connections to Television Scholarship}
+
+Extensive scholarship has argued for the role of television sitcoms as a static
+and conservative genre formation. Production elements such as camera style,
+resolution, or color are not seen as central to meaning-making. In contrast,
+sitcoms are categorized as a relatively stable genre designed to fulfill social,
+economic, and narrative functions that persist across technological or
+aesthetic changes. A particularly reductive version of this approach is 
+exemplified by Marshall McLuhan's provocation that ``the medium is the message''
+\cite{mcluhan1964understanding}. However, even some of McLuhan's strongest critics
+continue to highlight the stability of television forms and the fact that
+while culture strongly influences television forms, the cultural impact of the 
+visual forms themselves generally remain limited.
+Raymond Williams, for example, has argued that technology, of 
+which television is one example, is deeply influenced by cultural phenomena,
+and these cultural features influence the modes of production within television
+\cite{williams1974television}. At the same time, Williams suggests that the most
+important aspects of the television medium are fixed features such as linearity,
+episodic structure, and flow. In his view, it would take fundamentally new
+modes of production (possibly anticipating the internet and streaming) before
+real structural change could
+occur. Similarly, Jason Mittell's work on television genre \cite{mittell2004genre}
+and John Ellis' work on repetition tend to highlight the importance of static 
+television features over the dynamic and changing modes of production
+\cite{ellis1992visible}. Changes in production format, in other words, are
+stylistic evolutions that do not significantly alter the genre's core cultural
+and economic functions.
+
+In contrast to these theories, other media and television scholars have
+emphasized the influence that modes of production have had on the 
+ways and possibilities of stories that are told in sitcoms. For example,
+John Caldwell's \textit{Televisuality} argues, with a particular focus
+on the post-Network Era, that production choices such as camera setup, cast size,
+and canned laughter directly shape audience perception, meaning, and affect. 
+Caldwell argues that aesthetics and ideology are deeply entwined and informed
+by one another. Similarly, Lynn Spigel has argued that the importance of color
+television can be linked to notions of modernity and family ideology
+in the 1970s \cite{spigel1992make}, whereas Kristen Warner has shown how
+the interaction of high production values has influenced the depiction of race
+and class on modern television series \cite{warner2015cultural, warner2017time}.
+With a focus on early 1930s television in Britain, which featured a wide
+variety of different production forms, Jason Jacobs provides a detailed 
+description of how the interplay between form and function operates both
+visually and aurally \cite{jacobs2000intimate}. 
+
+Our study provides novel insights into the different theories regarding the
+relationship between form and function in U.S. sitcoms. While certain features
+such as overall episode length and dialogue dynamics such as turn length
+and speaker gaps show consistency over time, the formal properties of sitcoms
+are far from static. Rather, we see a clear and noticeable trend toward
+increased speed and complexity, with shorter cuts, more dialogue, and a focus
+on fast sequences centered on shots of individual characters with audio
+constrained to individual speakers within a single shot. These findings point to
+a fluid definition of
+the sitcom genre that can adapt to technological innovations, as opposed to the 
+conservative formations of genre offered by McLuhan and Ellis. The 
+correlation between changes in these metrics and the disappearance and
+return of the single-camera setup in our dataset provides further evidence that
+these temporal changes are directly mediated through technological influences.
+Individual variations in our dataset---such as the lower speech density used to
+create awkward humor in \textit{Modern Family} or the fast witty dialogue in
+the standard-definition multi-camera series \textit{Seinfeld}---suggest that
+technological changes afford certain styles and meanings but do not
+deterministically dictate them. The output is filtered through
+narrative goals, cultural conventions, and audience expectations. This aligns
+closely with the qualitative conclusions drawn by Caldwell and Jacobs in their
+respective periods of interest. Further research will, hopefully, continue to
+provide similar nuanced perspectives on existing television scholarship
+regarding these and other phenomena.
+
+\section{Conclusions and Future Directions}
+
+We have seen a number of strong general patterns and
+interesting outliers, as well as developed connections between these results
+and existing television scholarship. As an overarching pattern, we have shown
+a clear trend toward faster pacing across
+multiple dimensions of televisual style. Our findings reveal consistent increases
+in editing speed, dialogue density, and textual compression from the 1950s
+through the 2010s, with median shot lengths decreasing substantially and words
+per minute increasing across the corpus. While these changes correlate strongly
+with the technological shift from multi-camera to single-camera production, our
+analysis demonstrates that pacing decisions are not merely determined by
+production constraints but are strategically deployed to serve specific narrative
+and comedic functions. Series such as \textit{Seinfeld} and \textit{Frasier}
+exemplify how creators can accelerate dialogue within traditional multi-camera
+frameworks to emphasize verbal wit, while single-camera series can achieve
+comedic effects through the calculated juxtaposition of rapid speech with
+extended visual holds. These patterns reveal that sitcom style emerges from a
+complex negotiation between material production affordances and aesthetic
+intentions, challenging previous characterizations of the genre as formally
+conservative and demonstrating instead a dynamic relationship between
+technological capabilities, narrative strategy, and comedic expression.
+
+At a larger level, our contribution provides new evidence regarding the
+evolution of editing style and dialogue pacing in television, revealing how
+these stylistic
+choices have adapted to changing viewer expectations and technological
+capabilities. As Jeremy Butler observes, we must ``tap into the production
+culture of a particular time in order to understand stylistic conventions''
+\cite[10]{butler2014statistical}. By situating our computational findings within
+television production's historical and industrial contexts, we can begin to 
+develop a nuanced understanding of how editing decisions reflect both creative
+intentions and cognitive principles of human perception.
+
+Future directions for this research include a new materialist approach at the
+scene level, as well as a need to expand our corpus to include
+dramatic series and international productions, developing more sophisticated
+algorithms for detecting complex audiovisual patterns, and investigating how
+streaming platforms' binge-watching affordances may be reshaping fundamental
+timing conventions. Additionally, we plan to explore how our findings might
+inform contemporary production practices and contribute to media literacy
+education. Ultimately, this work demonstrates how computational methods can
+reveal the intricate formal systems through which television constructs meaning,
+exercises influence, and maintains its position as a dominant cultural force.
+
+\printbibliography
+
+\appendix
+
+\clearpage
+
+\section{Supplemental Data}
+
+
+\begin{table}[ht!]
+  \centering 
+\begin{tabular}{lr|rrr|rrr|rrr}
+\toprule
+ &  & \multicolumn{3}{|c|}{1 Speaker} & \multicolumn{3}{|c|}{2 Speakers} & \multicolumn{3}{|c}{3+ Speakers} \\
+Series & MSL & F1 & F2 & F3 & F1 & F2 & F3 & F1 & F2 & F3 \\
+\midrule
+\textit{Brooklyn 99} & 2.0 & 1.2 & 1.1 & 0.9 & 1.4 & 1.5 & 1.5 & 1.5 & 1.9 & 2.0 \\
+\textit{Kim's Convenience} & 2.1 & 1.1 & 1.2 & 1.1 & 1.3 & 1.9 & 1.6 & 1.6 & 2.5 & 2.6 \\
+\textit{30 Rock} & 2.1 & 1.3 & 1.2 & 1.1 & 1.6 & 2.0 & 1.5 & 1.8 & 2.3 & 2.2 \\
+\textit{Fresh Off The Boat} & 2.1 & 1.4 & 1.2 & 1.1 & 1.6 & 2.0 & 1.7 & 1.8 & 2.5 & 1.9 \\
+\textit{Community} & 2.2 & 1.4 & 1.2 & 1.0 & 1.7 & 2.1 & 1.8 & 2.0 & 3.0 & 2.7 \\
+\textit{Black-ish} & 2.2 & 1.2 & 1.1 & 0.9 & 1.5 & 1.7 & 1.6 & 1.7 & 2.6 & 1.9 \\
+\textit{Parks and Recreation} & 2.3 & 1.3 & 1.1 & 0.9 & 1.7 & 1.9 & 1.7 & 2.3 & 2.6 & 2.5 \\
+\textit{Arrested Development} & 2.3 & 1.1 & 1.2 & 1.2 & 1.7 & 2.3 & 2.1 & 2.3 & 3.3 & 2.9 \\
+\textit{The Good Place} & 2.3 & 1.3 & 1.3 & 1.2 & 1.7 & 1.9 & 1.8 & 1.5 & 2.2 & 1.7 \\
+\textit{How I Met Your Mother} & 2.3 & 1.7 & 1.5 & 1.3 & 1.9 & 2.4 & 2.0 & 2.8 & 3.7 & 2.9 \\
+\textit{The Big Bang Theory} & 2.6 & 1.9 & 1.8 & 1.5 & 1.9 & 2.5 & 2.0 & 2.2 & 3.0 & 2.8 \\
+\textit{The Office (US)} & 2.7 & 1.7 & 1.5 & 1.3 & 2.1 & 2.8 & 2.2 & 3.8 & 4.5 & 3.6 \\
+\textit{Seinfeld} & 2.8 & 1.8 & 1.9 & 1.9 & 1.9 & 3.0 & 2.8 & 3.2 & 4.4 & 4.5 \\
+\textit{Friends} & 2.8 & 2.0 & 2.0 & 1.8 & 2.1 & 2.9 & 2.5 & 3.2 & 4.1 & 3.4 \\
+\textit{Modern Family} & 2.9 & 1.7 & 1.7 & 1.4 & 2.1 & 3.0 & 2.5 & 4.0 & 4.2 & 4.6 \\
+\textit{I Dream of Jeannie} & 3.0 & 1.8 & 2.3 & 3.0 & 2.9 & 8.0 & 6.1 & 15.2 & 17.7 & 13.2 \\
+\textit{Cheers} & 3.2 & 1.7 & 1.9 & 1.7 & 2.7 & 3.9 & 3.4 & 4.6 & 6.0 & 5.7 \\
+\textit{Bewitched} & 3.3 & 2.1 & 2.7 & 3.1 & 3.5 & 6.6 & 6.0 & 8.2 & 11.0 & 10.0 \\
+\textit{Frasier} & 3.3 & 1.8 & 2.0 & 1.8 & 2.1 & 3.1 & 2.7 & 3.7 & 4.2 & 4.2 \\
+\textit{Everyb. Loves Raymond} & 3.4 & 2.0 & 2.2 & 1.9 & 3.1 & 4.0 & 2.9 & 4.6 & 6.2 & 4.9 \\
+\textit{That '70s Show} & 3.8 & 2.5 & 2.5 & 2.5 & 3.0 & 4.2 & 3.6 & 7.0 & 5.8 & 5.8 \\
+\textit{Mary Tyler Moore Show} & 3.8 & 2.2 & 2.7 & 2.4 & 2.9 & 4.4 & 3.3 & 5.1 & 6.4 & 6.1 \\
+\textit{Living Single} & 3.8 & 2.6 & 3.0 & 2.5 & 3.2 & 4.8 & 3.7 & 5.4 & 6.3 & 6.3 \\
+\textit{My Living Doll} & 3.9 & 2.2 & 2.8 & 2.2 & 4.3 & 8.9 & 4.5 & 7.9 & 16.8 & 7.9 \\
+\textit{Donna Reed Show} & 3.9 & 2.1 & 2.7 & 3.1 & 3.2 & 8.8 & 7.6 & 15.6 & 18.1 & 14.4 \\
+\textit{Fresh Prince} & 4.0 & 2.3 & 2.9 & 2.6 & 3.3 & 5.2 & 4.8 & 7.1 & 6.9 & 6.0 \\
+\textit{Dick Van Dyke Show} & 4.1 & 2.0 & 2.1 & 2.9 & 3.5 & 4.7 & 4.1 & 8.9 & 7.8 & 7.0 \\
+\textit{I Love Lucy} & 4.4 & 2.1 & 2.7 & 3.3 & 2.7 & 4.2 & 4.0 & 4.6 & 6.9 & 7.4 \\
+\textit{Good Times} & 4.5 & 2.8 & 3.0 & 2.7 & 3.2 & 5.2 & 4.5 & 5.6 & 6.9 & 7.4 \\
+\textit{Sanford and Son} & 5.1 & 2.9 & 3.7 & 3.3 & 3.6 & 6.2 & 4.4 & 7.3 & 8.8 & 7.3 \\
+\textit{All in the Family} & 5.3 & 3.1 & 3.4 & 3.3 & 4.0 & 5.8 & 5.0 & 8.1 & 8.7 & 7.7 \\
+\bottomrule
+\end{tabular}
+  \caption{The normal-corrected median absolute deviation (MAD) values 
+  corresponding to the median values in Table~\ref{tab:table3}. The overall MSL
+  (in seconds) is included in the first column because it was used to sort the
+  table, which is aligned with the results in Tables~\ref{tab:table3}--\ref{tab:table4}.}
+  \label{tab:table6}
+\end{table}
+
+\end{document}

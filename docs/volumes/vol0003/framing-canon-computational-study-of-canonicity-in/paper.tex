@@ -1,0 +1,399 @@
+% DO NOT change the documentclass
+\documentclass[final]{anthology-ch}
+
+% LOAD LaTeX PACKAGES
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subcaption}
+%\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage[table,xcdraw]{xcolor}
+
+
+% TITLE OF THE SUBMISSION
+\title{Framing the Canon: A Computational Study of Canonicity in Danish Golden Age Paintings (1750-1870)}
+
+% AUTHOR AND AFFILIATION INFORMATION
+% For each author, include a new call to the \author command, with
+% the numbers in brackets indicating the associated affiliations 
+% (next section) and ORCID-ID for each author. 
+
+\author[1]{Louise Brix Pilegaard Hansen}[
+  orcid=0009-0005-9088-3648
+]
+
+\author[1]{Rie Schmidt Eriksen}[
+  orcid=0009-0002-1010-9627
+]
+
+\author[1]{Pascale Feldkamp}[
+  orcid=0000-0002-2434-4268
+]
+\author[1]{Alie Lassche}[
+  orcid=0000-0002-7607-0174
+]
+
+\author[1]{Kristoffer Nielbo}[
+  orcid=0000-0002-5116-5070
+]
+
+\author[2]{Katrine Baunvig}[
+  orcid=0000-0001-6706-6694
+]
+
+\author[1]{Yuri Bizzoni}[
+  orcid=0000-0002-6981-7903
+]
+
+\affiliation{1}{Center for Humanities Computing, Aarhus University, Aarhus, Denmark}
+\affiliation{2}{Center for Grundtvig Studies, Aarhus University, Aarhus, Denmark}
+
+\keywords{art historical canon, computational art analysis, image embeddings, canonicity}
+
+% METADATA FOR THE PUBLICATION
+% This will be filled in when the document is published; the values can
+% be kept as their defaults when the file is submitted
+\pubyear{2025}
+\pubvolume{3}
+\pagestart{306}
+\pageend{323}
+\conferencename{Computational Humanities Research 2025}
+\conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
+\doi{10.63744/KTLpQIY247dD}  
+\paperorder{22}
+
+
+\addbibresource{bibliography.bib}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This paper investigates the mechanisms of canon formation in Danish Golden Age paintings (c. 1750-1870). We aim to assess whether we can link canonical status to quantifiable intrinsic aesthetic traits or whether the canon is the result of extrinsic processes. Drawing on recent studies of literary canonicity and earlier work in art history, we extend the methodological scope of canon studies by analyzing 1,656 paintings from the Danish National Gallery using image embeddings. In both synchronic and diachronic clustering experiments, we find no distinct separation between canonical and non-canonical works, nor any indication that canonical paintings prefigured artistic innovation. 
+However, above-chance performance from a binary classification task of canonical vs non-canonical artworks suggests subtle intrinsic differences between the two groups.\footnote{See github repository, https://github.com/centre-for-humanities-computing/canon-paintings-smk, for data and code.}
+\end{abstract}
+
+\section{Introduction} 
+
+The concept of `canon', despite its current ubiquity in cultural discourse, carries within itself layers of historical and semantic complexity. Rooted in ancient Greek, originally signifying a straight rod or measuring stick, the term has accrued meanings associated with literary and artistic standards, rules, and established principles \cite{locher_idea_2012}. In contemporary use, a canon denotes a curated body of works recognized as exemplary, significant, and worthy of both preservation and continued fruition \cite{Canon}.
+Yet, this definition invites a critical examination of the foundations of the artistic canon, raising questions about the criteria that elevate certain works to a status of cultural significance. While long-standing debates in literary history have examined such questions from several angles \cite{brottrager2021predicting, barre_operationalizing_2023, feldkamp_canonical_2024, lassche_why_2025, Guillory}, thereby identifying tensions between intrinsic aesthetic qualities \cite{crowtherpaul} and extrinsic institutional structures \cite{LiaoShen, hansmaanen}, art history has engaged with the canon in a qualitative manner.
+In this paper, we contribute to this discourse by using quantitative methods to investigate the mechanisms behind canon formation, as a first step towards providing an empirical ground to the debate. We employ a similar methodological pipeline as \textcite{feldkamp_canonical_2024}, who examined canon dynamics in Danish 19\textsuperscript{th} century novels using text embeddings, to investigate the mechanisms of canon formation in Danish Golden Age paintings (c. 1750–1870), using metadata from the \textit{The National Gallery of Denmark}. We evaluate two distinct hypotheses:\footnote{We do not suggest that the intrinsic and extrinsic models of canon formation are exclusive or clear-cut; rather, we employ this simplified dichotomy as a heuristic tool to investigate the complexity of canon formation in art.}\newline
+\begin{description}[noitemsep]
+    \item[H1]  Top-down processes shaped by extrinsic factors such as institutional acquisition, curatorial barriers, and national agenda shape the canon. There is nothing ``special'' in the paintings themselves - i.e., no aesthetic or thematic uniqueness.
+    \item[H2] Intrinsic attributes set canonical paintings aside from the rest of the artistic production, such as (i) distinctive or recurrent iconographic motifs; (ii) innovative role/chronological primacy; or (iii) subtle stylistic features.
+\end{description}
+
+In Section 2 we will review related works in both canonical debates and visual computing for art studies, and define our dataset and canon definition in Section 3. We will then detail our methodological pipeline (Section 4) and present our results (Section 5) and conclusions (Section 6). 
+
+\section{Related Work}
+
+\subsection{The canon in visual arts}
+\label{section:canon_visual_related}
+
+The debate over the construction, relevance, and content of artistic canons is longstanding. Scholars have long questioned whether artworks attain canonical status due to their intrinsic aesthetic qualities or as a result of extrinsic forces \cite{langfeld_canon_2018, carrier_art_1993}. 
+For visual art, intrinsic qualities are properties such as color scheme and composition, painting style, novelty, and other tokens of the painters' creativity \cite{vermeylen_test_2013}.\footnote{We might consider novelty a semi-intrinsic property, as it depends on the historical context of the work of art.} The widespread consensus on the inclusion of certain paintings in the canon has served as an argument in favor of the existence of objective qualities inherent in those works \cite{langfeld_canon_2018, carrier_art_1993}, but these claims have faced sustained critique in recent decades \cite{jensen2007measuring, carrier_art_1993, langfeld_canon_2018}. Today, many art historians and scholars tend to emphasize extrinsic factors such as institutional power, political interests, and social dynamics as the primary forces shaping the canon \cite{jensen2007measuring, karinalise, cutting2007mere, langfeld_canon_2018}. Art historian Robert Jensen even argues that ``\textit{nothing cultural in the world possesses intrinsic value''} \cite{jensen2007measuring}. This approach sees the artistic canon as a social construct ``assembled'' by institutions, museum curators, or art historians on the basis of considerations that have nothing to do with the characteristics of the works themselves \cite{carrier_art_1993}.
+
+Unlike literature, where popularity leaves tangible traces in terms of circulation numbers, sales, and editions, visual art consumption remains mediated by institutional frameworks, i.e., curatorial selection, museum exhibitions, and/or academic endorsements, shaping public engagement in ways that are harder to measure \cite{brille, Ventzislavov, xu}. Moreover, it could be argued that a novel presents more discrete and analyzable features, such as style, narrative complexity, or recurring themes, that lend themselves to sustained critical evaluation, whereas the assessment of visual art often hinges more directly on subjective interpretation or institutional framing. Consequently, the constructionist approach to the canon is perhaps more prominent for the visual arts, where audience reception is more volatile than in literature, and appeals to intrinsic qualities remain less common \cite{bloom_western_1995, van_peer_ideology_2008}.
+
+\subsection{Quantitative studies of canon}
+Quantitative approaches to the contents of canons across time have been most prevalent in the neighboring field of literary studies. Several works have examined differences in the intrinsic and extrinsic features of canonical literature using machine learning and natural language processing techniques
+\cite{barre_operationalizing_2023, brottrager2021predicting, algee-hewitt_canonarchive_2016}. Stylistic features have, for example, revealed intrinsic canonical profiles of novels \cite{wu-etal-2024-perplexing}, and text embeddings of novels have shown relative novelty and thematic unity in canonical groups \cite{feldkamp_canonical_2024, lassche_why_2025}. However, to our knowledge, no such efforts have been made in the visual arts field. Most research on the artistic canon is qualitative in nature, presenting perspectives on its formation, usability, and biases \cite{locher_idea_2012, carrier_art_1993, langfeld_canon_2018, lykke2012}. Efforts to quantify the canon involves counting mentions or illustrations in acknowledged art history books \cite{jensen2007measuring, cutting2007mere, ginsburgh_formation_2010, vermeylen_test_2013}. These studies have provided insights into the formation of canons and its artists as well as their dynamics through art history, but do not consider the content of the actual paintings. To bridge this gap, this paper examines the intrinsic qualities of canonical and non-canonical artworks using image embeddings from multimodal models, adopting a similar approach to studies by \textcite{feldkamp_canonical_2024} and \textcite{lassche_why_2025} from the literary field.
+
+\subsection{Models for artwork representation}
+Previous research using pre-trained computer vision models to represent images of artworks has shown that it is possible to classify
+artworks' content, material, genre, and overall painting style through dense visual embeddings \cite{tonkes_how_2023, cetinic_fine-tuning_2018, sabatelli_deep_2018, zhou_convnets_2021}. More recently, multimodal embeddings have been found to outperform unimodal ones both in capturing richer cross-modal features relevant to artwork analysis \cite{dahlgren-lindstrom-etal-2020-probing} and in serving as more effective feature extractors \cite{hansen_multimodal_2025}. Specifically, multimodal CLIP (\textit{Contrastive Language-Image Pre-training}) models, which are trained jointly on image and text data, have shown good performance in Image Aesthetic Assessment (IAA) tasks \cite{hentschel_clip_2022}, as well as feature extractors for the classification of genre, style, and artists of artworks \cite{hansen_multimodal_2025}. These findings are attributed to the fact that multimodal models learn representations that go beyond the pure visual characteristics of an image, as pre-training on natural language descriptions appears to equip multimodal models with a stronger capacity for inferring global semantic representations \cite{hansen_multimodal_2025, hentschel_clip_2022}. We hypothesize that such multimodal embeddings of paintings therefore can be used to examine stylistic differences between canon and non-canon artworks, as these models integrate raw visual input and may capture general visual style, something that is not trivial to characterize manually, even among experts \cite{specker_warm_2020, hekkert_assessment_1998}.\footnote{But while multimodal embeddings perform well on downstream tasks and image classification, it remains an open question whether they capture the kinds of features that matter to human evaluations of artistic quality - or to canonicity. This uncertainty is also why we include an analysis of the key aspects these embeddings represent in this study.} Consequently, if canonical artworks exhibit distinctive aesthetic traits not found in non-canonical works, such differences could be reflected in their image embeddings.
+
+\subsection{Danish Golden Age}
+The `Danish Golden Age' is traditionally delineated as occurring approximately between 1800 and 1850 \cite{kondrup, lykke2012}. However, for the purpose of this study, we deliberately expand our temporal framework to include data from the decades immediately before and after this conventional period.\footnote{This expanded periodization is methodologically necessary, allowing us to empirically determine whether the canonical aesthetic and artistic characteristics attributed to the Golden Age align with its conventional boundaries or whether they extend beyond them, thus enabling a data-driven reassessment of the periodization itself.} While the period is well-known globally for its literary innovation \cite{hobsbawm}, within the Danish context, it simultaneously signified a pivotal moment of artistic innovation. It witnessed the emergence of new aesthetic styles and painting approaches that not only redefined national artistic expression but have since come to be regarded as canonical within the cultural and national narrative of Denmark \cite{lykke2012}.
+
+However, it has become the object of critical reassessment, raising questions about the construction of historical narratives and the authority of inherited canons. 
+For example, recent work has examined a major exhibition on the Danish Golden Age, foregrounding the role of national museums as central agents in constructing and disseminating national identities, self-narratives and the canon - notions that continue to shape cultural self-understanding today \cite{Jørgensen2022}. 
+In this context, the issue of ``whose canon?'' has gained renewed relevance, making the Danish Golden Age a particularly apt case for investigating both the historical formation and renegotiation of the visual arts canon.
+
+The visual arts of the period mirrored significant societal transformations: landscape paintings reflected an intensified attention to the national `ethnoscape' as part of Denmark's broader nation-building efforts \cite{Oelsner2022}, while the growing prominence of portraiture signaled the social consolidation and self-representation of the emerging bourgeoisie \cite{Oelsner2022} (See \autoref{fig:example_paintings} for examples of Danish Golden Age paintings). These developments occurred alongside the maturation of Denmark’s aesthetic infrastructure, exemplified by the professionalization of art galleries and the founding of \textit{The National Gallery of Denmark}, now known as SMK (\textit{Statens Museum for Kunst}) \cite{Jørgensen2022}.
+
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=1\linewidth]{figures/goldenage_paintings.png}
+  \caption{Examples of paintings from the Danish Golden Age, all from the digital collection of \textit{Statens Museum for Kunst}. Left painting is \textit{Bøgeskov i maj. Motiv fra Iselingen} (1857) by P.C. Skovgaard, top right is \textit{En dansk kyst. Motiv fra Kitnæs ved Roskilde Fjord} (1843) by Johan Thomas Lundbye, bottom right is \textit{Udsigt gennem tre buer i Colosseums tredje stokværk} (1815) by C.W. Eckersberg.}
+  \label{fig:example_paintings}
+\end{figure}
+
+
+\section{Data}
+
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=1\linewidth]{figures/umap_letter_boxes_cropped_new.png}
+  \caption{UMAP of embeddings for all color images in dataset. Dimensionality reduction using PCA (with $n=50$ components) was applied to the embeddings before UMAP. Panel to the right highlights four clusters in the projected data: A) A distinct grouping of portraits of women, separated from portraits of men, B) Clear stylistic partition of religious or historically themed paintings from other motives with humans, C) Specific depictions of trees and landscapes group together, D) Paintings of ships in gloomy weather form a detached cluster from other natural motives.}
+  \label{fig:UMAP}
+\end{figure}
+
+Our dataset was obtained from the digitized collection of artworks of the Danish National Art Museum, \textit{Statens Museum for Kunst} (SMK).\footnote{\url{https://open.smk.dk/en/}.} We included only digitized paintings (i.e., no drawings or prints) produced between 1750 and 1870, to capture the period corresponding to the classic definition of the Golden Age, as well as the years preceding and following it.\footnote{Quite a few paintings had a production period rather than a production year. For the sake of simplicity, we decided to work with a single production year for each painting rather than a period. The production year for 322 paintings, which had a production period of more than 20 years, was manually updated. For some of these paintings ($n=130$), it was possible to determine a more accurate production year based on, for example, popular motifs of the period or the artist's travel activities. For paintings where this was not possible ($n=138$), we noted the production year as 25 years after the artist's birth. The mean of the production period was used as the production year for paintings by unknown artists and paintings with a production period of less than 20 years.} 
+The dataset consists of 1,656 paintings by 272 unique artists, and is enriched with a wide range of metadata.\footnote{Dataset was downloaded May 1, 2025 using the API for SMK's digital collection (\url{https://www.smk.dk/en/article/smk-api/}).} Of the total dataset, 574 paintings were only available in grayscale digitization. See \autoref{fig:UMAP} for a visualization of the dataset, and \autoref{tab:dataset_stats} for a description. 
+
+\begin{table}[h]
+\small
+\centering
+\begin{tabular}{l|cc|ccc|cc|cc}
+\toprule
+\textbf{} & \multicolumn{2}{c|}{\textbf{Paintings}} & \multicolumn{3}{c|}{\textbf{Artists}} & \multicolumn{2}{c|}{\textbf{Museums}} & \multicolumn{2}{c}{\textbf{Period}} \\
+ & Color & Gray & Danish & German & Other & Danish & Other & pre-1800 & post-1800 \\
+\midrule
+Count & 1,082 & 574 & 165 & 36 & 71 & 52 & 96 & 304 & 1352 \\
+\midrule
+\textbf{Total} & \multicolumn{2}{c|}{\textbf{1,656}} & \multicolumn{3}{c|}{\textbf{272}} & \multicolumn{2}{c|}{\textbf{148}} & \multicolumn{2}{c}{\textbf{1,656}} \\
+\bottomrule
+\end{tabular}
+\caption{Overview of the SMK dataset used in this study, by digitization type, artist origin, museum affiliation, and rough periodization.}
+\label{tab:dataset_stats}
+\end{table}
+
+\subsection{Defining the canon}
+We operationalize canonical status through exhibition history, following a long-standing view that the canon is instantiated by acts of \textbf{reproduction} - citations in art-historical discourse, mechanical copies, and, crucially, public displays in museum exhibitions \cite{jensen2007measuring, cutting2007mere, langfeld_canon_2018, sankowski_art_1993}. \textcite{vogel2016canon} even directly states that ``\textit{exhibitions establish the canon}''. Using the rich metadata in SMK's collection, which records exhibitions (in-house, national, and international), their dates, and the current display status of a painting, we derive three indicators of canonicity: 
+
+ \begin{itemize}
+     \item \textbf{Exhibitions canon}: the work appeared in at least one documented exhibition in the \textit{21st century} to reflect the contemporary canon of Golden Age paintings.
+    \item \textbf{SMK exhibitions canon}: the work has been exhibited \textit{at least once at SMK}, independent of date.
+     \item \textbf{On display canon}: the work is \textit{currently on public display} in the permanent galleries at SMK.
+ \end{itemize}
+ 
+See overview of canon labeling in \autoref{tab:dataset_overview}.    
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{l|cc|cc}
+\toprule
+& \multicolumn{2}{c|}{\textbf{Color}} & \multicolumn{2}{c}{\textbf{Grayscale}} \\
+                          & \textit{Canon} & \textit{Non-canon} & \textit{Canon} & \textit{Non-canon} \\
+\midrule
+\textbf{Exhibition canon}       & 598  & 484   & 641  & 1,015 \\
+\textbf{SMK exhibitions canon}  & 353  & 729   & 369  & 1,287 \\
+\textbf{On display canon}       & 223  & 859   & 227  & 1,429 \\
+\midrule
+\textbf{Total} & \multicolumn{2}{c|}{\textbf{1,082}} & \multicolumn{2}{c}{\textbf{1,656}} \\
+\bottomrule
+\end{tabular}
+\caption{Overview of canon variables. Note that a painting can appear in multiple canon groups.}
+\label{tab:dataset_overview}
+\end{table}
+
+\section{Methods}
+We follow a similar methodological pipeline as \textcite{feldkamp_canonical_2024} do for modeling canonicity in literary works:
+
+\subsection{Model selection}
+The selection of the pretrained multimodal model used for embeddings is grounded in a prior model comparison for representing artworks by \textcite{hansen_multimodal_2025}. The authors evaluated several models from the PyTorch library for pre-trained vision models, \textit{timm} \cite{rw2019timm}, using domain-relevant classification tasks on a large dataset of artworks. They found that the best-performing model was \textit{EVA-02-CLIP} \cite{fang_eva-02_2024}, a multimodal model which employs an EVA-02 vision transformer backbone and was contrastively pre-trained on 2 billion image–text pairs, enabling strong alignment between visual and linguistic representations across diverse domains.\footnote{See model card at \url{https://huggingface.co/timm/eva02_large_patch14_clip_336.merged2b}} In the rest of the paper, we will present results based on this model. 
+
+\subsection{Extracting embeddings}
+Before extracting embeddings, each painting in the dataset was resized and normalized.\footnote{Resize dimensions and normalization strategies followed the configurations of the pretrained EVA-02-CLIP model and were implemented with \textit{timm}.} Since not all paintings had digitized color images, we first extracted embeddings for only the 1,082 colored images in the dataset. Subsequently, we extracted embeddings for the entire dataset after converting all images to grayscale.\footnote{We used the standardized way of converting color images to grayscale, the ITU-R 601-2 luma transformation.} These two types of embeddings will be referred to as \textit{color embeddings} and \textit{grayscaled embeddings}, respectively.
+
+\subsection{Synchronic comparison}
+We initially inspect groupings in our data with PCA (components $n=2$) visualizations of embeddings implemented with \textit{scikit-learn} \cite{scikit-learn}.
+
+\subsection{Measuring diachronic change}
+We examine the intra-group (within-canon) and inter-group (canon vs non-canon) dynamics of our sample through cosine similarities of embeddings over time. \textit{Inter-group similarity} indicates the cosine similarity of the canon vs. non-canon groups over time, using the mean embedding for each group in a rolling window.\footnote{For the rolling window, we use a window-size of 30 years with a step-size of 1.} In contrast, \textit{intra-group similarity} indicates the internal similarity of a group, assessed through the mean internal cosine-similarity in a rolling window.
+
+\subsection{Supervised classification} We explore differences in canon and non-canon signals through a binary classification task, predicting labels from paintings' embeddings. For the classification step, we tested a logistic regression and a multi-layer perceptron (MLP) classifier, both implemented using \textit{scikit-learn} \cite{scikit-learn}. The logistic regression classifier was implemented with L2 penalty, while the MLP classifier used a single hidden layer size of 100, an adaptive learning rate and a maximum of 100 training iterations. We test the models with stratified K-fold cross-validation ($K=10$). To account for imbalances of canon vs non canon paintings in our sample, we balance the train set of each fold using \textit{RandomUnderSampler} from \textit{imbalanced-learn} \cite{JMLR:v18:16-365}. We report the mean K-fold cross-validated macro F1 scores for both balanced and unbalanced data across model types and canon definitions.
+
+\section{Results}
+
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=0.9\linewidth]{figures/PCA_exb_only.png}
+  \caption{PCA plots (components $n=2$) for `exhibition canon', color and greyscale}
+  \label{fig:pca_all}
+\end{figure}
+
+\subsection{Synchronic results}
+Upon immediate inspection, the PCA plot shows no significant distinction between canon and non-canon, as evident from the large overlap of paintings from the two groups (see \autoref{fig:pca_all}). The first two PCA components cluster the embeddings on the images' principal motif, topic, or domain (see \autoref{fig:PCA_paintings} in \autoref{appdx:a}), displaying separate clusters for portraits and landscape paintings. The distributions of portrait and landscape paintings exhibit considerable consistency across both canonical and non-canonical groupings, irrespective of whether colored or grayscaled embeddings are used. This suggests that there is no significant differentiation between these groups with respect to the specific motifs represented in the artworks.
+
+\subsection{Diachronic results}
+
+\begin{figure}[t!]
+  \centering
+  \makebox[\textwidth][c]{%
+    \includegraphics[width=\linewidth]{figures/intra_canon_w30.png}
+  }
+  \caption{Intra-group similarity for canon variables as measured by the mean cosine similarity of embeddings for each canon variable within a rolling window (\textit{size} = 30, \textit{step} = 1). We show the correlation of mean cosine similarity with time at the top of each plot (Spearman's $\rho$), all significant, $p < 0.01$. The band represents the 95\% confidence interval of the mean estimated via bootstrapped resampling ($n=1,000$) of cosine similarities for each time window.
+  \underline{At the top}: only embeddings of canon paintings in color ($n$ $min=223$, $max=598$);  \underline{Below}: embeddings of all canon paintings in grayscale ($n$ $min=227$, $max=641$). Canon-group sizes for each setting depend on canon definition (see \autoref{tab:dataset_stats}).}
+  \label{fig:intra_canon}
+\end{figure}
+
+\begin{figure}[t!]
+  \centering
+  \makebox[\textwidth][c]{%
+    \includegraphics[width=0.9\linewidth]{figures/total_noncanon_w30.png}
+  }
+  \caption{Intra-group similarity for all non-canon paintings across canon definitions, color ($n = 436$) and grayscale ($n = 962$), showing significant correlations with time, $p < 0.01$.} 
+  \label{fig:intra_noncanon}
+\end{figure}
+
+An analysis of both canon and non-canon groups (\autoref{fig:intra_canon} and \autoref{fig:intra_noncanon}) reveals a decline in \textit{intra-group similarity} from 1780 to 1810. This suggests a period of artistic innovation, as paintings appear to become more diversified within groups. An examination of the data reveals that this interval coincides with the emergence of \textit{landscape paintings} as a dominant motif, partly replacing portraits, the most prevalent motif before this period (see \autoref{sec:app_motifs_over_time} in \autoref{appdx:a}). 
+
+Upon immediate inspection, results reveal a general increase in \textit{inter-group} similarity (\autoref{fig:inter_canon}). However, results also reveal a decreased \textit{inter-group} similarity around 1800, which might indicate an enhanced experimentation and a shift in artistic conventions pulling the two groups apart, but unlike the \textit{intra-group} change, this drift does not seem related to the pioneering of a specific motif - not even landscapes, that appear to enter both groups in the same period (see \autoref{sec:app_motifs_over_time} in \autoref{appdx:a}). In other words, it is not an explicit innovative role that is making one group "newer" than the other.\footnote{Note that cosine similarities are generally high, so these fluctuations reflect subtle shifts. Inter-group scores use mean embeddings, which smooth individual variation and yield higher, narrower similarity ranges than the raw embeddings used in the intra-group analysis.} 
+
+The overall increase in similarity after 1810, within \textit{and} between groups, may be reflective of the popularization and standardization of the new motifs, highly influenced by important figures such as C. W. Eckersberg, whose work and teaching shaped the aesthetics of the Golden Age, escpecially the introduction of landscape paintings.
+
+\begin{figure}[t!]
+  \centering
+  \makebox[\textwidth][c]{%
+    \includegraphics[width=\linewidth]{figures/inter_w30.png}
+  }
+  \caption{Inter-group similarity for canon variables, as measured by the cosine similarity of mean embeddings for each of the two groups (canon/non-canon) in a rolling window (\textit{size} = 30, \textit{step} = 1). All variables except for \textit{On display canon (greyscaled)} (bottom right) show a significant correlation with time, $p < 0.01$. \underline{At the top}: embeddings of paintings in color ($n=1,082$); \underline{Below}: embeddings of all paintings in grayscale ($n=1,656$). }
+  \label{fig:inter_canon}
+\end{figure}
+
+\subsection{Classification results}
+Classification results from the binary classification of canon vs non-canon labels are reported in Table \ref{tab:class_results}. The models generally achieve higher predictive performance for the exhibition canon category relative to the other canon labels, likely due to the larger sample size of canonical paintings within this group. While the overall classification results are modest and do not show impressive performance, they nonetheless still suggest the presence of certain intrinsic features that differentiate canonical paintings from non-canonical paintings. This adds an interesting aspect to the already reported results and suggests that we do observe some, albeit subtle, differences between the two groups. 
+
+\begin{table}[htbp]
+\centering
+
+\begin{subtable}[t]{0.7\textwidth}
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccc}
+\toprule
+                          & \multicolumn{2}{c}{\textbf{Logistic Regression}}                              & \multicolumn{2}{c}{\textbf{MLP Classifier}}                                   \\
+                          & \textit{Unbalanced} & \textit{Balanced} & \textit{Unbalanced} & \textit{Balanced} \\ \midrule
+\textbf{Exhibition canon} &  0.635 ± 0.028                      &  0.628 ± 0.055                         & 0.666 ± 0.023                      & 0.667 ± 0.028                        \\
+\textbf{SMK exhibitions canon}        & 0.63 ± 0.06                      & 0.625 ± 0.046                        & 0.69 ± 0.046                      & 0.654 ± 0.042                        \\
+\textbf{On display canon} & 0.62 ± 0.045                      & 0.55 ± 0.039                        & 0.651 ± 0.047                & 0.564 ± 0.052          \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Color embeddings}
+\label{tab:canon_f1_color}
+\end{subtable}
+
+\vspace{1em} 
+
+\begin{subtable}[t]{0.7\textwidth}
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccc}
+\toprule
+                          & \multicolumn{2}{c}{\textbf{Logistic Regression}}                              & \multicolumn{2}{c}{\textbf{MLP Classifier}}                                   \\
+                          & \textit{Unbalanced} & \textit{Balanced} & \textit{Unbalanced} & \textit{Balanced} \\ \midrule
+\textbf{Exhibition canon} & 0.685 ± 0.038                      & 0.682 ± 0.043                       & 0.725 ± 0.039                     & 0.72 ± 0.04                        \\
+\textbf{SMK canon}        & 0.659 ± 0.035                     & 0.629 ± 0.027                        & 0.687 ± 0.03                      & 0.639 ± 0.026                       \\
+\textbf{On display canon} & 0.64 ± 0.064                       & 0.572 ± 0.036                        & 0.631 ± 0.074                     & 0.592 ± 0.044         \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Grayscaled embeddings}
+\label{tab:canon_f1_gray}
+\end{subtable}
+
+\caption{Mean stratified K-fold cross-validated (K=10) macro F1 scores and standard deviations for binary prediction tasks of canon and non-canon for all canon variables.}
+\label{tab:class_results}
+\end{table}
+
+\section{Conclusion and Future Works}
+We have scrutinized two persistent, opposing art-historical claims: that canonical paintings possess distinctive traits capable of being distinguished from non-canonical works or introducing aesthetic innovation, or, conversely, that the reason for them being canonical cannot be found in the works themselves. 
+Using visual embeddings, we have employed both unsupervised and supervised methods to begin addressing these competing claims. Consistent with findings from qualitative scholars (see \autoref{section:canon_visual_related}), our first unsupervised approach revealed no observable difference between canonical and non-canonical paintings, supporting the extrinsic interpretation. This aligns with \textcite{feldkamp_canonical_2024}, whose PCA visualizations of literary works also failed to differentiate between canonical and non-canonical novels. 
+
+Unlike the findings of \textcite{feldkamp_canonical_2024} regarding literary influence, we did not observe obvious temporal patterns suggesting that canonical paintings serve as \textit{trendsetters}. We find no clear evidence that canonical artworks systematically introduce \textit{motifs} subsequently adopted by non-canonical artists.
+The fact that we cannot corroborate \textcite{feldkamp_canonical_2024} and detect novelty in the visual arts canons may reflect medium-specific differences: literature’s broader distribution and consumption versus the visual arts’ historical exclusivity and institutional containment. Nineteenth-century literature, aided by technological advances, increasingly reached broader audiences, playing a central role in public culture \cite{horstboll_menigmands_1999, engelsing_perioden_1978}. By contrast, visual art remained largely confined to elite circles until public museums expanded access towards the end of the century. As a result,
+we might be modeling differences \textit{in-group}, as all visual artworks in our sample may carry the 'canonical' quality, while, by comparison, \textcite{feldkamp_canonical_2024} may be capturing the higher degree of differentiation that characterizes the literary field in this period \cite{bourdieu_field_1993}. Still, our diachronic analysis reveals a subtle pattern of divergence and convergence between canonical and non-canonical paintings, suggesting a degree of differentiation between the two groups. 
+
+Despite the absence of clear unsupervised distinctions, supervised methods yielded a measurable signal. A simple classifier distinguished canonicals from non-canonicals with above-chance performance ($F$-score $\approx 0.70$ for classification of exhibition canon with greyscaled-embeddings), making it impossible to dismiss the existence of some inherent aesthetic characteristics in canonical art, and challenging the extrinsic narrative prevalent in qualitative debates. 
+
+These findings resonate with \textcite{langfeld_canon_2018} and \textcite{carrier_art_1993}, who emphasize the inseparability of aesthetics and historical contexts. \textcite{langfeld_canon_2018} argues that neglecting visual aesthetics overlooks art's elemental aspects, yet acknowledges that aesthetic perception is contingent rather than timeless. \textcite{carrier_art_1993} further highlights how aesthetic judgments are mediated by institutional evaluations.
+
+Our analysis underscores the medium-specific dynamics of canon formation, emphasizing the impact of accessibility, dissemination, and consumption contexts. The observed intrinsic and aesthetic overlaps between canonical and non-canonical artworks suggest potential biases in museum practices; notably, SMK’s digitization efforts favor canonical paintings, indicating a preference for high-quality digitization of culturally recognized works.
+Recognizing these dynamics enriches our understanding of cultural history, illustrating how the processes of canon formation profoundly mirror their societal contexts.
+Future research should extend these methodological insights and empirical results to other artistic traditions, incorporating advanced computer vision techniques to strengthen the dialogue between computational methods and traditional art historical analyses \cite{lassche_why_2025}. Further exploring intrinsic and extrinsic interactions promises deeper insights into the complex mechanisms underpinning cultural canonization.
+
+
+\section*{Acknowledgements}
+The authors affiliated with Aarhus University were supported by grants from the Carlsberg Foundation (\textit{The Golden Array of Danish Cultural Heritage}) and the Aarhus Universitets Forskningsfond (\textit{Golden Imprints of Danish Cultural Heritage}).
+Part of the computation done for this project was performed on the UCloud interactive HPC system, which is managed by the eScience Center at the University of Southern Denmark. We express gratitude towards \textit{Statens Museum for Kunst} for their digitization efforts of their collection.
+
+\printbibliography
+
+\appendix
+
+\section{Appendix A} 
+\label{appdx:a}
+
+
+\subsection{Dataset details}
+
+\begin{figure}[h]
+  \centering
+  \makebox[\textwidth][c]{%
+    \includegraphics[width=\linewidth]{figures/canon_frequency.png}
+  }
+  \caption{Frequency of canon variables over time}
+  \label{fig:canon_frequency}
+\end{figure}
+
+
+\subsection{PCA with colored and grayscaled paintings}
+\vspace{1em}
+
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}{\textwidth}
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/pca_paintings_color.png}
+    \caption{Colored embeddings}
+    \label{fig:pca_paintings_color_embeddings}
+  \end{subfigure}
+
+  \vspace{1em}
+
+
+  \begin{subfigure}{\textwidth}
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/pca_paintings_grey_compressed.png}
+    \caption{Grayscaled embeddings}
+    \label{fig:pca_paintings_gray_embeddings}
+  \end{subfigure}
+
+  \caption{PCA (n-components = 2) with embeddings for all paintings, color and greyscale}
+  \label{fig:PCA_paintings}
+\end{figure}
+
+\subsection{Motifs in canon/non-canon groups over time}
+\label{sec:app_motifs_over_time}
+
+To examine motif innovation in our dataset, we divided the artworks into two temporal groups using 1780 as a rough dividing line: 1750-1780 and 1781-1810. As shown in \autoref{fig:pca_all} and \autoref{fig:PCA_paintings}, the most discriminative dimensions of the image embeddings appear to correspond to motif, with clusters generally reflecting motif similarity. Below, we visualize all artworks for each temporal group to explore how motifs shift over time: for the full dataset (\autoref{fig:all_temporal_PCA}), for canonized artworks in the \textit{exhibitions canon} category only (\autoref{fig:canon_temporal_PCA}), and for non-canon artworks (\autoref{fig:noncanon_temporal_PCA}).
+
+Most visible in \autoref{fig:all_temporal_PCA} and \autoref{fig:canon_temporal_PCA}, we see a two-part division in the earlier pre-1780 group (left PCA) - roughly corresponding to a motif division into portraits vs. other - while the later group post-1780 (right-hand PCA) has the heart-shaped structure of the full dataset PCA in \autoref{fig:PCA_paintings}. This development in shape might have to do primarily with the emergence of a landscape-painting cluster in the post-1780 PCAs (landscape paintings cluster on upper right side in \autoref{fig:all_temporal_PCA}, upper left side in \autoref{fig:canon_temporal_PCA} and bottom center in \autoref{fig:noncanon_temporal_PCA}). As such, this visual inspection seems to confirm a diversification of the whole dataset as we progress forward in time.
+
+
+\begin{figure}[h]
+    \begin{flushleft}
+        \includegraphics[width=\linewidth]{figures/pca_innovation_total.png}
+        \caption{All color artworks divided into two groups: 1750-1780 (left) and 1780-1810 (right). Note the development from a bipartite to a heart-shape form as the landscape-painting cluster emerges in the right-hand, post 1780 PCA.}
+        \label{fig:all_temporal_PCA}
+    \end{flushleft}
+\end{figure}
+
+It is notable, however, that the canon and non-canon PCAs do not seem to differ much here. While the earlier pre-1780 group in the canon (\autoref{fig:canon_temporal_PCA}) is not as two-part divided as the corresponding pre-1780 group in the non-canon (\autoref{fig:noncanon_temporal_PCA}); we do see the development of landscape paintings in both the canon and non-canon artworks.
+
+\begin{figure}[h]
+    \begin{flushleft}
+    \includegraphics[width=\linewidth]{figures/pca_innovation_canon.png}
+    \caption{Artworks included in the exhibitions \textbf{canon}, divided into two groups: 1750-1780 (left) and 1781-1810 (right). Note how there appear to be more portraits in the pre-1780 group and more landscapes in the post-1780 group (upper left cluster on the right-hand PCA).}
+    \label{fig:canon_temporal_PCA}
+    \end{flushleft}
+\end{figure}
+
+
+\begin{figure}[h]
+    \begin{flushleft}
+    \includegraphics[width=\linewidth]{figures/pca_innovation_non_canon.png}
+    \caption{\textbf{Non-canon} artworks in the \textit{exhibitions canon} category, divided into two groups: 1750-1780 (left) and 1780-1810 (right). Note how there appears to be more portraits in the pre-1780 group and more landscapes in the post-1780 group. These are clustered on the bottom center in the right-hand PCA.}
+    \label{fig:noncanon_temporal_PCA}
+    \end{flushleft}
+\end{figure}
+
+
+\end{document}

@@ -1,0 +1,426 @@
+% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
+% *Anthology of Computers and the Humanities*. ADD THE OPTION
+% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
+% DO NOT change the documentclass
+\documentclass[final]{anthology-ch} % for the final version
+%\documentclass{anthology-ch}         % for the submission
+
+% LOAD LaTeX PACKAGES
+\usepackage{booktabs}
+\usepackage{graphicx}
+% ADD your own packages using \usepackage{}
+
+\usepackage{tcolorbox}
+\usepackage{fancyvrb}
+\usepackage{xcolor}
+\usepackage{listings}
+\lstset{commentstyle=\color{blue},morecomment=[l]{//}}
+
+% \usepackage{xeCJK}
+% \usepackage{CJKutf8}
+
+\newfontfamily\zhfont{Songti SC}
+\DeclareTextFontCommand{\textzh}{\zhfont}
+\setmonofont{Songti SC} % or another CJK-capable mono font
+
+
+% TITLE OF THE SUBMISSION
+% Change this to the name of your submission
+\title{Toward Tracing Knowledge Flows in Martial Arts: Biographical Data and Interpersonal Contacts}
+
+% AUTHOR AND AFFILIATION INFORMATION
+% For each author, include a new call to the \author command, with
+% the numbers in brackets indicating the associated affiliations 
+% (next section) and ORCID-ID for each author.  
+\author[1,2]{Yumeng Hou}[
+  orcid=0000-0002-7908-0693
+]
+
+
+% There should be one call to \affiliation for each affiliation of
+% the authors. Multiple affiliations can be given to each author
+% and an affiliation can be given to multiple authors. 
+\affiliation{1}{Faculty of Arts and Social Sciences, National University of Singapore, Singapore}
+\affiliation{2}{Centre for Computational Social Science and Humanities, National University of Singapore, Singapore}
+
+% KEYWORDS
+% Provide one or more keywords or key phrases seperated by commas
+% using the following command
+\keywords{knowledge extraction, martial arts, biographical data, interpersonal contact, prompt engineering}
+
+% METADATA FOR THE PUBLICATION
+% This will be filled in when the document is published; the values can
+% be kept as their defaults when the file is submitted
+\pubyear{2025}
+\pubvolume{3}
+\pagestart{1394}
+\pageend{1407}
+\conferencename{Computational Humanities Research 2025}
+\conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
+\doi{10.63744/m8c605kSTaEM}  
+\paperorder{91}
+
+\addbibresource{bibliography.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HERE IS THE START OF THE TEXT
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This article presents an ongoing database construction effort for advancing evidence-based research on knowledge flows in Chinese martial arts. Martial arts, as embodied knowledge systems, intertwine the complexities of physical practice with ideological and sociocultural dimensions. Yet their histories remain elusive due to sparsity and divergence in documentation. 
+
+To address these challenges, we propose developing a reliable knowledge database of martial arts practitioners, with a focus on biographical information and interpersonal contacts. In doing so, we experiment with a human-in-the-loop pipeline that combines prompt engineering with domain-specific semantics, iteratively evaluated and refined by domain experts. The pipeline extracts knowledge entities from curated historical corpora, both unstructured and semi-structured, and transforms them into structured datasets.
+
+By sharing the challenges, strategies, and preliminary outcomes, we introduce a pathway for organising knowledge within the underdocumented and heterogeneously documented martial arts historiography. This work lays a foundation for future analytics on the knowledge flows in martial arts, with potential applicability to other embodied traditions.
+\end{abstract}
+
+\section{Introduction} 
+
+Martial arts have evolved from military combat skills into civilian practices and performative traditions through a longitudinal process. The knowledge systems are rooted in embodied practices, where the body enacts, adapts, and mediates transmission through interactions with individuals, objects, natural surroundings, and social norms. For this reason, scholars have often described martial arts as multilayered microcosms of historical narrative, in which physical, technical, ideological, and sociocultural dimensions are deeply intertwined and evolve in lockstep \cite{lianzhen2023bodily,farrer2011martial,bowman2019deconstructing}.
+
+Writing Chinese martial arts history, however, presents particular difficulties. On one hand, historical records of martial arts are sparse. Formal manuscripts began to appear only from the Ming dynasty onward. Yet they primarily focused on technical descriptions and were often presented in a highly compact form \cite{MamingdaArchive}. On the other hand, the history of martial arts in China is largely ordinary and widely distributed. Many practitioners were lower-class civilians who practised martial skills to make a living, protect their families, or safeguard their communities. They were barely literate and unable to record their own histories, nor were they considered noteworthy enough to be documented by scholars at the time.
+
+As a result, formal documentation or biographical records of martial artists that could provide a traceable account of their practices and transmission are scarce. Although a few martial arts systems have reached a degree of consensus regarding their lineage histories, evidence is often sparse, and different groups may preserve divergent versions of the narrative. Much of what survives has been mediated through the writings of others or passed down orally. Rather than clarifying historical truths, such sources can sometimes obscure or even complicate them.
+
+Might history be better revealed if we integrated various sources, such as chronicles, oral histories, and anecdotal accounts, both historical and contemporary? Recent studies in computational history (e.g., \cite{pan2022networking,cha2019build,chen2022beyond}) suggest that extracting information about people’s interactions and activities directly from these materials can facilitate cross-referencing and inference, potentially providing alternative forms of evidence to traditional historiography. To this end, we ask:
+
+\begin{quote}
+    \textit{How can we pursue an evidence-based history of knowledge transmission and \newline development in martial arts?}
+
+    \textit{How can data science and machine intelligence assist in this process?}
+\end{quote}
+
+
+To address these overarching questions, we propose a ground-truth approach through the computational curation of verifiable data sourced from materials critically reviewed by a diverse cohort of martial arts scholars. By \textit{ground-truth}, we argue for the necessity of building a robust evidentiary base from which claims about martial arts history can be tested, challenged, or refined.
+
+In particular, when seeking to understand the transmission and development of martial arts knowledge, it is essential to examine patterns of both change and continuity, not only within individual systems but also across them. This involves investigating evidence of individual life experiences, mobility routes, kinship networks, and social interactions, and exploring how these factors influenced the knowledge transmission within specific martial arts systems.
+
+Practitioners, especially teachers, who are typically addressed as masters in the martial arts context, are the key agents in this transmission process. While most masters pass down techniques and forms inherited through lineage, they also adapt, refine, and at times create new moves based on practical experience, stylistic preference, or pedagogical need \cite{hkwulin2014,gotti2023dynamic}. As such, developing a historically reliable database focused on these agents and the pathways of knowledge transmission, specifically their biographies and interactions, holds promise for advancing the ground-truth ideal.
+
+This article presents a preliminary effort to develop a database representing the biographical information and interpersonal contacts of historical Chinese martial arts practitioners. Section~\ref{sec:relevance} provides an analysis of the research relevance. Section~\ref{sec:method} introduces the proposed methodology, including specific configurations and strategies, followed by a presentation of initial outcomes in Section~\ref{sec:case}. Through these sections, we discuss the challenges and explore strategies for extracting knowledge from culturally specific, underrepresented corpora in the context of Chinese martial arts. This experiment serves as a foundation for future investigations, as outlined in Section~\ref{sec:future}.
+
+
+\section{Research relevance}\label{sec:relevance}
+
+\subsection{The dynamics of embodied knowledge transmission}
+
+Martial arts involve systematic clusters of principles and techniques demonstrated through choreographed forms, training methods, and fighting styles. Transmission occurs through oral instruction and physical interaction, shaped by individual experience and influenced by ritual, tradition, and the festive life of practitioner communities, forming an intrinsically sociocultural process. 
+
+In historical agrarian contexts, martial arts were typically passed down through patriarchal clan systems to ensure that core tactics and skills remained within the family to safeguard the village or community. This structure shaped teacher-disciple relationships that closely resembled kinship ties. Nonetheless, the preference for the within-clan transmission paradigm should not be conflated with the kind of secretive exclusivity dramatised in \textit{wuxia} (literally `martial arts and chivalry') movies and novels. In practice, many practitioners actually learned formally from multiple teachers, and informally through \emph{qie cuo} -- a practice of sparring-based exchange where techniques were tested, confronted, and often transmitted. Through these interactions, martial artists exchange, test, adapt, and refine their skills by incorporating or responding to one another’s methods \cite{lau2021chinese,hkwulin2014}.
+
+Additionally, while villages were generally static and martial practices often remained geographically localised, skilled practitioners were often more mobile than the average civilian. Many practitioners engaged in martial arts as part of their professional roles, with constant knowledge exchange occurring through occupational interactions and encounters. Moreover, during periods of extreme disruption such as war, natural disaster, or political suppression, the migration of villages and families also facilitated the transmission and evolution of martial knowledge along the evolving mobility networks.\footnote{Hakka martial arts offer a prime example. The Hakka, a Han Chinese subgroup who migrated south from the Central Plains in five major waves, developed a distinctive martial system through assimilation with local communities \cite{hakka300}.}
+
+Such exchanges occurred not only within clans or ethnic groups but also across national boundaries. The invention of \textit{shuangshoudao} (double-handed sword) exemplifies how local traditions studied foreign methods and developed innovations to overcome them \cite{MamingdaSword}. For instance, during the Ming Dynasty \emph{wokou} disturbances, often described as `Japanese pirates' though in reality a multiethnic maritime force of diverse East Asian ancestry.\footnote{Wang \cite{wokou_wang2021writing} discussed seven forces involved in sea raids: the Japanese of the archipelago’s western rim; unlicensed merchants; seafaring bands comprised of Japanese, Chinese, Korean, European, South and Southeast Asian, and African seamen who raided and traded across East Asia; Chinese smuggler lords; residents of the western Japanese littoral from Tsushima Island to the Kii Peninsula; and sea people and water demons.} Chinese martial artists encountered foreign techniques, including the Japanese two-handed sword, which they found particularly challenging. In seeking to understand and counter these methods, they introduced innovations in both combat and weapon design, most notably the Chinese \emph{shuangshoudao} techniques.
+
+\subsection{People as the contact points}
+
+As discussed, martial arts are fundamentally embodied knowledge, in which the mindful body enacts and mediates transmission through physical and intellectual interactions between individuals, between humans and objects, between people and their environment, and often, between practices and society. The human body becomes a crucial vessel for knowledge flows, where poses, gestures, and movements serve as carriers of information, representation, and expression. Practitioners, therefore, through personal interaction, act not only as agents of knowledge but as the very embodiment of \textit{contact} in a sociocultural sense.
+
+The concept of \textit{culture contact} refers to the interaction between distinct cultural systems that results in exchange, adaptation, and at times conflict across technologies, languages, and practices \cite{redfield1936memorandum}. Unlike one-directional influence, such as that imposed by colonial or feudal regimes, \textit{contact} implies fluid and reciprocal influence. It offers a particularly valuable lens through which to understand how cultural knowledge moves across boundaries and disciplines \cite{deagan2015studies}. The results of such contact may manifest in material traits, for instance, in the shape or visual characteristics of physical objects, as well as in immaterial forms, such as gestural, conceptual, or phonological features embedded within knowledge and practice. 
+
+Because martial arts, as embodied systems, evolve and spread almost exclusively through interpersonal interactions, we argue that the trajectory of \textit{culture contact} can often be traced from the individual to the collective. When individual encounters accumulate and exert broader influence, they begin to shape what we recognise as \textit{culture contact} at a systemic level.
+
+Therefore, practitioners, along with the networks they form, are central to studying martial arts as a history of individual contact. These individual links, when viewed cumulatively, reveal the interactions between systems that underpin the transmission and evolution of martial knowledge. However, tracing the lives and movements of individual practitioners within Chinese martial arts is far from straightforward. Organised historical records are sparse -- a condition that reflects not only the broader historiographical challenges associated with martial texts, but also the social status of the practitioners themselves. Most were civilians rather than literati or officials, and thus rarely left behind formal biographies. What we know of them must often be pieced together from scattered sources, and their reliability depends on rigorous critical scrutiny.
+
+In an early attempt to address the archival gap, martial historian Tang Hao compiled the \textit{Research on Illustrated Books of Chinese Martial Arts} (\textzh{《中國武藝圖籍考》}) in the mid-19th century. The work remains a foundational source in modern martial arts scholarship and has since informed contemporary efforts such as the \textit{Shedian} project (\textzh{《中華射典》}) and the \textit{Collection of Rare Classical Martial Works} (\textzh{《中國古代武藝珍本叢編》}), among others. Moreover, more directly addressing the biographical challenge, the monumental \textit{Dictionary of Chinese Martial Arts} (\textzh{《中國武術大辭典》}, hereafter `\textit{The Dictionary}') \cite{1990edition}, a project under the leadership of martial historian Ma Mingda, compiled concise biographical entries for over 500 notable figures throughout Chinese history, both factual and anecdotal.
+
+
+\textit{The Dictionary} stands as a landmark effort to systematise martial arts studies and serves as a foundational resource for extracting rich and reliable information in the construction of a knowledge database. It also provides a paradigm through which we aim to computationally compile and expand the resources by integrating dispersed sources that have traditionally been managed through manual scholarly processes.
+
+
+\section{Methodology}\label{sec:method}
+
+As we propose to address these research challenges through the construction of a biographical database of practitioners in Chinese martial arts history, our approach draws on principles consistent with those of the China Biographical Database (CBDB) project \cite{cbdb}. 
+
+CBDB has proven effective in aggregating data from historical texts and reference sources to provide multiple perspectives on the lives of individuals and groups throughout Chinese history \cite{tsui2020harvesting}. While our project takes conceptual inspiration from the CBDB paradigm, the methodology necessarily diverges. Unlike CBDB, which primarily extracts data from structured sources such as biographies and gazetteers, our work requires a more adaptable process of extraction and inference from heterogeneous and often fragmentary materials, collated and validated by a team of martial arts historians.
+
+The traditional humanities workflow for compiling biographical profiles typically involves the following procedures:
+
+\begin{enumerate}
+    \setlength\itemsep{-0.15em}
+    \item Collating and validating reliable texts from multiple, distributed sources pertaining to a specific historical figure;
+    \item Extracting factual information through direct reference or cross-referenced inference of life events across those sources;
+    \item Discarding ambiguous data and selecting only verified, historically significant events to produce a succinct biographical summary, chiefly based on subjective judgment.
+\end{enumerate}
+
+To enhance this process, we collaborate with martial arts scholars to emulate and also extend the traditional research pipeline through computational scalability. As described in the subsequent sections, we employ iterative prompt engineering with large language models (LLMs), in combination with an ontology framework, to extract and infer biographical information from curated and validated source texts. While algorithms handle large-scale batch extraction and inference, human experts are extensively involved in curating the corpora, adjudicating the extractions, suggesting prompt refinements -- particularly for guiding the semantic interpretation of ambiguous expressions in classical Chinese -- and validating the resulting datasets. Rather than generating narrative-style summaries, the output is configured as structured data entries that preserve comprehensive information while remaining operable for both human interpretation and machine processing.
+
+
+\subsection{The corpora}\label{sec:corpora}
+
+To construct a robust and structured dataset, we process two types of corpora that offer distinct information modalities and computational challenges.
+
+\subsubsection{Semistructured biographical summaries} 
+
+This corpus consists of brief yet rigorously compiled biographies sourced from \textit{The Dictionary}, written in a hybrid style that blends vernacular Chinese (\textit{Baihuawen}) with classical Chinese (\textit{Wenyanwen}), as shown in Figure~\ref{fig:corpora}(A). It covers key figures across diverse martial arts systems spanning a wide historical range, and brings a list of named entities (as in the Table of Contents). Therefore, the corpus provides a relatively structured and semantically coherent base corpus for subsequent computational processing.
+
+\subsubsection{Unstructured descriptive texts} 
+
+The second type of corpus comprises loosely structured descriptive texts in heterogeneous linguistic styles, including classical Chinese (\textit{Wenyanwen}) and vernacular Chinese (\textit{Baihuawen}) (see excerpt in Figure~\ref{fig:corpora}(b)). These sources were collated and validated by martial arts historians as part of a preparation for composing biographies of practitioners of Yang-style Tai Chi. While all content pertaining to a single individual was grouped into a single document, their internal organisation remains unsystematised and lacks semantic markup.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{figures/corpus2.png}
+    \caption{A comparative view of two types of corpus materials related to a single practitioner entity -- Yang Chengfu, a significant figure in the history of Yang-style Tai Chi. (a) A coherently written, concise biographical entry sourced from \textit{The Dictionary}. (b) Loosely structured descriptive texts describing different facets of the practitioner’s life, from various sources and registers.}
+    \label{fig:corpora}
+\end{figure}
+
+
+\subsection{Semantic basis}\label{sec:maon}
+
+
+To construct a descriptive and semantically coherent database of martial arts practitioners while connecting the diverse conceptual dimensions of martial knowledge and embodied traditions, this work adopts the Martial Arts Ontology (MAon) as its semantic foundation \cite{hou2024ontology}.
+
+MAon structures the knowledge domain of martial arts through three interrelated semantic modules: the \textit{technical}, \textit{stylistic}, and \textit{social} modules. The \textit{technical} module models the layered deployment of physical attributes in executing techniques and forms. The \textit{stylistic} module, encompassing epistemic and symbolic dimensions, describes how technique combinations form stylistic identities with cultural and representational significance. The \textit{social} module addresses knowledge transmission, i.e., how martial systems are taught, learned, codified, evaluated, and disseminated.
+
+Specifically, this work draws on the \textit{social module}, which models different types of social agents, such as individual practitioners (class:\texttt{MA\_Master}) and institutions (class:\texttt{MA\_Institute}), along with their relationships to entities including places, people, objects, and time periods. Leveraging the assertions and object properties defined in this module, we extend the ontology around the \texttt{MA\_Master} class to support a fine-grained description of individuals and their contact relations.
+
+
+\subsection{Knowledge Extraction through Prompt Engineering}\label{sec:prompt}
+
+Prompt engineering has gained traction as an efficient way to utilise LLMs by crafting and optimising prompts to improve task-specific reasoning. By actively engaging with the capacities of general-purpose models, while rectifying their limitations, we can guide these models to perform more effectively in disciplinary contexts. Prompt engineering thus offers a more agile and adaptable solution than fine-tuning a dedicated model, and allows for iterative refinement through the observation and refinement of the given prompt's limitations. For these reasons, at this exploratory stage, we chose to leverage prompt engineering as a rapid and iterative method for prototyping the workflow of knowledge extraction and organisation. 
+
+\subsubsection{Model setup}%Model and prompting
+
+\texttt{GPT-4o} was selected as the base model because it demonstrated higher coherence than other models when handling undertrained, heterogeneous Chinese-language sources during our exploratory sample testing (January 2025).
+
+\subsubsection{Crafting prompts}
+
+Few-shot learning is adopted as our prompting strategy. Prompts are structured as $\# Identity$, $\# Instruction$, followed by multiple $\#Examples$, and used as a system message to generate code. This approach efficiently introduces the model to new tasks through input-output examples, allowing it to infer patterns and apply them to new data.
+
+Two core sets of prompts have been iteratively devised (see samples in Appendix~\ref{appdx:promtsamples}): \ref{appdx:promt1} for extracting \textbf{practitioner entities} with explicitly identified attributes in the source texts, and \ref{appdx:promt2} for extracting both explicitly stated and implicitly inferred \textbf{contact relations} (technically, object properties) between pairs of identified practitioners. To mitigate issues of hallucination and facilitate explainable extractions, the model was instructed to append the \textbf{reference excerpt} for each relation to clarify how the inference was derived from the original text.
+
+
+\subsubsection{Output configuration}
+
+The response for each practitioner entity extraction is configured as a JSON array comprising the following fields:
+
+\begin{itemize}
+  \setlength\itemsep{-0.15em}
+    \item {Value properties} describing the person’s identity, including \texttt{Name}, \texttt{Courtesy Name}, \texttt{Style Name}, \texttt{Aliases}, \texttt{Date of Birth}, and \texttt{Date of Death}.
+    \item Entities illustrating ethnographic information, including \texttt{Ethnicity}, \texttt{Dynasty} (or known as `reign period'), and \texttt{Place of Birth}.
+    \item Entities capturing social activities and professional engagement, including \texttt{Organisations}, \texttt{Occupations}, \texttt{Works Authored}, \texttt{Works Mentioned}, and \texttt{Related Events}. \newline Each of these fields may contain multiple values and is therefore set as a list.
+    \item The specific types of \texttt{Martial Arts Practised} by the individual.
+    \item A brief \texttt{Biography} algorithmically summarised from the relevant textual sources.    
+\end{itemize}
+
+Regarding contact relations, we place particular emphasis on identifying kinship, master–disciple ties, and social associations (such as colleagueship or shared place of origin or residence). The responses, also structured as JSON arrays, are designed to include informative fields that describe the relational triplet, along with the reference excerpt from the original text from which the relation was inferred. Specifically, each entry includes:
+
+\begin{itemize}
+  \setlength\itemsep{-0.15em}
+  \item Name and type of the start entity.
+  \item Name and type of the end entity.
+  \item Semantic type of the relation.
+  \item Reference excerpt.
+\end{itemize}
+
+\subsubsection{Normalisation}
+
+The reality of working with heterogeneous corpora is that they are rarely coherent. In the context of Chinese martial arts, this is further complicated by (1) the variation in appellations used for historical figures, (2) the complex naming conventions of martial arts systems and dynasties, and (3) the temporal ambiguity introduced by dynastic designations.
+
+To resolve the complexity, we curated a set of standard term mapping tables by extracting entities from \textit{The Dictionary} to regularise appellations, names of martial arts systems and those of dynasties (examples in Figure~\ref{fig:normalise}). During prompting, the model was instructed to reference these mappings, ensuring adherence to controlled vocabularies and avoiding confusion between distinct concepts. After extraction, relational triplets were harmonised by consolidating person entities under their original name and aligning by Gregorian calendar dates with historical dynastic periods.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{figures/normalise.png}
+    \caption{Examples of standard term mapping tables for (a) person names, (b) organisations, and (c) martial arts systems.}
+    \label{fig:normalise}
+\end{figure}
+
+
+%\subsection{Adjudication and prompt refinement}
+
+\section{Preliminary results} \label{sec:case}
+
+To assess and improve the effectiveness of the engineering pipeline, we conducted two focused case studies on biographical and relational data extraction: (1) all named practitioner entities recorded in \textit{The Dictionary}, and (2) contemporary Yang-style Tai Chi practitioners parsed from newly collated unstructured texts, most of whom are absent from the former source. Multiple rounds of expert validation were carried out by cross-checking all extracted practitioner information, as well as kinship and master–disciple relations -- the two types directly linked to knowledge transmission -- for Yang-style Tai Chi, by tracing the reference excerpts back to source texts.
+
+\subsection{Extraction of practitioner entities}
+
+A total of 431 practitioner entities were identified from \textit{The Dictionary}, with annotation property fields extracted where applicable (Figure~\ref{fig:MAentity}). In addition, 43 important figures in the transmission history of Yang-style Tai Chi were retrieved from the newly curated corpus, which expands on the four individuals previously compiled in \textit{The Dictionary}.\footnote{The 43 additional figures refer only to the focused Yang-style Tai Chi case study, one of the 644 systems compiled in \textit{The Dictionary}. The number of entities, and thus the dataset, could increase significantly when the approach is scaled to additional styles, each requiring an expert-curated corpus and adjudication process.}
+
+In this exercise, prompt engineering proved readily applicable for extracting named practitioner entities from relatively structured and clean Chinese texts. The model demonstrated viable accuracy in recognising various appellations and ethnographic information of historical figures without special additional instructions in the prompts. However, it struggled to differentiate between concepts such as organisation versus dynasty, and martial arts systems versus related notions like techniques or clans. To address this issue, we compiled terminologies from \textit{The Dictionary} and other sources into a reference file organised by category, and instructed the model to use these predefined entity groups during extraction. This refinement improved accuracy to 98\%.
+
+
+\subsection{Extraction of interpersonal contacts}
+
+A total of 1,607 interpersonal contacts were identified from the integrated processing of \textit{The Dictionary} (849) and the Yang-style Tai Chi corpus (758), of which 1,222 were validated as transmission links representing teacher-student and kinship-based knowledge-transfer relationships. Each entry was post-processed into CSV format, including the triplet information along with the reference excerpt from which the inference was drawn (Figure~\ref{fig:relationcsv}). In addition, 1,587 relations between persons and other entities (such as places or events) were identified, which could potentially expand the dataset after thorough verification. 
+
+
+The model was less effective in inferring \textit{directed} interpersonal relationships than in extracting practitioner entities. While it could identify the existence of master-disciple relationships, even with relevant excerpts correctly extracted, it frequently confused their directions, i.e., reversing teacher and disciple, with initial accuracy below 50\%. 
+
+Upon examining the excerpts and the original texts, we observed that the model struggled particularly with classical Chinese expressions using a single character to indicate transmission activities, such as \textzh{A拜B(...师)}, \textzh{A从B(学/练/...)}, \textzh{A随B(学/练/...)} -- generally indicating that A is a student of B; or \textzh{A教B}, \textzh{A传B}, \textzh{A授B} -- generally indicating that A is a teacher of B. To address this, prompt refinement was carried out by incorporating these inference directives into the instructions and providing additional examples for few-shot learning. Following this adjustment, the model's accuracy improved to approximately 82\%, as manually verified during the expert adjudication process. While this is a promising improvement, further research is needed to enhance reliability for fully automatic extraction and to scale the approach to additional corpora.
+
+\section{Conclusion and outlook}\label{sec:future}
+
+This work explores a human-in-the-loop pipeline that leverages prompt engineering to configure more effective prompts for constructing a reliable biographical database of martial arts practitioners from scholarly curated corpora. Using this approach, we extract biographical entities with robust effectiveness and contact relations, though at a compromised performance, from heterogeneous historical materials. The JSON extractions can be converted into other formats suitable for programmatic tools, such as CSV and graph database deployment (Figure~\ref{fig:relationcsv}), to support further analytical development.
+
+Through these experiments, we found that generally trained LLMs can be tuned via iterative prompt refinement to perform better on undertrained corpora. This approach provides a rapid prototyping solution for exploring knowledge extraction in new contexts and can significantly enhance dataset creation and curation when the data scope is manageable. However, questions of reliability and scalability remain, particularly with the presence of semantic complexity and ambiguity, before applying this approach to more comprehensive corpora for in-depth analysis.
+
+Procedurally, expert adjudication is critical for identifying inference issues and guiding prompt refinement. Fostering this process, excerpt extraction -- texts that directly underpin the model’s outputs -- has proven an effective practice that enhances expert efficiency while providing explainability for validated extractions.
+
+Methodologically, we plan further research in two directions: (1) applying chain-of-thought and self-reflective instructions to probe the limits of prompt engineering for heterogeneous and context-specific Chinese corpora; and (2) developing a specialised model as a checking layer to adjudicate and correct the model's outputs, for example, by inferring and cross-checking semantic indicators of master-disciple relationships from reference excerpts.
+
+
+\begin{figure}[hp]
+        \centering
+        \includegraphics[width=\linewidth]{figures/entity.png}
+        \caption{A snapshot of extracted practitioner entities, processed from JSON into CSV format.}
+        \label{fig:MAentity}
+\end{figure}
+
+\begin{figure}[hp]
+        \centering
+        \includegraphics[width=\linewidth]{figures/relationentity.png}
+        \par\vspace{.6cm}
+        \includegraphics[width=.9\linewidth]{figures/master-sys-w.png}
+        \caption{Extraction of transmission contacts: (top) snapshot of extractions in CSV format; \newline(bottom) preliminary deployment of the transmission network in Neo4j.}
+        \label{fig:relationcsv}
+\end{figure}
+
+
+\section*{Acknowledgements}
+
+I sincerely thank the research team of Prof. Ma Mingda and Prof. Ma Lianzhen for granting permission to process \textit{The Dictionary}, and particularly Ma Jiewei and Ruan Wenpian for their significant contributions in curating corpora, adjudicating, and providing invaluable insights. I also gratefully acknowledge the computing resources provided by Xinhua Zhiyun Technology Co., Ltd.
+
+% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
+\printbibliography
+
+\clearpage
+% You can include an appendix using the following command
+\appendix
+
+\section{Core Prompt Samples} \label{appdx:promtsamples}
+
+Given the linguistic features of the corpora, the prompts consist of content written in Simplified Chinese. This section presents the prompts with English translations where necessary.
+
+\subsection{Extracting practitioner entities}\label{appdx:promt1}
+
+\begin{tcolorbox}
+\begin{scriptsize}
+\begin{verbatim}
+
+# Identity
+You are an expert in martial studies and history. You specialise in reading classical 
+Chinese and modern vernacular Chinese, and in analysing historical documents.
+
+# Instructions
+Extract structured information about historical martial figures from the given text.
+You must output the result as valid JSON.
+
+## Fields to extract in JSON schema
+{
+  "人名": "string or null",			        // Name
+  "字": "string or null",				         // Courtesy Name
+  "号": "string or null",				         // Style Name
+  "别名": ["string", ...] or [],			   // Aliases
+  "人物简介": "string or null",			    // Biography
+  "民族": "string or null",			        // Ethnicity
+  "组织机构": ["string", ...] or [],	 // Organisations
+  "职业": ["string", ...] or [],			   // Occupations
+  "朝代": "string or null",			        // Dynasty
+  "籍贯": "string or null",			        // Place of Birth
+  "生日": "YYYY-MM-DD or null",		     // Date of Birth
+  "卒日": "YYYY-MM-DD or null",		     // Date of Death
+  "创作作品": ["string", ...] or [],		// Works Authored
+  "提及作品": ["string", ...] or [],		// Works Mentioned
+  "拳种": ["string", ...] or [],			   // Martial Arts Practised
+  "事件": ["string", ...] or []			    // Related Events
+}
+
+## Additional Rules
+ //Organisations (组织机构), Occupations (职业), Works Authored (创作作品), Works Mentioned 
+ (提及作品), Martial Arts Practised (拳种), and
+ Related Events (事件) can have multiple entries.
+* Biography (人物简介) can be distilled from the original text.
+* Martial Arts Practised (拳种) must use terms from the list of martial arts systems provided 
+ at /path/, which lists names and categorisations.
+* Reign periods or vassal states are not Organisations (组织机构). Examples of organisations:
+ 'Yue Family Army', 'Wu Qiu Jiu', 'Seven Sages of the Bamboo Grove', and 'Tiger Ben Guard'. 
+
+# Example
+<doc_input id="example-1"> /text from the Dictionary of Chinese Martial Arts/ </doc_input>
+<assistant_response id="example-1">
+{
+   "人名": "岳飞",
+   "字": "鹏举",
+   "号": null,
+   "别名": ["岳武穆", "岳少保"],
+   "人物简介": "南宋抗金名将，精通武艺，忠勇著称。",
+   "民族": "汉族",
+   "组织机构": ["岳家军"],
+   "职业": ["将领"],
+   "朝代": "宋",
+   "籍贯": "河南省安阳市",
+   "生日": "1103-03-24",
+   "卒日": "1142-01-27",
+   "创作作品": ["武穆遗书", "满江红·怒发冲冠"],
+   "提及作品": ["说岳全传"],
+   "拳种": ["形意拳"],
+   "事件": [ "平定剧贼陶俊、贾进和之役", "单骑攻入常州盗郭吉的军营", "刺杀金将黑风大王"]
+}
+</assistant_response>
+\end{verbatim}
+\end{scriptsize}
+\end{tcolorbox}
+
+\subsection{Extracting relations between practitioners}\label{appdx:promt2}
+
+\begin{tcolorbox}
+\begin{scriptsize}
+\begin{verbatim}
+
+# Identity
+You are an expert in knowledge graphs. You specialise in accurately parsing relationships 
+between people, events, and locations described in a document.
+
+# Instructions
+Extract structured relationship data from the given text and output the result as valid JSON.
+
+## Relations to extract in JSON schema
+{
+    "起点实体": "string",				   // StartEntity
+    "终点实体": "string",				   // EndEntity
+    "起点实体类型": "string",			// StartEntityType
+    "终点实体类型": "string",			// EndEntityType
+    "关系类型": "string",				   // RelationType
+    "关系描述": "string"				    // RelationDescription
+}
+
+## Additional Rules
+* Focus on extracting these types of relations: between person and person, between person and
+event, and between location and event.
+* RelationType (关系类型) must only use defined terms from the provided list: column ‘relTypes’ 
+in ‘Rel_list.csv’. If none apply, output an empty array ‘[]’.
+* For each extracted relation, include the excerpt from the source text that explicitly  
+supports this relation.
+* Ensure the relation forms a complete subject-verb-object statement.
+*If either entity of a relation is missing, omit the relation.
+* Merge mentions of the same entity across paragraphs.
+* Ensure a correct relation direction. You can use indicator words to determine the direction:
+  - Disciple → Master: "A拜B", "A拜师B", "A师从B", "A随B", etc.  
+  - Master → Disciple: "A教B", "A传B", "A指导B", "A授B", etc. 
+
+# Example
+<doc_input id="example-1">
+"马英图(1898—1956) 字健勋。回族。河北省沧县杨石桥(今属孟村回族自治县)人。幼从父马捷元习武"
+</doc_input>
+
+<assistant_response id="example-1">
+{
+    "起点实体": "马捷元",			   // StartEntity: Ma Jieyuan
+    "终点实体": "马英图",			   // EndEntity: Ma Yingtu
+    "起点实体类型": "人物",			 // StartEntityType: Person
+    "终点实体类型": "人物",			 // EndEntityType: Person
+    "关系类型": "父子",				    // RelationType: Father–Son
+    "关系描述": 					          // RelationDescription
+    "马英图(1898—1956) 字健勋。回族。河北省沧县杨石桥(今属孟村回族自治县)人.幼从父马捷元习武"				
+}
+</assistant_response>
+\end{verbatim}
+\end{scriptsize}
+\end{tcolorbox}
+
+
+\end{document}

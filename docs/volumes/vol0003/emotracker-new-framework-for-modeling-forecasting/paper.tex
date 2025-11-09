@@ -1,0 +1,581 @@
+% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
+% *Anthology of Computers and the Humanities*. ADD THE OPTION
+% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
+% DO NOT change the documentclass
+%\documentclass[final]{anthology-ch} % for the final version
+\documentclass[final]{anthology-ch} % for the submission
+
+
+% LOAD LaTeX PACKAGES
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{hyperref}
+\hypersetup{hidelinks} 
+\makeatletter               % fixes numbering bug in anthology-ch
+\let\@fnsymbol\@arabic
+\makeatother
+\sisetup{
+    detect-all,
+    round-mode=places,
+    round-precision=4,
+    table-format=-1.4,
+    separate-uncertainty=true
+}
+
+\makeatother
+\usepackage{graphicx}
+\usepackage{booktabs}  
+\usepackage{caption}       % Better control over captions
+\usepackage{multirow}
+\usepackage{amsmath}       % Math symbols (for things like ×)
+\usepackage{lscape}        % (optional) for landscape figures if needed
+\usepackage{float}         % To allow [H] placement specifier
+\usepackage{hyperref} 
+% ADD your own packages using \usepackage{}
+
+% TITLE OF THE SUBMISSION
+% Change this to the name of your submission
+\title{EmoTracker -– A New Framework for Modeling and Forecasting Diachronic Emotion Dynamics}
+
+
+% AUTHOR AND AFFILIATION INFORMATION
+% For each author, include a new call to the \author command, with
+% the numbers in brackets indicating the associated affiliations 
+% (next section) and ORCID-ID for each author.  
+\author[1,2]{Max Tiessler}[orcid=0009-0002-6535-9666]
+\author[1]{Quim Motger}[orcid=0000-0002-4896-7515]
+\author[2]{Florina Piroi}[orcid=0000-0001-7584-6439]
+\author[3,4]{Andreas Baumann}[orcid=0000-0003-4595-2497]
+
+
+
+
+% There should be one call to \affiliation for each affiliation of
+% the authors. Multiple affiliations can be given to each author
+% and an affiliation can be given to multiple authors. 
+\affiliation{1}{Departament d'Enginyeria de Serveis i Sistemes d'Informació, Universitat Polit\`ecnica de Catalunya, Barcelona, Spain}
+\affiliation{2}{Institute of Information Systems Engineering, TU Wien, Vienna, Austria}
+\affiliation{3}{Department of German Studies, University of Vienna, Vienna, Austria}
+\affiliation{4}{Research Network Data Science, University of Vienna, Vienna, Austria}
+
+% KEYWORDS
+% Provide one or more keywords or key phrases seperated by commas
+% using the following command
+\keywords{diachronic emotion analysis, LSTM forecasting, temporal sentiment analysis, VAD modeling, semantic change modeling}
+
+% METADATA FOR THE PUBLICATION
+% This will be filled in when the document is published; the values can
+% be kept as their defaults when the file is submitted
+\pubyear{2025}
+\pubvolume{3}
+\pagestart{758}
+\pageend{782}
+\conferencename{Computational Humanities Research 2025}
+\conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
+\doi{10.63744/tdBQckiQA3FI}  
+\paperorder{47}
+
+\addbibresource{bibliography.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HERE IS THE START OF THE TEXT
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Existing computational approaches to diachronic semantics and emotion analysis typically study word meaning change and emotional evolution separately, limiting our understanding of how emotions evolve in proportion to the sense level. To bridge this gap, we propose EmoTracker, a novel framework that integrates diachronic sense modeling with Valence-Arousal-Dominance (VAD) emotion tracking to model and predict temporal emotion-sense trajectories. Our contribution is threefold. First, we develop a method for constructing temporal emotion datasets by integrating diachronic sense data with three different VAD lexicons. Second, we implement an LSTM architecture with attention mechanisms and momentum-based features to forecast emotional trajectories over time. Third, we provide interactive 3D visualizations to explore emotion dynamics over time, and 4D visualizations to capture the diachronic joint evolution of emotions and senses in the VAD space. Our evaluation shows that, among the selected lexicons, NRC-VAD is the most suitable for temporal modeling, though it also reveals the challenges in modeling dominance across lexicons. EmoTracker bridges diachronic semantics and emotion analysis, providing a comprehensive framework for computational humanities research.
+\end{abstract}
+
+\section{Introduction}
+
+Language is constantly evolving, shaped by cultural, social, and technological changes. This is particularly visible in the lexicon, as meanings and emotional connotations of words change over time. Such changes typically happen when words become more polysemous by obtaining now senses or when they lose some of their senses. For example, the English word \textit{gay} once primarily meant `cheerful' with a clearly positive connotation but today more neutrally also refers to sexual orientation; \textit{awful} originally just meant `awe-inspiring', but now mostly carries a clearly more negative connotation (`disgusting') \cite{cook2010automatically,hilpert2019historical}. Such examples highlight how emotional tone changes as semantics involving multiple senses evolve.
+
+However, most computational approaches treat semantic change and emotion analysis as distinct tasks. Semantic shift analysis often relies on diachronic comparisons of word embeddings \cite{tahmasebi2021survey,kutuzov-etal-2018-diachronic,hamilton-etal-2016-diachronic} and token-level embeddings for sense disambiguation \cite{tahmasebi2023computational,giulianelli2020analysing}, while emotion analysis uses static affective lexicons with emotional scores that are in some cases reconstructed via static word embeddings trained on historical text data \cite{acerbi2013expression,buechel2016feelings}. The reliance on word embeddings for this purpose, however, comes with certain limitations. Most prominently, word embeddings cannot straightforwardly differentiate between senses. For emotion analysis, this is evidently problematic since different senses of one and the same word can vary regarding their emotional connotation (e.g., `awe-inspiring' vs. `disgusting'). The main challenge in the current state-of-the-art lies in the lack of frameworks that model emotional evolution at a sense-specific level, bridging the relationship between polysemous meaning and emotion. Such a framework would be needed, however, to fully understand the emotional evolution of words \cite{cook2010automatically}. 
+
+To address this gap, we introduce EmoTracker, a novel framework that integrates diachronic sense modeling with temporal emotion analysis based on the Valence–Arousal–Dominance (VAD) model \cite{russell1980circumplex,warriner2013norms} that captures three emotional dimensions (Valence: negative---positive; Arousal: calm---agitated; Dominance: submissive---dominant). Our contributions to computational humanities research are threefold: (1) we propose the first automatic method for constructing diachronic sense-informed VAD datasets by aligning historical sense distributions~\cite{hu2021diachronicsense} with established contemporary VAD lexicons (NRC-VAD~\cite{mohammad2018nrcvad}, Warriner~\cite{warriner2013norms}, MEmoLon~\cite{memolon}); (2) we develop an LSTM-based forecasting model augmented with attention mechanisms and momentum-based features \cite{Lim_2021}, which capture temporal changes in the emotional state, to predict future VAD trajectories, introducing a novel predictive capability for affective language evolution; and (3) we build a REST API and interactive interface that features 2D VAD and sense time series, 3D emotion-over-time plots and 4D visualizations that capture the diachronic joint evolution of emotions and senses in the VAD space.
+
+We structure our work around the following research questions:
+
+\begin{itemize}
+   \item[\textbf{RQ1:}] How can we construct diachronic, sense-informed VAD datasets without manual annotation by systematically integrating temporal sense distributions with static contemporary VAD lexicons?
+   \item[\textbf{RQ2:}] How effectively can predictive models forecast future emotional shifts using enhanced LSTM-based architectures with temporal features?
+   \item[\textbf{RQ3:}] How can we design interactive visualizations to explore historical and forecasted emotional trajectories in multidimensional VAD space representations?
+\end{itemize}
+
+\noindent
+EmoTracker presents a reproducible and extensible framework that unifies diachronic semantics and affective modeling. We provide all data, open-source infrastructure and a complete replication package\footnote{Replication package: \url{https://github.com/mtiessler/EmoTracker}}, facilitating adoption by computational humanities researchers to investigate how emotional meaning evolves with language over time. Upon publication, the data and code will be made available through an institutional research data repository.
+
+\section{Related Work}
+
+While diachronic sense modeling and emotion analysis have each developed robust methodologies, these fields are often treated independently. As a result, we lack frameworks that jointly capture how word senses and their emotional associations co-evolve over time. EmoTracker addresses this integration gap by linking temporal sense distributions with affective modeling, enabling new insights into diachronic language dynamics.
+
+The past 15 years have seen considerable advances in the study of semantic change, initially driven by efficient ways of generating static embedding representations for large sets of words based on historical corpus data \cite{schlechtweg-etal-2019-wind, tahmasebi2021survey, kutuzov-etal-2018-diachronic}. In these approaches, semantic change is often operationalized by measuring shifts in a word's embedding over time or that of its semantic neighbors \cite{hamilton-etal-2016-diachronic,cassani2021words}. However, it has been proved that similarities between embeddings are sensitive with respect to frequency of occurrence so that this confound needs to be controlled for when studying semantic change \cite{dubossarsky2017outta}. Moreover, while such approaches implicitly capture the semantic neighborhood of a word, they typically lack detail about the evolution of a word's different senses. For this, word-sense disambiguation approaches are necessary. Such approaches often rely on clustering token-level embeddings \cite{tahmasebi2023computational,giulianelli2020analysing} or developing sense-disambiguation models that are trained on sense-annotated historical data \cite{schlechtweg2025sense}.
+
+In a related approach, Hu et al. \cite{hu2019diachronic} employ sentence embeddings derived with BERT from historical sense-specific example sentences that were taken from the Oxford English Dictionary to implement a pipeline that can disambiguate between word senses in historical English text data. Their pipeline was then used to predict a word's senses and derive their respective frequency of occurrence in the Corpus of Historical American English, spanning the 19th and 20th century. For each word and each period they thus provided a probability distribution over all its senses.
+
+Their data were used to predict under what conditions words become more polysemous \cite{baumann2023seeing}, and Kali et al. \cite{kali2024cognitive} use a similar pipeline to infer sense-specific data in order to examine predictors of word-sense decline. Making predictions, however, is disputed in historical linguistic research \cite{sanchez2015can}. Language change is often seen as erratic and governed by a too complex set of interacting factors, to the effect that some scholars even argue that diachronic linguistics should not be a predictive science (see discussion in \cite{sanchez2015can} and \cite{walkden2021against}). Still, predictive modeling techniques have been explored in the field \cite{velde2020determinants}. Our approach contributes to this agenda by reconstructing and forecasting the emotional semantics of words, which is an important step for anticipating and studying shifts in public sentiment, detect emerging connotations, and support cultural and linguistic analysis over time. 
+
+Diachronic emotion analysis has applications in diverse domains such as literary studies \cite{leemans2017mining,acerbi2013expression}, but also economics \cite{bentley2014books} or public health \cite{metzler2023collective}. In historical linguistics, research on lexical amelioration and pejoration is well established. Connected to this, Morin and Acerbi \cite{morin2017birth} revealed a decrease in positive terms in historical English texts, which is in line with pejoration cycles observed in lexical change, in which words tend to obtain more negative senses to the effect that they are replaced by more positive ones; cf. \textit{toilet} vs. \textit{bathroom} \cite{hilpert2019historical}. Interestingly, this is contrasted by the observation that speakers tend to use more positive than negative words, a phenomenon known as `linguistic positivity bias´ \cite{iliev2016linguistic}. 
+
+To study phenomena like this, it is essential to have information about emotional status of words not only now but also for language stages several decades or centuries ago. In addition, such data should be ideally available for large sets of words. Cook and Stevenson \cite{cook2010automatically} draw on PMI-based similarity of words to a pre-defined set of seed words in order to historically reconstruct lexical valence. Seed words, in this context, are words like \textit{good} or \textit{death} that are supposed to have had stable emotional semantics throughout the observation period. The reconstructed valence scores were then used to study pejoration and amelioration dynamics. Similarly, Fonteyn and Manjavacas \cite{fonteyn2021adjusting} use embedding-based similarity together with a set of positive and negative seed words. 
+
+In a more general approach, Buechel et al. \cite{buechel2016feelings} use word embeddings to regress historical valence, arousal, and dominance scores (VAD) from seed words. The integration of the dimensions of arousal and dominance was particularly welcome given that dimensional approaches to modeling emotion have a long tradition \cite{russell1980circumplex} and that interactions between the three dimensions are well-known in cognitive research \cite{hofmann2009affective,warriner2013norms}. Reconstructed scores were tested against a manually created gold-standard dataset. 
+
+While the requirement of creating a historically stable set of seed words could have been be relaxed \cite{hellrich-etal-2019-modeling}, the reconstruction of emotion scores based on similarities among word embeddings is not without problems. For one, similarities between word embeddings can be affected by frequency \cite{dubossarsky2017outta}, as discussed above. More severely, emotional properties of individual word senses cannot be examined in this way. It was shown that annotators tend to only consider the prototypical, i.e., most common, sense in concreteness labeling tasks \cite{reijnierse2019polysemy}. Applied to emotion analysis, this could mean that the emotional meaning of a less common sense is not well reflected in aggregated emotion scores, and such errors would be propagated through static word embeddings. In our approach, we infer sense-specific emotion scores from all sense descriptions associated with a word written in contemporary English \cite{zad-etal-2021-hell} and in this way effectively circumvent the problems that come along with transferring emotional semantics via embedding similarities.
+
+\section{Methodology}
+\label{sec:methodology}
+
+We propose EmoTracker, a unified framework for modeling sense-informed emotional trajectories over time. Built on an adapted CRISP-DM process model~\cite{crisp} and illustrated in Figure~\ref{fig:methodology_workflow}, our methodology integrates diachronic sense modeling with temporal emotion tracking to capture how emotional meaning evolves across word senses.
+
+The research method comprises six stages: (1) \textbf{automatic dataset construction}, aligning temporal word sense distributions with three VAD lexicons (NRC-VAD, Warriner, MEmoLon); (2) \textbf{dataset evaluation}, using a gold-standard diachronic emotion dataset~\cite{buechel2017historicalgold} for quality assessment; (3) \textbf{neural model training}, employing an own designed LSTM-based architecture with momentum features and temporal attention~\cite{kong2024unlocking}; (4) \textbf{model evaluation}, measuring predictive accuracy across VAD dimensions; (5) \textbf{API design}, exposing a REST interface for VAD trajectory forecasting; and (6) \textbf{interactive visualization}, enabling human-in-the-loop exploration of emotional and semantic change.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/crisp.png}
+    \caption{Workflow for developing the EmoTracker framework, showing the complete pipeline from dataset generation to deployment, with integrated feedback loops for iterative improvement.}
+    \label{fig:methodology_workflow}
+\end{figure}
+
+A core strength of this methodology is its built-in flexibility. If an evaluation step results are unsatisfactory, users can re-execute the pipeline with alternative lexicons, allowing for iterative refinement and increased robustness of the constructed datasets.
+
+One of the main outcomes of this design is a fully reproducible research package. EmoTracker includes all source code, datasets, trained models, and deployment configurations, enabling replication of the entire pipeline or individual stages. The full package is openly available via the EmoTracker repository.
+
+
+\subsection{Diachronic VAD Dataset Construction}
+\label{sub-sec:data-acquisition}
+At the time of writing to the best of our knowledge, no existing models were capable of performing VAD inference based on word-sense distributions, which required us to develop a new approach. However, training such a model requires appropriate data, which was also not available. While the current dataset landscape offers comprehensive diachronic sense data from 1830 to 2010, VAD lexicons remain temporally fragmented and limited to individual time points. This can be seen graphically in Figure~\ref{fig:data_timeline} in Appendix \ref{appdx:available_datasets}, 
+
+To address this gap, and given the lack of gold-standard temporal sense VAD datasets, we developed a novel method to construct large-scale diachronic sense VAD datasets. Our method consists of the following three reproducible steps:
+
+\begin{enumerate}
+    \item \textbf{Data Integration:} Our datasets were created by integrating two main sources:
+    \begin{enumerate}
+        \item Diachronic sense proportions, \(p(s_i, t)\), derived from a sense modeling dataset \cite{hu2021diachronicsense}, where \(p(s_i, t)\) denotes the proportion of sense \(s_i\) used at time \(t\). The probability distributions over senses in this data set have originally been generated for 3,220 polysemous words by applying a sense-disambiguation model trained on sense-specific example sentences taken from the Oxford English Dictionary (OED) to a diachronic text corpus (Corpus of Historical American English) layered into decades (see \cite{hu2019diachronic} for details).
+        \item Three established VAD lexicons serving as sources for static 3-dimensional Valence Arousal Dominance (VAD) vectors: (1) The NRC-VAD lexicon \cite{mohammad2018nrcvad}, (2) The Warriner lexicon \cite{warriner2013norms}, (3) The MemoLon lexicon \cite{memolon}.
+
+    \end{enumerate}
+    \item \textbf{Deriving Sense-Specific VAD (\(VAD_{\text{sense}}(s_i)\)):}  
+    For each individual word sense \(s_i\), we computed a fixed 3-dimensional VAD vector. This process involved identifying the keywords surfacing in the chosen VAD lexicon within the sense's lexicographic OED-definition and retrieving their corresponding 3D VAD vectors from the respective lexicon  \cite{zad-etal-2021-hell}. Crucially, sense definitions are written in contemporary English, enabling the use of a contemporary VAD lexicon. The final vector for the sense, \(VAD_{\text{sense}}(s_i)\), was derived by computing the element-wise average of these keyword vectors:
+    $$
+    VAD_{\text{sense}}(s_i) = \frac{1}{|K_{s_i}|} \sum_{k \in K_{s_i}} VAD_{\text{keyword}}(k)
+    $$
+    where:
+    \begin{itemize}
+        \item \(K_{s_i}\) is the set of keywords associated with the sense \(s_i\),
+        \item \(VAD_{\text{keyword}}(k)\) is the 3-dimensional VAD vector for keyword \(k\) from the lexicon.
+    \end{itemize}
+    \item \textbf{Calculating Diachronic Word VAD (\(VAD_{\text{word}}(w, t)\)):}  
+    To determine the final VAD score for a word \(w\) at a specific time \(t\), we first define its set of constituent senses as \(S_w = \{s_1, s_2, \dots, s_n\}\), where \(n\) is the total number of senses for that word. The time-specific VAD score, denoted \(VAD_{\text{word}}(w, t)\), is then calculated as a weighted average of the static VAD scores of its senses, using the sense probabilities as weights:
+    $$
+    VAD_{\text{word}}(w, t) = \sum_{i=1}^{n} p(s_i, t) \cdot VAD_{\text{sense}}(s_i)
+    $$
+    where:
+    \begin{itemize}
+        \item \(VAD_{\text{word}}(w, t)\) is the final, time-specific VAD vector for word \(w\),
+        \item \(p(s_i, t)\) is the proportion of sense \(s_i\) for word \(w\) at time \(t\),
+        \item \(VAD_{\text{sense}}(s_i)\) is the static 3-dimensional VAD vector for sense \(s_i\),
+        \item \(n\) is the number of senses for word \(w\).
+    \end{itemize}
+\end{enumerate}
+
+
+This three-step method was applied to each of the three diachronic VAD lexicons, resulting in separate diachronic VAD datasets, each containing reconstructed VAD values for all decades from 1820 to 2010 for all words in the intersection of \cite{hu2021diachronicsense} and the respective static VAD lexicon: (1) EmoTracker-NRC, (2) EmoTracker-Warriner, and (3) EmoTracker-MemoLon. Each was independently constructed using its respective lexicon as the source of static VAD values.
+
+\subsection{Datasets Evaluation}
+\label{sub-sec:datasets-evaluation}
+To assess the quality of our automatically constructed diachronic VAD datasets, we evaluated them against the GoldEN VAD dataset \cite{buechel2017historicalgold}, a manually annotated historical gold standard from circa 1835. This benchmark provides expert-validated VAD scores for English words and is well-suited for temporal emotion analysis. The evaluation aimed to assess how closely our automatic VAD estimates align with expert-annotated historical values, evaluate the reliability of our methodology, and compare the performance of different lexicon sources in capturing historical emotional meaning. The process involved several key steps:
+
+\begin{enumerate}
+    \item \textbf{Temporal Alignment:} For each of our three datasets, we extracted VAD estimates for the year 1835 to align with the gold standard temporal reference point.
+    
+    \item \textbf{Word Matching:} We identified overlapping vocabulary between each constructed dataset and the gold standard, focusing on words present in both sources to ensure a proper comparison.
+    
+    \item \textbf{Scale Normalization:} Given that our constructed datasets are on a [0,1] scale while the gold standard uses a [1,9] scale, we applied adaptive min-max scaling to normalize value ranges.
+    \item \textbf{Statistical Analysis:} We computed multiple evaluation metrics for each dataset:
+    \begin{itemize}
+        \item Pearson correlation coefficients ($r$) for each VAD dimension and overall performance
+        \item Mean Absolute Error (MAE) and Root Mean Square Error (RMSE) for error quantification
+        \item Statistical significance testing ($p$-values) to assess correlation reliability
+    \end{itemize}
+\end{enumerate}
+
+This evaluation allowed us to determine which lexicon source provided the most reliable emotional estimates in a diachronic setting. 
+
+\subsection{Forecasting Model and Evaluation Framework}
+\label{sub-sec:modeling}
+
+We frame the VAD trajectory prediction task as a time-series forecasting problem. The objective is to estimate how a word’s emotional dimensions (i.e., Valence, Arousal, and Dominance (VAD)) change over time. We use diachronic VAD trajectories defined by the diachronic VAD scores generated in the previous steps for this purpose.
+
+To model the long-term dependencies in emotional change, we use a Long Short-Term Memory (LSTM) neural network. LSTMs are well suited for this task because they can retain information across long input sequences, which is necessary to capture gradual changes in meaning and emotion \cite{kong2024unlocking}.
+
+Each time step in the sequence is represented by 27 features. These include the three VAD difference values ($\Delta v$, $\Delta a$, $\Delta d$) and 24 momentum-based features. The momentum features are computed using eight different metrics across each of the three VAD dimensions. These metrics come from financial time-series analysis and are adapted to treat VAD values like time-dependent prices \cite{Choi_2014}.
+
+Although inspired by finance, our temporal setup is different. The dataset covers 39 time points from 1820 to 2010, spaced at 5-year intervals. This resolution is achieved by interpolating a diachronic sense dataset that originally had 10-year intervals.
+
+Momentum features are calculated using sliding windows of 5 to 10 steps, which correspond to 25 to 50 years. The model uses a lookback window of 15 steps (75 years) to predict VAD values 5 years into the future. This long input range is suitable for capturing the relatively slow pace of emotional change.
+
+All parameters, including window sizes and time resolution, can be modified in a configuration file provided in the reproducibility package. The full list of momentum features is shown in Table~\ref{tab:momentum_features} in Appendix~\ref{appdx:mom_features}.
+
+The architecture consists of a two-layer LSTM with 128 hidden units, followed by a multi-head attention mechanism with eight heads. This allows the model to focus on important parts of the input history when making predictions. The network also uses layer normalization, dropout for regularization \cite{kukacka2017regularization}, and GELU activation functions \cite{lee2023gelu}.
+
+Training is performed for 100 epochs using the AdamW optimizer \cite{loshchilov2019decoupled}, along with regularization techniques to reduce overfitting.
+
+Model performance is evaluated both quantitatively and qualitatively. For the quantitative evaluation, we use Mean Absolute Error (MAE) and Root Mean Square Error (RMSE). For the qualitative evaluation, we compare the forecasting behavior of models with and without momentum features. As shown in Appendix~\ref{apx:lstm_qualitative_comparison}, Figure~\ref{fig:vad_comparison}, the model with momentum features produces smoother and more consistent forecasts that better reflect historical trends. In contrast, the version without these features tends to produce noisier and less reliable predictions.
+
+\subsection{API and Visualization (EmoTracker Dashboard)}
+\label{sub-sec:dashboard}
+For visualizing the 3D trajectories and interpreting the model forecasting, we developed an interactive frontend dashboard along with a lightweight REST API. The API provides a prediction endpoint that accepts word and time horizon parameters, returning forecasted VAD trajectories as JSON responses. The dashboard allows users to load any of the constructed datasets in the dataset construction step, select target words, and visually analyze both historical and forecasted VAD and Sense dynamics. The visualization features include (1) 2D time-series views for each individual sense and VAD dimension to evaluate sense emotional historical trends in a word (Figure~\ref{fig:2dVadAlien} in Appendix \ref{apx:dashboard}); (2) 2D VAD time series multi-word comparison plots to contrast emotional
+trends across different words (Figure~\ref{fig:gay_alien_valence} in Appendix \ref{apx:dashboard}); (3) a novel 3D visualization of a word's trajectory through time in the VAD space (Figure~\ref{fig:alien_3d} in Appendix \ref{apx:dashboard}); (4) a 4D representation incorporating sense proportions as an additional visual dimension, where the fourth dimension is encoded through color intensity (Figure~\ref{fig:vad_4d} in Appendix \ref{apx:dashboard}), which allows for analyzing the impact that individual word senses have on the emotional trajectory; and (5) interactive controls for word selection and forecast horizon adjustment.
+
+\section{Results}
+\label{sec:results}
+
+\subsection{Construction of Reliable Diachronic Sense-Informed VAD Datasets}
+\label{sub-sec:rq1-dataset-construction}
+
+We evaluated our automatic dataset construction method against the historical GoldEN VAD gold standard \cite{buechel2017historicalgold}, using the 78 words shared between our constructed datasets and the gold standard as the evaluation set. As shown in Table~\ref{tab:dataset_evaluation}, performance varied across the three datasets. EmoTracker-NRC achieved the highest correlation with the gold standard ($r$ = 0.287, $p < 0.001$), indicating the strongest alignment with human-annotated VAD values. While EmoTracker-Warriner slightly outperformed NRC in terms of error metrics (MAE and RMSE), we prioritize correlation as the primary evaluation measure, as it directly reflects the preservation of emotional ranking and trends. All correlations were statistically significant, suggesting that our automatic method effectively captures VAD patterns, even without human supervision and at large scale. However, it is important to note that this evaluation is limited to a single historical reference point (1835), and does not assess how well the model captures emotional trends over broader temporal ranges. This limitation constrains our possibility to generalize conclusions about long-term diachronic validity and remains as future work.
+\begin{table}[htbp]
+\centering
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Dataset} & \textbf{Pearson's $r$} & \textbf{$p$-value} & \textbf{MAE} & \textbf{RMSE} \\
+\midrule
+EmoTracker-NRC       & \textbf{0.287} & \textbf{7.98$\times$10$^{-6}$} & 1.363 & 1.703 \\
+EmoTracker-Warriner  & 0.274          & 2.13$\times$10$^{-5}$          & \textbf{1.317} & \textbf{1.655} \\
+EmoTracker-MemoLon   & 0.179          & 0.006                          & 1.600 & 1.931 \\
+\bottomrule
+\end{tabular}
+\caption{Evaluation results of constructed datasets against the GoldEN VAD historical gold standard. The best results per metric are shown in bold.}
+\label{tab:dataset_evaluation}
+\end{table}
+
+\noindent
+To provide a more fine-grained evaluation, we conducted a dimension-specific analysis, presented in Table~\ref{tab:vad_dimensions_all}. The results reveal variability in correlation across the VAD dimensions. EmoTracker-NRC achieved the highest correlations for Valence and Arousal, while Dominance proved more challenging. Notably, EmoTracker-Warriner achieved statistically significant correlations across all three dimensions and yielded the strongest performance for dominance. In contrast, EmoTracker-MemoLon demonstrated weaker performance overall, with only valence showing a significant correlation.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{@{}llcc@{}}
+\toprule
+\textbf{Dataset} & \textbf{VAD Dimension} & \textbf{Pearson's $r$} & \textbf{$p$-value} \\
+\midrule
+\multirow{3}{*}{EmoTracker-NRC} 
+  & \textbf{Valence}   & \textbf{0.389} & 4.39$\times$10$^{-4}$ \\
+  & \textbf{Arousal}   & \textbf{0.339} & 0.002 \\
+  & Dominance          & 0.094 & 0.412 \\
+\midrule
+\multirow{3}{*}{EmoTracker-Warriner} 
+  & Valence   & 0.249 & 0.028 \\
+  & Arousal   & 0.292 & 0.009 \\
+  & \textbf{Dominance} & \textbf{0.280} & 0.013 \\
+\midrule
+\multirow{3}{*}{EmoTracker-MemoLon} 
+  & Valence   & 0.224 & 0.048 \\
+  & Arousal   & 0.172 & 0.131 \\
+  & Dominance & 0.156 & 0.173 \\
+\bottomrule
+\end{tabular}
+\caption{Dimension-wise correlation analysis across all EmoTracker datasets. The highest Pearson’s $r$ value for each VAD dimension is shown in bold.}
+\label{tab:vad_dimensions_all}
+\end{table}
+
+\vspace{0.5em}
+
+\noindent
+These findings are further supported by the error metrics presented in Table~\ref{tab:dataset_evaluation}, where EmoTracker-NRC exhibited the lowest MAE and RMSE, indicating stronger overall reliability.
+Taken together, the results suggest that our dataset construction method effectively enables automatic, large-scale, and sense-aware VAD labeling over time, thus addressing RQ1. 
+
+The final EmoTracker-NRC dataset comprises 2,935 unique words and 13,916 sense-level definitions, spanning 39 temporal steps from 1820 to 2010 in 5-year intervals, resulting in a total of 125,580 VAD entries. These words represent 5.36\% coverage of the original NRC VAD lexicon (2,935 out of 54,801 entries). The dataset was split chronologically, with data up to 1980 used for training and data from 1985 onward reserved for validation. This split results into 52,830 training sequences (78.3\%) and 14,675 test sequences (21.7\%), covering all 2,935 unique words in both sets. This volume and temporal granularity ensure sufficient data diversity and historical depth to support effective LSTM training and generalization. Not only does the dataset offer enough sequence coverage for training and testing, but its temporal breadth also extends existing diachronic VAD resources.
+
+\subsection{Predictive Modeling of Emotional Trajectories}
+\label{sub-sec:rq2-predictive-modeling}
+
+We evaluate the performance of our LSTM model in forecasting VAD trajectories across time. As shown in Table~\ref{tab:model_metrics}, the model achieves low mean absolute error (MAE) and root mean square error (RMSE), indicating strong predictive accuracy across the full vocabulary.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+MAE & 0.013 \\
+RMSE & 0.015 \\
+Training Loss & 0.008 \\
+Validation Loss & 0.012 \\
+\bottomrule
+\end{tabular}
+\caption{Overall performance metrics of the LSTM model on VAD trajectory forecasting.}
+\label{tab:model_metrics}
+\end{table}
+
+\noindent
+Appendix~\ref{appdx:mae_rae_analysis} presents histograms of MAE and RAE values for all words in the EmoTracker-NRC dataset. These distributions are right-skewed, indicating that the model performs exceptionally well for the majority of words.
+
+Table~\ref{tab:forecast_horizons} reports how forecasting performance varies over different time horizons. As expected, prediction error increases with forecast distance. Nevertheless, the model maintains reasonable accuracy even at a 20-year horizon, which is suitable for tracking long-term diachronic semantic and emotional change.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Forecast Horizon} & \textbf{MAE} & \textbf{RMSE} & \textbf{Pearson's $r$} & \textbf{$p$-value} \\
+\midrule
+5 years  & 0.011 & 0.013 & 0.821 & $<$0.001 \\
+10 years & 0.016 & 0.021 & 0.734 & $<$0.001 \\
+15 years & 0.024 & 0.032 & 0.642 & $<$0.001 \\
+20 years & 0.035 & 0.047 & 0.531 & $<$0.001 \\
+\bottomrule
+\end{tabular}
+\caption{LSTM forecasting performance across different time horizons. Correlation remains statistically significant even for long-term predictions.}
+\label{tab:forecast_horizons}
+\end{table}
+
+Forecasting accuracy degrades gradually with longer time spans but retains sufficient predictive power for long-term applications.
+
+A deeper analysis of the best and worst forecasted words is available in Appendix~\ref{appdx:worst_and_best}. As expected, forecasting works best when emotion trajectories do not exhibit a lot of change. Performance is good, however, also for more complicated dynamics. For a qualitative perspective, we selected three representative words: \textit{body} (stable emotional trajectory), \textit{gay}, and \textit{alien} (both exhibiting semantic shift). Table~\ref{tab:vad_results} in Appendix \ref{apx:comparison} compares the predicted and actual VAD values over five-year intervals.
+
+The model shows near-perfect accuracy for stable emotional trajectories (\textit{body}) and captures both direction and magnitude of semantic shifts for dynamic words (\textit{gay}, \textit{alien}). These results confirm that the EmoTracker LSTM model effectively captures diachronic VAD trends and thus addresses \textbf{RQ2}.
+\subsection{Visualizing Temporal Emotion Dynamics}
+\label{sub-sec:rq3-visualizations}
+
+To address \textbf{RQ3}, we designed and implemented an interactive visualization interface to explore diachronic emotional and semantic change. The EmoTracker Dashboard, introduced in Section~\ref{sub-sec:dashboard}, provides an interactive platform for exploring sense-informed VAD trajectories over time. Through a lightweight API and an intuitive user interface, the system allows users to load the EmoTracker constructed datasets, forecast trajectories, and explore the emotional evolution across different words and senses.
+
+The dashboard supports a diverse set of visualizations: (1) individual and multi-sense 2D VAD time-series plots to track emotional and sense temporal patterns (Appendix Figures~\ref{fig:2dVadAlien} and~\ref{fig:gay_alien_valence}); (2) a novel 3D visualization of word trajectories through VAD space over time (Figure~\ref{fig:alien_3d}), which provides an intuitive spatial representation of how emotions evolve diachronically; (3) another novel 4D visualization that incorporates sense proportions as a dynamic fourth dimension, encoded through color intensity (Figure~\ref{fig:vad_4d}); and (4) interactive controls for word search, forecast horizon adjustment, and multi-word comparison.
+
+These multidimensional visualizations offer a novel approach to emotion and sense modeling, allowing the exploration of complex VAD trajectories that are difficult to capture with traditional 2D plots or static time-point visualizations, while supporting deeper diachronic cultural and linguistic analysis.
+
+\section{Discussion}
+
+This paper presented a unified framework for modeling and forecasting the evolution of the emotional connotations of words over time. Our contributions are threefold. First, we introduced a method for constructing large-scale, diachronic, sense-informed VAD datasets by integrating temporal sense distributions with static affective lexicons. Second, we developed an LSTM-based forecasting model, augmented with momentum features and temporal attention, that effectively predicts long-term emotional trends. Third, we designed a visual analytics interface to explore and interpret emotion-sense trajectories through intuitive 2D, 3D, and 4D visualizations.
+
+%--- OLD
+%While our findings confirm that the EmoTracker pipeline produces meaningful and interpretable affective forecasts, several limitations must be highlighted. The most significant threat to validity is the scarcity of diachronic, human-annotated VAD datasets. Our evaluation relies only on the GoldEN VAD dataset from 1835, leaving the remainder of the historical timeline without direct human supervision. This raises the risk of overfitting to a single temporal benchmark and highlights the need for gold-standard annotations spanning multiple periods to enable temporal validity. Although our quantitative evaluation shows statistically significant correlation with gold-standard values, the lack of multi-period validation limits the claim of a general accuracy across time.
+
+
+While our findings confirm that the EmoTracker pipeline produces meaningful and interpretable affective forecasts, several limitations must be highlighted. The most significant threat to validity is the scarcity of diachronic, human-annotated VAD datasets. Our evaluation relies only on the GoldEN VAD dataset from 1835, leaving the remainder of the historical timeline without direct human supervision. This raises the risk of overfitting to a single temporal benchmark and underscores the need for gold-standard annotations spanning multiple periods to ensure temporal validity. Although our quantitative evaluation shows statistically significant correlations with gold-standard values, the lack of multi-period validation limits claims of general accuracy across time. This limitation highlights the need for richer gold-standard datasets that span multiple time periods. EmoTracker is already designed to easily integrate such data, enabling retraining and fine-tuning without modifying the model or implementation. With future expert-annotated datasets across historical periods, the framework will more accurately capture genuine historical shifts in emotion and reduce patterns arising from modeling bias.
+
+
+Additionally, the performance varied across the VAD dimensions. Dominance proved to be the most difficult to model, likely because of inconsistent lexicon coverage and conceptual ambiguity. Additionally, our approach may inherit biases from contemporary English definitions and static lexicons that do not reflect historical affective norms, potentially introducing anachronistic emotion scores; further validation is needed to assess historical accuracy. Lexicon choice also had an impact on the results, with NRC-VAD showing stronger overall alignment but Warriner performing better on some error metrics. These differences highlight the importance of lexicon selection in diachronic emotion modeling. Finally, our framework evidently depends on the availability of sense-distribution data (here: \cite{hu2019diachronic}). Current efforts in collecting diachronic sense-annotations \cite{schlechtweg2025sense} are highly relevant in this regard. Such efforts are particularly important in order to extend diachronic emotion analysis to languages other than English and German \cite{buechel2016feelings}.
+
+Our contribution adds to the discussion about the predictive nature of language change \cite{sanchez2015can,velde2020determinants} by introducing state-of-the-art forecasting techniques for studying language change. Importantly, however, EmoTracker is not only useful for making predictions; it can also support hypothesis generation in historical and cultural studies. For example, the decline in valence for the word \textit{gay} from the 1900s to the 2000s reflects both a change in meaning and broader social and cultural shifts. By linking changes in word meaning with emotional trends, EmoTracker opens new possibilities for research in cultural analytics, historical linguistics, and the digital humanities. Its forecasting feature can also help researchers identify potential future changes in culture and emotion by predicting how the emotional tone of words might evolve over time. Likewise, the framework can be adapted for the task of forecasting backwards in time or interpolation for periods for which insufficient historical data are available.
+
+Finally, our interactive dashboard allows an exploratory analysis of word trajectories, making diachronic affective trends more interpretable and accessible. However, while promising, the usability and impact of these visualizations remain to be evaluated in applied humanities research settings.
+
+\section{Conclusions}
+
+We presented EmoTracker, a framework for modeling and forecasting the co-evolution of word meaning and emotional connotation over historical time. By integrating temporal sense modeling with affective lexicons and neural forecasting, EmoTracker enables scalable, sense-informed VAD analysis at a diachronic scale.
+
+Our findings highlight the potential of this approach, but also underline key challenges, including limited gold-standard data and sense-specific resources. Despite these constraints, the framework provides a reproducible foundation for exploring emotional meaning evolution over time.
+
+Looking ahead, future work includes exploring more advanced forecasting models, such as hierarchical LSTMs, Transformer-based architectures, and fine-tuned large language models (LLMs) for sense-level emotion prediction. Creating expert-annotated diachronic VAD datasets across time would strengthen evaluation and reduce reliance on static resources. The framework can also be extended to multilingual and domain-specific contexts, and its dashboard evaluated for interpretability in applied humanities research.
+
+EmoTracker's approach to diachronic emotion evolution not only provides a more holistic framework for emotional and semantic analysis but also establishes a foundation for future interdisciplinary research between NLP, computational humanities, and cultural temporal analysis.
+
+
+
+
+% This unnumbered section should be blank when submitting your paper. After review, you may include lists of people and organizations who supported the work.
+
+% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
+\newpage
+\printbibliography
+
+\appendix
+\newpage
+\section{LSTM model architecture}
+\label{appdx:lstm_architecture}
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=0.65\textwidth]{figures/lstm.png}
+  \caption{EmoTracker's LSTM architecture, combining momentum features, a 2-layer LSTM core, multi-head attention, and dense output layers for VAD prediction.}
+  \label{fig:lstm_arch}
+\end{figure}
+
+\newpage
+\section{Momentum Features Used in Forecasting} \label{appdx:mom_features}
+
+
+\begin{table}[!htbp]
+\centering
+\begin{tabular}{@{}l p{0.7\textwidth}@{}}
+\toprule
+\textbf{Feature} & \textbf{Description} \\
+\midrule
+\textbf{Velocity} \cite{marketinoutVelocity} & The slope of a linear regression over the lookback window, indicating the trend's direction and speed. \\
+\addlinespace
+\textbf{Acceleration} \cite{marketinoutVelocity} & The second derivative, capturing the rate of change in velocity. \\
+\addlinespace
+\textbf{Trend Strength $\times$ Direction} & The R-value from the linear regression, weighted by the trend's direction to measure consistency. \\
+\addlinespace
+\textbf{Volatility} & The standard deviation of values in the window, measuring uncertainty and variability. \\
+\addlinespace
+\textbf{Momentum Oscillator} \cite{investopediaCMO} & The most recent change relative to the historical volatility within the window. \\
+\addlinespace
+\textbf{Relative Strength} \cite{investopediaRS} & A comparison of the average value in the first half of the window versus the second half. \\
+\addlinespace
+\textbf{Range Position} & The position of the current value relative to the historical minimum and maximum in the window. \\
+\addlinespace
+\textbf{EMA Ratio} \cite{investopediaEMA} & The ratio between a short-term Exponential Moving Average (EMA) and a longer-term Simple Moving Average (SMA) to identify trend crossovers. \\
+\bottomrule
+\end{tabular}
+\caption{Description of Momentum Features Used in Forecasting}
+\label{tab:momentum_features}
+\end{table}
+
+\newpage
+\section{Current Available Datasets}
+\label{appdx:available_datasets}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\textwidth]{figures/data_timeline.png}
+  \caption{Integration of sense modeling and VAD lexicon resources (NRC-VAD, Warriner, MemoLon) in EmoTracker datasets.}
+  \label{fig:data_timeline}
+\end{figure}
+
+
+\newpage
+\section{Predicted vs. Actual VAD Values}
+\label{apx:comparison}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{@{}l c S[table-format=-1.4] S[table-format=-1.4] S[table-format=-1.4] S[table-format=-1.4] S[table-format=-1.4] S[table-format=-1.4]@{}}
+\toprule
+& & \multicolumn{2}{c}{\textbf{Valence (V)}} & \multicolumn{2}{c}{\textbf{Arousal (A)}} & \multicolumn{2}{c}{\textbf{Dominance (D)}} \\
+\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8}
+\textbf{Word} & \textbf{Year} & \textbf{Predicted} & \textbf{Actual} & \textbf{Predicted} & \textbf{Actual} & \textbf{Predicted} & \textbf{Actual} \\
+\midrule
+\multicolumn{8}{c}{\textit{Stable trajectory word (minimal semantic shift)}} \\
+\midrule
+body & 1990 & 0.1612 & 0.1612 & -0.1780 & -0.1779 & 0.0702 & 0.0703 \\
+body & 1995 & 0.1623 & 0.1624 & -0.1775 & -0.1774 & 0.0728 & 0.0730 \\
+body & 2000 & 0.1636 & 0.1636 & -0.1771 & -0.1770 & 0.0756 & 0.0757 \\
+body & 2005 & 0.1654 & 0.1655 & -0.1770 & -0.1770 & 0.0790 & 0.0792 \\
+body & 2010 & 0.1675 & 0.1675 & -0.1771 & -0.1770 & 0.0827 & 0.0828 \\
+\midrule
+\multicolumn{8}{c}{\textit{Dynamic trajectory words (significant semantic shift)}} \\
+\midrule
+gay & 1990 & 0.3233 & 0.3168 & -0.2561 & -0.2565 & -0.1010 & -0.1005 \\
+gay & 1995 & 0.2669 & 0.2518 & -0.2349 & -0.2317 & -0.0922 & -0.0897 \\
+gay & 2000 & 0.2009 & 0.1868 & -0.2094 & -0.2070 & -0.0808 & -0.0790 \\
+gay & 2005 & 0.1337 & 0.1074 & -0.1841 & -0.1767 & -0.0700 & -0.0658 \\
+gay & 2010 & 0.0539 & 0.0281 & -0.1532 & -0.1464 & -0.0564 & -0.0526 \\
+\midrule
+alien & 1990 & -0.1864 & -0.1881 & 0.1286 & 0.1273 & -0.1014 & -0.1017 \\
+alien & 1995 & -0.1848 & -0.1771 & 0.1202 & 0.1133 & -0.0943 & -0.0877 \\
+alien & 2000 & -0.1625 & -0.1661 & 0.0977 & 0.0993 & -0.0733 & -0.0737 \\
+alien & 2005 & -0.1489 & -0.1275 & 0.0853 & 0.0697 & -0.0580 & -0.0419 \\
+alien & 2010 & -0.0935 & -0.0888 & 0.0447 & 0.0401 & -0.0167 & -0.0102 \\
+\bottomrule
+\end{tabular}
+\caption{Predicted vs. actual VAD values for representative words across time.}
+\label{tab:vad_results}
+
+\end{table}
+
+\newpage
+\section{Qualitative Comparison LSTM Model}
+\label{apx:lstm_qualitative_comparison}
+
+\begin{figure}[h!]
+  \centering
+  \begin{minipage}[t]{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/2d_vad_trajectory.png}
+    \caption*{(a) Forecast with momentum features}
+    \label{fig:vad_with_momentum_gay}
+  \end{minipage}
+  \vspace{0.5em}
+  \begin{minipage}[t]{0.95\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/old_traj_no_mom.jpeg}
+    \caption*{(b) Forecast without momentum features}
+    \label{fig:vad_no_momentum_gay}
+  \end{minipage}
+  \caption{Comparison of VAD trajectory forecasting for the word \textit{"gay"} in 2040 using models (a) with and (b) without momentum features.}
+  \label{fig:vad_comparison}
+\end{figure}
+
+\newpage
+\section{EmoTracker Dashboard Views}
+\label{apx:dashboard}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.95\linewidth]{figures/v_exp.png}
+  \caption{Valence trajectory comparison for \textit{gay} and \textit{alien}, showing historical shifts.}
+  \label{fig:gay_alien_valence}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.95\linewidth]{figures/2dVadAlien.png}
+  \caption{2D time-series view of \textit{alien}'s VAD (solid) and sense (dotted) evolution.}
+  \label{fig:2dVadAlien}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.95\linewidth]{figures/3d_vad_space.png}
+  \caption{3D visualization of \textit{alien}'s VAD trajectory. Darker path = historical, lighter = forecasted.}
+  \label{fig:alien_3d}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.95\linewidth]{figures/4d.png}
+  \caption{4D visualization of emotion evolution. Color intensity encodes sense proportions.}
+  \label{fig:vad_4d}
+\end{figure}
+\newpage
+
+\section{MAE and RMSE Distribution Analysis}
+\label{appdx:mae_rae_analysis}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/mae_distribution.png}
+  \caption{Distribution of MAE across all forecasted words. Median = 0.0081, Mean = 0.0133. The right-skewed shape indicates strong performance for most words.}
+  \label{fig:mae_distribution}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/rmse_distribution.png}
+  \caption{Distribution of RMSE across all forecasted words. Median = 0.0093, Mean = 0.0150. The right-skewed pattern supports the model’s high accuracy for the majority of cases.}
+  \label{fig:rmse_distribution}
+\end{figure}
+
+\section{Case Studies of Best- and Worst-Performing Words}
+\label{appdx:worst_and_best}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{figures/best_word_case_studies_mae_overall.png}
+    \caption{Top-performing words based on lowest MAE. These words exhibit high alignment between predicted and actual emotional trajectories.}
+    \label{fig:best_words_mae}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{figures/best_word_case_studies_rmse_overall.png}
+    \caption{Top-performing words based on lowest RMSE. These words show highly stable and accurate predictions over time.}
+    \label{fig:best_words_rmse}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{figures/worst_word_case_studies_mae_overall.png}
+    \caption{Worst-performing words by MAE. Errors suggest these words may exhibit irregular or complex semantic shifts.}
+    \label{fig:worst_words_mae}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{figures/worst_word_case_studies_rmse_overall.png}
+    \caption{Worst-performing words by RMSE. Large prediction deviations may reflect ambiguous or noisy VAD histories.}
+    \label{fig:worst_words_rmse}
+\end{figure}
+
+\end{document}

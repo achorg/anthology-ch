@@ -1,0 +1,1129 @@
+% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
+% *Anthology of Computers and the Humanities*. ADD THE OPTION
+% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
+% DO NOT change the documentclass
+\documentclass[final]{anthology-ch} % for the final version
+%\documentclass{anthology-ch}         % for the submission
+% Change "review" to "final" to generate the final (sometimes called camera-ready) version.
+% Change to "preprint" to generate a non-anonymous version with page numbers.
+%\usepackage[preprint]{acl}
+
+% Standard package includes
+%\usepackage{times}
+\usepackage{latexsym}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{adjustbox}
+\usepackage{subcaption}
+\usepackage{comment}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{lipsum}
+\usepackage{textcomp}
+\usepackage{todonotes}
+\usepackage{subfig} % Add this in the preamble
+\captionsetup{skip=0pt}
+\usepackage[inline]{enumitem} % Include in the preamble for inline lists
+\usepackage{longtable}
+\usepackage{array}    % For column types
+\usepackage{tabularx}
+\usepackage{listings} % For JSON formatting
+% \usepackage{geometry} % Adjust for better margins
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage[dvipsnames]{xcolor}
+
+% JSON styling
+% \lstset{
+%     basicstyle=\ttfamily\small,
+%     breaklines=true,
+%     frame=single,
+%     backgroundcolor=\color{gray!10},
+%     showstringspaces=false,
+%     keywordstyle=\color{blue},
+%     stringstyle=\color{red}
+% }
+
+\makeatletter
+\providecommand{\sf@counterlist}{}
+\makeatother
+
+% For proper rendering and hyphenation of words containing Latin characters (including in bib files)
+% \usepackage[T1]{fontenc}
+% For Vietnamese characters
+% \usepackage[T5]{fontenc}
+% See https://www.latex-project.org/help/documentation/encguide.pdf for other character sets
+
+% This assumes your files are encoded as UTF8
+% \usepackage[utf8]{inputenc}
+
+% This is not strictly necessary, and may be commented out,
+% but it will improve the layout of the manuscript,
+% and will typically save some space.
+%\usepackage{microtype}
+
+% This is also not strictly necessary, and may be commented out.
+% However, it will improve the aesthetics of text in
+% the typewriter font.
+%\usepackage{inconsolata}
+
+%Including images in your LaTeX document requires adding
+%additional package(s)
+\usepackage{graphicx}
+\usepackage{wrapfig} 
+\usepackage{caption}
+% If the title and author information does not fit in the area allocated, uncomment the following
+%
+%\setlength\titlebox{<dim>}
+%
+% and set <dim> to something 5cm or larger.
+
+\title{Llamas Don't Understand Fiction: Application and Evaluation of Large Language Models for Knowledge Extraction from Short Stories in English}
+
+% AUTHOR AND AFFILIATION INFORMATION
+% For each author, include a new call to the \author command, with
+% the numbers in brackets indicating the associated affiliations 
+% (next section) and ORCID-ID for each author.  
+\author[1,2]{Arianna Graciotti}[
+  orcid=0009-0004-7918-809X
+]
+
+\author[1]{Franziska Pannach}[
+  orcid=0000-0003-4216-8410
+]
+
+\author[1]{Valentina Presutti}[
+  orcid=0000-0002-9380-5160
+]
+
+\author[1]{Federico Pianzola}[
+  orcid=0000-0002-4545-1548
+]
+
+
+% There should be one call to \affiliation for each affiliation of
+% the authors. Multiple affiliations can be given to each author
+% and an affiliation can be given to multiple authors. 
+\affiliation{1}{Centre for Language and Cognition, University of Groningen, Groningen, Netherlands}
+\affiliation{2}{Department of Languages, Literatures and Modern Cultures, University of Bologna, Bologna, Italy}
+
+% KEYWORDS
+% Provide one or more keywords or key phrases seperated by commas
+% using the following command
+\keywords{Event Extraction, Fiction, Human-Centered Evaluation, LLMs, Zero/Few-Shot Extraction}
+
+
+\pubyear{2025}
+\pubvolume{3}
+\pagestart{14}
+\pageend{41}
+\conferencename{Computational Humanities Research 2025}
+\conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
+\doi{10.63744/iCGYNUN0uUAe}
+\paperorder{3}
+
+\addbibresource{bibliography.bib}
+
+\begin{document}
+
+\maketitle
+\begin{abstract}
+Extracting event knowledge from unstructured text is a well-known challenge in Natural Language Processing (NLP) and is particularly difficult when dealing with fiction. Subtext, rather than explicit information, and figurative style in fictional narratives, complicate event extraction. Recent advances in Large Language Models (LLMs) have improved performance across various NLP tasks. However, their effectiveness in extracting events from fiction remains underexplored. In this article, we evaluate the performance of open-weights LLMs to extract character death events from fictional narratives in English. These events are defined as triples consisting of \emph{Victim}, \emph{Perpetrator}, and \emph{Mode of Demise}. We cast Knowledge Extraction (KE) as a zero-shot task and evaluate our approach on a manually annotated benchmark of fanfiction stories. Our results show that LLMs struggle with KE from fiction, with a maximum F1-score of 0.45 across the elements constituting the triples and, at most, 25\% of death events correctly extracted. A detailed error analysis reveals that most errors stem from missed death events and from direct presentation modes, such as direct speech, which significantly impair extraction performance. Moreover, KE accuracy declines as the story length increases, while LLMs' background knowledge leakage contributes to false positives. These findings provide domain-specific insights into the challenges of KE in fiction.
+\end{abstract}
+
+%Arianna: the "automatic mapping" results can go in the body of the text to make clear the delta 
+
+
+
+\section{Introduction}
+
+\newcommand{\mcml}[1]{\multicolumn{6}{p{\dimexpr\linewidth-2\tabcolsep-2\arrayrulewidth}}{\footnotesize #1}}
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.45\columnwidth]{figures/LLMs_fiction_090225.png}
+    \vspace{0.1em}
+    \caption{An excerpt from a short story in our dataset, with the human-annotated character death event triple highlighted in green. References to the victim appear in purple, to the perpetrator in blue, and the mode of demise is underlined.} 
+    \label{fig:figure1}
+\end{figure}
+
+This work presents an effort to evaluate Large Language Models (LLMs) for automatic knowledge extraction (KE) from fiction, and to understand the impact of stories' features on the models' performance, such as the presentation mode, the point of view from which the event is presented, and the stories' word-length and word-entropy. Entertainment companies increasingly use NLP techniques to improve the services they offer to their audience~\cite{bhat-etal-2021-hierarchical}, and fiction is a domain well known to language models, since it has been included in the pre-training of most of them~\cite{bidermann-2022-pile, elazar2024whats, chang-etal-2023-speak}. However, fictional texts pose unique challenges for some common NLP tasks, such as entity extraction, co-reference resolution, and event extraction~\cite{sims-etal-2019-literary, bamman-etal-2020-annotated}. Fiction notably uses information gaps to generate effects such as suspense, curiosity, and surprise~\cite{steg-etal-2022-computational}, so information about events and characters is not always presented in a straightforward way. In addition, novelists pay attention to the aesthetic quality of their writing, often using figurative language. This linguistic and narrative complexity makes tasks like event detection in fiction challenging.
+
+To test the KE capabilities of LLMs, we selected one type of event, character deaths, and one specific subdomain, fanfiction on ancient Greek mythology. The mention of death events varies across the data, from explicit and detailed descriptions to hints and allusions. Some stories in the corpus should be well known to LLMs, e.g. \textit{Agamennon} sacrificing his daughter \textit{Iphigenia} (see Figure~\ref{fig:figure1}). However, fanfiction adaptations often change relevant plot points. We can thus analyse how the background knowledge of a model in the training data influences the performance of knowledge extraction when the original and the adaptations differ.
+
+Death events serve as an exemplary case study due to their narrative prominence in plot development, making them ideal for refining automated event extraction methodologies. Technical advancements in KE can enable comparative literary studies at scale: by systematically identifying and analyzing story traits (e.g., death patterns, causal relationships, or thematic motifs), researchers can trace how narrative conventions evolve across cultural traditions, genres, or historical periods.
+
+Our main contributions can be summarised as follows:
+
+\begin{itemize}
+\item An analysis of the %summarisation and 
+KE capabilities of open-weights LLMs (\texttt{llama3.1:70b} and \texttt{deepseek-r1:70b}) within the domain of fiction;
+\item A comparative evaluation of KE performance from two types of input: full story texts and LLM-generated summaries;
+\item A detailed error analysis that highlights specific challenges faced by LLMs on KE in the domain of fiction, including handling events presented in different modes, such as direct and indirect speech or thought, and other domain-specific complexities.
+\end{itemize}
+
+All code, data, and evaluation outputs are publicly available on GitHub\footnote{\url{https://github.com/GOLEM-lab/llms-ke-fiction}}, including the chain-of-thought output of \texttt{deepseek-r1:70b}.
+%The rest of the paper is structured as follows: 
+
+\section{Related Work}
+KE of events in fiction has been mainly addressed as a combined dependency-parsing and supersense-tagging task~\cite{piper2024, bamman2021bookNLP}, as a semantic roles labelling task -- e.g., using PropBank~\cite{li-etal-2023-glen, pradhan-etal-2022-propbank} or FrameNet~\cite{aguilar-etal-2014-comparison, palmer-etal-2014-semlink} -- and as a QA task~\cite{jing-etal-2019-bipar, yu-etal-2024-lfed}. A first challenge for fiction is that it requires readers and language models to connect information across large spans of text to identify what happens in a story. However, most of the documents used to train LLMs for downstream tasks are quite short. Therefore, it is not beneficial to use models that excel in general extractive QA tasks, because their good performance in short passage datasets, such as the Stanford Question Answering Dataset \cite[SQuAD 1.1]{rajpurkar-etal-2016-squad}, where most texts do not reach 350 words, does not scale to longer texts. Even fiction-specific datasets rarely include long texts, e.g., FairytaleQA~\cite{xu-etal-2022-fantastic} has an average of 370 words per story and MCTest~\cite{richardson-etal-2013-mctest} has 200 words per story. NarrativeQA~\cite{kocisky-etal-2018-narrativeqa} and LFED~\cite{yu-etal-2024-lfed} are two exceptions, including full-length books and movie scripts. Indeed, analyses of these two datasets show that language models struggle with QA in fiction. Better insights are needed to understand which factors impact the performance of KE from fiction.
+
+A second challenge is that QA datasets primarily address generic reading comprehension and are not suitable for systematic KE tasks, such as causality linking between events~\cite{Meehan2022CausalityMI}, character profiling~\cite{yuan-etal-2024-evaluating}, and relationship identification~\cite{zhao-etal-2024-large}. For an in-depth understanding of the story, more fine-grained information on events and their participants is needed. But in this case, annotation is labour-intensive and datasets of annotated events in fiction are somewhat limited: LitBank~\cite{sims-etal-2019-literary} uses samples of 2,000 words from 100 novels and EvENT~\cite{Vauth-2022} has six full texts for a total of ca. 291,000 tokens.
+
+Given the scarcity of specialised resources for fiction, leveraging LLMs' zero-shot capabilities for KE might be an efficient solution. To evaluate this opportunity, we focus on extracting character death events, a type of event that is overrepresented in fiction~\cite{Morin2019-ov} due to its potential for narrative engagement. Indeed, murders, natural disasters, and other tragedies are often crucial events in the plot development of novels. Reliably extracting this information can open up new possibilities for the large-scale comparative analysis of literature.
+
+\section{Methodology}
+
+In this section, we outline the methodology used to assess the ability of LLMs to perform KE from fiction. We begin by defining the task in Section~\ref{sub:task} and detailing the framework for evaluating LLMs' KE capabilities. Our approach consists of two main steps: knowledge extraction and summarisation. Next, in Section~\ref{sub:dataset}, we introduce the dataset, a corpus of short stories with manually annotated death events. We then describe the models evaluated in our study (Section~\ref{sub:meth_models}) before presenting the evaluation criteria used for assessment (Section~\ref{sub:meth_eval}).
+
+
+\subsection{Task}
+\label{sub:task}
+
+
+\noindent
+\textbf{Knowledge extraction}
+\label{par:meth_ke}
+We approach the recognition of death events in fictional narratives by framing it as a KE task. Specifically, we prompt an LLM to identify death events within a given input and return a triple comprising the three constituent elements of each event: \begin{enumerate*}[label=(\arabic*)]
+\item the victim, 
+\item the perpetrator, 
+\item the mode of demise
+\end{enumerate*} (e.g. \textit{Medusa, Perseus, beheading}).
+The prompt used for this task is provided in Appendix~\ref{app:prompts_ke}. The extracted triples are compared against the manually annotated gold standard benchmark. %used in this study to evaluate the model's performance.
+
+
+
+\noindent
+\textbf{Summarisation}
+\label{par:meth_sum}
+The input to the LLM can be either the full story or an automatically generated summary of the story. The motivation for introducing a preliminary summarisation step is that, in fiction, events are often implicit or presented using figurative language. Summarising stories may help in making events more explicit in the summaries and, therefore, easier to extract~\cite{lucy2025telldontshowleveraging}. For the summarisation step, we explore two types of summaries: \begin{enumerate*}[label=(\arabic*)] \item a generic summary, generated by prompting the LLM to provide a summary of the story capturing all the events; \item a task-specific specialised summary, generated by prompting the LLM to explicitly focus on identifying and reporting character deaths. The specific prompts for generating these summaries are detailed in Appendix~\ref{app:prompts_sum}. \end{enumerate*}
+
+
+\subsection{Dataset}
+\label{sub:dataset}
+
+%\numberedtodo[inline]{Refer)}
+
+\begin{table}[htpb]
+    \centering
+    \begin{adjustbox}{width=\textwidth}
+%
+    \begin{tabular}{cccccc}
+        \hline
+        \textbf{\#Stories} & \textbf{\#Death Events} & \textbf{\#Victims} & \textbf{\#Perpetrators} & \textbf{Modes of Demise (All)} & \textbf{Modes of Demise (Unique)} \\
+        \hline
+        $59$ & $246$ & $234$ & $169$ & $177$ & $63$ \\
+        \hline
+    \end{tabular}%
+    
+\end{adjustbox}
+    \caption{Summary statistics of stories, death events, and modes of demise.}
+    \label{tab:story_stats}
+\end{table}
+
+\begin{table}[htpb]
+    \centering
+    \begin{adjustbox}{width=\textwidth}
+%
+    \begin{tabular}{lccccc}
+        \hline
+        \textbf{Metric} & \textbf{Mean} & \textbf{Median} & \textbf{Std Dev} & \textbf{Min} & \textbf{Max} \\
+        \hline
+        Words per story & $2,560$ & $1,686$ & $2,083.5$ & $400$ & $7,367$ \\
+        Word entropy & $8.15$ & $8.13$ & $0.49$ & $7.05$ & $9.25$ \\
+        \hline
+    \end{tabular}%
+    
+\end{adjustbox}
+        \caption{Dataset words per story and word entropy statistics.}
+    \label{tab:words_dataset_stats}
+\end{table}
+
+
+% \begin{table}[H]
+%     \centering
+%     \begin{tabular}{l c}
+%         \toprule
+%         \textbf{Mode of Demise} & \textbf{Count} \\
+%         \midrule
+%         Slaying & 13 \\
+%         Stabbing & 12 \\
+%         Being eaten & 11 \\
+%         Petrification & 10 \\
+%         Being shot & 9 \\
+%         Drowning & 8 \\
+%         Snake bite & 7 \\
+%         War & 7 \\
+%         Tearing to pieces & 6 \\
+%         Sacrifice & 6 \\
+%         \bottomrule
+%     \end{tabular}
+%     \caption{Top 10 modes of demise occurring in the corpus.}
+  \label{tab:modes_of_demise}
+%     
+% \end{table}
+
+%Word entropy measures the predictability of word co-occurrence in text.
+\subsubsection{Statistics}
+\label{subsub:datasets_stats}
+Our dataset contains 59 stories (see Table~\ref{tab:story_stats}) collected from the fan fiction platform Archive of Our Own~\cite{fiesler2016archive}. As reported in Table~\ref{tab:words_dataset_stats}, the stories in our dataset feature a median of 1,681 words per story and 8.13 word entropy. The latter value is used in the error analysis presented in Section~\ref{sub:error_analysis}.
+
+Following~\cite{Jacobsen2024}, we compute textual features and readers' reception characteristics of the stories\footnote{Calculated with \url{https://github.com/centre-for-humanities-computing/fabula_pipeline}.} and report them in Table~\ref{tab:textual_reception_dataset_stats} in Appendix~\ref{app:textfeat}. As textual features, we report metrics such as the Dale-Chall New Readability score, which measures the stylistic simplicity of a given text (the higher the score, the more complex the story), and the Hurst exponent (H), which is used as a proxy to measure the narrative complexity of the story's sentiment arc (H > 0.5 indicates an higher predictability of the narrative and is often associated to bestsellers, while H < 0.5 indicates more complex narratives and is frequently related to highbrow fiction~\cite{bizzoni2024goodbookscomplexmatters}). Readers' reception features include kudos and hits, metrics harvested from Archive of Our Own that indicate the number of likes a story received and the number of times it was visited. The ratio of these metrics indicates appreciation~\cite{fiesler2016archive, pianzola2020cultural}.
+Interestingly, our dataset has a higher Dale-Chall New mean score than the fanfiction corpus reported in~\cite{Jacobsen2024} ($6.72$ vs $5.73$), and a slightly higher H ($0.57$ vs $0.59$).
+We calculated Spearman $\rho$ between hits and appreciation and each of the textual features reported, but found no correlation.
+
+\subsubsection{Annotation}
+\label{subsub:annotations}
+Three annotators worked on the corpus in different phases: one annotator (an expert on Greek myths) selected the short stories. %The texts were collected from the fan fiction platform Archive of Our Own~\cite{fiesler2016archive}. 
+Each of the stories was published under the category (i.e. \textit{fandom}) \textit{Ancient Greek Religion and Lore}. They were filtered by length (ca. 400-10.000 words), as shorter publications are often poems or very short stories without many events, and by the author-supplied label \textit{Major Character Death}. This ensured that at least one character death was present in the story, but the annotation included minor character deaths as well, where they occurred.
+
+The domain expert then annotated the death events in the texts as triples of \emph{Victim, Perpetrator} and \emph{Mode of Demise} (e.g., \emph{Medusa, Perseus, beheading}), and extracted textual evidence supporting each triple. The textual evidence might be an explicit statement or the semantically closest statement indicating the event (e.g. \textit{I saw her floating body}). Co-references were always resolved, and the proper name of the character was used in the triple. Information on the three constituents might be presented in different parts of the text, e.g., the perpetrator appears only later in the text, while the victim is mentioned early. In these cases, multiple statements of support were extracted and separated by "[...]". Not all cases require the three constituents (Victim, Perpetrator, and Mode of Demise) to be present. For instance, not every character death occurs at the hand of a second character. %Thus, the dataset distinguishes between murderous and non-murderous events. The \textit{Mode of Demise} can be the same for a murder or non-murder death, e.g. \text{drowning} by accident or by the hands of a perpetrator. 
+One or more of the triple constituents might be unspecified without even implied mention (e.g. \textit{Artemis killed her children}). In these cases, the Mode of Demise is \textit{unspecified}. Modes of Demise were aligned, e.g. \emph{turned to stone}, \emph{transformed into a rock}, and \emph{petrification} were subsumed under \emph{petrification}.
+
+In a subsequent quality control step, a second annotator checked all the annotations and verified that the selected textual evidence was complete and correct. A third annotator (an expert narratologist) annotated the presentation modes and the perspective of the narrator (first-, second-, third-person). %How a death event is presented in the story—referred to as the \textit{presentation mode}— impacts the accuracy of death event extraction. 
+We categorize presentation modes into five types: \begin{enumerate*}[label=(\roman*)] \item \textit{direct speech}, \item \textit{direct thought}, \item \textit{indirect speech}, \item \textit{indirect thought}, and \item \textit{narrator}\end{enumerate*}.\footnote{The categories \textit{indirect speech} and \textit{indirect thought} also include modes sometimes called \textit{free indirect speech}, \textit{represented thought}, etc.~\cite{semino2004corpus}} This distinction is relevant because the presentation mode influences the epistemological status of events. For example, speech, thoughts, and dreams decrease the certainty about the actual occurrence of the reported event. This can pose challenges for LLMs, as it may lower their confidence during the KE task. We report in Appendix~\ref{app:pm_pov} an overview of these modes, including a representative example sentence from the dataset for each. 
+
+%\section{Experimental Setup}
+\subsection{Models}
+\label{sub:meth_models}
+We employed \texttt{llama3.1:70b}~\cite{grattafiori2024llama3herdmodels} and \texttt{deepseek-R1-Distill-llama-70B}, a reasoning model based on \texttt{llama-3.3-70B-Instruct}~\cite{deepseekai2025}. 
+The choice of open-weight LLMs was necessary to locally process full-text stories without breaching copyright or data privacy associated with sending content to proprietary, remotely hosted models. The selected models were utilised to both generate summaries of the input stories and extract death events from the tested inputs (full-text stories, generic summaries, and specialised summaries).
+
+\subsection{Evaluation}
+
+The evaluation compares the extracted KE outputs to the gold annotations provided in the dataset. We conduct two types of evaluations: 
+\begin{enumerate*}[label=(\arabic*)] 
+    \item a \textit{fine-grained} evaluation, which assesses each component of a death event (victim, perpetrator, and mode of demise) %, described in Section~\ref{par:fine_grained_eval}; 
+    and 
+    \item a \textit{coarse-grained} evaluation, which evaluates the death event triple as a whole%, outlined in Section~\ref{par:coarse_grained_eval}
+    .
+\end{enumerate*}
+
+
+
+\noindent
+\textbf*{Fine-grained evaluation}\label{par:fine_grained_eval}
+The fine-grained evaluation assesses the correctness of individual elements within each death event triple. Specifically, we compare the extracted Victim, Perpetrator, and Mode of Demise against the manually annotated references. This enables the identification of true positives (TP), false positives (FP), and false negatives (FN), which are then used to compute standard precision (\(P\)), recall (\(R\)), and F1 score (\(F1\)) for each constituent element. We adopt a soft approach: for \textit{unspecified} constituents, we consider \textit{null} predictions by the LLM as true negatives (TN), even when the model did not detect any other constituent.
+
+% --------------------------------------------------------------
+% Fine-grained evaluation table (Precision, Recall, F1)       
+% --------------------------------------------------------------
+
+\begin{table}[htpb]
+\centering
+\begin{adjustbox}{width=\textwidth}
+\begin{tabular}{lrrrrrrrrr|rrrrrrrrr}
+\toprule
+& \multicolumn{9}{c}{\textbf{\texttt{llama3.1:70b}}} & \multicolumn{9}{c}{\textbf{\texttt{deepseek-r1:70b}}} \\
+\cline{2-10} \cline{11-19}
+& \multicolumn{3}{c}{\textbf{Victim}} & \multicolumn{3}{c}{\textbf{Perpetrator}} & \multicolumn{3}{c}{\textbf{Mode of Demise}} & \multicolumn{3}{c}{\textbf{Victim}} & \multicolumn{3}{c}{\textbf{Perpetrator}} & \multicolumn{3}{c}{\textbf{Mode of Demise}} \\
+\textbf{Input} & \textbf{P} & \textbf{R} & \textbf{F1} & \textbf{P} & \textbf{R} & \textbf{F1} & \textbf{P} & \textbf{R} & \textbf{F1} & \textbf{P} & \textbf{R} & \textbf{F1} & \textbf{P} & \textbf{R} & \textbf{F1} & \textbf{P} & \textbf{R} & \textbf{F1} \\
+\midrule
+Generic Summary & \underline{0.85} & 0.27 & 0.41 & \underline{0.74} & \underline{0.21} & \underline{0.32} & 0.55 & 0.17 & 0.26 & \underline{0.84} & 0.24 & 0.37 & \underline{0.59} & 0.17 & 0.26 & \underline{0.54} & 0.17 & 0.26 \\
+Specialised Summary & \textbf{0.86} & \textbf{0.44} & \textbf{0.58} & \textbf{0.76} & \textbf{0.33} & \textbf{0.46} & \textbf{0.67} & \underline{0.22} & \underline{0.33} & \textbf{0.89} & \textbf{0.42} & \textbf{0.57} & \textbf{0.64} & \textbf{0.30} & \textbf{0.41} & 0.49 & \textbf{0.26} & \textbf{0.34} \\
+Story & 0.77 & \underline{0.35} & \underline{0.48} & 0.53 & 0.19 & 0.28 & \underline{0.56} & \textbf{0.26} & \textbf{0.35} & 0.81 & \underline{0.37} & \underline{0.51} & 0.54 & \underline{0.22} & \underline{0.31} & \textbf{0.55} & \underline{0.25} & \textbf{0.34} \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{\label{tab:finegrained_eval}Fine-grained evaluation metrics (Precision, Recall, F1) for Victim, Perpetrator, and Mode of Demise across the three input types for the two models tested. The best score is in bold, and the second-best is underlined.}
+  \label{par:coarse_grained_eval}
+\end{table}
+
+
+
+\noindent
+\textbf*{Coarse-grained evaluation} 
+Building upon the fine-grained evaluation, the coarse-grained evaluation assesses the correctness of each death event triple as a whole. A triple is classified as:
+\begin{enumerate*}[label=(\alph*)]
+    \item \emph{Correct}, if all its constituent elements (victim, perpetrator, and mode of demise) are TPs or TNs;
+    \item \emph{Partially Correct}, if at least one of its constituent elements is a FP or FN; or
+    \item \emph{Incorrect}, if none of its constituent elements is a TP or a TN.
+\end{enumerate*}
+For each input type (full story, generic summary, and specialised summary), we compute the proportion of correct, partially correct, and incorrect death events relative to the total number of extracted death events.
+
+% --------------------------------------------------------------
+% Coarse-grained evaluation table (Correct%, Part%, Inc%)       
+% --------------------------------------------------------------
+
+
+\begin{table}[htpb]
+\centering
+\begin{adjustbox}{width=\textwidth}
+\begin{tabular}{lcccccc}
+\toprule
+\multirow{2}{*}{\textbf{Input}} & \multicolumn{3}{c}{\textbf{\texttt{llama3.1:70b}}} & \multicolumn{3}{c}{\textbf{\texttt{deepseek-r1:70b}}} \\
+\cmidrule(lr){2-4} \cmidrule(lr){5-7}
+ & \textbf{Corr. (n, \%)} & \textbf{Part. (n, \%)} & \textbf{Inc. (n, \%)} & \textbf{Corr. (n, \%)} & \textbf{Part. (n, \%)} & \textbf{Inc. (n, \%)} \\
+\midrule
+  Generic Summary & $(31)$ 12\% & $(30)$ \underline{12\%} & $(188)$ 76\% & $(26)$ 10\% & $(31)$ \underline{12\%} & $(198)$ 78\% \\
+  Specialised Summary & $(63)$ \textbf{25\%} & $(36)$ \textbf{14\%} & $(155)$ \textbf{61\%} & $(49)$ \underline{19\%} & $(49)$ \textbf{19\%} & $(159)$ \textbf{62\%} \\
+  Story & $(51)$ \underline{20\%} & $(31)$ \underline{12\%} & $(178)$ \underline{68\%} & $(57)$ \textbf{22\%} & $(31)$ \underline{12\%} & $(177)$ \underline{67\%} \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{\label{tab:coarse_grained_eval}Coarse-grained evaluation results of extracted death event triples across three input types for the two models tested. Each triple is classified as \textit{Correct} (Corr.), \textit{Partially Correct} (Part.), or \textit{Incorrect} (Inc.). The total number of extracted death event triples varies across model runs and input types, as models may extract different numbers of incorrect triples per run.}
+  \label{sub:meth_eval}
+\end{table}
+
+
+
+
+
+\noindent
+\textbf*{Manual review for evaluation validity} Initially, this comparison is performed automatically using string-matching. However, since automatic metrics often struggle to fully capture the nuances of KE outputs, as with free-form QA outputs~\cite{chen-etal-2019-evaluating}, especially with generative outputs~\cite{kamalloo-etal-2023-evaluating}, all comparison pairs are subsequently reviewed manually. This manual revision also accounts for cases where the victim or perpetrator is referred to using nominal or pronominal references, ensuring that models are not penalised for unresolved coreference (e.g. \textit{his own daughter} for \textit{Iphigenia}, in Figure~\ref{fig:figure1}). Examples illustrating how manual evaluation improves the fairness of model assessment are provided in Appendix~\ref{app:manual_ex}, specifically in Tables~\ref{tab:manual_alignment_cases1}, \ref{tab:manual_alignment_cases2}. The manual revision process was performed by the same experts who annotated the dataset (cf. Section~\ref{sub:dataset}).
+
+
+\section{Discussion}
+\label{sec:discussion}
+This section presents the highlights of our experimental results. We then analyse errors, first examining the types of errors in KE, then assessing whether certain stylistic features of the text, like the death event presentation mode or the narrator's point of view (POV), are likely to elicit more errors.
+
+
+%\begin{table}[H]
+%\centering
+%\caption{Categories of error types occurring in the character death event extraction across two models. Highest in bold, second highest underlined.}
+  \label{tab:error_scope_type}
+%\begin{adjustbox}{width=\textwidth}
+%\begin{tabular}{llll|lll}
+%  \toprule
+%  & \multicolumn{3}{c}{\textbf{\texttt{llama3.1:70b}}} & \multicolumn{3}{c}{\textbf{\textbf{\texttt{deepseek-r1:70b}}}} \\
+%  \cline{2-4} \cline{5-7}
+%  \textbf{Error types} & \textbf{Generic} & \textbf{Specialised} & \textbf{Story} & \textbf{Generic} & \textbf{Specialised} & \textbf{Story} \\
+%  \midrule
+%   \textbf{Summarisation} & & & & & & \\
+%   \hspace{1em}Wrong death event reported & $7\%$ & $13\%$ & N/A & $8\%$ & $22\%$ & N/A \\
+%   \hspace{1em}Missing death event (Major character) & $\mathbf{48\%}$ & $\mathbf{44\%}$ & N/A & $\mathbf{41\%}$ & $\mathbf{36\%}$ & N/A \\
+%   \hspace{1em}Missing death event (Minor character) & $\underline{32\%}$ & $\underline{31\%}$ & N/A & $\underline{36\%}$ & $\underline{32\%}$ & N/A \\
+%   \textbf{Knowledge Extraction} & & & & & & \\
+%   \hspace{1em}Wrong death event extracted & $6\%$ & $7\%$ & $20\%$ & $3\%$ & $1.5\%$ & $27\%$ \\ %19/220
+%   \hspace{1em}Missed death event (Major character) & $8\%$ & $5\%$ & $\mathbf{46\%}$ & $7\%$ & $4.5\%$ & $\underline{34\%}$ \\
+%   \hspace{1em}Missed death event (Minor character) & $0\%$ & $0\%$ & $\underline{33\%}$ & $5\%$ & $4\%$ & $\mathbf{39\%}$ \\
+%   \bottomrule
+%\end{tabular}
+%\end{adjustbox}
+%
+%\end{table}
+
+\subsection{Results highlights}
+
+
+\begin{comment}
+\begin{table}[H]
+\centering
+\begin{adjustbox}{width=\textwidth}
+\begin{tabular}{lcccccc}
+\toprule
+\multirow{2}{*} & \multicolumn{3}{c}{\textbf{llama3.1:70b3.1:70b}} & \multicolumn{3}{c}{\textbf{\texttt{deepseek-r1:70b}}} \\
+\cmidrule(lr){2-4} \cmidrule(lr){5-7}
+\textbf{Input} & \textbf{Victim (n, \%)} & \textbf{Perpetrator (n, \%)} & \textbf{Mode of Demise (n, \%)} & \textbf{Victim (n, \%)} & \textbf{Perpetrator (n, \%)} & \textbf{Mode of Demise (n, \%)}\\
+\midrule
+Generic Summary & (0) 0\% & (12) 30\% & (23) 70\% & (1) 3\% & (20) 44\% & (23) 53\%\\
+Specialised Summary & (0) 0\% & (12) 27\% & (28) 73\% & (0) 0\% & (26) 33\% & (43) 67\%\\
+Story & (2) 3\% & (18) 42\% & (21) 55\% & (0) 0\% & (23) 52\% & (22) 48\%\\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{\label{tab:partial_correct_eval}Counts and percentages of the death event element (Victim, Perpetrator, and Mode of Demise) causing a partially correct classification per each input type.}
+  \label{sub:error_analysis}
+\end{table}
+
+\end{comment}
+
+
+
+\noindent
+\textbf*{Specialised summaries ensure the best KE performance} By explicitly focusing on death events, the specialised summary prompt encourages the LLM to generate more exhaustive descriptions of these events, making them easier to extract through the KE prompt. The results of the fine-grained evaluation, presented in Table~\ref{tab:finegrained_eval}, confirm that for both tested models, the most advantageous input for the KE step is the specialised summary, ensuring the highest precision, recall, and \(F1\) score for both the Victim and Perpetrator elements. It is worth highlighting that the second-best precision values for the Victim and the Perpetrator are obtained with the generic summary in the input. A different trend is observed for the Mode of Demise. With \texttt{llama3.1:70b}, the highest \(F1\) score is obtained when the full story is used as input. Conversely, for \texttt{deepseek-r1:70b}, the \(F1\) score for Mode of Demise remains the same whether the input is the specialised summary or the full story. The results of the coarse-grained evaluation, reported in Table~\ref{tab:coarse_grained_eval}, further support this trend. For \texttt{llama3.1:70b}, the specialised summary yields the highest number of correctly and partially correctly extracted death events, along with the lowest number of incorrectly extracted ones. For \texttt{deepseek-r1:70b}, the highest number of correctly extracted death events is observed when using the full story as input. However, the specialised summary remains the input that ultimately results in the lowest number of incorrect extractions. We report detailed examples of cases of successful extraction of death events from the specialised summary as compared to the other types of input in Appendix~\ref{app:successfull_extraction_from_specialised_summaries_ex}.
+
+
+
+\noindent
+\textbf*{Victim identification rarely causes partial errors} A deeper analysis into the most recurring element responsible for a partially correct assessment reveals that the Victim is almost never the mistaken element, except a small proportion (3\%) of cases in which \texttt{llama3.1:70b} extracts from the full story and \texttt{deepseek-r1:70b} from the generic summary. The identification of the Victim consistently achieves the highest \(F1\) across all inputs and models tested. The most recurring error in partially correct death events when the input is a summary, whether generic or specialised, is the Mode of Demise. This element accounts for 74\% of partially correct assessment in \texttt{llama3.1:70b} and 67\% in \texttt{deepseek-r1:70b}. %, reinforcing the hypothesis that the mode of demise is treated as the least salient component of a death event when a short story is summarised. 
+However, when the input is the story, the errors are more evenly distributed between the Perpetrator and the Mode of Demise: 42\% and 55\% for \texttt{llama3.1:70b}, and 52\% and 48\% for \texttt{deepseek-r1:70b}, respectively. These findings suggest that when events are recounted in summaries, key elements such as the Victim and Perpetrator are more consistently retained. In contrast, the Mode of Demise is seen as a lower-priority detail and may be omitted or described less explicitly. This supports the hypothesis that summarisation tends to preserve the most salient aspects of an event while filtering out less central details.
+
+
+%By explicitly focusing on death events, the specialised summary prompt encourages the LLM to generate more exhaustive descriptions of these events, making them easier to extract through the KE prompt. 
+
+
+\noindent
+\textbf{LLMs struggle with knowledge extraction from fiction} The overall performance on the KE task is limited. The highest average \(F1\) score across the three death event elements with the best-performing input is 0.45 for \texttt{llama3.1:70b}, while for \texttt{deepseek-r1:70b} is 0.44. Additionally, the percentage of correctly extracted death events is notably low, with a maximum of only 25\%. These findings show the challenges of KE from fiction.
+
+\subsection{Error Analysis}
+
+
+
+
+\noindent
+\textbf{Missed death events dominate error types}
+
+In Table~\ref{tab:error_summaries} and Table~\ref{tab:error_story} (see Appendix~\ref{app:error_type_dist}), we categorise errors into different types to analyse the prevalence of specific issues in extracting death events from different inputs. 
+
+First, we differentiate errors according to their scope: \begin{enumerate*}[label=(\alph*)] \item errors at the summarisation level and \item errors at the KE level. \end{enumerate*} The former occurs when a death event is either missing from the summary or inaccurately represented in it.\footnote{These errors are specific to KE settings where the inputs are the generic or specialised summaries and do not apply (\textit{N/A}) to the KE setting in which the input is the full story.} The latter arises when a death event is correctly reported in the summary but is either not extracted or extracted incorrectly during the KE process. Errors at the KE level are applicable across all settings, regardless of whether the input is the generic summary, the specialised summary, or the full story. 
+
+Second, we classify errors belonging to each scope based on their type. Errors at the summarisation level can occur in two main forms: \begin{enumerate*}[label=(\roman*)] \item a wrong death event reported, such as when a death event is reported by the LLM in the summary but not present in the full story, or when there is a mismatch between the Victim, the Perpetrator, or the Mode of Demise reported in the summary and those manually annotated, and \item a missing death event from the summary. \end{enumerate*} We further divide the latter error type into two subcategories: \begin{enumerate*}[label=(\roman*)] \item a missing death event of a major character, when the omitted death event pertains to a character so relevant to the story that it is explicitly named with a proper noun, and \item a missing death event of a minor character, when the omitted death event pertains to a character identified through a genitive construct (e.g., \textit{Philomela's father}) or a generic descriptor (e.g., \textit{villagers}).\footnote{The distinction between missed minor and major death events is particularly relevant for evaluating summary quality, as, in certain use cases, missing the deaths of minor characters may not significantly impact the usability of the summary.} \end{enumerate*} Errors at the KE level can manifest in two main forms: \begin{enumerate*}[label=(\alph*)] \item a wrong death event extracted, where the death event triple extracted from a given input contains an incorrect value for one or more of its constituent elements, and \item a missed death event, where the death event triple is erroneously not extracted from the input. \end{enumerate*} Similar to errors at the summarisation level, we further divide the missed death event scenario into two subcategories: \begin{enumerate*}[label=(\roman*)] \item a missed death event of a major character, and \item a missed death event of a minor character.\end{enumerate*}
+
+Our analysis reveals that the vast majority of errors at the summarisation level across both models tested involve death events present in the story but omitted from the summary. For \texttt{llama3.1:70b}, missing death events of major characters constitute the highest proportion of summarisation errors (48\% for generic and 44\% for specialised summaries), followed by missing death events of minor characters (32\% and 31\%, respectively). A similar pattern emerges for \texttt{deepseek-r1:70b}, with missing death events of major characters accounting for 41\% (generic) and 36\% (specialised) of errors, and minor character deaths representing 36\% and 32\%, respectively. Wrong death events reported remain relatively low across both models (7\% for generic and 13\% for specialised summaries for \texttt{llama3.1:70b}, 8\% and 22\% for \texttt{deepseek-r1:70b}). Combined, missing death events account for approximately 75--80\% of all summarisation errors, highlighting the models' tendency to omit rather than fabricate or misrepresent death events in the summaries.
+
+At the KE level, the distribution of error types varies considerably depending on the input. When extracting from summaries (generic or specialised), errors are relatively low and distributed across categories, with wrong extractions of 6\% and 7\% for \texttt{llama3.1:70b}, and 3\% and 1.5\% for \texttt{deepseek-r1:70b}, and missed death events of 8\% and 5\% for \texttt{llama3.1:70b} and 7\% and 4.5\% for \texttt{deepseek-r1:70b}. Considering the full story as an input, for \texttt{llama3.1:70b} processing full stories, missed death events account for 79\% of all KE errors (46\% major characters, 33\% minor characters), while for \texttt{deepseek-r1:70b}, this figure reaches 73\% (34\% major, 39\% minor). Wrong extractions are also notably higher when processing full stories (20\% and 27\%) compared to summary inputs, suggesting that the increased complexity and length of full narratives pose substantial challenges for accurate KE.
+
+In general, missed death events dominate extraction errors, confirming a trend already observed in Table~\ref{tab:finegrained_eval}: for each constituent element of the death event triples, \emph{Recall} in KE extraction is very low. This trend underscores that most errors can be attributed either to the LLM failing to identify and report a death event in the summary or to the LLM failing to recognise the death event directly from the full story.
+
+
+
+\noindent
+\textbf*{Indirect presentation modes and third-person narration facilitate KE}
+
+Table~\ref{tab:err_an_presentation_mode} highlights the influence of presentation modes on the correctness of death event extraction across the input types tested. For all input types and both LLMs, death events presented in \textit{direct speech} are the most challenging to extract, exhibiting the lowest rates of correct extractions. However, prior summarisation appears to mitigate this issue by making such events more explicit, ultimately facilitating their extraction in the KE step. An example of this phenomenon is provided in Table~\ref{tab:dir_sp_difficult} reported in Appendix~\ref{app:successfull_extraction_from_specialised_summaries_ex}. In this case, although death events are clearly stated in direct speech within the excerpt of the original story, both LLMs fail to extract them when the input is the full story. The same applies when the input is the generic summary. However, when the specialised summary is used as input, the death events are reformulated more explicitly, enabling successful extraction by the KE step. We report other similar examples in Appendix~\ref{app:failed_direct_speech_ex}. 
+
+Conversely, death events presented in indirect modes, either through the narrator or indirect thought, are consistently easier to extract across all input types for both LLMs. This suggests that the indirect presentation of a death event inherently facilitates extraction, reinforcing the benefit of incorporating a summarisation step. Since summarisation tends to transform direct speech into indirect reporting, it helps structure the information in a way that better aligns with LLMs' KE capabilities. Table~\ref{tab:err_an_narrator_pov} corroborates these findings, showing that KE is more accurate when stories are narrated in the third person. Across all models and input types tested, third-person narratives yield the highest proportion of correct extractions while also exhibiting the lowest number of missed death events. This trend suggests that third-person narration provides a clearer, more explicit presentation of events, reducing ambiguity and improving LLMs' accuracy in extracting key information.
+
+\begin{table}[htpb]
+\begin{minipage}{\textwidth}
+\begin{tabular}{l r  r r r | r r r | r r r}
+\toprule
+\multicolumn{11}{c}{\textbf{\texttt{llama3.1:70b}}} \\
+& & \multicolumn{3}{c}{\textbf{Generic Summary}} & \multicolumn{3}{c}{\textbf{Specialised Summary}} & \multicolumn{3}{c}{\textbf{Story}} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}\cmidrule(lr){9-11}
+\textbf{Presentation mode} & \textbf{Total} & \textbf{Corr.} & \textbf{Part.} & \textbf{Miss.} & \textbf{Corr.} & \textbf{Part.} & \textbf{Miss.} & \textbf{Corr.} & \textbf{Part.} & \textbf{Miss.} \\
+\midrule
+\texttt{narrator}  & $165$  & 15\%  & \textbf{11\%}  & 74\%  & \textbf{34\%}  & 15\%  & \textbf{52\%}  & \textbf{27\%}  & 11\%  & \textbf{62\%} \\
+\texttt{direct speech}  & $38$  & 8\%  & \textbf{11\%}  & 82\%  & 3\%  & \textbf{21\%}  & 76\%  & 0\%  & 13\%  & 87\% \\
+\texttt{indirect thought}  & $37$  & \textbf{19\%}  & 8\%  & \textbf{73\%}  & 14\%  & 11\%  & 76\%  & 16\%  & \textbf{22\%}  & \textbf{62\%} \\
+%\midrule
+\textcolor{gray}{\texttt{indirect speech}}  & \textcolor{gray}{$5$}  & \textcolor{gray}{0\%}  & \textcolor{gray}{20\%}  & \textcolor{gray}{80\%}  & \textcolor{gray}{40\%}  & \textcolor{gray}{0\%}  & \textcolor{gray}{60\%}  & \textcolor{gray}{20\%}  & \textcolor{gray}{20\%}  & \textcolor{gray}{60\%} \\
+\textcolor{gray}{\texttt{direct thought}}  & \textcolor{gray}{$3$}  & \textcolor{gray}{0\%}  & \textcolor{gray}{100\%}  & \textcolor{gray}{0\%}  & \textcolor{gray}{100\%}  & \textcolor{gray}{0\%}  & \textcolor{gray}{0\%}  & \textcolor{gray}{100\%}  & \textcolor{gray}{0\%}  & \textcolor{gray}{0\%} \\
+\bottomrule
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{l r  r r r | r r r | r r r}
+\toprule
+\multicolumn{11}{c}{\textbf{\texttt{deepseek-r1:70b}}} \\
+& & \multicolumn{3}{c}{\textbf{Generic Summary}} & \multicolumn{3}{c}{\textbf{Specialised Summary}} & \multicolumn{3}{c}{\textbf{Story}} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}\cmidrule(lr){9-11}
+\textbf{Presentation mode} & \textbf{Total} & \textbf{Corr.} & \textbf{Part.} & \textbf{Miss.} & \textbf{Corr.} & \textbf{Part.} & \textbf{Miss.} & \textbf{Corr.} & \textbf{Part.} & \textbf{Miss.} \\
+\midrule
+\texttt{narrator}  & $165$  & 12\%  & \textbf{13\%}  & \textbf{75\%}  & \textbf{23\%}  & \textbf{22\%}  & \textbf{55\%}  & 25\%  & \textbf{13\%}  & 62\% \\
+\texttt{direct speech}  & $38$  & 5\%  & 8\%  & 87\%  & 8\%  & 8\%  & 84\%  & 5\%  & 8\%  & 87\% \\
+\texttt{indirect thought}  & $37$  & \textbf{14\%}  & 11\%  & 76\%  & 19\%  & 19\%  & 62\%  & \textbf{35\%}  & 8\%  & \textbf{57\%} \\
+%\midrule
+\textcolor{gray}{\texttt{indirect speech}}  & \textcolor{gray}{$5$}  & \textcolor{gray}{0\%}  & \textcolor{gray}{20\%}  & \textcolor{gray}{80\%}  & \textcolor{gray}{20\%}  & \textcolor{gray}{40\%}  & \textcolor{gray}{40\%}  & \textcolor{gray}{20\%}  & \textcolor{gray}{20\%}  & \textcolor{gray}{60\%} \\
+\textcolor{gray}{\texttt{direct thought}}  & \textcolor{gray}{$3$}  & \textcolor{gray}{0\%}  & \textcolor{gray}{67\%}  & \textcolor{gray}{33\%}  & \textcolor{gray}{33\%}  & \textcolor{gray}{33\%}  & \textcolor{gray}{33\%}  & \textcolor{gray}{0\%}  & \textcolor{gray}{67\%}  & \textcolor{gray}{33\%} \\
+\bottomrule
+\end{tabular}
+\caption{Error analysis by presentation mode for \texttt{llama3.1:70b} and \texttt{deepseek-r1:70b}. Results for presentation modes with a low number of samples are reported but excluded from the comparison.}
+\label{tab:err_an_presentation_mode}
+\end{minipage}
+\end{table}
+
+\begin{table}[htpb]
+\begin{minipage}{\textwidth}
+\begin{tabular}{l r  r r r | r r r | r r r}
+\toprule
+\multicolumn{11}{c}{\textbf{\texttt{llama3.1:70b}}} \\
+& & \multicolumn{3}{c}{\textbf{Generic Summary}} & \multicolumn{3}{c}{\textbf{Specialised Summary}} & \multicolumn{3}{c}{\textbf{Story}} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}\cmidrule(lr){9-11}
+\textbf{Narrator POV} & \textbf{Total} & \textbf{Corr.} & \textbf{Part.} & \textbf{Miss.} & \textbf{Corr.} & \textbf{Part.} & \textbf{Miss.} & \textbf{Corr.} & \textbf{Part.} & \textbf{Miss.} \\
+\midrule
+\texttt{third}  & $126$  & \textbf{18\%}  & \textbf{15\%}  & \textbf{67\%}  & \textbf{27\%}  & \textbf{15\%}  & \textbf{58\%}  & \textbf{23\%}  & 12\%  & \textbf{65\%} \\
+\texttt{first}  & $112$  & 11\%  & 7\%  & 83\%  & 25\%  & 12\%  & 62\%  & 20\%  & \textbf{14\%}  & 66\% \\
+%\midrule
+\textcolor{gray}{\texttt{second}}  & \textcolor{gray}{$10$}  & \textcolor{gray}{0\%}  & \textcolor{gray}{22\%}  & \textcolor{gray}{78\%}  & \textcolor{gray}{20\%}  & \textcolor{gray}{40\%}  & \textcolor{gray}{40\%}  & \textcolor{gray}{20\%}  & \textcolor{gray}{10\%}  & \textcolor{gray}{70\%} \\
+\bottomrule
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{l r  r r r | r r r | r r r}
+\toprule
+\multicolumn{11}{c}{\textbf{\texttt{deepseek-r1:70b}}} \\
+& & \multicolumn{3}{c}{\textbf{Generic Summary}} & \multicolumn{3}{c}{\textbf{Specialised Summary}} & \multicolumn{3}{c}{\textbf{Story}} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}\cmidrule(lr){9-11}
+\textbf{Narrator POV} & \textbf{Total} & \textbf{Corr.} & \textbf{Part.} & \textbf{Miss.} & \textbf{Corr.} & \textbf{Part.} & \textbf{Miss.} & \textbf{Corr.} & \textbf{Part.} & \textbf{Miss.} \\
+\midrule
+\texttt{third}  & $126$  & \textbf{15\%}  & \textbf{16\%}  & \textbf{69\%}  & \textbf{26\%}  & 16\%  & \textbf{58\%}  & \textbf{30\%}  & 10\%  & \textbf{60\%} \\
+\texttt{first}  & $112$  & 5\%  & 10\%  & 85\%  & 13\%  & \textbf{25\%}  & 62\%  & 16\%  & \textbf{14\%}  & 70\% \\
+%\midrule
+\textcolor{gray}{\texttt{second}}  & \textcolor{gray}{$10$}  & \textcolor{gray}{30\%}  & \textcolor{gray}{0\%}  & \textcolor{gray}{70\%}  & \textcolor{gray}{30\%}  & \textcolor{gray}{10\%}  & \textcolor{gray}{60\%}  & \textcolor{gray}{20\%}  & \textcolor{gray}{20\%}  & \textcolor{gray}{60\%} \\
+\bottomrule
+\end{tabular}
+\caption{Error analysis by narrator's point of view (POV) for \texttt{llama3.1:70b} and \texttt{deepseek-r1:70b}. Results for narrator's POVs with a low number of samples are reported but excluded from the comparison.}
+\label{tab:err_an_narrator_pov}
+\end{minipage}
+\end{table}
+
+
+
+\noindent
+\textbf*{KE worsens as story length and word entropy increase}
+
+% Word Count Figures
+\begin{figure}[htpb]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/words_incorrect_percentage_SOURCE_SPECIFIC_WORK_BASED_quartiles_llama_soft.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/words_incorrect_percentage_SOURCE_SPECIFIC_WORK_BASED_quartiles_deepseek_soft.png}
+    \end{minipage}
+    \caption{Comparison of incorrectly extracted death events by word count quartiles. Left: \texttt{llama3.1:70b}. Right: \texttt{deepseek-r1:70b}. Q1-Q4 word count ranges: [400-1000], [1085-1677], [1686-3488], [4072-7367]. Each quartile contains 14-15 works. Each plot includes one line for each input type (generic, specialised, story).}
+    \label{fig:word_count_comparison}
+\end{figure}
+
+% Word Entropy Figures
+\begin{figure}[htpb]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/word_entropy_incorrect_percentage_SOURCE_SPECIFIC_WORK_BASED_quartiles_llama_soft.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/word_entropy_incorrect_percentage_SOURCE_SPECIFIC_WORK_BASED_quartiles_deepseek_soft.png}
+    \end{minipage}
+    \caption{Comparison of incorrectly extracted death events by word entropy quartiles. Left: \texttt{llama3.1:70b}. Right: \texttt{deepseek-r1:70b}. Q1-Q4 entropy ranges: [7.1-7.7], [7.8-8.1], [8.1-8.5], [8.5-9.2]. Each quartile contains 14-15 works. Each plot includes one line for each input type (generic, specialised, story).}
+    \label{fig:word_entropy_comparison}
+\end{figure}
+
+%\begin{table}[H]
+%    \centering
+%    \caption{Spearman correlation between KE errors and text complexity metrics by model and input type. All correlations are statistically significant (p < 0.001).}
+  \label{tab:correlation_analysis}
+%    
+%    \begin{tabular}{lllrrrr}
+%        \toprule
+%        \textbf{Model} & \textbf{Input Type} & \textbf{Metric} & \textbf{Correlation}\\
+%        \midrule
+%        \multirow{6}{*}{\texttt{deepseek-r1:70b}} & \multirow{2}{*}{Story} & Word Count & $\mathbf{0.486}$\\
+%        & & Word Entropy & $\mathbf{0.463}$\\
+%        \addlinespace[0.2em]
+%        & \multirow{2}{*}{Specialised Summary} & Word Count & 0.414\\
+%        & & Word Entropy & 0.406\\
+%        \addlinespace[0.2em]
+%        & \multirow{2}{*}{Generic Summary} & Word Count & 0.325\\
+%        & & Word Entropy & 0.297\\
+%        \midrule
+%        \multirow{6}{*}{\texttt{llama3.1:70b}} & \multirow{2}{*}{Story} & Word Count & $\mathbf{0.439}$\\
+%        & & Word Entropy & $\mathbf{0.421}$\\
+%        \addlinespace[0.2em]
+%        & \multirow{2}{*}{Specialised Summary} & Word Count & 0.312\\
+%        & & Word Entropy & 0.298\\
+%        \addlinespace[0.2em]
+%        & \multirow{2}{*}{Generic Summary} & Word Count & 0.275\\
+%        & & Word Entropy & 0.242\\
+%        \bottomrule
+%    \end{tabular}
+%\end{table}
+
+Long contexts pose challenges for LLMs~\cite{liu-etal-2024-lost}. Table~\ref{tab:words_dataset_stats} shows substantial variation in story length, ranging from short (400 words) to long (7367 words) narratives. Word entropy, a measure that indicates the predictability of words' co-occurrence in a text~\cite{bentz2016wordentropynaturallanguages,schlechtweg-etal-2017-german}, with higher levels signifying higher unpredictability, varies in a range from $7.05$ to $9.25$ in our corpus. Figures~\ref{fig:word_count_comparison} and \ref{fig:word_entropy_comparison} demonstrate that incorrect death event extractions increase with both story length and word entropy. Specialised summaries produce the fewest incorrect extractions in most conditions. However, for the shortest and most predictable stories (first quartiles of word count and entropy), full stories yield more accurate extractions than specialised summaries. The advantages of specialised summaries peak at intermediate complexity levels (second and third quartiles), where the gap between specialised summaries and other input types is largest. At the extreme quartile (longest stories and highest entropy), all input types show similar performance levels, with specialised summaries maintaining slight advantages. This pattern suggests that summarisation becomes increasingly beneficial as text length and predictability increase, but offers diminishing returns for the most challenging texts.
+
+We calculate the Spearman correlation to examine the relationship between incorrectly extracted death event triples and the word length and entropy of the stories to which they belong. Our analysis reveals that summarisation consistently reduces the correlation between KE errors and story length and entropy metrics across both evaluated LLMs. For full stories, we observed the strongest correlations (all statistically significant at p < 0.001), with \texttt{deepseek-r1:70b} showing correlations of 0.49 for word count and 0.46 for word entropy, while \texttt{llama3.1:70b} exhibited correlations of 0.44 and 0.42, respectively. When using specialised summaries, these correlations decreased moderately to 0.41 for \texttt{deepseek-r1:70b}, and more substantially to 0.31 and 0.30 for \texttt{llama3.1:70b}. Generic summaries showed the weakest correlations, with values dropping to 0.32 and 0.30 for \texttt{deepseek-r1:70b}, and 0.27 and 0.24 for \texttt{llama3.1:70b}. This consistent pattern across both LLMs suggests that summarisation can effectively reduce the dependency between extraction accuracy and challenging stories, which are characterised by higher word length and entropy.
+
+We also conducted quartile analysis and Spearman's $\rho$ computations for textual features and reader reception metrics, but found no clear trends or correlations with extraction errors. These results are reported in the Appendix~\ref{app:KE_trends_tf_rr}, Table~\ref{tab:textual_reception_dataset_stats}.
+
+
+
+
+
+\noindent
+\textbf{LLMs' background knowledge may hinder KE quality}
+
+%\begin{table}[H]
+%    \centering
+%    \caption{Example of false positive extracted from the generic summary due to background knowledge leaking from the model. For each example, the predicted elements of the triple (victim, perpetrator, and mode of demise) are reported, with incorrect predictions highlighted in \textcolor{red}{red}.}\label{tab:FP_error_examples}
+%    \small % Use small font for ACL templates
+%    \setlength{\tabcolsep}{4pt} % Adjust column separation for readability
+%    \renewcommand{\arraystretch}{1.2} % Adjust row height for better readability
+%    \begin{tabularx}{\linewidth}{c c c c X}
+%        \toprule
+%        \multicolumn{5}{c}{\textit{Cassandra's Song}, 734141} \\ 
+%        \toprule
+%        \multicolumn{5}{c}{\textbf{\texttt{llama3.1:70b}}} \\
+%        \midrule
+%        Input & Victim & Perpetrator & Mode of Demise & Summary Sentence \\
+%        \midrule
+%         Generic Summary & \textcolor{red}{Iphigenia} & \textcolor{red}{Agamennon} & \textcolor{red}{stabbing} & However, Clytaemnestra appears behind him, seeking revenge for their daughter Iphigenia's death, and strikes Agamemnon down with her sword.\\
+%        \bottomrule
+%    \end{tabularx}
+%\end{table}
+
+%, indicating some level of ambiguity in the original text.
+
+As seen in Tables~\ref{tab:finegrained_eval} and \ref{tab:coarse_grained_eval} death event extraction from fiction is characterised by low Recall, while Precision tends to achieve higher scores. However, false positives can still occur. %, and some are particularly noteworthy due to their connection with the preliminary summarisation step. During this step, 
+LLMs may generate hallucinations~\cite{HallucinationSurvey}, incorporating their background knowledge of the story's characters and settings into the summary or in the KE step. This phenomenon is especially significant in the context of fanfiction, where characters and narrative universes are often drawn from pre-existing works. Consequently, the LLM may inject information into the summary based on its prior training rather than the input text. This issue is especially relevant to our case study, which uses narratives inspired by Greek mythology, a domain well-known and extensively documented online.
+
+We observed an illustrative example of this phenomenon with \texttt{llama3.1:70b}. When generating a generic summary, the LLM produced the sentence: "However, Clytaemnestra appears behind him, seeking revenge for their daughter Iphigenia's death, and strikes Agamemnon down with her sword." From this summary sentence, our KE step incorrectly identified a death event with Iphigenia as the Victim, Agamemnon as the Perpetrator, and stabbing as the Mode of Demise; all three elements of this extracted triple were false positives. Crucially, this event does not appear anywhere in the corresponding full story.\footnote{The full story has title \textit{Cassandra's Song} and workid 734141} The presence of the characters \textit{Agamemnon}, \textit{Cassandra}, and \textit{Clytemnestra} in the actual narrative appears to have prompted the LLM to incorporate background knowledge about Iphigenia's death--a well-documented mythological antecedent that serves as motivation for Clytemnestra's actions in the Greek tragedy--even though this backstory was not present in the input text. This demonstrates how models can inadvertently inject external knowledge into summaries, leading to extracted information that, while mythologically accurate, constitutes a false positive for our task. We report further examples of such false positives in Appendix~\ref{app:fp_examples}.
+
+%\section{Future Work}
+\section{Conclusion}
+This research investigated the feasibility of using LLMs for automated knowledge extraction of death events from fictional narratives, specifically Greek mythology fanfiction. We explored the impact of different input presentations: full text, generic summaries, and specialised summaries tailored for death event extraction. Our findings indicate that specialised summaries can offer some performance improvements, especially with shorter narratives, but gains are modest (+0.09 \(F1\)), leaving the task challenging. However, this advantage diminishes with increasing story length and word entropy, where all input types lead to low performance. Correlation analysis reveals stronger associations between extraction errors and story length and word entropy when processing full stories. These correlations weaken with summary inputs, suggesting that summarisation may be a beneficial preprocessing strategy for event extraction from fiction. We also showed examples of the detrimental effects of knowledge leakage from pre-training, leading to false-positive extractions. This issue is particularly prominent in domains like Greek mythology, where widely available background information can contaminate the LLM's output. Moreover, the way information is presented significantly impacts KE performance. First-person narratives and direct speech consistently yielded worse extractions compared to other narrative perspectives, likely due to their less explicit presentation of events. 
+
+Overall, the performance of unsupervised LLMs in this KE task was poor, with most problems due to the low Recall. In other words, LLMs may perform sufficiently well to extract information from passages that are relatively simple and more explicit, but still perform extremely bad with passages that are stylistically more unpredictable. Given that indirect communication and artistic uses of language are characteristics of many narratives and fictional texts, the observed limitations suggest that relying solely on unsupervised LLMs for accurate and reliable information extraction from such texts is currently not feasible. Future research should explore alternative KE methods, domain-specific fine-tuning, and dataset diversification to address these challenges.
+
+The specific case study addressed by this research is illustrative of the potential of KE for comparative analysis. Mythology is a rich domain with a long history of adaptation and can serve as an exemplary context for studying how fictional characters meet their demise. By matching the mode of demise in modern adaptations (fanfiction) to their original counterparts, we can investigate innovation and the reframing of plots in the reception of the Ancient Greek mythological tradition. Additionally, fanfiction comes in various forms--from poetic retellings to dialogues between ancient characters, to streams-of-consciousness narratives. This study, therefore, provides a valuable starting point for event extraction across different domains, such as the analysis of screenplays.
+
+\section{Limitations}
+This work has several limitations that we plan to address in subsequent studies. 
+We performed automatic alignment of Modes of Demise manually, as LLMs output cannot always be matched directly (e.g. \textit{turning to stone} and \textit{petrification}). A valuable contribution to the study of events in fiction would be an automatic or semi-automatic method to align these categories, where applicable. 
+
+We plan to extend the study of event extraction to more domains. While fanfiction stories on Ancient Greek mythology serve as an interesting case study, we aim to include other types of fiction in subsequent studies. 
+
+We also plan to extend the dataset to more than one event category. As demonstrated in this paper, death events are expressed in many forms, which allows us to test the capabilities of KE models in various scenarios and across presentation modes. However, other categories, such as the development of relationships between characters, are equally interesting. Further studies in this direction will allow us to come to more generalizable conclusions about automatic KE from fictional stories.  
+
+
+\section{Ethical considerations}
+We followed best practices for using online fandom data: obtaining permission, attribution, giving back, and learning community norms~\cite{Dym2020}. People within fan communities often have protective views regarding their data and its use by researchers. One of the risks is that of amplifying fan content to an audience it was never intended for, which could compromise the privacy and context of that data. Fan-generated data are highly contextual to the owner and their specific privacy needs. To address these concerns, we gained explicit permission from fans whose stories are being quoted and analysed in this research.
+
+\section{Acknowledgments}
+Funded by the European Union. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Research Council. Neither the European Union nor the granting authority can be held responsible for them.
+\newpage
+% Bibliography entries for the entire Anthology, followed by custom entries
+% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
+%\printbibliography
+% Custom bibliography entries only
+\printbibliography
+
+
+\newenvironment{prompt}
+  {\begin{quote}\ttfamily}
+  {\end{quote}}
+
+\appendix
+
+
+\section{Dataset textual features and reader reception statistics}
+\label{app:textfeat}
+
+\begin{table}[htpb]
+    \centering
+    \begin{tabular}{lccccc}
+        \toprule
+        \textbf{Metric} & \textbf{Mean} & \textbf{Median} & \textbf{Std Dev} & \textbf{Min} & \textbf{Max} \\
+        \midrule
+        \multicolumn{6}{l}{\textit{Textual Features}} \\
+        \hspace{1em} Dale-Chall readability & $6.72$ & $6.65$ & $0.61$ & $5.91$ & $8.89$ \\
+        \hspace{1em} Hurst exponent & $0.59$ & $0.57$ & $0.11$ & $0.28$ & $0.91$ \\
+        \midrule
+        \multicolumn{6}{l}{\textit{Reader Reception Metrics}} \\
+        \hspace{1em} Kudos & $42.3$ & $21$ & $47$ & $1$ & $190$ \\
+        \hspace{1em} Hits & $1,135.1$ & $488$ & $2,268.5$ & $9$ & $16,809$ \\
+        \hspace{1em} Appreciation (kudos/hits) & $0.061$ & $0.049$ & $0.061$ & $0.006$ & $0.446$ \\
+        \bottomrule
+    \end{tabular}
+        \caption{Dataset textual features and reader reception statistics. Appreciation is calculated as kudos/hits ratio.}
+    \label{tab:textual_reception_dataset_stats}
+\end{table}
+
+In this section, we report Table~\ref{tab:textual_reception_dataset_stats}, in which we compute textual features and reader reception characteristics of the stories.
+
+\section{Prompts}
+
+This appendix contains all the prompts used in our experiments.
+
+\subsection{Knowledge Extraction prompts}
+\label{app:prompts_ke}
+
+\subsubsection{Knowledge Extraction from Summaries}
+Below is the prompt for extracting character death events from summaries:
+\begin{prompt}
+        Answer the following questions based on the provided story summary: \texttt{<STORY SUMMARY>} \\[1em]
+        For each death event reported in the summary, answer the following:
+        \begin{enumerate}
+            \item Character Death (Yes/No)
+            \item Mode of Demise
+            \item Victim
+            \item Perpetrator
+        \end{enumerate}
+        Your answers must be made using a single word or as few words as possible. For example:
+        \begin{quote}
+            Character Death: yes; Mode of Demise: tearing to pieces; Victim: Orpheus; Perpetrator: Maenads.
+        \end{quote}
+        There may be multiple death events in the summary. Please provide separate answers for each event. \\[1em]
+        You MUST STRICTLY RELY on the PROVIDED SUMMARY ONLY. You MUST NOT provide answers based on any information outside the text. \\[1em]
+        Each group of answers for each death event should be output in JSONL format, as in the following example:
+        \begin{quote}
+        \texttt{\{"id": "<id>", "death\_event\_1": \{"Character Death": "", "Mode of Demise": "", "Victim": "", "Perpetrator": ""\}, "death\_event\_2": \{"Character Death": "", "Mode of Demise": "", "Victim": "", "Perpetrator": ""\}\}}
+        \end{quote}
+        For this summary, use \texttt{<ID>} as the work identifier. You MUST return the generated JSONL only. Do not write anything else. 
+\end{prompt}
+
+\subsubsection{Knowledge Extraction from Stories}
+Below is the prompt for extracting character death events from full stories:
+\begin{prompt}
+        Answer the following questions based on the provided short story: \texttt{<STORY>} \\[1em]
+        For each death event reported in the story, identify the following:
+        \begin{enumerate}
+            \item Character Death (Yes/No)
+            \item Mode of Demise
+            \item Victim
+            \item Perpetrator
+        \end{enumerate}
+        Your answers must be made using a single word or as few words as possible. For example:
+        \begin{quote}
+            Character Death: yes; Mode of Demise: tearing to pieces; Victim: Orpheus; Perpetrator: Maenads.
+        \end{quote}
+        There may be multiple death events in the story. Please provide separate answers for each event. \\[1em]
+        You MUST STRICTLY RELY on the PROVIDED STORY ONLY. You MUST NOT provide answers based on any information outside the text. \\[1em]
+        Each group of answers for each death event should be output in JSONL format, as in the following example:
+        \begin{quote}
+        \texttt{\{"id": "<id>", "death\_event\_1": \{"Character Death": "", "Mode of Demise": "", "Victim": "", "Perpetrator": ""\}, "death\_event\_2": \{"Character Death": "", "Mode of Demise": "", "Victim": "", "Perpetrator": ""\}\}}
+        \end{quote}
+        For this story, use \texttt{<ID>} as the work identifier. You MUST return the generated JSONL only. Do not write anything else. 
+\end{prompt}
+
+\subsection{Summarisation Prompts}
+\label{app:prompts_sum}
+
+\subsubsection{Generic Summary}
+Below is the prompt used for generic summary generation:
+\begin{prompt}
+        You are an expert in short story summarisation. Create a summary of the provided short story: \\[1em]
+        \texttt{<STORY>} \\[1em]
+        Rely STRICTLY on the provided text. It is FORBIDDEN to include any information that is not present in the text. \\[1em]
+        Your output is a coherent and cohesive summary that encapsulates the essence of the given short story in a few sentences. \\[1em]
+        Make sure to capture all the events of the story. Return the generated summary only. Do not write anything else. 
+\end{prompt}
+
+\subsubsection{Specialised Summary}
+We report here the prompt used for specialised summary generation:
+\begin{prompt}
+        You are an expert in short story summarisation. Create a summary of the provided short story: \\[1em]
+        \texttt{<STORY>} \\[1em]
+        Make sure to include information about all the character deaths mentioned, specifying who is/are the murderer(s), what is/are the mode(s) of demise, who is/are the victim(s), who is/are the perpetrator(s). Rely STRICTLY on the provided text. It is FORBIDDEN to include any information that is not present in the text.  \\[1em]
+        Your output is a coherent and cohesive summary that encapsulates the essence of the given short story in a few sentences. \\[1em]
+        Make sure to capture all the events of the story. Return the generated summary only. Do not write anything else. 
+\end{prompt}
+
+\section{Error Type Distribution Across Input Types}
+\label{app:error_type_dist}
+
+\begin{table}[htpb]
+\centering
+\begin{adjustbox}{width=0.95\textwidth}
+\begin{tabular}{lll|ll}
+  \toprule
+  & \multicolumn{2}{c}{\textbf{\texttt{llama3.1:70b}}} & \multicolumn{2}{c}{\textbf{\texttt{deepseek-r1:70b}}} \\
+  \cline{2-3} \cline{4-5}
+  \textbf{Error types} & \textbf{Generic} & \textbf{Specialised} & \textbf{Generic} & \textbf{Specialised} \\
+  \midrule
+   \textbf{Summarisation} & & & & \\
+   \hspace{1em}Wrong death event reported & $7\%$ & $13\%$ & $8\%$ & $22\%$ \\
+   \hspace{1em}Missing death event (Major character) & $\mathbf{48\%}$ & $\mathbf{44\%}$ & $\mathbf{41\%}$ & $\mathbf{36\%}$ \\
+   \hspace{1em}Missing death event (Minor character) & $\underline{32\%}$ & $\underline{31\%}$ & $\underline{36\%}$ & $\underline{32\%}$ \\
+   \textbf{Knowledge Extraction} & & & & \\
+   \hspace{1em}Wrong death event extracted & $6\%$ & $7\%$ & $3\%$ & $1.5\%$ \\
+   \hspace{1em}Missed death event (Major character) & $8\%$ & $5\%$ & $7\%$ & $4.5\%$ \\
+   \hspace{1em}Missed death event (Minor character) & $0\%$ & $0\%$ & $5\%$ & $4\%$ \\
+   \bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Categories of error types when extracting from summaries (generic and specialised) across two models. Highest in bold, second highest underlined.}
+\label{tab:error_summaries}
+\end{table}
+
+\begin{table}[htpb]
+\centering
+\begin{adjustbox}{width=0.8\textwidth}
+\begin{tabular}{ll|l}
+  \toprule
+  & \textbf{\texttt{llama3.1:70b}} & \textbf{\texttt{deepseek-r1:70b}} \\
+  \cline{2-2} \cline{3-3}
+  \textbf{Error types} & \textbf{Story} & \textbf{Story} \\
+  \midrule
+   \textbf{Knowledge Extraction} & & \\
+   \hspace{1em}Wrong death event extracted & $20\%$ & $27\%$ \\
+   \hspace{1em}Missed death event (Major character) & $\mathbf{46\%}$ & $\underline{34\%}$ \\
+   \hspace{1em}Missed death event (Minor character) & $\underline{33\%}$ & $\mathbf{39\%}$ \\
+   \bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Categories of error types when extracting from full stories across two models. Highest in bold, second highest underlined.}
+\label{tab:error_story}
+\end{table}
+
+This section provides a detailed breakdown of error types occurring in the character death event extraction task across both models tested (\texttt{llama3.1:70b} and \texttt{deepseek-r1:70b}). The errors are categorised according to their scope (summarisation vs. knowledge extraction) and type (wrong events vs. missed events, further divided by character importance). 
+
+Table~\ref{tab:error_summaries} presents the error distribution when using generic and specialised summaries as inputs, encompassing both summarisation-level errors (where death events are incorrectly represented or omitted) and knowledge extraction errors (where death events are not correctly extracted). Table~\ref{tab:error_story} focuses on knowledge extraction errors when the full story serves as the input, where summarisation-level errors are not applicable. The percentages represent the proportion of each error type relative to the total number of errors observed in each experimental condition.
+
+\section{Presentation modes and narrator POV examples}
+\label{app:pm_pov}
+We report in Table~\ref{tab:presentation_modes} examples of death events labelled by presentation mode and narrator POV.
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabularx}{\textwidth}{>{\centering\arraybackslash}p{1,5cm}>{\centering\arraybackslash}p{1,5cm}X>{\centering\arraybackslash}p{2cm}>{\centering\arraybackslash}p{2cm}}
+    \toprule
+    \textbf{Presentation Mode} & \textbf{POV} & \textbf{Example} & \textbf{ID} & \textbf{Title} \\
+    \toprule
+    Narrator & Third person & The room was still locked, the servant hanged, suitors dead, Penelope and Telemachus safe. & 57811963 & \textit{Witch, Goddes, and home again} \\
+    \midrule
+    Direct Speech & Second person & and you arch up into him as he says, "Because I killed Patroclus, Achilles won't let me live." & 17464 & \textit{Requiem} \\
+    \midrule
+    Indirect Thought & Third person & Her own nightmares about miners involved hanged men, ropes still around their necks, accusing her. & 30281253 & \textit{Cast Down but Not Destroyed} \\
+    \midrule
+    Indirect Speech & Third person & From the soldier she learned that Menoiteus had exiled him to Pthita for a supposed murder of another boy. & 24350869 & \textit{Mela} \\
+    \midrule
+    Direct Thought & First person & He will bring me to his wife, who schemes with his cousin to kill him in revenge for the murder of her Iphigenia. She will ease him up with flattery before trapping him in a net in a bathtub, like a large mackerel caught by a fisherman, and will slay him with a sword. & 47136421 & \textit{Cassandra on the beach} \\
+    \bottomrule
+  \end{tabularx}
+\caption{\label{tab:presentation_modes}
+    Examples of presentation modes for death events, including corresponding IDs and titles from the dataset.
+  }
+  \label{app:manual_ex}
+\end{table}
+
+\section{Manual review for evaluation examples}
+
+
+\begin{table}[htbp]
+    \centering
+    \small % Use small font for ACL templates
+    \setlength{\tabcolsep}{4pt} % Adjust column separation for readability
+    \renewcommand{\arraystretch}{1.2} % Adjust row height for better readability
+    \begin{tabularx}{\linewidth}{c c c c X}
+        \toprule
+        \multicolumn{5}{c}{\textit{In the Eye of the Beholden}, 51106009} \\ 
+        \addlinespace[1ex] % Add space between title and rows
+        \multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep-2\arrayrulewidth}}{\footnotesize \textit{\texttt{Direct speech, first:} The change is gradual, like a slow-tide, but unstoppable. His flesh turns to gray stone, and it moves up his body. His hands in mine become cold, and he moves away. He keeps his eyes locked onto mine. (\texttt{Theofylaktos, Medusa, petrification})}} \\
+        \midrule
+        \multicolumn{5}{c}{\textbf{Model:} \texttt{llama3.1:70b}} \\        
+        \midrule
+        Input & Victim & Perpetrator & Mode of Demise & Summary Sentence \\
+        \midrule
+         Generic Summary & \textbf{Medusa's human partner} & \textcolor{red}{-} & \textcolor{red}{-} & The narrator, Medusa, lives with a human man for many years, hiding her true reptilian form from him. As he ages and his health declines, he eventually discovers her secret but is not repelled by it. In fact, he finds her snakes beautiful and asks to see her eyes, which shine like mother of pearl. With his dying breath, he thanks Medusa for a life well-lived and a painless death, and turns into stone as he passes away. Despite her grief, Medusa feels her heart is light, knowing she will see him again in the afterlife and that their love has given her the strength to carry on.\\
+         Specialised Summary & \textbf{old man} & \textbf{Medusa} & \textbf{petrification} & Medusa's lover, an old man with weak eyesight, dies after being petrified by Medusa's gaze at his own request, allowing him to die painlessly and with dignity. He is the victim, and Medusa is the unwitting perpetrator of his demise. Athena is indirectly responsible for his death, as she had previously laughed in Medusa's head, foreshadowing the event.\\
+         Story & \textbf{the male protagonist} & \textcolor{red}{Athena} & \textbf{petrification} & N/A \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Example of manual evaluation handling alignment for Victim and Perpetrator.}\label{tab:manual_alignment_cases1}
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \small % Use small font for ACL templates
+    \setlength{\tabcolsep}{4pt} % Adjust column separation for readability
+    \renewcommand{\arraystretch}{1.2} % Adjust row height for better readability
+    \begin{tabularx}{\linewidth}{c c c c p{0.28\linewidth}}
+        \toprule
+        \multicolumn{5}{c}{\textit{Cast Down but Not Destroyed}, 30281253} \\ 
+        \addlinespace[1ex] % Add space between title and rows
+        \multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep-2\arrayrulewidth}}{\footnotesize \textit{\texttt{Indirect thought, third:} Talking about Dixon's murder wasn't proper, not in front of his widow." [...] "Raising the pick over her head had taken all Corrie's strength, but the wet, crushing noise when it entered Dixon's head had made the effort worth it. (\texttt{Dixon, Corrie, slaying})}} \\
+        \midrule
+        \multicolumn{5}{c}{\textbf{Model:} \texttt{llama3.1:70b}} \\        
+        \midrule
+        Input & Victim & Perpetrator & Mode of Demise & Summary Sentence \\
+        \midrule
+         Generic Summary & \textbf{Dixon} & \textbf{Corrie} & \textbf{pickaxe} & The story unfolds as a tale of secrets, lies, and revenge, ultimately revealing that Corrie killed her husband with a pickaxe, seeking justice for the suffering he caused.\\
+         Specialised Summary & \textbf{Dixon} & \textbf{Corrie} & \textcolor{red}{murder} & It is implied that Corrie herself was the one who killed Dixon with a pickaxe, as she recalls the effort and noise of the act.\\
+         Story & \textbf{Dixon Worth} & \textbf{Corrie Worth} & \textcolor{red}{beating} & N/A \\   
+
+        \bottomrule
+    \end{tabularx}
+        \caption{Example of manual evaluation handling alignment for Mode of Demise.}\label{tab:manual_alignment_cases2}
+\end{table}
+
+To better understand the limitations of automatic evaluation and the necessity of manual review, we analyze specific cases where string-matching fail to capture the correct KE annotations. Tables~\ref{tab:manual_alignment_cases1}, \ref{tab:manual_alignment_cases2} presents illustrative examples of such cases, focusing on instances where the LLM’s outputs differ from gold annotations due to unresolved coreference or lexical variations.
+
+One common issue arises when the Victim or Perpetrator is referred to using pronouns or indirect nominal references rather than explicit mentions. In the first example, the manually annotated Victim is \texttt{Theofylaktos}, while the Victim automatically extracted from the different input types are, respectively, \texttt{Medusa's human partner}, \texttt{old man}, \texttt{the male protagonist}. Considering the story, all of those three extractions can be considered correct. However, in the story, the name Theofylaktos only occurs once, making it difficult for the model to extract it as the Victim in a zero-shot setting. Furthermore, the story from which this death event is extracted is 5,714 words long, which is almost double the average word length in our dataset and almost five times the median. While an automatic string-matching approach may classify such cases as incorrect, manual evaluation allows for resolving these references, preventing penalisation. Similarly, variations in lexical choices—such as synonyms for the Mode of Demise—can lead to false negatives under strict string comparison. In the second example, the manually annotated Mode of Demise is \texttt{slaying}, while the one automatically extracted from the generic summary is \texttt{pickaxe}. From the sentence reported in the table, it is straightforward to see that pickaxe is the instrument used for the murder. We decided to consider this case correct and to consider extractions such as \texttt{murder} or \texttt{beating} wrong instead as too generic.
+
+\section{Further examples of errors}
+\label{app:err_ex}
+
+
+\subsection{Successful extraction from summaries examples}
+\label{app:successfull_extraction_from_specialised_summaries_ex}
+
+\begin{table}[htpb]
+    \centering
+    \small % Use small font for ACL templates
+    \setlength{\tabcolsep}{4pt} % Adjust column separation for readability
+    \renewcommand{\arraystretch}{1.2} % Adjust row height for better readability
+    
+    \begin{tabularx}{\linewidth}{c c c c X}
+        \toprule
+        \multicolumn{5}{c}{\textit{I have died everyday waiting for you}, 38886291} \\ 
+        \addlinespace[1ex] % Add space between title and rows
+        \multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep-2\arrayrulewidth}}{\footnotesize \texttt{Direct speech, first:} “Look at how he will be remembered now. Killing Hector, killing Troilus.". \texttt{(Hector/Troilus, Achilles, unspecified)}}\\
+        \midrule
+        \multicolumn{5}{c}{\textbf{Model:} \texttt{llama3.1:70b}} \\        
+        \midrule
+        Input & Victim & Perpetrator & Mode of Demise & Summary Sentence \\ %& Assessment \\
+        \midrule        
+        Generic Summary & \textcolor{red}{-} & \textcolor{red}{-} & - & \textcolor{red}{-} \\ %& \textcolor{green}{Correct} \\
+        Specialised Summary & \textbf{Hector/Troilus} & \textbf{Achilles} & - & Achilles' lover, Patroclus, confronts Achilles' mother, Thetis, about how she has ruined him and how he will be remembered for his cruel killings in war, specifically the murders of Hector and Troilus. \\ %& \textcolor{red}{Incorrect}\\
+        Story & \textcolor{red}{-} & \textcolor{red}{-} & - & N/A \\ %& \textcolor{red}{Incorrect}\\
+        \midrule
+        \multicolumn{5}{c}{\textbf{Model:} \texttt{deepseek-r1:70b}} \\        
+        \midrule
+        Generic Summary & \textcolor{red}{-} & \textcolor{red}{-} & - & \textcolor{red}{-} \\ %& \textcolor{green}{Correct} \\
+        Specialised Summary & \textbf{Hector/Troilus} & \textbf{Achilles} & - & Achilles is portrayed as a complex figure, remembered both for his heroic deeds in battle and his intimate, human moments with Patroclus. His killings of Hector and Troilus are highlighted as acts of cruelty driven by grief, leaving a legacy tied to war and bloodshed. \\ %& \textcolor{red}{Incorrect}\\
+        Story & \textcolor{red}{-} & \textcolor{red}{-} & - & N/A \\ %& \textcolor{red}{Incorrect}\\       
+        \bottomrule
+    \end{tabularx}
+    \caption{For each example, we include the \textit{story title}, ID, and the quote from the story reporting the death event. Each quote is introduced with the corresponding \texttt{presentation} and \texttt{narrator POV} and followed, in round brackets, by the \texttt{gold-standard victim, perpetrator, mode of demise}. Correct predicted elements are shown in \textbf{bold}, with incorrect predictions highlighted in \textcolor{red}{red}.}\label{tab:dir_sp_difficult}
+\end{table}
+
+We report in Table~\ref{tab:dir_sp_difficult} examples of cases in which the summarisation mitigates the difficulty of extracting death events conveyed in direct speech, making them more explicit.
+
+
+\begin{table}[htpb]
+    \centering
+    \small % Use small font for ACL templates
+    \setlength{\tabcolsep}{4pt} % Adjust column separation for readability
+    \renewcommand{\arraystretch}{1.2} % Adjust row height for better readability
+    
+    \begin{tabularx}{\linewidth}{c c c c X}
+        \toprule
+        \multicolumn{5}{c}{\textit{Medusa}, 1087311} \\ 
+        \addlinespace[1ex] % Add space between title and rows
+        \multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep-2\arrayrulewidth}}{\footnotesize \texttt{Narrator, Third person:} Medusa had killed hundreds of men with a single glance; this newcomer was nothing but another nameless body to be added to the list of deceased. No one who met her gaze ever breathed again. \texttt{(men, Medusa, petrification)}} \\
+        \midrule
+        \multicolumn{5}{c}{\textbf{Model:} \texttt{llama3.1:70b}} \\        
+        \midrule
+        Input & Victim & Perpetrator & Mode of Demise & Summary Sentence \\
+        \midrule
+        Generic Summary & \textbf{men} & \textbf{Medusa} & \textbf{turning to stone} & Medusa, cursed by Poseidon for her beauty, has been exiled to an island where she can turn men to stone with a single gaze, and has amassed hundreds of statues over time.\\
+        Specialised Summary & \textbf{men} & \textbf{Medusa} & \textbf{turned to stone} & She has been living on an island, turning hundreds of men who dared to approach her into statues.\\
+        Story & - & - & - & N/A \\
+        \midrule
+        \multicolumn{5}{c}{\textit{Cassandra on the Beach}, 47136421} \\ 
+        \addlinespace[1ex] % Add space between title and rows
+        \multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep-2\arrayrulewidth}}{\footnotesize \texttt{Direct thought, first person:} She will then turn to me, bloodlust in her eyes, swinging the same sword towards me. I will sit there calmly as she kills me, because I knew this was coming, and I cannot wish for death to come soon enough. \texttt{(Cassandra, Agamemnon's wife, slaying)}} \\        
+        \midrule
+        Input & Victim & Perpetrator & Mode of Demise & Summary Sentence \\
+        \midrule        
+        Generic Summary & \textcolor{red}{-} & \textcolor{red}{-} & \textcolor{red}{-} & \textcolor{red}{-}\\
+        Specialised Summary & \textbf{Cassandra} & \textbf{Clytemnestra} & \textbf{killed with sword} & Cassandra herself will be given to Agamemnon, who will rape her, and she will bear him twins before he is murdered by his wife Clytemnestra in revenge for the murder of her daughter Iphigenia; Clytemnestra will then kill Cassandra with the same sword.\\
+        Story & \textcolor{red}{-} & \textcolor{red}{-} & \textcolor{red}{-} & N/A \\  
+
+        \midrule
+        \multicolumn{5}{c}{\textit{Requiem}, 17464} \\ 
+        \addlinespace[1ex] % Add space between title and rows
+        \multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep-2\arrayrulewidth}}{\footnotesize \texttt{Narrator, second person:} You watch when Achilles strikes your brother down, watch your brother's glorious form fall under the wrath of a goddess's son, and you can almost hear your brother telling you again that he hates you, that you are the reason he won't live to see the sun set this day. \texttt{(Hector, Achilles, slaying)}} \\        
+        \midrule
+        Input & Victim & Perpetrator & Mode of Demise & Summary Sentence \\
+        \midrule        
+        Generic Summary & \textbf{Hector} & \textbf{Achilles} & \textcolor{red}{-} & The story then cuts back to the present, where Paris puts on his armor, preparing for battle after Hector's death at the hands of Achilles. \\
+        Specialised Summary & \textbf{Hector} & \textbf{Achilles} & \textcolor{red}{-} & He reflects on his unrequited love for his brother Hector, who is now dead, murdered by Achilles as revenge for killing Patroclus.\\
+        Story & \textbf{Hector} & \textbf{Achilles} & \textbf{struck down} & N/A \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Examples of death events expressed in direct speech whose extraction is missed from the story and the specialised summary, but correct from the generic summary.}\label{tab:direct_speech_failed_example_app}
+    \small % Use small font for ACL templates
+    \setlength{\tabcolsep}{4pt} % Adjust column separation for readability
+    \renewcommand{\arraystretch}{1.2} % Adjust row height for better readability
+    
+    \begin{tabularx}{\linewidth}{c c c c X}
+        \toprule
+        \multicolumn{5}{c}{\textit{Aulis Through Her Eyes}, 56575177} \\ 
+        \addlinespace[1ex] % Add space between title and rows
+        \multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep-2\arrayrulewidth}}{\footnotesize \texttt{Direct speech, third:} “…Because he plans to kill your daughter and sacrifice her to Artemis.” [...] “How can you not? This is your daughter and now you are about to kill your own daughter with the knife in your hands! What kind of man would have a heart like this?” [...] “Mother, I cannot bear to leave you! I cannot bear to leave this world and enter the dark realm of Hades.". \texttt{(Iphigenia, Agamemnon, sacrifice)}} \\        
+        \midrule
+        \multicolumn{5}{c}{\textbf{Model:} \texttt{llama3.1:70b}} \\        
+        \midrule
+        Input & Victim & Perpetrator & Mode of Demise & Summary Sentence \\ %& Assessment \\
+        \midrule        
+        Generic Summary & \textbf{Iphigenia} & \textbf{Agamemnon} & \textbf{sacrifice} & Klytemnestra, queen of Mycenae, devises a plan for revenge against her husband King Agamemnon, who had sacrificed their daughter Iphigenia before leaving for Troy. \\ %& \textcolor{green}{Correct} \\
+        Specialised Summary & \textcolor{red}{-} & \textcolor{red}{-} & \textcolor{red}{-} & \textcolor{red}{-} \\ %& \textcolor{red}{Incorrect}\\
+        Story & \textcolor{red}{-} & \textcolor{red}{-} & \textcolor{red}{-} & \textcolor{red}{-} \\ %& \textcolor{red}{Incorrect}\\
+        \bottomrule
+    \end{tabularx}
+        \caption{Examples of death events extracted from the different inputs tested in this study. For each example, we include the \textit{story title}, ID, and the quote from the story reporting the death event. Each quote is introduced with the corresponding \texttt{presentation} and \texttt{narrator POV} and followed, in round brackets, by the \texttt{gold-standard victim, perpetrator, mode of demise}. Correct predicted elements are shown in \textbf{bold}, with incorrect predictions highlighted in \textcolor{red}{red}.}\label{tab:input_compare_error_examples}
+\end{table}
+
+In Table~\ref{tab:input_compare_error_examples}, we present three further examples of death events extracted across the three types of input tested in this study. %For each example, we analyze how the extracted triple's elements (victim, perpetrator, and mode of demise) diverge from the annotated target values.
+In the first example, the death event is presented by the narrator. Extraction is successful in both summary-based settings but fails when the input is the full story. We hypothesise that the figurative and implicit nature of the death event expression in the full story likely misled the model. Conversely, the summaries render the death event more explicitly, even though the mode of demise—men being killed through petrification—is fantastical and concerns a minor character (generic "men"). This explicitness in the summaries likely facilitates correct extraction. The second example illustrates a death event presented as an indirect thought. Specifically, it is a prophecy by Cassandra, forecasting her own demise at the hands of Clytemnestra. This presentation mode introduces additional complexity for extraction. Consequently, extraction fails when the input consists of either the generic summary or the full story. However, in the specialised summary, the death event is articulated more explicitly, enabling successful extraction during the KE step of our method. The third example involves Hector's death at the hands of Achilles, presented in indirect speech. As seen in Section~\ref{sec:discussion}, death events conveyed through indirect speech are generally more likely to be extracted successfully. Consistent with this observation, the extraction process succeeds across all input types for this example. However, when the full story is used as input, a false positive occurs in the mode of demise.
+
+\subsection{Failed KE from direct speech additional examples}
+\label{app:failed_direct_speech_ex}
+
+As discussed in Section~\ref{sec:discussion}, death events presented in direct speech are difficult for the models to extract. We report in Table~\ref{tab:direct_speech_failed_example_app} an additional example of a death event occurring in a direct speech that cannot be extracted from the story and the specialised summary, but correctly extracted from the generic summary.
+
+\begin{table}[htbp]
+    \centering
+    \small % Use small font for ACL templates
+    \setlength{\tabcolsep}{4pt} % Adjust column separation for readability
+    \renewcommand{\arraystretch}{1.2} % Adjust row height for better readability
+    \begin{tabularx}{\linewidth}{c c c c X}
+        \toprule
+        \multicolumn{5}{c}{\textit{In The Minotaur's Maze}, 50126794} \\ 
+        \addlinespace[1ex] % Add space between title and rows
+        \multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep-2\arrayrulewidth}}{\footnotesize \textit{You had no idea how Asterion could have survived all this time. He had been killed! But apparently, he hadn't gotten the memo.}} \\
+        \midrule
+        \multicolumn{5}{c}{\textbf{Model:} \texttt{llama3.1:70b}} \\        
+        \midrule
+        Input & Victim & Perpetrator & Mode of Demise & Summary Sentence \\
+        \midrule
+         Generic Summary & - & - & - & N/A\\
+         Specialised Summary & \textcolor{red}{Asterion} & - & - & In this dark fantasy short story, an explorer seeking ancient relics discovers the entrance to the fabled Minotaur labyrinth and navigates its treacherous paths. However, they soon find themselves face-to-face with Asterion, the supposedly slain Minotaur, who has somehow survived for thousands of years.\\
+         Story & \textcolor{red}{Asterion the Minotaur} & - & - & N/A \\   
+        \bottomrule
+    \end{tabularx}
+        \caption{Examples of FP death event extracted from the specialised summaries and the story. For each example, the predicted elements of the triple (victim, perpetrator, and mode of demise) are reported, with incorrect predictions highlighted in \textcolor{red}{red}.}\label{tab:FP_error_examples_2}
+\end{table}
+
+\subsection{False positives examples}
+\label{app:fp_examples}
+
+As discussed in Section~\ref{sec:discussion}, the major problems LLMs face when performing KE from fiction are Recall issues and missed death events. Nevertheless, false positive extractions still occur, particularly when dealing with characters' thoughts and dreams. Table~\ref{tab:FP_error_examples_2} presents an example of a false positive extraction of a death event: the protagonist speculates about Asterion’s death, but Asterion has not died and is still alive. However, the model incorrectly extracts Asterion's death as an actual event, leading to a false positive.
+
+\section{KE performances trend and Textual Features and Reader Reception metrics}
+\label{app:KE_trends_tf_rr}
+
+% Dale-Chall New figures
+\begin{figure}[htpb]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/dale_chall_new_incorrect_percentage_SOURCE_SPECIFIC_WORK_BASED_quartiles_llama_soft.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/dale_chall_new_incorrect_percentage_SOURCE_SPECIFIC_WORK_BASED_quartiles_deepseek_soft.png}
+    \end{minipage}
+    \caption{Comparison of incorrectly extracted death events by Dale-Chall readability quartiles. Left: \texttt{llama3.1:70b}. Right: \texttt{deepseek-r1:70b}. Q1-Q4 Dale-Chall ranges: [5.910, 6.249], [6.266, 6.637], [6.647, 6.979], [6.993, 8.886]. Each quartile contains 14-15 works. Each plot includes one line for each input type (generic, specialised, story).}
+    \label{fig:dale_chall_comparison}
+\end{figure}
+
+% Hurst Figures
+\begin{figure}[htpb]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/hurst_incorrect_percentage_SOURCE_SPECIFIC_WORK_BASED_quartiles_llama_soft.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/hurst_incorrect_percentage_SOURCE_SPECIFIC_WORK_BASED_quartiles_deepseek_soft.png}
+    \end{minipage}
+    \caption{Comparison of incorrectly extracted death events by Hurst exponent quartiles. Left: \texttt{llama3.1:70b}. Right: \texttt{deepseek-r1:70b}. Q1-Q4 Hurst ranges: [0.280, 0.510], [0.520, 0.570], [0.580, 0.640], [0.670, 0.910]. Each quartile contains between 12 and 17 works. Each plot includes one line for each input type (generic, specialised, story).}
+    \label{fig:hurst_comparison}
+\end{figure}
+
+% Appreciation Figures
+\begin{figure}[htpb]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/kudos_hits_ratio_incorrect_percentage_SOURCE_SPECIFIC_WORK_BASED_quartiles_llama_soft_ENGAGEMENT.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/kudos_hits_ratio_incorrect_percentage_SOURCE_SPECIFIC_WORK_BASED_quartiles_deepseek_soft_ENGAGEMENT.png}
+    \end{minipage}
+    \caption{Comparison of incorrectly extracted death events by appreciation (kudos/hits ratio) quartiles. Left: \texttt{llama3.1:70b}. Right: \texttt{deepseek-r1:70b}. Q1-Q4 appreciation ranges: [0.006, 0.029], [0.031, 0.048], [0.049, 0.071], [0.075, 0.446]. Each quartile contains 14-15 works. Each plot includes one line for each input type (generic, specialised, story).}
+    \label{fig:appreciation_comparison}
+\end{figure}
+
+We conducted quartile analysis and Spearman $\rho$ computation for textual features and reader reception metrics reported in Table~\ref{tab:textual_reception_dataset_stats} to investigate potential correlations with extraction errors. The analysis examined Dale-Chall readability (Figure~\ref{fig:dale_chall_comparison}), Hurst exponent (Figure~\ref{fig:hurst_comparison}), and appreciation metrics (Figure~\ref{fig:appreciation_comparison}) across both models and all input types. Spearman $\rho$ computation revealed no significant correlations for readability and Hurst exponent metrics. However, quartile analysis showed a trend of decreasing incorrect extractions as story appreciation increases, suggesting that stories with higher reader engagement may be easier for LLMs to process for death event extraction. This indicates that while text features do not substantially influence extraction accuracy, reader reception metrics may provide some predictive value for model performance.
+
+
+\end{document}

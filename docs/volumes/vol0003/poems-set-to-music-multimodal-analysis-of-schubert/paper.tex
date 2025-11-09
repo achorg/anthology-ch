@@ -1,0 +1,348 @@
+% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
+% *Anthology of Computers and the Humanities*. ADD THE OPTION
+% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
+% DO NOT change the documentclass
+%\documentclass[final]{anthology-ch} % for the final version
+\documentclass[final]{anthology-ch}         % for the submission
+
+% LOAD LaTeX PACKAGES
+\usepackage{booktabs}
+\usepackage{graphicx}
+% ADD your own packages using \usepackage{}
+
+% xcolor with the [table] option is crucial for \columncolor
+\usepackage[table]{xcolor}
+% The 'array' package is needed for the >{} column specifier syntax
+\usepackage{array}
+\usepackage[normalem]{ulem}
+
+\title{Poems Set to Music: A Multimodal Analysis of Schubert's Song Cycle Winterreise}
+
+% AUTHOR AND AFFILIATION INFORMATION
+% For each author, include a new call to the \author command, with
+% the numbers in brackets indicating the associated affiliations 
+% (next section) and ORCID-ID for each author.  
+\author[1]{Benjamin Henzel}[orcid=0009-0002-6650-2591]
+
+\author[3]{Merten Kröncke}[orcid=0000-0003-2717-0598]
+
+\author[2,1]{Leonard Konle}[orcid=0000-0001-5833-0414]
+
+\author[3]{Simone Winko}[orcid=0000-0002-1006-7925]
+
+\author[2,1]{Fotis Jannidis}[orcid=0000-0001-6944-6113]
+
+\author[1]{Christof Weiß}[orcid=0000-0003-2143-4679]
+
+% There should be one call to \affiliation for each affiliation of
+% the authors. Multiple affiliations can be given to each author
+% and an affiliation can be given to multiple authors. 
+\affiliation{1}{Center for Artificial Intelligence and Data Science (CAIDAS), Julius-Maximilians-Universität Würzburg, Germany}
+\affiliation{2}{Institut für Deutsche Philologie, Julius-Maximilians-Universität Würzburg, Germany}
+\affiliation{3}{Seminar für Deutsche Philologie, Georg-August-Universität Göttingen, Germany}
+
+% KEYWORDS
+% Provide one or more keywords or key phrases seperated by commas
+% using the following command
+\keywords{Multimodal Analysis, Music Information Retrieval, Emotion Analysis}
+
+% METADATA FOR THE PUBLICATION
+% This will be filled in when the document is published; the values can
+% be kept as their defaults when the file is submitted
+\pubyear{2025}
+\pubvolume{3}
+\pagestart{1188}
+\pageend{1197}
+\conferencename{Computational Humanities Research 2025}
+\conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
+\doi{10.63744/yQ1RSRGE825k}  
+\paperorder{74}
+
+\addbibresource{bibliography.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HERE IS THE START OF THE TEXT
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+%This LaTeX template helps you typeset and format a paper for the Computational Humanities Research conference in the ACH Anthology. This template helps you adhere to the the required specifications and provides an example of how your paper should look. In practice, the abstract of the paper here should be a one-paragraph summary of the outline and main contributions of the paper. 
+A \textit{Kunstlied} (German for art song) or simply \textit{Lied} is a poem set to music by a composer. This genre, which flourished in the 19th century, constitutes a unique connection between text and music. In this paper, we take the first steps towards a computational, multimodal analysis of this close relationship between poems and art songs. Our aim is to explore the relations between emotions expressed in poetry and musical devices chosen by the composers. Our strategy involves annotating text and music for semantic properties. Based on the musical time scale, we then measure the extent to which these properties overlap and show potential correlations between them. As a case study, we apply our methods to the Schubert Winterreise Dataset, a multimodal dataset of 24 songs by Franz Schubert including text, score, and audio data along with various annotations. By examining local keys and chords as musical properties, we find that, overall, Schubert used more major keys to express positive emotions such as joy and love relative to the whole song cycle. For negative emotions, we find that Schubert used chords that exert more tension and less stability. We conclude that our strategy is able to unveil cross-modal relationships and reflect on necessary steps towards a large-scale corpus analysis.
+\end{abstract}
+
+\section{Introduction} \label{sec:introduction} 
+
+The German term ``Lied'' can have different meanings depending on the context. In literary studies, it refers to a text genre, a subgenre of poetry, which was supposed to be especially close to music. In musicology, the term refers to a musical genre of composers setting texts to music. Finer terms such as \textit{Kunstlied} or \textit{art song} restrict its meaning to a certain type of musical work that composers began to create in the 18th century, reaching its peak in the 19th century during the \textit{Romantic era}.\footnote{While attributions to a certain era are often debatable, they can be useful in transporting certain stereotypes and associations, e.\,g. those coming with the term \textit{Romanticism}.} Although composers such as Franz Schubert and Johannes Brahms are best known for this genre, many others developed their own style of composing Lieder before, during and after this period. This includes atonal compositions by Arnold Schoenberg and Anton Webern in the early 20th century \cite{mgg15637v11_Lied, grovemusiconline_Lied, schmierer_liedgeschichte, parsons_companionlied, duerr_deutschessololied}.
+
+With today's improved capabilities in multimodal data analysis, this genre comes into perspective as a fascinating subject due to its close connection between text and music. In musicology, the close analysis of Lieder traditionally consists of textual and musical analysis, as well as the connection between these two domains \cite{duerr_spracheundmusik, baileyshea_linesandlyrics, SchulzeArdey_komponistalsleser, voigt_versundatonalität}. All three are necessary, because poems set to music usually have certain characteristics that composers had to consider. While some properties (e.\,g. meter, diction, rhythm, etc.) could be inherited directly by composers for their Lied composition, this was not possible for others (especially at the semantic level), as there is no direct equivalent in music, which further highlights the song's dependence on the lyrics. However, it is important to note that composers were not forced to follow all of these demands of a poem. But they had to deal with them in some way, and therefore had to establish a relationship between the poem and their composition \cite{duerr_spracheundmusik}.
+
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=0.55\linewidth]{figures/teaser_strategy.png}
+  \caption{Computational strategy for analyzing poems and \textit{Lieder}.}
+  \label{fig:teaser_strategy}
+\end{figure}
+
+In contrast to other genres such as choir music \cite{WeissM23_ChoirCorpus_CHR}, no large-scale computational corpus analysis of Lied compositions has been attempted yet, despite its potential to provide valuable insights into the genre as a whole. 
+In this vein, our goal is to examine the close relationship between text and music in a computational way, hypothesizing that we can unveil cross-modal relationships between the poems and the compositions examining a small selection of properties from both domains (see Figure~\ref{fig:teaser_strategy}). At the textual level, we analyze the lyrics for certain emotions and emotional groups following \cite{konle_emotions_2022,konlekroencke_connectingdots_literaryemotions}. This allows us to identify particular affects that composers may have set to music. At the musical level, we aim to establish a connection between these emotions and local keys and chords. These properties only represent a fraction of the possibilities to set an affect to music, but they happen at a similar temporal level as emotions: at the level of words, verses, and even entire stanzas.
+
+As a case study, we consider the Schubert Winterreise Dataset\footnote{Openly available on Zenodo, see \url{https://doi.org/10.5281/zenodo.10839767}.} (SWD) \cite{DBLP:WeissZAMKVG24WinterreiseDatasetItself} consisting of 24 poems by Wilhelm Müller that were set to music by Franz Schubert in 1827 and compiled into a song cycle called \textit{Winterreise}. The dataset includes text, symbolic scores, and audio recordings of the songs, as well as detailed annotations of musical properties such as local key or chord labels \cite{WeissZAMKVG21_WinterreiseDataset_ACM-JOCCH}. We use this dataset for a case study which represents a first step towards a large-scale corpus analysis. Finally, based on our case study, we consider the requirements for a large-scale corpus study, reflecting on the necessary data and methods. 
+
+The remainder of this paper is structured as follows: In Section~\ref{sec:dsstrategy_swd}, we introduce the SWD, which we use for our experiments. In Section~\ref{sec:dsstrategy_musicalfeatures}, we explain the musical properties that we consider in our case study: local keys and chords. Then, we describe our methods for annotating emotions in poems Section~\ref{sec:dsstrategy_emotions} and show how we compute the overlap between these textual and musical annotations in Section~\ref{sec:dsstrategy_linktomusic}. Finally, in Section~\ref{sec:experiments}, we present and discuss the results of our case study and describe steps towards a large-scale corpus analysis. Section~\ref{sec:conclusion} concludes the paper.
+%Here is an example of the first section of the paper. You may modify \texttt{paper.tex} by renaming, deleting, or adding sections of your own and substituting our instructional text with the text of your paper. Add references to previous work to \texttt{biblography.bib} as BibTeX entries. Refer to the Conference Call for Papers (CfP) for details about submission types and paper lengths. Do \textit{not} modify \texttt{anthology-ch.cls} when editing this template. 
+
+\section{Dataset and Strategy} \label{sec:dsstrategy}
+
+\subsection{The Schubert Winterreise Dataset (SWD)} \label{sec:dsstrategy_swd}
+
+The SWD is a multimodal dataset based on Franz Schubert's song cycle \textit{Winterreise} (composed 1827), which comprises 24 art songs for voice and piano based on poems by Wilhelm Müller.\footnote{The latest version of the dataset is publically available on Zenodo~\cite{DBLP:WeissZAMKVG24WinterreiseDatasetItself}.} The dataset includes lyrics of the songs, sheet music images, symbolic representations in formats such as MusicXML and MIDI, and multiple audio recordings for each song. This raw data is accompanied by expert annotations regarding structural segments, global and local keys, chords, and individual note events. Finally, both raw data and annotations are aligned regarding their respective time axes (measures for the score and seconds for the audio recordings) \cite{WeissZAMKVG21_WinterreiseDataset_ACM-JOCCH}. Due to its multimodality and its rich set of annotations, the SWD constitutes a valuable dataset for assessing our strategy of demonstrating a relationship between text and music.
+
+\subsection{Annotating Chords and Local Keys as Musical Properties} \label{sec:dsstrategy_musicalfeatures}
+
+
+
+\noindent
+\textbf{Chords} 
+In this study, we focus on two types of musical properties: chords and local keys. Chords appear at a fine-grained time scale and are comprised of multiple pitches sounding simultaneously, constituting an important part of local harmony. 
+The SWD's chord annotations are very detailed\footnote{Only one type of chord annotation is included in the SWD, see \cite{WeissZAMKVG21_WinterreiseDataset_ACM-JOCCH} for details.} and describe the exact chord notes as intervals over the root note \cite{HarteSAG05_ChordRecognition_ISMIR}, e.\,g. D\#:(3,5,b7) as the dominant seventh chord over the root D\#. To make these annotations more interpretable for our study, we summarize the chords into five groups: The first two are major (maj) and minor (min) chords, both of which are defined by their base triads.  
+The third category consists of chords based on augmented or diminished triads (augdim). Finally, there are dominant seventh chords (dom7) as well as a few other chords that do not fit into these categories, which are, however, only represented by a small number in this study. 
+Next, we also classify the chords into stable chords (maj, min, and other ``consonant'' chords), which do not call for any resolution, and tense chords (augdim, dom7, and other ``dissonant'' chords), which drive the music towards a resolution. This approach is coherent with historical and modern conception of consonance and dissonance and aims for anticipating the effect of the sounding chords on the historical listener \cite{Wagner1974_historische_harmonielehre,  Kostka2024_tonal_harmony}.
+Consequently, we obtain chord type annotations relating to different time scales: musical measures (and fractions thereof) for the score representations and seconds for audio representations.
+
+
+
+\noindent
+\textbf{Local Keys}
+Unlike terms such as \textit{global key} or \textit{chord}, the term \textit{local key} is rather ambiguous. A piece of music can have one global key, which is sometimes part of its title (e.\,g. \textit{Piano Concerto in D major, K. 537} by W. A. Mozart). It represents the coarsest temporal level of tonal information. Chords, on the other hand, operate at a much finer temporal resolution. 
+Local keys are of intermediate level and
+can be described as an implied ``tonal center \cite{WeissZAMKVG21_WinterreiseDataset_ACM-JOCCH}'' of a certain segment. For the SWD, three experts annotated local keys in the entire song cycle. To reduce the ambiguity surrounding local keys, we focus solely on the mode information (major vs. minor keys) from these annotations. This means that we do not differentiate between, e.\,g., G minor and C minor, as both are part of the minor mode. We then solely look at the inter-annotator agreement and disregard segments where there is any disagreement on modes (see Section~\ref{sec:experiments_localkeys} for statistics). 
+We thus obtain local key annotations that are related to the same time scales as our chord annotations.
+
+\subsection{Annotating Emotions as Textual Properties} \label{sec:dsstrategy_emotions}
+
+For our study, all poems in Schubert’s \textit{Winterreise} were annotated by two students of literary history. They first worked independently before collaborating to merge their findings into a final consensus annotation. Their task was to annotate the emotions depicted in the poems either as emotions of characters or of the speaker, i.e. they did not annotate the emotions of the readers, but the emotions presented in the texts.\footnote{It is state of the art in linguistics and literary studies to describe texts as containing emotional codes that make use of general linguistic and specific literary devices \cite{Soriano2022_AffectiveMeaning, Winko2023_LiteratureEmotion}.
+One indication of the high degree of codification of emotions is the relatively high inter-annotator agreement for this task \cite{konle_emotions_2022}.} 
+The annotators selected any span of text which expressed an emotion. They added an emotion label from a list of 40 discrete emotions (see Table~\ref{tab:emotions_and_groups_colored_cols}). Additionally, they annotated several emotion markers: lexical indicators for the emotion (‘weep’, ‘lovingly’, etc.), figurative language (‘broken heart’, etc.), and  situations that are usually associated with emotions (death of a loved one, etc.). The same span of text could be labeled with more than one emotion. 
+
+% --- Custom Color Definitions (unchanged) ---
+\definecolor{colLove}{HTML}{D5E8D4}
+\definecolor{colJoy}{HTML}{FFE6CC}
+\definecolor{colSurprise}{HTML}{FFF2CC}
+\definecolor{colAnger}{HTML}{F8CECC}
+\definecolor{colSadness}{HTML}{E1D5E7}
+\definecolor{colFear}{HTML}{DAE8FC}
+
+\begin{table}[t!]
+\centering
+\renewcommand{\arraystretch}{1.4}
+
+% --- Column Definitions ---
+% The >{\columncolor{...}} syntax applies a background color to the entire column.
+% This is the key change to color all rows, not just the header.
+\begin{tabular}{
+    >{\columncolor{colLove}}p{2.2cm}
+    >{\columncolor{colJoy}}p{1.8cm}
+    >{\columncolor{colSurprise}}p{1.9cm}
+    >{\columncolor{colAnger}}p{1.5cm}
+    >{\columncolor{colSadness}}p{2.4cm}
+    >{\columncolor{colFear}}p{1.3cm}
+}
+
+% --- Table Header ---
+% \cellcolor is no longer needed as the column color is now applied automatically.
+\textbf{Love} &
+\textbf{Joy} &
+\textbf{Surprise/ Agitation} &
+\textbf{Anger} &
+\textbf{Sadness} &
+\textbf{Fear} \\
+
+% --- Table Body ---
+% The content remains the same. The column colors from the definition above
+% will be applied automatically to every cell.
+Admiration & Bliss & Agitation & Anger & Despair & Fear \\
+Affection & Calmness & Emotionality & Contempt & Disappointment & Fright \\
+Desire (non-sexual) & Comfort & Surprise & Disgust & Impatience & \\
+Gratefulness & Enthusiasm & Suspense & Dislike & Insecurity & \\
+Longing & Hope & & Envy & Melancholy & \\
+Love & Joy & & Hate & Loneliness & \\
+Lust (sexual) & Pride & & & Pity & \\
+& Solace & & & Powerlessness & \\
+& & & & Regret & \\
+& & & & Sadness & \\
+& & & & Shame & \\
+& & & & Suffering & \\
+& & & & Uneasiness & \\
+
+\end{tabular}
+\caption{Emotions and Emotion Groups}
+\label{tab:emotions_and_groups_colored_cols}
+\end{table}
+
+
+The selection of these 40 discrete emotions was based both on emotion models (e.g. \cite{Ekman1999,Plutchik1980}) and on the emotions that were regularly represented in the poems in our corpus. We categorized the emotions into six groups based on the emotion hierarchy in \cite{Shaver1987} in order to obtain a sufficient number of annotations per emotion. (See \ref{appdx:first} appendix for a distribution of all annotated emotions across the 24 poems.) We tested this method in a project on German-language poetry of realism and early modernism on around 1,352 poems \cite{konle_emotions_2022}.
+
+\subsection{Linking Textual and Musical Annotations} \label{sec:dsstrategy_linktomusic}
+
+By applying our strategy of extracting emotion annotations to our dataset, we can identify certain emotions associated with specific words, verses, or even entire stanzas of poems. In our case study below, these poems (originally by Wilhelm Müller) are the lyrics set to music by Schubert (slightly modified). 
+Consequently, we identify emotions happening in the lyrics between two characters (e.\,g. characters 100 and 120). Using the symbolic representation in MusicXML format, we can connect these tokens to syllables, and then connect the syllables to a specific part of a measure. For instance, we link the lyrics ``Fremd bin ich eingezogen'' in the first song \textit{Gute Nacht} to the measure region [7.750--9.750]. The decimals relate to the proportion of the corresponding beats in the measures. We end up with a musical timeline in measures when working with symbolic scores, or to a physical timeline in seconds when aligning the lyrics with audio data.
+
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=0.65\linewidth]{figures/strategy_features_small.png}
+  \caption{Example of text and musical annotations, relating to the same timeline.}
+  \label{fig:strategy_features}
+\end{figure}
+
+Our chord and local key annotations also correspond to musical time in measures.
+Therefore, for all songs in the \textit{Winterreise}, we can compute the overlap between the emotion and musical annotations and aggregate them across all modes and chord types. Figure~\ref{fig:strategy_features} shows an illustrating  example for our strategy that allows us to extract information on local keys and chords for both emotional and non-emotional segments. 
+
+\section{Experiments and Results} \label{sec:experiments}
+
+We now apply our presented methods to the dataset and investigate our hypothesis that Schubert's setting of poems to music reflects the emotions expressed in the poems. To this end, in Section~\ref{sec:experiments_localkeys}, we examine a possible relationship between emotions and local keys. We then examine emotions and chords in Section~\ref{sec:experiments_chords}. In Section~\ref{sec:experiments_scalingup}, we consider necessary steps towards a large-scale corpus analysis.
+
+\subsection{Emotions and Local Keys} \label{sec:experiments_localkeys}
+
+As mentioned in Section~\ref{sec:dsstrategy_linktomusic}, we use the inter-annotator agreement to obtain reliable local key annotations. For the entire dataset, there are roughly 1,492 measures with annotated local keys, and the three annotators agree on the mode for almost 1,293 of those, resulting in an inter-annotator agreement of 86.66\%. 
+We can therefore categorize these 1,293 measures as 556 in major keys and 737 in minor keys. For the following comparison, we simplify these as proportions to 0.43 for major and 0.57 for minor.
+
+We then apply the strategy described in Section~\ref{sec:dsstrategy_linktomusic}, making use of the emotion annotations (Section~\ref{sec:dsstrategy_emotions}), and add the musical annotations for 40 discrete emotions and six major emotional categories together. We then normalize the values using the L1-norm to obtain the proportion of major and minor keys in each category. Finally, we subtract the proportions in the entire \textit{Winterreise} from these values to understand how the emotional segments differ from it. 
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.49\linewidth]{figures/symbolic_localkeys_emotioncatsbig.png}
+  \includegraphics[width=0.49\linewidth]{figures/symbolic_localkeys_emotionsbig.png}
+  \caption{Four emotional categories, four individual emotions and their local keys in relation to the entire \textit{Winterreise}.}
+  \label{fig:symbolic_localkey_emocats}
+\end{figure}
+
+Figure~\ref{fig:symbolic_localkey_emocats} (left) shows our results for the four most prevalent categories (Joy, Love, Sadness, and Agitation), each of which contains at least 40 measures.
+We observe that segments annotated with the emotions from the categories ``Joy'' and ``Love'' show higher proportions of local keys in major mode than the entire song cycle, at +0.28 and +0.20, respectively. Consequently, the proportion of local keys in minor mode are -0.28 and -0.20. Meanwhile, segments with emotions from the categories ``Sadness'' and ``Agitation'' are closer to the overall average of the \textit{Winterreise}, with slightly fewer measures in major mode for ``Sadness'' and slightly more for ``Agitation''. 
+
+Before reflecting on these results, let us take a look at the four most prevalent emotions, containing each at least 25 measures: Joy, Love, Longing, and Sadness (see Figure~\ref{fig:symbolic_localkey_emocats} right). Note that these are individual emotions that may belong to an emotional category of the same name. For example, the emotions ``Love'' and ``Desire'' are both part of the overall category ``Love''. While we observe similar results for the individual emotions ``Joy'' and ``Sadness'' as for their category counterparts, we notice that the emotion ``Love'' correlates to a much higher proportion of measures in a major local key and that ``Longing'' is balanced more evenly between major and minor keys.
+
+Interestingly, our results show higher proportions of major modes for emotions that are depicted as positive and lower proportions for emotions that are depicted as negative. In the 18th and early 19th century, music theory emphasized the role of keys in supporting specific affects \cite{Thissen_2014_SchubartTonarten, Steblin2002_history_keycharacteristics}. Dürr~\cite{duerr_spracheundmusik} contextualizes Schubert as a disciple of this time, and argues that, while it is impossible to prove that Schubert used a certain key to convey a specific meaning without statements from the composer themselves, these keys may have been a natural choice for him when setting a particular affect to music, for example by modulating to a different key. Fittingly, Wollenberg~\cite{Wollenberg_2021_textmusic_winterreise} lists the juxtaposition of major and minor modes as one of Schubert's characteristic musical devices in the \textit{Winterreise}.
+
+\subsection{Emotions and Chords} \label{sec:experiments_chords}
+
+We now analyze the overlap between emotional segments and chord annotations. For the entire \textit{Winterreise}, we identify 1,490 measures with chord annotations and categorize them according to Section~\ref{sec:dsstrategy_musicalfeatures}. In proportions, we find 0.68 stable, 0.30 tense, and 0.02 other chords. Our second classification leads to chords corresponding to categories on a finer scale: 0.35 major, 0.33 minor, 0.08 augmented or diminished, 0.22 dominant seventh, and 0.02 other chords. In both cases, we disregard the uncategorized ``other'' types.
+
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=0.49\linewidth]{figures/symbolic_chords_emocats_Lovebig.png}
+  \includegraphics[width=0.49\linewidth]{figures/symbolic_chords_emocats_Sadnessbig.png}
+  \caption{Two emotional categories and chords in relation to the entire \textit{Winterreise}.}
+  \label{fig:symbolic_chords_emocats}
+\end{figure}
+
+Comparing the results for segments of different emotional categories with the proportions of the entire song cycle, Figure~\ref{fig:symbolic_chords_emocats} shows two examples for the categories ``Love'' and ``Agitation'', both of which correspond to at least 50 measures of chord annotations. We observe that musical segments expressing emotions of love consist of a similar proportion of stable and tense chords to the whole \textit{Winterreise}. However, we notice differences on a finer scale, with more major and fewer minor chords. This once again corresponds to the use of major chords to depict positive affects.
+
+In contrast, the category ``Sadness'' is associated with negative notions. We observe less stable and more tense chords. Consequently, there are fewer major and minor chords, as well as only slightly more augmented and diminished chords. The increase in tension-rich chords appears to be mainly due to an increased number of dominant seventh chords. One possible explanation for this is the difference between the two tense chord types. While both types drive the music towards a resolution, the target resolution of dominant seventh chords is much clearer. This shorter way to a ``more positive (or negative)'' ending could therefore be fitting for emotions such as sadness.
+
+\subsection{Towards a Large-Scale Corpus Analysis} \label{sec:experiments_scalingup}
+While we found interesting trends from the 24 songs of \textit{Winterreise}, there is high potential in scaling up our examinations to large corpora. This requires multiple steps. Regarding data and its availability, such an analysis needs a corpus that includes a sufficient number of different poems and songs to enable meaningful examinations of the \textit{Lied} genre. While there are resources available for poems\footnote{For example, the LiederNetArchive (https://www.lieder.net/) promises to be ``[...] the world’s largest reference archive of texts and translations of art songs and choral works.''}, an equivalent resource for music is rare\footnote{An exception is the OpenScore Lieder Corpus \cite{openscoreLieder}, whose purely symbolic content, however, does not focus exclusively on the german \textit{Kunstlied}.}. One problem is that creating large quantities of symbolic data and annotations can require a lot of manual work.
+Audio recordings, on the other hand, are easily available. Applying our methods to large amounts of audio data would require tasks such as lyrics--audio alignment, local key estimation, and chord recognition to be realized automatically and in sufficient quality.\footnote{First steps to solve these tasks have already been performed on the \textit{Winterreise}, e.\,g. local key estimation in \cite{DBLP:conf/icassp/SchreiberWM20SWDLocalKey}.} On the textual side, we also have to automatically extract emotions from poems and confirm the quality of these labels as in \cite{konlekroencke_connectingdots_literaryemotions}.
+
+Apart from scaling up our analysis at the data level, we need to broaden our analysis regarding properties. So far, we have only considered a few aspects of setting poems to music. Further aspects include tempo, rhythm, and tonal complexity in emotional segments, for example. For the text, we could include a comparative analysis of the original texts and the texts as used in the songs, or other properties corresponding to musical characteristics, such as poetic rhythm and meter, as well as some concepts of textual complexity. Since poems are often short, however, the small amount of textual data poses a challenge.
+
+\section{Conclusion} \label{sec:conclusion}
+
+In this paper, we presented a strategy for analyzing Lieder in a computational way by examining the overlap between textual and musical properties. By applying our methods to all 24 songs from Schubert's \textit{Winterreise}, as available in the SWD, we were able to unveil relationships between the poems and their musical setting. To this end, we manually annotated the emotions expressed in the songs' lyrics and measured their overlap with expert annotations of local keys and chords. Overall, we observed that segments with positive emotional categories and individual emotions, such as joy and love, correspond to measures with major keys. We confirmed the same relationship at the chord level, with major chords being a preferred chord type for love. In contrast, we were able to relate the negative emotional group of sadness to tense chords with a prevalence of dominant seventh chords. Finally, we reflected on the necessary steps towards a large-scale corpus analysis, which may be of high potential for interdisciplinary research.
+
+\section*{Acknowledgments}
+The annotation of the poetry has happened in the context of two projects funded by the German Research Foundation (Deutsche
+Forschungsgemeinschaft, DFG): \textit{The beginnings of modern poetry -- Modeling literary history with text similarities} (funded 2020--2023) and \textit{Literary Change. German Poetry between Realism and Early Modernism and Its Relation to Literary, Cultural and Social Developments} (funded 2023--2026). The music analysis has been funded within DFG's Emmy Noether Junior Research Group on \emph{Computational Analysis of Music Audio Recordings: A Cross-Version Approach} (DFG WE 6611/3-1, Grant No. 531250483).
+
+%This unnumbered section should be blank when submitting your paper. After review, you may include lists of people and organizations who supported the work.
+
+% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
+\printbibliography
+
+% You can include an appendix using the following command
+%\appendix
+
+\section{Appendix } \label{appdx:first}
+
+Following the method described in Section~\ref{sec:dsstrategy_emotions}, the annotators merged their findings into a final consensus annotation. In Schubert's \textit{Winterreise}, they tagged 232 emotion markers, with 124 emotion terms making up more than half of these. Note that one annotated span of emotion annotation could be indicated by several markers at once. Table~\ref{tab:consensus_amotion_annos} shows the number of emotions tagged (span-wise) in Schubert's \textit{Winterreise} as part of the consensus annotation. On average, a span to which an emotion was assigned during annotation is 4.38 words or 25.13 characters long.
+
+% \begin{table}[h]
+%   \centering 
+%   \begin{tabular}{cc}
+%     \toprule
+%     Emotion & Annotated Sections\\
+%     \midrule
+%     Liebe & 21 \\
+%     Leid & 17 \\
+%     Freude & 16 \\
+%     Emotionalität & 14 \\
+%     Trauer & 13 \\
+%     Sehnsucht & 12 \\
+%     Ausgeglichenheit & 8 \\
+%     Hoffnung & 8 \\
+%     Aufregung & 6 \\
+%     Angst & 3 \\
+%   \bottomrule
+%   \end{tabular}
+%   \begin{tabular}{cc}
+%     \toprule
+%     Emotion & Annotated Sections\\
+%     \midrule
+%     Verzweiflung & 2 \\
+%     Mitleid & 2 \\
+%     Glück & 2 \\
+%     Einsamkeit & 2 \\
+%     Unbehagen & 2 \\
+%     Abneigung & 2 \\
+%     %Verhalten & 1 \\
+%     Lust (nicht sexuell) & 1 \\
+%     Unsicherheit & 1 \\
+%     Zuneigung & 1 \\
+%     \\
+%     \bottomrule
+%   \end{tabular}
+%   \caption{Emotions and the amount of annotated sections.}
+  \label{tab:consensus_amotion_annos_ger}
+%   
+% \end{table}
+
+\begin{table}[h]
+ \centering 
+ \begin{tabular}{cc}
+   \toprule
+   Emotion & Annotated Sections\\
+   \midrule
+   Love & 21 \\
+   Suffering & 17 \\
+   Joy & 16 \\
+   Emotionality & 14 \\
+   Sadness & 13 \\
+   Longing & 12 \\
+   Calmness & 8 \\
+   Hope & 8 \\
+   Agitation & 6 \\
+   Fear & 3 \\
+   \bottomrule
+ \end{tabular}
+ \begin{tabular}{cc}
+   \toprule
+   Emotion & Annotated Sections\\
+   \midrule
+   Despair & 2 \\
+   Pity & 2 \\
+   Bliss & 2 \\
+   Loneliness & 2 \\
+   Uneasiness & 2 \\
+  Dislike & 2 \\
+  Desire (non-sexual) & 1 \\
+  Insecurity & 1 \\
+  Affection & 1 \\
+  \\
+ \bottomrule
+ \end{tabular}
+ \caption{Emotions and the amount of annotated sections.}
+ \label{tab:consensus_amotion_annos}
+\end{table}
+
+
+\end{document}

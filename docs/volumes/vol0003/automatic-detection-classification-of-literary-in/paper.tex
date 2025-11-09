@@ -1,0 +1,719 @@
+%!TEX TS-program = pdflatex
+% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
+% *Anthology of Computers and the Humanities*. ADD THE OPTION
+% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
+% DO NOT change the documentclass
+\documentclass[final]{anthology-ch} % for the final version
+%\documentclass{anthology-ch}         % for the submission
+
+
+
+% LOAD LaTeX PACKAGES
+\usepackage{booktabs}
+\usepackage{graphicx}
+% ADD your own packages using \usepackage{}
+
+\usepackage{siunitx}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{longtable}
+
+\usepackage{covington,todonotes,rotating}
+
+% TITLE OF THE SUBMISSION
+% Change this to the name of your submission
+\title{Automatic detection and classification of literary character properties in German narratives}
+
+% AUTHOR AND AFFILIATION INFORMATION
+% For each author, include a new call to the \author command, with
+% the numbers in brackets indicating the associated affiliations 
+% (next section) and ORCID-ID for each author.  
+\author[1]{Janis Pagel}[
+  orcid=0000-0003-4370-1483
+]
+
+\author[1]{Nils Reiter}[
+  orcid=0000-0003-3193-6170
+]
+
+% There should be one call to \affiliation for each affiliation of
+% the authors. Multiple affiliations can be given to each author
+% and an affiliation can be given to multiple authors. 
+\affiliation{1}{Department for Digital Humanities, University of Cologne, Cologne, Germany}
+
+% KEYWORDS
+% Provide one or more keywords or key phrases seperated by commas
+% using the following command
+\keywords{computational literary studies, literary character properties, transformers, large language models}
+
+% METADATA FOR THE PUBLICATION
+% This will be filled in when the document is published; the values can
+% be kept as their defaults when the file is submitted
+\pubyear{2025}
+\pubvolume{3}
+\pagestart{1420}
+\pageend{1435}
+\conferencename{Computational Humanities Research 2025}
+\conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
+\doi{10.63744/UkAh6gmT12av}
+\paperorder{93}
+
+\addbibresource{bibliography.bib}
+
+\newcommand\llmlabel{Llama 3.1 w/ LoRA}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HERE IS THE START OF THE TEXT
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This work presents an approach to automatically (i) identify sentences in German narrative texts that contain properties of literary characters  and (ii) assign categories to these sentences according to what kind of property is described, both with coarse -- such as role, clothing or physiognomy -- and fine-grained categories -- such as occupation, accessories or face.
+To this end, we test different transformer-based models (BERT, ELECTRA, RoBERTa, Llama) and compare the results to simple baselines (majority, random, bag-of-words Naive Bayes).
+We find that an uncased ELECTRA model achieves promising results in identifying sentences that contain character properties (67\% F1), while uncased BERT achieves highest results in assigning coarse-grained categories to sentences (87\% F1) and RoBERTa  is the best model in assigning fine-grained categories (80\% F1).
+A LoRA-tuned Llama 3.1 large language model is able to achieve comparable scores to the best encoder model on the coarse-grained task (81\% F1), but is still 6 percentage points below the fine-tuned German BERT model.
+\end{abstract}
+
+\section{Introduction} 
+
+This paper presents a method to automatically identify snippets of German narrative texts in which a character property is mentioned and to classify the snippet according to the category of the property. Characters are crucial elements of narrative texts and automatically assigning properties to them is an important part of general, all-encompassing narrative understanding. At the same time, extracting character properties is a challenging task, as virtually any linguistic form can be used to assign a property to a character. 
+
+\begin{examples}
+\item Now Mr. Bumble was a fat man, and a choleric one [\dots].\label{ex:twist1}\footnote{Examples \pxref{ex:twist1} to \pxref{ex:twist4} are taken from Charles Dicken's \textit{Oliver Twist}, Chapter 2.}
+\item But nature or inheritance had implanted a good sturdy spirit in Oliver's breast [\dots].\label{ex:twist2}
+\item \enquote{What is it?} inquired the beadle.\label{ex:twist3}
+\item \enquote{Well, you have come here to be educated, and taught a useful trade,} said the red-faced gentleman in the high chair.\label{ex:twist4}
+\end{examples}
+
+As an illustration, consider examples \pxref{ex:twist1} to \pxref{ex:twist4}. Each sentence assigns one or more properties to a character through different linguistic means. In \pxref{ex:twist1}, the assignment is very explicit -- a character with a proper name is described as being fat and choleric. Example \pxref{ex:twist2} assigns a property -- having inner strength -- through a description of the circumstances of his uprising. In \pxref{ex:twist3}, the character making the utterance is assigned the profession \enquote{beadle}. Human readers have no trouble in determining that this is the character that previously was named Mr. Bumble. Finally, example \pxref{ex:twist4} shows the use of an attributive adjective to describe the face on an unnamed gentleman. This list is by no means complete, but it illustrates the versatility of character property assignments in literary texts. 
+
+From a technical standpoint, a machine-readable representation of such a character assignment looks straightforward at first sight and can be expressed as a triple that links a character (id) through a property with a property value. For example, \pxref{ex:twist1} could be expressed as \texttt{(mr-bumble, body\_type, fat)}. In the practice of literary narratives, however, things are more complicated: Many property values can change, even throughout a single text. Thus, each triple needs to be associated with a timestamp information that encodes when within the narrated time the property assignment holds. Another complication arises from the fact that a description of a character in a narrative may be conducted with limited authority: Such descriptions can come from other characters (e.g., through direct or indirect speech) or appear in different narrative levels. In cases of unreliable narration or focalization \cite{bruhns_internal_2024}, even the narrator may not tell us the whole story. Thus, in addition to temporal information, we would need to include information about the source of a property assignment. 
+
+There are different possibilities to deal with these complications. The solution we work towards is a fine-grained and modular approach: Assigning the source of a property assignment, determining its temporal position within the narrative world, determining the exact target of a property are all distinct sub-steps in a modular framework. This paper focuses on the first step: The detection of character property mentions in narrative prose.
+
+\section{Related Work}\label{sect:related-work}
+
+Characters are a prime component of narrative and dramatic literary texts and serve as anchor points for our perceived pleasure and/or identification when reading them. Literary characters have been studied extensively in literary studies, often with a focus on specific instances.\footnote{For instance: \cite{bell_hermione_2012} collects essays on Hermione Granger from Harry Potter, discussing her feminist nature; \cite{walch_smeagol_2015} discusses Sméagol/Gollum from Lord of the Rings.} More systematically, there are publications about what exactly literary characters are \cite{eaton_being_1976,margolin_what_1990}, how they can be grouped/classified/typed \cite{fishelov_types_1990,propp_morphology_1958} or what their significance for the text as a whole is \cite{susic_methodical_2020}. There is also quite a bit of work on the comparison of multiple characters, within or across a specific text (e.g., \cite{meyers_fateful_2018} on Captain Ahab from Melville's \textit{Moby Dick} and the ivory trader Kurtz from Conrad's \textit{Heart of Darkness}). In sum, both individual literary characters are practically and the concept of literary character is theoretically well researched. 
+
+From this perspective, it may be somewhat surprising that they are not front and center in digital or computational approaches to literature. Due to the clear and fundamental differences in operationalization chances, the analysis of dramatic and prose characters rests on different assumptions and pre-conditions. Dramatic characters have been researched intensively in terms of their relations: Co-presence on stage with other characters (often in the form of social networks; \cite{trilcke_social_2013,trilcke_digital_2015,szemes_tragic_2024}), family relations among the characters \cite{wiedmer_romeo_2020}, or the knowledge they express about each other \cite{andresen_who_2022}. Besides work on identifying gender, age and social status \cite{krautter_properties_2022}, non-relational properties of dramatic characters have not been investigated using computational means. On prose texts, there is existing work on associating characters with their speech \cite{elson_automatic_2010,brunner_bert_2020}, their sounds \cite{guhr_whats_2024} and their emotions \cite{kim_who_2018}. To our knowledge, only a small subset of character properties/aspects have been looked at so far in a generic way (i.e., not in a relation to a specific text or author), namely gender \cite{schumacher_stanfordner_2021}, their psychology \cite{rashkin_modeling_2018} and the contents of character speech \cite{rybicki_burrowing_2006,hess_narrator_2019,vishnubhotla_are_2019}.
+
+There are few publications on the automatic identification/extraction of character properties in narratives in a generic way. \cite{bonch-osmolovskaya_text_2016} describe a system based on automatic syntactic and semantic analysis. Using a syntactic and semantic parser, the authors extract semantic roles for each character in Tolstois' \textit{War and Peace} (in Russian) and with the help of principled component analysis find that some characters are more closely associated with Object, Agent, Addressee and other roles than others. \cite{koolen_blue_2018} extract physical descriptions from Dutch-language \enquote{chick lit}. Based on manually annotated sentences, they compare a machine learning with a lexical pattern-based approach and find the extraction via lexical patterns to achieve higher performance.
+
+To our knowledge, we are the first to attempt a supervised extraction of theoretically motivated character properties in German narrative texts.
+
+\section{Automatic Detection of Character Properties}\label{sect:overview}
+Our approach on the automatic extraction of character properties runs in multiple stages and this paper concentrates on the first one. The goal of this first stage is to i) identify spans in which one of a number of pre-defined character properties are mentioned and ii) classify the span according to the property. Thus, in a sentence like \pxref{ex:1}, the first stage system determines that this sentence mentions (among other things) the property \enquote{face}.
+
+\begin{example}
+Er blickte scharf nach dem holden Angesicht, das sich einst im Zorn über ihn gerötet hatte. \\
+\emph{He looked sharply at the fair face that had once reddened in anger at him.}\footnote{Translation by DeepL.}
+\label{ex:1}
+\end{example}
+
+There are additional steps in order to conduct an end-to-end automatic extraction of fine-grained  character properties: i) Extracting the property value (in \pxref{ex:1}, the fact that the face is described as \enquote{fair}), ii) identifying the character that this property (value) is attributed to. Both tasks are not the focus of this paper.
+
+
+
+The concrete set of properties we are working with (shown in Table \ref{tab:label-distribution}) has been developed in collaboration with project partners from literary studies. As a first step, a small set of texts has been annotated without pre-defined categories. Based on the annotated spans that convey a character property, we have defined a set of coarse and fine-grained property categories. Thus, they are not based on an ontological, systematic understanding of potential descriptions of humans, but are based on experiences and expectations of character descriptions that actually appear in (German-language) literary texts from a given time period. This leads to certain imbalances, as, for instance, the face is part of the head. Still, descriptions of faces or face aspects appear in high frequency and bear a high significance, that we decided to let them form their own category.
+
+\section{Data}
+
+The text sources for the annotated data comes from 14 texts found in d-prose~\cite{gius2021a} and three texts in TextGrid.\footnote{\url{https://textgridrep.org/}}$^{,}$\footnote{A list of all texts is provided in Table~\ref{tab:appendix-texts}, Appendix~\ref{appendix-texts}.}
+The texts were split into sentences using Spacy's sentence splitter\footnote{\url{https://spacy.io/api/dependencyparser}. Sentence splitting is based on the output of Spacy's dependency parser, see~\cite{honnibal2015a}. Model used: \texttt{de\_core\_news\_sm}.} and manually annotated for the coarse- and fine-grained categories shown in Table \ref{tab:label-distribution}.\footnote{An example for each fine-grained category in both the original German and an English translation is provided in Appendix~\ref{appendix-category-examples}.} The annotations were carried out by four trained German-speaking students of German literary studies. Next to the category, the annotators also marked which token span belongs to which category and which literary character is being described. Annotation guidelines (in German language) are used to detail the criteria on each coarse- and fine-grained category. Annotators are regularly supervised. Quality of the annotations is regularly checked through calculation of inter-annotator agreement.
+
+\begin{table}[htbp]
+\small
+\begin{tabular}[t]{llr}
+\toprule
+\multicolumn{2}{c}{Categories} & \multirow{2}{*}{Count} \\
+\cmidrule(lr){1-2}
+Coarse & Fine & \\
+\midrule
+\multirow{4}{*}{\begin{sideways}Age\end{sideways}} 
+& Numerical & 50 \\
+& Role w/ connection to age & 235 \\
+& Scalar & 201 \\
+\cmidrule(lr){2-3}
+& Total & 486 \\
+\midrule
+\multirow{5}{*}{\begin{sideways}Traits\end{sideways}}
+& Mind/habitus       & 28 \\
+& Basic attitude     & 17 \\
+& Body/health        & 19 \\
+& Standard of living & 10 \\
+\cmidrule(lr){2-3}
+& Total & 77 \\
+\midrule
+\multirow{5}{*}{\begin{sideways}Clothing\end{sideways}}
+& Accessories               & 6 \\
+& Fashion appearance        & 1 \\
+& Piece of clothing         & 6 \\
+& Part of piece of clothing & 1 \\
+\cmidrule(lr){2-3}
+& Total & 14 \\
+\bottomrule
+\end{tabular}\hspace{1em}
+\begin{tabular}[t]{llr}
+\toprule
+\multicolumn{2}{c}{Categories} & \multirow{2}{*}{Count} \\
+\cmidrule(lr){1-2}
+Coarse & Fine & \\
+\midrule
+\multirow{8}{*}{\begin{sideways}Physiognomy\end{sideways}}
+& Charisma              & 15 \\
+& Face                  & 41 \\
+& Finger/hand/arm       & 2 \\
+& Head/hair             & 24 \\
+& Height/stature/weight & 45 \\
+& Trunk/shoulder        & 4 \\
+& Toe/foot/leg          & 10 \\
+\cmidrule(lr){2-3}
+& Total & 141 \\
+\midrule
+\multirow{8}{*}{\begin{sideways}Role\end{sideways}}
+& Occupation         & 148 \\
+& Relationship       & 45 \\
+& Sex                & 370 \\
+& Family             & 462 \\
+& Nationality/place of origin & 14 \\
+& Religion/politics  & 7 \\
+& Type               & 67 \\
+& Social status      & 68 \\
+\cmidrule(lr){2-3}
+& Total & 1186 \\
+\bottomrule
+\end{tabular}
+\caption{Coarse- and fine-grained categories as annotated. Each annotation is attached to a single sentence.}
+\label{tab:label-distribution}
+\end{table}
+
+Inter-annotator agreement was measured on three of the texts mentioned in Table~\ref{tab:appendix-texts}.\footnote{These three texts are \enquote{Der Selbstmordverein}, \enquote{Altmodische Leute} and \enquote{Der Katzenjunker}.}
+Overall, there is an agreement among all four annotators, measured in Fleiss $\kappa$~\cite{fleiss1971a}, of 0.23 for the fine-grained categories and 0.93 for the coarse-grained categories, suggesting that the later task is much easier for humans to perform than the former.
+When looking at single fine-grained categories, the ones with the lowest agreement were \emph{type} and \emph{part of piece of clothing} with a $\kappa$ value of -0.001 and the ones with the highest agreement were \emph{finger/hand/arm} and \emph{social status} with $\kappa$ values of 0.499 and 0.497, respectively.\footnote{A full list of agreement scores for the coarse-grained and fine-grained categories can be found in Appendix~\ref{appendix-iaa}.} Note that some of these fine-grained categories appear with extremely low frequency, which also affects the measurement of inter-annotator agreement.
+It should further be noted that even for the fine-grained categories with the highest agreements, scores of around 0.5 are usually not considered to signify high agreement in general. In subsequent model training for the three texts used to determine inter-annotator agreement, only annotations by one annotator have been used.
+
+\section{Experimental Setup}\label{sec:experimental-setup}
+
+We perform 5-fold cross-validation with five repetitions, meaning that the folds are additionally randomly split five times and the result is averaged.
+Furthermore, we make sure that all classes have the same ratio per train/test set and fold like in the complete dataset.
+This results in the distribution of categories in Table~\ref{tab:label-distribution-train-test}, averaged over all folds and repetitions.
+Since for the binary task, there would be a large imbalance of sentences containing and not containing a character property, we apply downsampling to the number of sentences that do contain a character property in the train set, while keeping the test set intact.
+For each sentence in the training and test set, we prepend the two previous and append the two following sentences as context for the models.
+
+For automatic prediction, we use the following encoder models: A cased and uncased version of German BERT\footnote{\url{https://huggingface.co/dbmdz/bert-base-german-uncased}, \url{https://huggingface.co/bert-base-german-cased}}, a cased and uncased version of German ELECTRA\footnote{\url{https://huggingface.co/german-nlp-group/electra-base-german-uncased}, \url{dbmdz/electra-base-german-europeana-cased-discriminator}} and German RoBERTa\footnote{\url{https://huggingface.co/benjamin/roberta-base-wechsel-german}}.
+We fine-tune all models for 20 epochs, using a learning rate of \num{4e-5}.
+Additionally, we compare the results of the BERT-like models for the coarse-grained category task to one decoder large language model, namely Llama-3.1 8B Instruct\footnote{\url{meta-llama/Llama-3.1-8B-Instruct}}, by fine-tuning the model on one fold of the training data, using LoRA~\cite{hu2021a}, for 10 epochs, a learning rate of \num{1e-4} and a rank of \num{32}.
+For both LoRA finetuning and prediction, the prompt in Listing~\ref{lst:prompt} was used.
+
+\begin{lstlisting}[basicstyle=\ttfamily,frame = single,columns=flexible,caption={Prompt to fine-tune the LLM with LoRA.},label=lst:prompt,captionpos=b]
+Give a character property label to the following text snippet!
+         
+         The following labels are possible:
+         - Age
+         - Character trait
+         - Clothing
+         - Physiognomy
+         - Role
+         
+Do not output anything else!!!
+\end{lstlisting}
+
+For the binary task, we also used the predictions of a named entity recognition model\footnote{\url{https://huggingface.co/flair/ner-german}} on the sentences and added a one-hot encoded vector to the input embeddings of all models, containing the information if the (sub-)token is labeled as a named entity or not.
+
+For the coarse- and fine-grained tasks, we run two lines of experiments: for one line, we add XML tags into the input string that tell the models where the target sentence starts and ends. This annotation provides the models information on where to divide between actual sentence in question and mere context. For the other line, these tags are missing. This way we can test if providing this information is helpful for the transformer models to make decisions.
+For the binary task where the model is supposed to detect if a character property is present in the sentence or not, we never provide the sentence markers, as this information would already preempt the answer and would give the models too much information.
+
+It is also important to note that for the coarse- and fine-grained tasks, the model has access to the sentences that contain a character property according to our annotators, so the tasks show the upper bound of possible classification scores for character property classes.
+
+We also compare the results of the transformer models to some simple baselines: a majority baseline (most frequent), two random baselines, (i) were the classes are randomly picked according to the frequency of the class in the training data (Random (stratified)), (ii) were the classes are picked entirely randomly (Random (uniform)) and a Naive Bayes model with features based on the counts of a bag-of-words transformation of the training sentences.
+
+\begin{table}[htbp]
+    \centering
+\begin{tabular}{lrrrr}
+\toprule
+{Category} & \multicolumn{2}{c}{Train} & \multicolumn{2}{c}{Test}\\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
+& mean & sd & mean & sd \\
+\midrule
+No character property & 1523.2 & 0.4 & 3873.0 & 0.0 \\
+Character property present & 1523.2 & 0.4 & 380.8 & 0.4 \\
+\midrule
+Age & 388.8 & 0.4 & 97.2 & 0.4 \\
+Character trait & 61.6 & 0.5 & 15.4 & 0.5 \\
+Clothing & 11.2 & 0.4 & 2.8 & 0.4 \\
+Physiognomy & 112.8 & 0.4 & 28.2 & 0.4 \\
+Role & 948.8 & 0.4 & 237.2 & 0.4 \\
+\midrule
+Accessories & 4.8 & 0.4 & 1.2 & 0.4 \\
+Basic attitude & 13.6 & 0.5 & 3.4 & 0.5 \\
+Body/health & 15.2 & 0.4 & 3.8 & 0.4 \\
+Charisma & 12.0 & 0.0 & 3.0 & 0.0 \\
+Face & 32.8 & 0.4 & 8.2 & 0.4 \\
+Family & 369.6 & 0.5 & 92.4 & 0.5 \\
+Head/hair & 19.2 & 0.4 & 4.8 & 0.4 \\
+Height/stature/weight & 36.0 & 0.0 & 9.0 & 0.0 \\
+Mind/habitus & 22.4 & 0.5 & 5.6 & 0.5 \\
+Nationality/place of origin & 11.2 & 0.4 & 2.8 & 0.4 \\
+Numerical age & 40.0 & 0.0 & 10.0 & 0.0 \\
+Occupation & 118.4 & 0.5 & 29.6 & 0.5 \\
+Piece of clothing & 4.8 & 0.4 & 1.2 & 0.4 \\
+Relationship & 36.0 & 0.0 & 9.0 & 0.0 \\
+Religion/politics & 5.6 & 0.5 & 1.4 & 0.5 \\
+Role with connection to age & 188.0 & 0.0 & 47.0 & 0.0 \\
+Scalar age & 160.8 & 0.4 & 40.2 & 0.4 \\
+Sex & 296.0 & 0.0 & 74.0 & 0.0 \\
+Social status & 54.4 & 0.5 & 13.6 & 0.0 \\
+Standard of living & 8.0 & 0.0 & 2.0 & 0.0 \\
+Toe/foot/leg & 8.0 & 0.0 & 2.0 & 0.0 \\
+Trunk/shoulder & 3.2 & 0.4 & 1.0 & 0.0 \\
+Type & 53.6 & 0.5 & 13.4 & 0.5 \\
+\bottomrule
+\end{tabular}
+    \caption{Distribution of categories across the train and test set, averaged for each fold and repetition. In total, there are less instances for the fine-grained categories (378) in the test set than for the coarse-grained categories (381), because some fine-grained categories are excluded for having too less instances (part of piece of clothing, fashion appearance, finger/hand/arm).}
+    \label{tab:label-distribution-train-test}
+\end{table}
+
+\section{Results}
+
+As previously mentioned, we evaluate classification performance on three tasks of increasing label complexity: a binary classification (detecting whether a sentence contains a character property), a 5-class coarse-grained classification and a fine-grained 18-class classification into specific sub-categories.
+We report macro-averaged F1, precision, recall and accuracy for each model.
+While micro-averaged scores would be higher than the macro-averaged variants, we are mainly interested in the overall performance of the models independent of the contributions of each category.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lrrrrrrrr}
+\toprule
+\multicolumn{1}{c}{Model} & \multicolumn{2}{c}{F1} & \multicolumn{2}{c}{Precision} & \multicolumn{2}{c}{Recall} & \multicolumn{2}{c}{Accuracy} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7} \cmidrule(l{3pt}r{3pt}){8-9}
+ & mean & sd & mean & sd & mean & sd & mean & sd\\
+\midrule
+Most frequent & 0.65 & 0.00 & \textbf{0.91} & 0.00 & 0.50 & 0.00 & \textbf{0.91} & 0.00\\
+Random (stratified) & 0.50 & 0.01 & 0.50 & 0.00 & 0.50 & 0.01 & 0.50 & 0.00\\
+Random (uniform) & 0.50 & 0.01 & 0.50 & 0.00 & 0.50 & 0.01 & 0.50 & 0.00\\
+Naive Bayes & 0.66 & 0.01 & 0.59 & 0.00 & 0.74 & 0.01 & 0.72 & 0.01\\
+\midrule
+BERT (uncased) & 0.58 & 0.28 & 0.57 & 0.32 & 0.71 & 0.20 & 0.66 & 0.36\\
+BERT (cased) & 0.52 & 0.29 & 0.53 & 0.35 & 0.66 & 0.20 & 0.59 & 0.39\\
+ELECTRA (uncased) & \textbf{0.67} & 0.21 & 0.67 & 0.24 & \textbf{0.75} & 0.20 & 0.76 & 0.28\\
+ELECTRA (cased) & 0.55 & 0.23 & 0.65 & 0.34 & 0.59 & 0.16 & 0.69 & 0.35\\
+RoBERTa & 0.48 & 0.32 & 0.55 & 0.42 & 0.58 & 0.18 & 0.53 & 0.43\\
+\bottomrule
+\end{tabular}
+\caption{Overall results on binary character property detection task. Metrics are macro-averaged. \textit{Mean} shows the average over all 5 folds with 5 repetitions, \textit{sd} the standard deviation. Bold indicates the best result in each column. The upper part shows baseline performances.}
+\label{tab:binary-results}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{llrrrrrrrr}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{ } & \multicolumn{2}{c}{F1} & \multicolumn{2}{c}{Precision} & \multicolumn{2}{c}{Recall} & \multicolumn{2}{c}{Accuracy} \\
+\cmidrule(l{3pt}r{3pt}){3-4} \cmidrule(l{3pt}r{3pt}){5-6} \cmidrule(l{3pt}r{3pt}){7-8} \cmidrule(l{3pt}r{3pt}){9-10}
+Target & Model & mean & sd & mean & sd & mean & sd & mean & sd\\
+\midrule
+ & Most frequent & 0.30 & 0.00 & 0.62 & 0.00 & 0.20 & 0.00 & 0.62 & 0.00\\
+
+ & Random (stratified) & 0.21 & 0.01 & 0.21 & 0.01 & 0.20 & 0.01 & 0.48 & 0.01\\
+
+ & Random (uniform) & 0.18 & 0.03 & 0.19 & 0.01 & 0.17 & 0.05 & 0.18 & 0.01\\
+
+ & Naive Bayes & 0.31 & 0.02 & 0.70 & 0.13 & 0.20 & 0.00 & 0.63 & 0.00\\
+
+ & BERT (uncased) & 0.83 & 0.17 & 0.89 & 0.10 & 0.80 & 0.21 & 0.94 & 0.08\\
+
+ & BERT (cased) & 0.74 & 0.26 & 0.84 & 0.13 & 0.69 & 0.31 & 0.88 & 0.15\\
+
+ & ELECTRA (uncased) &  0.86 & 0.11 & 0.90 & 0.06 & 0.83 & 0.15 & \textbf{0.95} & 0.03\\
+
+ & ELECTRA (cased) & 0.84 & 0.14 & 0.90 & 0.05 & 0.81 & 0.19 & 0.95 & 0.04\\
+
+\multirow{-9}{*}{\raggedright\arraybackslash Unmarked} & RoBERTa & 0.79 & 0.23 & 0.90 & 0.11 & 0.74 & 0.28 & 0.92 & 0.12\\
+\cmidrule{1-10}
+ & Most frequent & 0.30 & 0.00 & 0.62 & 0.00 & 0.20 & 0.00 & 0.62 & 0.00\\
+
+ & Random (stratified) & 0.21 & 0.01 & 0.21 & 0.01 & 0.20 & 0.01 & 0.48 & 0.01\\
+
+ & Random (uniform) & 0.18 & 0.03 & 0.19 & 0.01 & 0.17 & 0.05 & 0.18 & 0.01\\
+
+ & Naive Bayes & 0.31 & 0.02 & 0.68 & 0.13 & 0.20 & 0.00 & 0.62 & 0.00\\
+
+ & BERT (uncased) & \textbf{0.87} & 0.15 & \textbf{0.91} & 0.07 & \textbf{0.85} & 0.19 & \textbf{0.95} & 0.07\\
+
+ & BERT (cased) & 0.75 & 0.24 & 0.86 & 0.12 & 0.71 & 0.29 & 0.90 & 0.13\\
+
+ & ELECTRA (uncased) & 0.84 & 0.14 & 0.85 & 0.13 & 0.83 & 0.15 & 0.92 & 0.10\\
+
+ & ELECTRA (cased) & 0.54 & 0.30 & 0.74 & 0.15 & 0.47 & 0.35 & 0.76 & 0.17\\
+
+\multirow{-9}{*}{\raggedright\arraybackslash Marked} & RoBERTa & 0.80 & 0.27 & 0.92 & 0.09 & 0.76 & 0.33 & 0.90 & 0.15\\
+\bottomrule
+\end{tabular}
+\caption{Overall, macro-averaged results on the coarse-grained classification task (5 classes). \textit{Mean} shows the average over all 5 folds with 5 repetitions, \textit{sd} the standard deviation. Bold font marks the top value per column.}
+\label{tab:supercat-results}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{llrrrrrrrr}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{ } & \multicolumn{2}{c}{F1} & \multicolumn{2}{c}{Precision} & \multicolumn{2}{c}{Recall} & \multicolumn{2}{c}{Accuracy} \\
+\cmidrule(l{3pt}r{3pt}){3-4} \cmidrule(l{3pt}r{3pt}){5-6} \cmidrule(l{3pt}r{3pt}){7-8} \cmidrule(l{3pt}r{3pt}){9-10}
+Target & Model & mean & sd & mean & sd & mean & sd & mean & sd\\
+\midrule
+ & Most frequent & 0.07 & 0.00 & 0.24 & 0.00 & 0.04 & 0.00 & 0.24 & 0.00\\
+
+ & Random (stratified) & 0.05 & 0.01 & 0.05 & 0.01 & 0.05 & 0.01 & 0.14 & 0.02\\
+
+ & Random (uniform) & 0.04 & 0.01 & 0.04 & 0.01 & 0.04 & 0.02 & 0.04 & 0.01\\
+
+ & Naive Bayes & 0.09 & 0.00 & 0.46 & 0.11 & 0.05 & 0.00 & 0.27 & 0.01\\
+
+ & BERT (uncased) & 0.74 & 0.11 & 0.75 & 0.10 & 0.73 & 0.11 & 0.75 & 0.07\\
+
+ & BERT (cased) & 0.74 & 0.11 & 0.75 & 0.11 & 0.73 & 0.11 & 0.75 & 0.06\\
+
+ & ELECTRA (uncased) & 0.73 & 0.12 & 0.74 & 0.12 & 0.72 & 0.13 & 0.75 & 0.07\\
+
+ & ELECTRA (cased) & 0.71 & 0.15 & 0.73 & 0.14 & 0.69 & 0.16 & 0.75 & 0.09\\
+
+\multirow{-9}{*}{\raggedright\arraybackslash Unmarked} & RoBERTa & \textbf{0.80} & 0.06 & \textbf{0.81} & 0.06 & \textbf{0.80} & 0.06 & \textbf{0.79} & 0.03\\
+\cmidrule{1-10}
+ & Most frequent & 0.07 & 0.00 & 0.24 & 0.00 & 0.04 & 0.00 & 0.24 & 0.00\\
+
+ & Random (stratified) & 0.05 & 0.01 & 0.05 & 0.01 & 0.05 & 0.01 & 0.14 & 0.02\\
+
+ & Random (uniform) & 0.04 & 0.01 & 0.04 & 0.01 & 0.04 & 0.02 & 0.04 & 0.01\\
+
+ & Naive Bayes & 0.09 & 0.00 & 0.46 & 0.12 & 0.05 & 0.00 & 0.27 & 0.01\\
+
+ & BERT (uncased) & 0.76 & 0.10 & 0.77 & 0.10 & 0.75 & 0.10 & 0.76 & 0.05\\
+
+ & BERT (cased) & 0.75 & 0.10 & 0.76 & 0.10 & 0.74 & 0.10 & 0.76 & 0.05\\
+
+ & ELECTRA (uncased) & 0.74 & 0.12 & 0.75 & 0.11 & 0.73 & 0.12 & 0.76 & 0.07\\
+
+ & ELECTRA (cased) & 0.74 & 0.12 & 0.75 & 0.11 & 0.74 & 0.13 & 0.76 & 0.06\\
+
+\multirow{-9}{*}{\raggedright\arraybackslash Marked} & RoBERTa & \textbf{0.80} & 0.06 & \textbf{0.81} & 0.06 & 0.79 & 0.06 & \textbf{0.79} & 0.04\\
+\bottomrule
+\end{tabular}
+\caption{Overall results on the fine-grained classification task (18 classes). \textit{Mean} shows the average over all 5 folds with 5 repetitions, \textit{sd} the standard deviation. Bold values indicate best-in-column results.}
+\label{tab:subcat-results}
+\end{table}
+
+As shown in Tables~\ref{tab:binary-results}--\ref{tab:subcat-results}, the transformer-based models outperform the baseline classifiers on all tasks; only for the binary task, the majority baseline has the highest precision. On the binary character property detection, the best model (uncased ELECTRA) achieves an averaged macro-F1 of 0.67. It is notable that the Naive Bayes baseline almost reaches the performance of the ELECTRA model with just one percentage point of difference (0.66), suggesting that lexical clues are enough to detect many character properties and that the transformer models are able to correctly classify these instances as well, but are not able to pick up on more implicit features of the sentences where this is not the case. Furthermore, we observe very high standard deviations for the transformer model results across the folds and repetitions, suggesting that the dataset is rather diverse and that it matters which dataset splits to present to the models.
+For the 5-class coarse-grained categories, the top model reaches 0.87 F1 (uncased BERT), far exceeding the uniform baseline’s 0.18.
+Also, adding sentence markers to tell the model which sentence to focus on often helps with prediction, albeit to a varying degree. Especially the cased ELECTRA model seems to be thrown off by the sentence markers, as adding a sentence marker reduces this model's performance by 16--34 percentage points.
+We also notice that using the uncased version of a model over the cased version generally improves the results significantly.
+Note that many models show a certain discrepancy between accuracy and F1 score, which can be explained by the fact that F1 is calculated as the macro-average.
+The fine-grained 18-class task is slightly more challenging: the highest macro-F1 is 0.8 (with RoBERTa), though this still represents a large improvement over the near-zero majority (0.07) and random baselines (0.05 and 0.04).
+We do not observe large differences between cased and uncased versions of models.
+
+When adding one-hot encoded embeddings containing information about the named entity classes of a sentence to the models, as described in Section~\ref{sec:experimental-setup}, we do not find any difference in performance for any of the models.
+
+A closer per-class analysis of the fine-grained category predictions in Table~\ref{tab:subcat-detailed-results} reveals the impact of label imbalance. The best models for each task perform reasonably well on the frequent classes but struggle on the rare ones. For example, the RoBERTa classifier attains $F_1 = 0.78$ on the most common fine-grained category \textit{family} ($\sim$ 370 train instances, $\sim$ 92 test instances), but it fails to perform well for several infrequent categories -- \textit{religion/politics} ($\sim$ 6 train instances, $\sim$ 1 test instance) and \textit{nationality/place of origin} ($\sim$ 11 train instances, $\sim$ 2 test instances) have $F_1 = 0.24$ and $F_1 = 0.41$ with or without sentence markers present. A similar imbalance effect is observed in the coarse-grained task dominated by the \textit{role} class (Table~\ref{tab:supercat-detailed-results}).
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lrrrrrrr}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{F1} & \multicolumn{2}{c}{Precision} & \multicolumn{2}{c}{Recall} & \multicolumn{1}{c}{Support} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7} \cmidrule(l{3pt}r{3pt}){8-8}
+Class & mean & sd & mean & sd & mean & sd & mean\\
+\midrule
+Character property present & 0.38 & 0.26 & 0.29 & 0.20 & 0.73 & 0.42 & 380.8\\
+No character property & 0.80 & 0.32 & 0.85 & 0.32 & 0.77 & 0.32 & 3873.0\\
+\bottomrule
+\end{tabular}
+\caption{Per-class results for binary classification task and the best model ELECTRA (uncased).}
+\label{tab:binary-detailed-results}
+\end{table}
+
+
+
+\begin{table}[htbp]
+\centering
+\scriptsize
+\begin{tabular}{llrrrrrrrrrr}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{ } & \multicolumn{1}{c}{ } & \multicolumn{6}{c}{BERT (uncased)} & \multicolumn{3}{c}{\llmlabel} \\
+\cmidrule(l{3pt}r{3pt}){4-9} \cmidrule(l{3pt}r{3pt}){10-12}
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{ } & \multicolumn{1}{c}{Support} & \multicolumn{2}{c}{F1} & \multicolumn{2}{c}{Precision} & \multicolumn{2}{c}{Recall} & \multicolumn{1}{c}{F1} & \multicolumn{1}{c}{Precision} & \multicolumn{1}{c}{Recall} \\
+\cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7} \cmidrule(l{3pt}r{3pt}){8-9} \cmidrule(l{3pt}r{3pt}){10-10} \cmidrule(l{3pt}r{3pt}){11-11} \cmidrule(l{3pt}r{3pt}){12-12}
+Target & Category & mean & mean & sd & mean & sd & mean & sd &  &  & \\
+\midrule
+ & Age & 97.2 & 0.92 & 0.20 & 0.91 & 0.20 & 0.94 & 0.20 & 0.93 & 1.00 & 0.87\\
+
+ & Character trait & 15.4 & 0.70 & 0.23 & 0.69 & 0.24 & 0.72 & 0.26 & 0.56 & 0.56 & 0.56\\
+
+ & Clothing & 2.8 & 0.78 & 0.36 & 0.82 & 0.37 & 0.75 & 0.37 & 0.75 & 1.00 & 0.60\\
+
+ & Physiognomy & 28.2 & 0.86 & 0.27 & 0.88 & 0.27 & 0.85 & 0.27 & 0.88 & 0.89 & 0.86\\
+
+\multirow{-5}{*}{\raggedright\arraybackslash Marked} & Role & 237.2 & 0.98 & 0.04 & 0.98 & 0.07 & 0.99 & 0.01 & 0.94 & 0.91 & 0.98\\
+\cmidrule{1-12}
+ & Age & 97.2 & 0.92 & 0.19 & 0.90 & 0.20 & 0.94 & 0.20 & 0.93 & 0.99 & 0.87\\
+
+ & Character trait & 15.4 & 0.59 & 0.32 & 0.60 & 0.31 & 0.59 & 0.33 & 0.39 & 0.38 & 0.40\\
+
+ & Clothing & 2.8 & 0.70 & 0.40 & 0.75 & 0.41 & 0.69 & 0.41 & 0.50 & 0.67 & 0.40\\
+
+ & Physiognomy & 28.2 & 0.79 & 0.33 & 0.83 & 0.32 & 0.77 & 0.34 & 0.87 & 0.96 & 0.79\\
+
+\multirow{-5}{*}{\raggedright\arraybackslash Unmarked} & Role & 237.2 & 0.97 & 0.05 & 0.96 & 0.08 & 0.99 & 0.01 & 0.93 & 0.89 & 0.97\\
+\bottomrule
+\end{tabular}
+\caption{Per-class results for the coarse-grained category classification task, showing BERT (uncased) and \llmlabel.}
+\label{tab:supercat-detailed-results}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{llrrrrrrr}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{ } & \multicolumn{2}{c}{F1} & \multicolumn{2}{c}{Precision} & \multicolumn{2}{c}{Recall} & \multicolumn{1}{c}{Support} \\
+\cmidrule(l{3pt}r{3pt}){3-4} \cmidrule(l{3pt}r{3pt}){5-6} \cmidrule(l{3pt}r{3pt}){7-8} \cmidrule(l{3pt}r{3pt}){9-9}
+Target & Category & mean & sd & mean & sd & mean & sd & mean\\
+\midrule
+ & Accessories & 0.99 & 0.07 & 1.00 & 0.00 & 0.98 & 0.10 & 1.2\\
+
+ & Basic attitude & 0.91 & 0.12 & 0.93 & 0.13 & 0.91 & 0.16 & 3.4\\
+
+ & Body/health & 0.83 & 0.11 & 0.86 & 0.16 & 0.85 & 0.16 & 3.8\\
+
+ & Charisma & 0.97 & 0.13 & 0.97 & 0.13 & 0.97 & 0.13 & 3.0\\
+
+ & Face & 0.98 & 0.07 & 0.98 & 0.07 & 0.98 & 0.07 & 8.2\\
+
+ & Family & 0.78 & 0.05 & 0.79 & 0.05 & 0.78 & 0.07 & 92.4\\
+
+ & Head/hair & 0.99 & 0.07 & 0.99 & 0.05 & 0.98 & 0.08 & 4.8\\
+
+ & Height/stature/weight & 0.85 & 0.07 & 0.88 & 0.13 & 0.85 & 0.14 & 9.0\\
+
+ & Mind/habitus & 0.95 & 0.08 & 0.95 & 0.12 & 0.96 & 0.08 & 5.6\\
+
+ & Nationality/place of origin & 0.41 & 0.22 & 0.47 & 0.32 & 0.43 & 0.28 & 2.8\\
+
+ & Numerical age & 0.98 & 0.03 & 0.99 & 0.03 & 0.98 & 0.04 & 10.0\\
+
+ & Occupation & 0.56 & 0.08 & 0.57 & 0.10 & 0.56 & 0.09 & 29.6\\
+
+ & Piece of clothing & 1.00 & 0.00 & 1.00 & 0.00 & 1.00 & 0.00 & 1.2\\
+
+ & Relationship & 0.54 & 0.21 & 0.56 & 0.19 & 0.56 & 0.27 & 9.0\\
+
+ & Religion/politics & 0.24 & 0.34 & 0.23 & 0.34 & 0.32 & 0.43 & 1.4\\
+
+ & Role with connection to age & 0.96 & 0.04 & 0.96 & 0.04 & 0.96 & 0.05 & 47.0\\
+
+ & Scalar age & 0.92 & 0.03 & 0.93 & 0.04 & 0.92 & 0.04 & 40.2\\
+
+ & Sex & 0.72 & 0.05 & 0.73 & 0.05 & 0.71 & 0.07 & 74.0\\
+
+ & Social status & 0.67 & 0.11 & 0.65 & 0.13 & 0.69 & 0.14 & 13.6\\
+
+ & Standard of living & 0.93 & 0.17 & 0.97 & 0.15 & 0.92 & 0.19 & 2.0\\
+
+ & Toe/foot/leg & 0.98 & 0.10 & 0.98 & 0.10 & 0.98 & 0.10 & 2.0\\
+
+ & Trunk/shoulder & 1.00 & 0.00 & 1.00 & 0.00 & 1.00 & 0.00 & 1.0\\
+
+\multirow{-23}{*}{\raggedright\arraybackslash Marked} & Type & 0.57 & 0.13 & 0.60 & 0.17 & 0.59 & 0.20 & 13.4\\
+\cmidrule{1-9}
+ & Accessories & 0.99 & 0.07 & 1.00 & 0.00 & 0.98 & 0.10 & 1.2\\
+
+ & Basic attitude & 0.90 & 0.11 & 0.92 & 0.11 & 0.91 & 0.16 & 3.4\\
+
+ & Body/health & 0.83 & 0.11 & 0.85 & 0.17 & 0.85 & 0.15 & 3.8\\
+
+ & Charisma & 0.98 & 0.12 & 0.98 & 0.10 & 0.97 & 0.13 & 3.0\\
+
+ & Face & 0.99 & 0.05 & 0.99 & 0.07 & 1.00 & 0.03 & 8.2\\
+
+ & Family & 0.78 & 0.04 & 0.79 & 0.05 & 0.78 & 0.07 & 92.4\\
+
+ & Head/hair & 0.99 & 0.05 & 1.00 & 0.00 & 0.98 & 0.08 & 4.8\\
+
+ & Height/stature/weight & 0.85 & 0.10 & 0.89 & 0.13 & 0.85 & 0.15 & 9.0\\
+
+ & Mind/habitus & 0.94 & 0.09 & 0.95 & 0.10 & 0.95 & 0.10 & 5.6\\
+
+ & Nationality/place of origin & 0.41 & 0.24 & 0.47 & 0.34 & 0.43 & 0.29 & 2.8\\
+
+ & Numerical age & 0.98 & 0.02 & 0.99 & 0.03 & 0.98 & 0.04 & 10.0\\
+
+ & Occupation & 0.57 & 0.08 & 0.57 & 0.08 & 0.57 & 0.10 & 29.6\\
+
+ & Piece of clothing & 0.99 & 0.07 & 0.98 & 0.10 & 1.00 & 0.00 & 1.2\\
+
+ & Relationship & 0.53 & 0.21 & 0.54 & 0.19 & 0.55 & 0.26 & 9.0\\
+
+ & Religion/politics & 0.24 & 0.34 & 0.23 & 0.34 & 0.32 & 0.43 & 1.4\\
+
+ & Role with connection to age & 0.96 & 0.03 & 0.97 & 0.03 & 0.97 & 0.05 & 47.0\\
+
+ & Scalar age & 0.93 & 0.02 & 0.93 & 0.04 & 0.93 & 0.04 & 40.2\\
+
+ & Sex & 0.72 & 0.05 & 0.72 & 0.05 & 0.71 & 0.08 & 74.0\\
+
+ & Social status & 0.67 & 0.10 & 0.67 & 0.13 & 0.70 & 0.13 & 13.6\\
+
+ & Standard of living & 0.99 & 0.07 & 1.00 & 0.00 & 0.98 & 0.10 & 2.0\\
+
+ & Toe/foot/leg & 0.98 & 0.10 & 0.98 & 0.10 & 0.98 & 0.10 & 2.0\\
+
+ & Trunk/shoulder & 1.00 & 0.00 & 1.00 & 0.00 & 1.00 & 0.00 & 1.0\\
+
+\multirow{-23}{*}{\raggedright\arraybackslash Unmarked} & Type & 0.57 & 0.12 & 0.62 & 0.19 & 0.57 & 0.17 & 13.4\\
+\bottomrule
+\end{tabular}
+\caption{Per-class results for the fine-grained category classification task and the best model RoBERTa.}
+\label{tab:subcat-detailed-results}
+\end{table}
+
+The results on the coarse-grained task for the LoRA-fine-tuned \textsc{Llama} model in Table~\ref{tab:supercat-detailed-results} are fairly strong, ranging between 0.39 and 0.94 macro F1-score depending on the category and if the target was marked or not.
+As for the BERT-like models, \textit{role} and \textit{age} are predicted with the best performance scores.
+However, uncased BERT achieves higher F1 scores for all categories except \textit{physiognomy} and \textit{age}.
+
+\section{Conclusion}
+
+This paper introduces a comprehensive approach to detecting and categorizing character property mentions in German narrative prose. We showed that transformer-based models are generally able to perform three tasks of increasing complexity: binary classification (whether a character property is mentioned), coarse-grained category classification and fine-grained classification. One could suspect that some of the categories are strongly lexicalized, as it is, for instance, difficult to talk about character age without using very specific and unambiguous vocabulary (\enquote{old}, \enquote{young}, \enquote{years}, \dots). The strong performance of the bag-of-words-based Naive Bayes classifier for the binary task shows that this could be the case; however, this baseline did not perform as strongly for the coarse- and fine-grained category tasks.
+
+The most challenging task for the models is the detection of a character property in a sentence, where the best model ELECTRA (uncased) achieves an F1-score of 0.67.
+
+We also showed that the inclusion of sentence markers yields systematic gains in classification performance across most models and tasks for the coarse-grained categories. This suggests that providing context in a structured form to the model can help mitigate ambiguity and improve the focus on relevant spans. By contrast, encoding named entity recognition (NER) tags as additional input features had negligible impact, indicating that  entity-type information alone does not benefit character property recognition in this domain.
+
+Our analysis also revealed that label imbalance remains a central challenge, especially in the fine-grained task. Frequent labels such as family or age were classified with reasonable success, while rare labels like nationality or religion/politics were often missed entirely.
+This effect is also observable for the coarse-grained task, although to a lesser extent.
+
+The often high standard deviations across folds for all small transformer models raises the question of generalizability and especially the question of how heterogeneous the data actually is. Looking further into different properties of the sentence, e.g. linguistic features, might reveal that the models have no issue with certain types of sentences but struggle with others.
+
+Notably, a fine-tuned LLaMA 3.1 model using parameter-efficient LoRA adaptation achieved competitive results on the coarse-grained task, rivaling or surpassing transformer encoders. This underscores the growing relevance of decoder-style large language models for classification tasks in computational literary studies, particularly when paired with lightweight tuning methods such as LoRA. However, we also observe LLM-related issues: In some cases during our experiments, the model invented new categories, i.e., hallucinated a new label. Any kind of LLM-based classification needs to be ready to deal with such issues (and count them as errors for evaluation purposes). A tempting alternative to using LLMs with LoRA adaptation is the prompting of a raw language model. Initial experiments revealed much weaker performance. In addition, hallucination issues might become more frequent.
+
+In sum, this work lays a robust foundation for the automatic extraction of literary character properties in German-language prose, advancing computational literary studies' research on literary characters. Future work will extend this framework to model additional dimensions of character description, including temporal anchoring, source attribution and coreference resolution, moving toward a full-fledged representation of literary character descriptions.
+
+\section*{Acknowledgments}
+
+We would like to thank our colleagues from the CompAnno project, Julia Nantke and Marie Fl{\"u}h, for fruitful collaboration and discussions and the annotated data.
+We also thank the German Research Foundation (DFG) for funding the CompAnno project (project number 508319395). All experiments were carried out using the computational facilities of the Center for Data and Simulation Science (CDS) at the University of Cologne, for which we are also thankful.
+
+%This unnumbered section should be blank when submitting your paper. After review, you may include lists of people and organizations who supported the work.
+
+% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
+\printbibliography
+
+\newpage
+
+% You can include an appendix using the following command
+\appendix
+
+\section{Texts}\label{appendix-texts}
+
+Table~\ref{tab:appendix-texts} shows the 19 texts that were the bases for the annotations.
+
+\begin{longtable}{llr}
+    \toprule
+    Title & Author & Publication Year \\
+    \midrule
+    Der blonde Eckbert & Tieck, Ludwig & 1797 \\
+    Das Erdbeben in Chili & Kleist, Heinrich von & 1807 \\
+    Die Judenbuche & Droste-Hülshoff, Annette von & 1842 \\
+    Marcus König & Freytag, Gustav & 1876 \\
+    Der Katzenjunker & François, Louise von & 1879 \\
+    Krambambuli & Ebner-Eschenbach, Marie von & 1883 \\
+    Der Scout & May, Karl & 1888 \\
+    Altmodische Leute & Frapan, Ilse & 1890 \\
+    Die Schlangendame & Bierbaum, Otto Julius & 1896 \\
+    Die Frau Bürgermeisterin & Ebers, Georg & 1897 \\
+    Amazonenschlacht & Janitschek, Maria & 1897 \\
+    Kerlchen als Anstandsdame & Rose, Felicitas & 1900 \\
+    Münchhausen und Clarissa & Scheerbart, Paul & 1906 \\
+    Lena S. & Meyer Förder, Wilhelm & 1908 \\
+    Die Verwandlung & Kafka, Franz & 1915 \\
+    Der Selbstmordverein & Reventlow, Franziska Gräfin zu & 1916 \\
+    Das Liebesleben eines deutschen Jünglings & Zapp, Arthur & 1920 \\
+    \bottomrule
+    \caption{The 17 texts that were used as the basis for all analysis in this study.}\label{tab:appendix-texts}
+\end{longtable}
+
+\section{Examples for Categories}\label{appendix-category-examples}
+
+Table~\ref{tab:appendix-category-examples} provides a short example sentence for each fine-grained category. The examples are originally in German and additionally translated into English.
+
+\begin{longtable}{lp{5cm}p{5cm}}
+    \toprule
+    Category & Example & English Translation \\
+    \midrule
+    Family & \textbf{Mein Vater} wird nächstens Geheimrat werden. & \textbf{My father} will soon become a privy councilor. \\
+    Sex & Dieser Brief hinterließ in \textbf{Herrn} Brock junior fatale Gefühle. & This letter left \textbf{Mr.} Brock junior with fatal feelings. \\
+    Role with connection to age & Das \textbf{Mädchen}: »Na, eigentlich heiß ich Mathilde. & The \textbf{girl}: "Well, actually my name is Mathilde. \\
+    Scalar age & Der \textbf{alte} Pfadfinder schien ein ganz anderer Mensch geworden zu sein. & The \textbf{old} scout seemed to have become a completely different person. \\
+    Occupation & Das Mädchen sprach: »Nein, \textbf{Herr Doktor}! & The girl said: "No, \textbf{Mr. Doctor}! \\
+    Social status & Ich grüße Euch mein Kumpan, \textbf{Herzog} Albrecht von Brandenburg! & I greet you, my comrade, \textbf{Duke} Albrecht of Brandenburg! \\
+    Type & »Paul, Du mußt mich nicht für ein \textbf{Nilpferd} halten; das ist beleidigend.« & “Paul, you mustn't think of me as a \textbf{hippopotamus}; that's offensive.” \\
+    Numerical age & »Ich denke: \textbf{So an die fünfundzwanzig}. & "I think: \textbf{About twenty-five}. \\
+    Relationship & Ich muß wohl \textbf{sehr verliebt in Dich sein}. & I must be \textbf{very much in love with you}. \\
+    Height/stature/weight & Resigniert \textbf{blickte er, so weit es ging, an seinem Bauch hinab}. & Resigned, he \textbf{looked down at his belly, as far as he could}. \\
+    Face & "Hat sie nicht unter blonden Haaren \textbf{braune Augen}? & "Doesn't she have \textbf{brown eyes} under her blonde hair? \\
+    Mind/habitus & Noch war Gregor hier und \textbf{dachte nicht im geringsten daran, seine Familie zu verlassen}. & Gregor was still here and \textbf{did not think in the least of leaving his family}. \\
+    Head/hair & Er hatte eine \textbf{Platte}. & He was \textbf{bald}. \\
+    Body/health & Da sitzt er mit \textbf{blassen eingefallenen Wangen} in seinem Bett zwischen aufgesteckten Kissen. & There he sat with \textbf{pale, sunken cheeks} in his bed between propped-up pillows. \\
+    Basic attitude & Wir wissen, es \textbf{lag nicht in seinem Wesen, zu rennen, unanständige Eile war ihm fremd}, seine Korpulenz verbot ihm geradezu, Sprünge zu machen. & We know that it was \textbf{not in his nature to run, indecent haste was foreign to him}, his corpulence positively forbade him to jump. \\
+    Charisma & Ist sie nicht wie die Morgenröte \textbf{lieblich}? & Is she not \textbf{lovely} like the dawn? \\
+    Nationality/place of origin & Denn sie \textbf{war aus Sachsen}. & For she \textbf{was from Saxony}. \\
+    Standard of living & Als er wieder zurückkam, kündigte er das Atelier, unsere \textbf{hübsche, große Wohnung}, und mietete eine viel kleinere. & When he came back, he gave up the studio, our \textbf{pretty, large apartment} and rented a much smaller one. \\
+    Toe/foot/leg & Und eines Tages raffte sie ihr Kleid bis fast zum Knie: »Habe ich nicht ein \textbf{schönes Bein}, Albertchen?« & And one day she gathered her dress up almost to her knees: “Don't I have \textbf{beautiful legs}, Albertchen?” \\
+    Religion/politics & sie waren Freigeister, ohne sich so zu nennen oder es auch nur zu wissen, der \textbf{Vater Lutheraner}, die \textbf{Mutter Katholikin}. & They were free spirits, without calling themselves that or even knowing it, the \textbf{father was Lutheran}, the \textbf{mother was Catholic}. \\
+    Piece of clothing & Herr Ewald Brock knöpfte seinen \textbf{Frack} auf, strich sich über den Leib und sagte: »Mehlsuppe!« & Mr. Ewald Brock unbuttoned his \textbf{tailcoat}, stroked his chest and said, “Flour soup!” \\
+    Accessoires & Auch schlug er mit seinem \textbf{Spazierstock} eine steile Terz in die Luft. & He also struck a steep third in the air with his \textbf{walking stick}. \\
+    Trunk/shoulder & Der \textbf{Rücken schien hart} zu sein; & His \textbf{back seemed to be hard}; \\
+    \bottomrule
+    \caption{Examples for each fine-grained category, in the original German and an English translation.}\label{tab:appendix-category-examples}
+\end{longtable}
+
+\section{Inter-Annotator Agreement}\label{appendix-iaa}
+
+Table~\ref{tab:appendix-iaa} shows the full list of agreement values (Fleiss $\kappa$), overall, for the coarse-grained and for the fine-grained categories.
+
+\begin{longtable}{lrrr}
+    \toprule
+    Category & Fleiss $\kappa$ & z-score \\
+    \midrule
+    Overall coarse-grained & 0.935 & 21.99 \\
+    Overall fine-grained & 0.232 & 24.135 \\
+    \midrule
+    Age & 0.856 & 11.252 \\
+    Character trait & 0.94 & 12.368 \\
+    Clothing & 1.00 & 13.153 \\
+    Physiognomy & 0.961 & 12.636 \\
+    Role & 0.93 & 12.234 \\
+    \midrule
+    Accessories & 0.388 & 10.664 \\
+    Charisma & 0.272 & 7.485 \\
+    Occupation & 0.418 & 11.487 \\
+    Relationship & 0.452 & 12.431 \\
+    Sex & 0.375 & 10.316 & \\
+    Family & 0.398 & 10.947 \\
+    Mind/habitus & 0.392 & 10.782 \\
+    Face & 0.352 & 9.682 \\
+    Basic attitude & 0.238 & 6.541 \\
+    Piece of clothing & 0.401 & 11.029 \\
+    Head/hair & 0.396 & 10.888 \\
+    Body/health & -0.001 & -0.036 \\
+    Height/stature/weight & 0.438 & 12.048 \\
+    Standard of living & 0.438 & 12.036 \\
+    Numerical age& 0.354 & 9.74 \\
+    Role with connection to age & 0.386 & 10.612 \\
+    Scalar age & 0.412 & 11.315 \\
+    Social status & 0.497 & 13.675 \\
+    Type & -0.001 & -0.036 \\
+    \bottomrule
+    \caption{Fleiss $\kappa$ per fine-grained category and z-score. All values are statistically significant ($p \approx 0$) except for \enquote{body/health} and \enquote{type} ($p=0.971$).}\label{tab:appendix-iaa}
+\end{longtable}
+
+\end{document}

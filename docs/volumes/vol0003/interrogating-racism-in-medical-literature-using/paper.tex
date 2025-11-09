@@ -1,0 +1,330 @@
+% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
+% *Anthology of Computers and the Humanities*. ADD THE OPTION
+% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
+% DO NOT change the documentclass
+\documentclass[final]{anthology-ch} % for the final version
+%\documentclass{anthology-ch}         % for the submission
+
+% LOAD LaTeX PACKAGES
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage[most]{tcolorbox}
+
+% ADD your own packages using \usepackage{}
+
+% TITLE OF THE SUBMISSION
+% Change this to the name of your submission
+\title{Interrogating Racism in the Medical Literature Using Word Embeddings}
+
+% AUTHOR AND AFFILIATION INFORMATION
+
+\author[2]{Lauren D. Liao}[
+  orcid=0000-0003-4697-6909
+]
+
+\author[3]{Sajia Darwish}[
+  orcid=
+]
+
+\author[4]{Caroline Figueroa}[
+  orcid=0000-0003-0692-2244
+]
+
+\author[5]{Erin Manalo-Pedro}[
+  orcid=0000-0001-9863-6338
+]
+
+\author[5]{Swetha Pola}[
+  orcid=
+]
+
+\author[6]{Maithili Jha}[
+  orcid=
+]
+
+\author[7,8]{Fernando De Maio}[
+  orcid=0000-0002-0678-610X
+]
+
+\author[1]{Claudia von Vacano}[
+  orcid=0000-0003-1729-153X
+]
+
+\author[9,10]{Chris J. Kennedy}[
+  orcid=0000-0001-7444-2766
+]
+
+\author[1]{Pratik S. Sachdeva}[
+  orcid=0000-0002-6809-2437
+]
+
+% AFFILIATIONS
+\affiliation{1}{D-Lab, University of California, Berkeley, Berkeley, USA}
+\affiliation{2}{Division of Research, Kaiser Permanente, Oakland, USA}
+\affiliation{3}{Department of Biostatistics, Harvard University, Cambridge, USA}
+\affiliation{4}{Delft University of Technology, Delft, Netherlands}
+\affiliation{5}{Independent Scholar}
+\affiliation{6}{Rimtec Corporation, Addison, USA}
+\affiliation{7}{Department of Sociology, DePaul University, Chicago, USA}
+\affiliation{8}{Health Equity Research, American Medical Association, Chicago, USA}
+\affiliation{9}{Center for Precision Psychiatry, Massachusetts General Hospital, Boston, USA}
+\affiliation{10}{Department of Psychiatry, Harvard Medical School, Boston, USA}
+
+% KEYWORDS
+% Provide one or more keywords or key phrases seperated by commas
+% using the following command
+\keywords{racism, medicine, digital humanities, medical humanities, embeddings, natural language processing}
+
+% METADATA FOR THE PUBLICATION
+% This will be filled in when the document is published; the values can
+% be kept as their defaults when the file is submitted
+\pubyear{2025}
+\pubvolume{3}
+\pagestart{672}
+\pageend{689}
+\conferencename{Computational Humanities Research 2025}
+\conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
+\doi{10.63744/voHr9u5XsC0n}  
+\paperorder{42}
+
+\addbibresource{bibliography.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HERE IS THE START OF THE TEXT
+\begin{document}
+
+\maketitle
+%TC:ignore
+\begin{abstract}
+The medical literature has an important role to play in establishing anti-racist practice that may alleviate racial health inequities. Recent critical discourse analyses have demonstrated that medical literature often fails to explicitly name racism or discuss it through a structural lens, instead employing euphemistic language that obscures structural determinants of health inequities. Here, we build upon this work by using Word2Vec word embeddings to interrogate a corpus of 871 published articles containing the word ``racism'' sourced from top medical journals between 1999 and 2020. Our findings reveal distinct patterns in medical discourse around racism. First, hierarchical clustering of discrimination-, power-, and wealth-related words demonstrated clear separation between racism-related concepts and structural determinants, with racism showing minimal similarity to wealth-related words while clustering more closely with other forms of discrimination. Second, we found that qualifying language denoting uncertainty (e.g., ``maybe'', ``possibly'') showed higher similarity to racism-related words than more confident language, suggesting qualifying language serves as a hedge against direct assertions about racist processes. Finally, we conducted a network analysis revealing how concepts cluster within medical discourse, with bridging words between health inequities and racism clusters predominantly reflecting interpersonal rather than structural framings of racism. Specifically, words associated with health inequities, such as ``stress'' and ``homelessness'' connected to racism primarily through person-level gatekeepers such as ``interpersonal,'' ``prejudice,'' and ``overt,'' while structural concepts remained notably absent from common pathways. Overall, understanding these linguistic patterns is crucial as the medical community works to build anti-racist norms, while simultaneously relying on medical text to train artificial intelligence systems deployed in clinical settings.
+\end{abstract}
+%TC:endignore
+\section{Introduction} 
+
+Racism has deep historical roots within the field of medicine \cite{byrd2001race, nelson2002unequal}. While racism can manifest at the interpersonal level through the conscious or unconscious biases of individual care providers \cite{jones2000levels, hoffman2016racial}, \textit{structural racism} -- the broad array of mechanisms and systems by which societies perpetuate racial discrimination \cite{bailey2017structural} -- has a deeper and more insidious impact on health outcomes \cite{ford2010public}. Structural racism systematically shapes medical practices, establishing self-perpetuating cycles of health inequity that endure even when individual clinicians and practitioners espouse egalitarian values \cite{gee2011structural}. Structural racism is particularly evident in the medical literature, where the framing of race-related health differences often disconnects observed inequities from their underlying structural causes, either by avoiding the word ``racism'' entirely or by naming racism without linking it to its role as a driver of health inequities \cite{boyd2020racism, krieger2021medicine, timeboyd2021medicaljournals}.
+
+The manner in which the medical literature discusses racism -- which Figueroa et al. term \textit{racism narratives} \cite{figueroa2023stories} -- shapes policy decisions and clinical beliefs across medicine \cite{hardeman2018naming}. For example, the failure of practitioners to explicitly name racism as a causal factor in health inequities research diminishes awareness of structural determinants among readers, leading to interventions that focus on individual behaviors rather than addressing systemic causes \cite{krieger2021medicine}. Even when racism is explicitly acknowledged, if practitioners discuss it solely through the lens of interpersonal bias rather than as a structural phenomenon, there is correspondingly less pressure to enact the institutional changes necessary to address root causes of health inequity \cite{figueroa2023stories, hamed2022racism, dean2022structural}.
+
+This issue has become particularly pressing as medical texts authored by doctors and clinicians are increasingly being used to train large language models (LLMs) and artificial intelligence models in healthcare applications \cite{alsentzer2019publicly, rasmy2021med, wang2023clinicalgpt}. Structural racism is evident in these medical texts, such as racial bias in the electronic health record \cite{sun2022negative, cobert2024measuring, harrigian2023characterization}. Recent computational studies reveal pervasive racial biases embedded within these systems, demonstrating that LLMs trained on medical corpora exhibit biases in clinical decision-making \cite{zhang2020hurtful, zack2024assessing, yang2024unmasking, omar2025evaluating}. As these biased language models are deployed in clinical decision support systems and diagnostic tools, they risk perpetuating and scaling discriminatory practices across healthcare institutions, making it crucial to understand how medical practitioners conceptualize and discuss racism in their written discourse.
+
+Despite these pressing concerns, recent discourse analyses have empirically demonstrated that racism is often not explicitly named in medical literature \cite{krieger2021medicine, hardeman2018naming, castle2019public}. Furthermore, there remains comparatively limited work examining racism in medicine from a structural perspective \cite{krieger2021medicine}. Notably, Hardeman et al. conducted a review revealing that public health literature avoids naming structural racism as a fundamental cause of health inequities, and thus fails to adequately address them in practice \cite{hardeman2018naming}. Krieger et al. constructed a corpus of medical articles mentioning the word racism, finding that they represent a small fraction of the larger medical literature on health inequities \cite{krieger2021medicine}. Using this corpus, Figueroa et al. developed a typology of \textit{racism narratives} present in the medical literature, with broad categories spanning ``dismissal'', ``person-level'', ``societal'', and ``actionable'' \cite{figueroa2023stories}. Here, we build upon the foundation of critical discourse analysis established by these works by utilizing computational methods to provide a distant reading of racism in the medical literature at scale.
+
+Natural language processing methods, such as word embeddings, can serve as powerful tools for textual interrogation. Word embedding analyses have revealed gender and ethnic stereotypes in both general language corpora \cite{garg2018word, lewis2020gender} and medical texts, including ICU notes and clinical documentation \cite{cobert2024measuring, harrigian2023characterization}. In this work, we apply word embeddings to the corpus developed by Krieger et al. \cite{krieger2021medicine} to interrogate how racism is discussed and conceptualized within the medical literature. By utilizing a variety of secondary analyses, including hierarchical clustering and network analysis, we identify patterns in how racism is linguistically framed within medical discourse. Our findings provide evidence that medical literature conceptualizes racism through individual-level, rather than structural frameworks, which may have implications for how the field understands and addresses structural determinants of health inequities.
+
+\section{Methods}
+
+All code used to carry out the analyses and generate the figures in this paper is publicly available on GitHub.\footnote{\url{https://github.com/dlab-projects/interrogating_racism_medical_literature}}
+
+\subsection{Text collection and preprocessing}
+\label{sec:preprocessing}
+We conducted our analysis on the corpus of medical articles containing the word ``racism'' created by Krieger et al. \cite{krieger2021medicine}. This corpus consisted of articles obtained from four leading medical research journals -- The British Medical Journal (BMJ), The Journal of the American Medical Association (JAMA), The New England Journal of  Medicine (NEJM), and The Lancet, published from 1999-2020. The final corpus consists of 871 articles, with 391 articles from BMJ, 128 from JAMA, 91 from NEJM, and 260 from The Lancet. We used raw text extracted from these articles with optical character recognition (OCR).
+
+We applied a robust text cleaning pipeline to each article in the corpus. The pipeline consisted of preprocessing steps commonly performed in natural language processing, as well as additional steps to clean text obtained from OCR. We used a custom preprocessing pipeline rather than a pretrained tokenizer to control the level of granularity of tokens. The pipeline is as follows: (1) Identify and correct valid words separated into two lines connected by a dash (e.g., ``\texttt{hea- lth}'' $\rightarrow$ ``\texttt{health}''); (2) Remove digital object identifiers, URLs, digits, common punctuation, line separations, and blank spaces between valid words; (3) Remove stop words (e.g., ``\texttt{the}'', ``\texttt{and}'') using a custom curated list; (4) Convert text to lowercase; (5) Replace words in British English with their American English equivalents; \cite{hyperreality_american_british_english_translator} (6) Manually correct common misspellings; and (7) Add spaces between words where OCR removed spaces (e.g., ``\texttt{noblankspaces}'' $\rightarrow$ ``\texttt{no blank spaces}'').
+
+After applying the text cleaning pipeline to each article in the corpus, we tokenized the dataset by breaking down each word or word-like unit (e.g., a contraction) into distinct ``tokens'' using the \texttt{nltk} (Natural Language Toolkit) package \cite{bird-loper-2004-nltk}, which streamlines downstream analyses. Importantly, our tokenizing included lemmatization, where words were converted to their root form (e.g., ``\texttt{roots}''$\rightarrow$ ``\texttt{root}'' and ``\texttt{rooted}''$\rightarrow$``\texttt{root}''). For the rest of this paper, we refer to tokens as ``words.''
+
+We subsequently expanded the vocabulary by creating bigrams and trigrams via the package \texttt{gensim} \cite{vrehuuvrek2011gensim}. The inclusion of bigrams and trigrams allows commonly used pairs and trios of words to be used as single tokens (e.g., \texttt{health\_disparity} or \texttt{social\_determinants\_health}).  We omitted common English connector words when forming bigrams and trigrams (e.g., \textit{also}, \textit{then}, etc.). We only included bigrams and trigrams when they occurred with a minimum frequency phrase count of 10. Bigrams and trigrams were further chosen via a scoring function that assesses the likelihood of co-occurrences of words. 
+
+The above preprocessing pipeline ensured a more robust analysis by removing extraneous words from the text, leaving behind a cleaner corpus dataset for subsequent word embedding calculations. After applying the preprocessing pipeline to the corpus, we obtained a vocabulary with 9,242 unique words (including bigrams and trigrams).
+
+\subsection{Word embeddings}
+\label{sec:word_embeddings}
+\textbf{Overview.} Word embeddings are numerical representations of words, constructed based on their usage in large corpora. In practice, the embedding is a vector of numbers that represents a word in a given corpus. Word embeddings are useful because they capture the meanings, semantic relationships, and syntactic properties of the words. While the raw numerical representation of the word is not interpretable alone, the embedding can be used in downstream quantitative tasks to elucidate the underlying structure of the text. For example, word embeddings have been used to perform semantic tasks quantitatively, such as finding synonyms and testing analogies \cite{mikolov2013distributed}. 
+
+We employed Word2Vec to construct word embeddings (the continuous bag-of-words variant) \cite{mikolov2013efficient}. Word2Vec is a model that generates word embeddings by either predicting a target word from its surrounding context words or predicting context words from a target word. A Word2Vec model is generally specified by two main hyperparameters: (i) a context window $W$ that specifies the number of words surrounding a target word used in training, and (ii) a vector size $V$ specifying the dimensionality of the word embedding. 
+
+Word embeddings enable analysis of pairwise relationships between words with a similarity measure. The similarity measure quantifies the degree to which two words share conceptual or functional similarities based on how they are used in the corpus. We chose to use the cosine similarity, which quantifies similarity as the angle between the tokens' word vectors. The cosine similarity ranges from $-1$ to $1$, where values closer to $1$ represent higher similarity. Although two words with high similarity may not be interchangeable, they are suggested to be used in similar contexts. 
+
+\textbf{Training Procedure.} We used the package \texttt{gensim} to carry out word embeddings analyses \cite{vrehuuvrek2011gensim}. Due to randomness in the optimization algorithm used by \texttt{gensim}, each Word2Vec fit generates different embeddings (and therefore, word similarities). This variation can result in differing interpretations, especially in small corpora. To create a more robust word similarity matrix, we fit word embeddings for 100 random seeds. For each fit, we calculated word similarities between every pairwise combination of words, resulting in a \textit{word similarity matrix} with dimensionality $9242 \times 9242$. We then averaged the word similarity matrices across the 100 fits to produce a final word similarity matrix for the corpus. 
+
+To select the vector and window size hyperparameters, we evaluated the consistency of word similarities for a set of pre-specified seed words across fits. Specifically, for the pre-specified seed words, we identified which words appeared at least 75\% of the time in the list of the top-10 most similar words. We chose the hyperparameter configuration which most consistently maintained the top-10 list. We tested all pairwise combinations of window sizes $W\in \left\{5, 10\right\}$ and vector sizes $V \in \left\{ 32, 64, 128\right\}$. In the process of evaluating the consistency of top similar words, we found that a window size $W=5$ and vector size $V=128$ produced the most consistent and stable results for this corpus. Other hyperparameters were left at their default values.
+
+\subsection{Word Similarity Matrix}
+\label{sec:word_similarity}
+\textbf{Seed Words.} We examined word similarities from a subset of the full $9242 \times 9242$ word similarity matrix. We used 10 seed words related to (1) discrimination (\textit{homophobia}, \textit{sexism}, \textit{racism}, \textit{discrimination}, \textit{bias}), (2) wealth (\textit{wealth}, \textit{poverty}, \textit{economic}), and (3) power (\textit{power}, \textit{structural}). To choose the seeds words, we began with anchor words for each category of interest: \textit{racism}, \textit{wealth}, and \textit{power}. We chose the final seed words in an iterative fashion, by examining the most similar words to the anchor words that fell within the pre-defined categories. We began with a list of 21 candidate words which we narrowed down to the 10 final seed words with the aim of balancing the number of seeds words in each cluster, the total number of seed words, and the magnitude of word similarities.
+
+\textbf{Dendrogram.} To further elucidate hierarchical structure within the $10\times 10$ similarity matrix, we computed a dendrogram. Dendrograms provide evidence of hierarchical structure in data by sequentially clustering pairs or groups of words.  Dendrograms, at their finest levels, pair words with high similarity. These pairings are treated as a unit to form subsequent groupings. The broadest groupings describe more global structure of the word similarity matrix. We conducted hierarchical agglomerative clustering with Ward's linkage  using \textit{scipy} \cite{2020SciPy-NMeth} to construct a dendrogram for the seed word similarity matrix.
+
+\subsection{Qualifying Language}
+\label{sec:qualifying}
+Scientists, clinicians, and editors often use \textit{qualifying language} -- words such as \textit{likely}, \textit{probably}, \textit{possibly}, etc. -- to indicate degree of confidence in claims asserted in publications \cite{hyland1995author}. Such language can also be used to soften or hedge statements \cite{lewin2005hedging}. Given the hesitancy of medical practitioners to name racism, we may find that qualifying language is used to distance authors from strong claims about racism or to minimize its perceived importance. Thus, we used word similarities to quantify the degree to which qualifying language was used in the context of words denoting race or racism. 
+
+\subsection{Network analysis}\label{sec:network_analysis}
+
+\textbf{Network Construction.} To visualize and interpret the $9242 \times 9242$ similarity matrix, we built a network representation by treating the similarity matrix as an adjacency matrix, following past work which uses word embeddings as conceptual space frameworks \cite{liu2025exploring}. In this construction, each word acts as a node, and edges connect word pairs with weights defined as 1 minus their similarity, so that more similar words are positioned closer together. Because every word pair has a similarity score, this network would be extremely dense, making analysis and visualization difficult. To address this, we sparsified the network by removing edges.
+
+We sought to sparsify the network in a manner that reduced the number of edges while preserving rare or informative words. For example, we could sparsify the network by setting a minimum word similarity for inclusion, which would be akin to keeping the top $k$ percent of word similarities. This approach, however, would not be desirable because rare but informative words may have lower similarity scores and would risk being excluded. We instead use an approach similar to the \textit{local degree} method of sparsification in social networks, which has been shown to preserve the global structure of networks \cite{hamann2016structure}. For each word, we chose to only include edges to its 30 most similar words (we refer to this as the ``top-30 list''). This approach ensures every word is included in the network, while retaining only the most meaningful edges. To validate that only connections with high similarity were included, we examined the distribution of least similar pairings for each node in the network. The IQR for this distribution was [0.958, 0.987], suggesting that few to no edges in the network connect dissimilar words. We treated the resulting network as undirected. Thus, in scenarios where one word was in the top-30 list of another, but not vice versa, we included an undirected edge connecting the two words. Sparsifying by keeping only the 30 most similar words for each node reduced the number of edges by 45.3\% compared to only keeping the top 1\% of word similarities in the network.
+
+\textbf{Visualization.} To visualize the network, we extracted a sub-network from the 9242 nodes using 61 hand-selected terms motivated by the construct of racism developed by \cite{figueroa2023stories}, encompassing discrimination-related terms at the individual, societal, and actionable level. We supplemented this list with words related to contributors to health disparities or health outcomes. We visualized the 61-node network with Pyvis, which uses force-directed layout algorithms to identify meaningful clusters based on edge lengths \cite{perrone2020network}. 
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=0.65\textwidth]{figures/fig1.png}
+    \caption{\textbf{Word similarities reveal hierarchical relationships among thematic groups of tokens.} The heat map depicts word similarities for a sub-matrix of 10 hand-picked words, chosen from the broader $9242\times9242$ matrix. Word similarity (colorbar: bluer/darker indicates higher similarity) is measured by the cosine similarity. Words are clustered hierarchically using a dendrogram, indicated by the tree structure.}
+    \label{fig:heatmap_dendrogram}
+\end{figure*}
+
+\textbf{Identifying Gatekeepers.} We sought to identify ``gatekeepers'', or words that mediated conceptual pathways in the network. Gatekeepers can be thought of as having the property of ``betweenness'' (as in betweenness centrality), a common property found in small-word networks characterized by high clustering and short average path lengths \cite{liu2025exploring, watts1998collective}.  Like brokers in social network analysis \cite{kwon2020network}, they occupy strategic positions that potentially shape how medical practitioners understand connections between social determinants and health outcomes.
+
+We focused on gatekeepers between the word \textit{racism} and words related to health inequities. To identify the gatekeepers, we determined the most common words existing on the shortest paths between \textit{racism} and the health inequity words. For example, in this scheme, the shortest path from a word related to health inequities -- \textit{stress} -- and \textit{racism} is traced through:
+\begin{align*}
+\textit{stress}\rightarrow\textit{psychological}\rightarrow\textit{stigma}\rightarrow\textit{interpersonal}\rightarrow\textit{discrimination}\rightarrow\textit{racism}
+\end{align*}
+Here, \textit{interpersonal} serves as a potential gatekeeper (which we validate by examining many paths). We emphasize that these paths reflect correspondences among word usage in medical texts, and do not reflect causality.
+
+We calculated shortest paths between words $w_i, w_j$ on the network, where edge lengths (conditional on an edge existing between two words) were defined as 
+\begin{align*}
+|e_{ij}| = 1 - \text{cosine}(w_i, w_j)
+\end{align*}
+where $\text{cosine}(w_i, w_j)$ is the cosine word similarity between words $w_i$ and $w_j$.
+Thus, pairs of words with high similarity had shorter edges connecting them (and words not in each other's top-30 list had no edge connecting them, due to the sparsification procedure discussed above). Past work leveraging word embeddings networks as conceptual space frameworks generally utilize the shortest path as a meaningful indicator of conceptual relatedness \cite{liu2025exploring, amancio2025leveraging}. 
+
+\textbf{Labeling Health Inequity Words.} To identify a subset of words to use for the shortest path analysis, we used OpenAI's GPT-4 \cite{achiam2023gpt} (the most powerful LLM available to use at the time of analysis) to extract words from the corpus that are directly related to health inequities (see Appendix~\ref{app:system_prompt} for the prompt). We used few-shot learning, providing the model with example input-output to guide selection of relevant words. To account for the size of GPT-4's context window, we prompted 1000 words at a time in batches. From the full corpus of 9,242 words, we identified 110 words related to health inequities.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\textwidth]{figures/fig2.png}
+    \caption{\textbf{Qualifying language reflecting uncertainty more frequently aligns with racism-related words.} The cell color denotes the strength of the word similarity (colorbar: bluer/darker indicates higher similarity) between racism-related words (rows) and qualifying language (columns). Qualifying language is sorted in decreasing order of perceived probability. Exact word similarities are provided in each cell.}
+    \label{fig:qualifier}
+\end{figure}
+
+\section{Results}
+
+We applied word embeddings to a corpus of 871 medical articles containing the word \textit{racism} from four leading medical journals (BMJ, JAMA, NEJM, and The Lancet) published between 1999-2020 \cite{krieger2021medicine}. After implementing a comprehensive text preprocessing pipeline (Section~\ref{sec:preprocessing}), we obtained a vocabulary of 9,242 unique tokens (which we refer to as ``words''). We computed word embeddings by averaging over multiple model fits, improving stability and robustness of the representations (Section~\ref{sec:word_embeddings}) \cite{bloem2019evaluating}. These embeddings enabled us to quantify semantic relationships between words and conduct downstream analyses examining how racism is conceptualized and discussed within medical literature through hierarchical clustering (Section~\ref{sec:word_similarity}), examination of qualifying language (Section~\ref{sec:qualifying}), and a network analysis, using shortest path calculations between racism and words related to health inequities (Section~\ref{sec:network_analysis}).
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.90\textwidth]{figures/pyvis.png}
+    \caption{\textbf{Word similarity network.} The visualized network depicts the structure of a sub-network for 61 hand-selected words. A force-directed layout algorithm positions nodes based on edge lengths, causing similar words to cluster more tightly. Communities of words with greater collective similarity will cluster more tightly.}
+    \label{fig:pyvis_network}
+\end{figure}
+
+\subsection{Word similarities reveal hierarchical relationships among thematic groups of tokens}
+
+We calculated word similarities between all pairs of words in the corpus, resulting in a $9242 \times 9242$ word similarity matrix. Examining all pairwise combinations of similarities would be infeasible. Thus, we analyzed word similarities for a set of hand-picked words using a heat map (Fig.~\ref{fig:heatmap_dendrogram}). The raw frequencies for these words are summarized in Appendix Table~\ref{tab:word_counts_fig1}. The subset of words we chose embodied three groups, corresponding to discrimination, wealth, and power (Section~\ref{sec:word_similarity}). We additionally calculated a dendrogram using the similarity matrix.
+
+The dendrogram (Fig.~\ref{fig:heatmap_dendrogram}: black lines) consists of two large clusters: one containing discrimination-related words and the other containing the power-related and wealth-related words. The second cluster further breaks down into the power-related and wealth-related groupings, demonstrating that the word similarities and resulting dendrogram are able to reveal the semantic structure of these words. The heat map indicates a clear distinction between the two largest clusters. The low similarity between discrimination-related words and power- or wealth-related words suggests they are not often used in similar contexts. Notably, the word similarities between \textit{racism} and the wealth-related words are among the lowest in the similarity matrix, with similarities nearing 0, while \textit{racism} shows slightly higher similarities with power-related words.
+
+The dendrogram further visualized hierarchical structure within these two clusters. For example, among the discrimination-related words, \textit{homophobia} and \textit{sexism} form their own cluster with high similarity, while \textit{racism} couples more tightly with \textit{discrimination} and \textit{bias}. We may expect this result, given that the corpus was constructed with articles containing the word \textit{racism}, but it raises questions about how \textit{discrimination} and \textit{bias} might relate to specific forms of discrimination in a broader medical corpus. Within the power- and wealth-related cluster, \textit{power} and \textit{structural} are grouped together but show distinct patterns in their relationships with other words, such as \textit{poverty}, suggesting context-dependent interpretations. Together, these results demonstrate how the word similarities, via a dendrogram, can facilitate a hierarchical composition of thematic groups of words, shedding light on how tightly coupled notions of racism are with discrimination-, wealth-, and power-related words.
+
+\subsection{Qualifying language reflecting uncertainty more frequently aligns with racism-related words}
+
+Next, we used word embeddings to quantify the relationship between words associated with racism and qualifying language (Section~\ref{sec:qualifying}). We chose four words related to race and discrimination (\textit{racially}, \textit{racist}, \textit{racism}, \textit{discrimination}) and calculated their corresponding similarities with four words used to qualify claims: \textit{likely}, \textit{probably}, \textit{possibly}, and \textit{maybe} (listed in decreasing order of perceived probability) \cite{wallsten1986measuring, budescu1985consistency}. We plotted the word similarities among the 16 pairs in a heat map (Fig.~\ref{fig:qualifier}). 
+
+Among the words analyzed, \textit{racially} showed the highest similarity to qualifying language, while \textit{racism} exhibited the lowest similarity across all qualifiers. As the perceived uncertainty of the qualifier increases (\textit{likely} to \textit{maybe}), the similarity with all four racism-related words also generally increases. For example, the similarity between \textit{likely} and \textit{racism} is $0.12$, whereas the similarity between \textit{maybe} and \textit{racism} is $0.45$. The other three words exhibited similar patterns, with word similarities increasing from $0.52$ to $0.86$ (\textit{racially}), $0.29$ to $0.81$ (\textit{racist}), and $0.3$ to $0.43$ (\textit{discrimination}). These patterns suggest a reluctance to make confident claims about racism. We note these results do not clarify whether that uncertainty is unwarranted, i.e., whether the conclusions of a given paper are strong enough to warrant direct claims on racism, but the authors hedge nonetheless. However, the substantially higher word similarities between qualifying language and \textit{racially} compared to \textit{racism} and \textit{racist} reflect how medical discourse generally employs more neutral, descriptive language as a hedge against making direct assertions about racist processes or discriminatory practices, warranting further examination.
+
+\subsection{Gatekeeper words mediate pathways between racism and health inequities}
+
+The heat map and dendrogram in Figure~\ref{fig:heatmap_dendrogram} facilitated examination of only a small vocabulary of words in the corpus. To better understand the relationship of a broader range of words, we turned to a network analysis (Section~\ref{sec:network_analysis}). First, we visualized a subset of the full vocabulary (Fig.~\ref{fig:pyvis_network}). We provide raw frequencies for these words in Appendix Table~\ref{tab:word_counts_fig3}. We found several distinct clusters, including discrimination-related words (top right) and health inequity outcomes (bottom left). The discrimination cluster exhibited tighter connectivity, with words such as \textit{implicit}, \textit{homophobia}, \textit{exclusion}, and \textit{superiority} showing high similarity to one another. In contrast, health inequity outcomes, including \textit{poverty}, \textit{psychological}, \textit{vulnerability}, and \textit{food\_security}, formed a more dispersed cluster with lower internal connectivity. The upper left region contains words related to expectations and structures, such as \textit{cultural}, \textit{norm}, \textit{power}, and \textit{structural}, which demonstrate relatively low similarity to the discrimination cluster. Notably, several words occupied intermediate positions between the larger clusters, serving as connecting bridges. For instance, \textit{stigma}, \textit{interpersonal}, \textit{biological}, and \textit{construct} all lie along pathways linking discrimination-related words with health outcome words. The positioning of broader words such as \textit{norm}, \textit{power}, and \textit{societal} suggests connections to structural and systemic concepts, though these remain distant (lower in similarity) from the primary clusters.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{figures/Fig4.png}
+    \caption{\textbf{Gatekeeper words mediate pathways between racism and health inequities.} \textbf{a, b.} Example shortest pathways between two candidate targets -- \textit{stress} and \textit{homelessness} -- and \textit{racism}. The words \textit{interpersonal} and \textit{overt} are gatekeepers. \textbf{c.} Sankey plot showing the most common pathways taken up to 3 levels away from \textit{racism}. The width of each flow denotes the fraction of paths passing through that word: the majority of paths pass through \textit{overt}, followed by \textit{interpersonal}.}
+    \label{fig:sankey}
+\end{figure}
+
+The visualization in Figure~\ref{fig:pyvis_network} shows that there are specific words that may connect separate clusters such as health outcomes and words related to racism. Following established work in distributional semantics, we assume that semantic proximity in word embeddings -- reflecting co-occurrence patterns in text -- indicates conceptual associations in medical discourse, such that shortest paths through the network reveal how medical practitioners connect these ideas in their writing \cite{turney2010frequency}. For example, the shortest path between \textit{racism} and \textit{poverty}, a key determinant of health inequities, passes through the word \textit{interpersonal}, suggesting a particular framing of racism (akin to person-level racism from Figueroa et al.'s construct \cite{figueroa2023stories}). If we view the network of word similarities as a conceptual space framework \cite{liu2025exploring}, then these connecting words -- which we call \textit{gatekeepers} -- control how different domains are linked in the semantic mappings of medical text.  We emphasize that a gatekeeper is not the only way to conceptually relate two nodes in a network, but highlights the most prominent semantic path between two concepts in the network, as suggested by the word embeddings. We hypothesized that a few gatekeepers dominate the pathways between racism and words related to health inequities and outcomes.
+
+We identified gatekeepers between \textit{racism} and 110 words related to health inequities by calculating shortest paths from \textit{racism} to these words (Section~\ref{sec:network_analysis}).  We then identified the gatekeepers as the words most consistently appearing on the pathways. For example, in Figure~\ref{fig:sankey}a, the shortest path to the word \textit{stress} passes through \textit{discrimination} and then \textit{interpersonal}, both of which could be potential gatekeepers. Meanwhile, in Figure~\ref{fig:sankey}b, the shortest path to \textit{homelessness} passes through \textit{prejudice} and \textit{overt}.
+
+We identified clear patterns in how the targets connect to racism through the network. The mean pathway distance from the health inequity words to \textit{racism} was 0.292 (ranging from 0.074 to 0.416). The five closest words to racism were \textit{discrimination}, \textit{sexism}, \textit{homophobia}, \textit{microaggression}, and \textit{xenophobia}, while the five most distant were \textit{tuberculosis}, \textit{malaria}, \textit{social\_determinant}, \textit{obesity}, and \textit{poverty}. We visualized the flow of shortest pathways from racism to all health inequity words using a Sankey diagram (Fig.~\ref{fig:sankey}c), with the width of each flow proportional to the number of pathways passing through each gatekeeper. No health inequity words lacked a pathway to racism. Among the pathways, we found that 81.8\% of paths reached their targets through the subsequence \textit{overt}$\rightarrow$\textit{prejudice}$\rightarrow$\textit{racism}, while 9.1\% connected primarily through \textit{interpersonal} (Fig.~\ref{fig:sankey}c), providing evidence for our hypothesis that a few gatekeepers (e.g., \textit{overt} and \textit{interpersonal}) dominate conceptual pathways between \textit{racism} and health inequities.
+
+\section{Discussion}
+
+We leveraged word embeddings to interrogate how racism is conceptualized and discussed in medical literature published in prestigious journals. Our analysis identified distinct patterns in medical discourse around racism, including the separation of racism-related concepts from structural determinants, such as wealth and power, the use of qualifying language (words such as \textit{likely}, \textit{probably}, \textit{possibly}) to hedge discussions of racism, and the dominance of person-level gatekeepers connecting health inequities to racism. These findings provide quantitative evidence that the medical literature discusses racism primarily through individual-level mechanisms rather than structural determinants, and tends to use qualifying language exhibiting uncertainty when discussing it \cite{harper2012race}.
+
+Our analyses focused solely on articles that use the word \textit{racism}. However, in accordance with our hypothesis that medical researchers and clinicians may refrain from naming racism in the medical literature, studying the medical literature on health inequities at large is of paramount importance. Our results serve as an upper bound for engagement with structural racism in the medical literature, because articles that avoid using \textit{racism} are unlikely to engage with it conceptually on a deep level. Indeed, authors may intentionally add qualifying language to words like \textit{racism} in order to discuss it without being required by editors to remove it entirely. Thus, there is a selection bias in the corpus we studied, and future work should conduct similar analyses on medical texts not using the word \textit{racism}. Such analyses could leverage large-scale medical corpora including PubMed \cite{noroozizadeh2025pmoa} and PubMed Central's Open Access Subset \cite{pmc_open_access} to examine patterns of health inequity discourse in the broader medical literature where racism may not be explicitly named. These datasets provide rich opportunities to interrogate discussion (or lack thereof) of racism across time, medical fields, and publication types.
+
+We found gatekeepers (Fig.~\ref{fig:sankey}) that predominantly reflect person-level conceptualizations of racism rather than structural ones. The presence of words like \textit{overt}, \textit{interpersonal}, and \textit{prejudice} as gatekeepers aligns with Figueroa et al.'s person-level racism framework \cite{figueroa2023stories}, suggesting that the portion of the medical literature we study conceptualizes racism primarily through individual attitudes and behaviors. Notably absent from common pathways are words indicative of structural racism such as \textit{institutional}, \textit{systemic}, or \textit{structural}, reinforcing the pattern of individual-focused rather than systems-focused discourse around racism in medical texts.
+
+We focused on medical literature from leading journals that, while internationally circulated, predominantly reflect medical discourse and research conducted within the United States and other Western contexts. The conceptualization and discussion of racism in medical literature may vary significantly across different cultural contexts. For instance, the framing of racism in medical discourse may differ in countries with distinct colonial histories, different racial and ethnic compositions, or alternative healthcare systems. Future research should study how racism narratives manifest in medical literature from diverse global contexts, including journals published in non-English languages and medical systems with different historical relationships to race and ethnicity.
+
+While our analysis focused primarily on racism, our findings briefly touched on related concepts such as sexism and homophobia. Future research could extend these methods to examine how different forms of discrimination are conceptualized and discussed in medical literature, as each carries unique historical trajectories and social contexts within the United States. For instance, the medicalization of homosexuality and its subsequent depathologization \cite{drescher2015out} represents a fundamentally different historical relationship between medicine and LGBTQ+ communities compared to the legacy of medical racism rooted in slavery and segregation. Similarly, discussions of sexism in medicine may be shaped by the field's gender demographics and the particular ways that gender bias manifests in clinical care and research. Comparative analyses across these different forms of discrimination could illuminate how medical discourse varies in its willingness to name and address different types of bias.
+
+Our analysis relied on word embeddings, which capture semantic relationships between individual words but are limited in their ability to represent higher-order linguistic structures and contextual interactions between concepts. We opted for word embeddings to set a foundation for future work relying on more advanced techniques. For example, sentence embeddings offer a promising avenue for deepening our understanding of how racism is discussed in medical literature by preserving the broader semantic context in which words appear \cite{reimers2019sentence, cer2018universal}. Future research could employ sentence embeddings to cluster sentences or paragraphs containing the word \textit{racism} to identify distinct narrative frameworks in the spirit of Figueroa et al.'s typology of racism narratives. Additionally, large language models present a promising direction in mixed-methods approaches, and could serve to support qualitative analyses by facilitating thematic coding and iterative analysis of racism narratives \cite{tai2024examination}.
+
+As the medical community continues to reckon with its historical and contemporary role in perpetuating racial health inequities and establish anti-racist norms, studies of this nature will become increasingly important to ensure accountability \cite{crear2020moving}. Clinical journal language is powerful in that it establishes dominant narratives and therefore the norms in the medical community. Furthermore, since clinical journals are used in continuing medical education, their language impacts how medical students are trained and practice medicine \cite{milota2019narrative}. Even more pressing, clinical journals -- and other related texts written by medical practitioners -- are increasingly used to train large language models for medical AI systems  \cite{alsentzer2019publicly, rasmy2021med, wang2023clinicalgpt}. Their language will directly shape the biases and perspectives embedded in these AI tools, influencing future clinical decision-making and patient care. The size and scope of these systems will necessitate continuing work and innovation in computational humanities to critically examine and audit their usage and impact.
+
+\section*{Acknowledgements}
+We acknowledge funding from the American Medical Association which supported this work in its early stages. The ideas in this article are those of the authors and do not necessarily represent policy of the American Medical Association.
+
+% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
+\printbibliography
+\clearpage
+
+% You can include an appendix using the following command
+\appendix
+
+\section{System Prompt for Identifying Words Related to Health Inequities} \label{app:system_prompt}
+
+\begin{tcolorbox}[colback=gray!5!white,colframe=black!75!black,title={Round-robin, Head-to-Head Deliberation System Prompt},fonttitle=\bfseries,breakable]
+\begin{ttfamily}
+
+    You are a tool for labeling health related terms.\\
+    
+    You will be given a list of health related terms with each term separated by a comma.\\
+
+    Please return the words from the given list that is related or contributing to health disparities.\\
+    
+    Return "poverty", "homophobia", "stigma", "stress", and "racism" because they are directly related and contributing to health disparities.\\
+    
+    Do not return "africa", "male", "health", "patient", "black", "cocaine", "invasion", "horrible", and "cancer" because they are not directly contributing to health disparities.\\
+    
+    If none of the terms are health related terms, return "NONE".
+
+\end{ttfamily}
+\end{tcolorbox}
+
+\clearpage
+\section{Frequencies of Seed Words} \label{app:keyterms_freq}
+\begin{table}[h!]
+\centering
+\begin{tabular}{l r l r }
+\toprule
+Word & Count & Word & Count \\
+\midrule
+homophobia & 33 & economic & 685 \\
+sexism & 62 & wealth & 123 \\
+racism & 1550 & poverty & 465 \\
+discrimination & 734 & power & 453 \\
+bias & 391 & structural & 323 \\
+\bottomrule
+\end{tabular}
+\caption{Frequencies of seed words for Figure~\ref{fig:heatmap_dendrogram}.}
+\label{tab:word_counts_fig1}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{l r l r l r }
+\toprule
+Word & Count & Word & Count & Word & Count \\
+\midrule
+stereotype & 107 & sexual\_orientation & 37 & environmental & 313 \\
+exclusion & 133 & systemic & 123 & economic & 685 \\
+prejudice & 179 & gender & 562 & vulnerability & 110 \\
+superiority & 13 & interpersonal & 71 & food\_security & 46 \\
+experience & 1005 & injustice & 157 & distribution & 161 \\
+overt & 62 & historical & 211 & underlying & 138 \\
+homophobia & 33 & culture & 767 & poverty & 465 \\
+bias & 391 & cultural & 662 & societal & 126 \\
+racial\_discrimination & 145 & construct & 51 & norm & 163 \\
+religion & 89 & identity & 258 & sociopolitical & 20 \\
+oppression & 78 & stress & 268 & fundamental & 141 \\
+implicit & 77 & stigma & 130 & structural & 323 \\
+racism & 1550 & deprivation & 116 & influence & 272 \\
+discrimination & 734 & negative & 232 & difference & 882 \\
+segregation & 95 & disadvantage & 186 & sex & 483 \\
+perceived & 177 & biological & 188 & class & 321 \\
+sexism & 62 & driver & 116 & ethnicity & 351 \\
+stereotyping & 74 & psychosocial & 86 & disparity & 911 \\
+belief & 293 & wealth & 123 & power & 453 \\
+race & 1025 & consequence & 318 & & \\
+racial & 893 & affecting & 84 & & \\
+\bottomrule
+\end{tabular}
+\caption{Frequencies of seed words used to generate network in Figure~\ref{fig:pyvis_network}.}
+\label{tab:word_counts_fig3}
+\end{table}
+\end{document}

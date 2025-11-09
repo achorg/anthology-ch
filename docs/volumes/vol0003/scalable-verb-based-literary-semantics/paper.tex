@@ -1,0 +1,734 @@
+\documentclass[final]{anthology-ch}
+
+\usepackage{booktabs}
+\usepackage{multirow,multicol}
+\usepackage{lipsum}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{makecell}
+\usepackage{xcolor}
+\usepackage[many]{tcolorbox}
+\tcbuselibrary{skins}
+
+
+
+
+\newenvironment{llmprompt}
+{
+    \setcounter{promptcounter}{0}
+    \begin{tcolorbox}[
+        enhanced,
+        breakable,
+        frame hidden,
+        boxrule=0pt,
+        borderline west={2pt}{0pt}{gray!30},
+        colback=gray!5,
+        sharp corners,
+        before upper={\footnotesize},
+    ]
+}
+{
+    \end{tcolorbox}
+    \setcounter{promptcounter}{0}
+}
+
+\usepackage{listings}
+\usepackage{subfig}
+\usepackage{todonotes}
+
+\title{Scalable Verb-Based Literary Semantics}
+
+\author[1]{Hans Ole Hatzel}[%
+    orcid=0000-0002-4586-7260,
+]
+
+\author[2]{Haimo Stiemer}[orcid=0000-0002-4407-2415]%
+
+\author[2]{Evelyn Gius}[%
+    orcid=0000-0001-8888-8419,
+]
+
+\author[1]{Chris Biemann}[%
+    orcid=0000-0002-8449-9624,
+]
+
+\affiliation{1}{Department of Informatics, University of Hamburg, Hamburg, Germany}
+\affiliation{2}{Institute of Linguistics and Literary Studies, TU Darmstadt, Darmstadt, Germany}
+
+\keywords{verb classes, prompting, computational literary studies, large language model, rag, semantics, genre, themes}
+
+
+\pubyear{2025}
+\pubvolume{3}
+\pagestart{434}
+\pageend{446}
+\conferencename{Computational Humanities Research 2025}
+\conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
+\doi{10.63744/IwD9hAGns9BK}
+\paperorder{27}
+
+\addbibresource{bibliography.bib}
+
+
+\begin{document}
+
+%%
+%% The "author" command and its associated commands are used to define
+%% the authors and their affiliations.
+\newcounter{promptcounter}
+
+\newcommand{\user}[1]{
+    \ifnum\value{promptcounter}>0\vspace{1em}\hrule\vspace{1em}\fi
+    \stepcounter{promptcounter}
+    \textcolor{blue}{\textbf{User:}}
+    #1
+}
+
+\newcommand{\system}[1]{
+    \ifnum\value{promptcounter}>0\vspace{1em}\hrule\vspace{1em}\fi
+    \stepcounter{promptcounter}
+    \textcolor{red}{\textbf{System:}}
+    #1
+}
+
+\newcommand{\assistant}[1]{
+    \ifnum\value{promptcounter}>0\vspace{1em}\hrule\vspace{1em}\fi
+    \stepcounter{promptcounter}
+    \textcolor{green!50!black}{\textbf{Assistant:}}
+    #1
+}
+
+\newcommand{\interruption}[1]{
+    \ifnum\value{promptcounter}>0\vspace{1em}\hrule\vspace{0em}\fi
+    \begin{tcolorbox}[
+        enhanced,
+        frame hidden,
+        boxrule=0pt,
+        colback=yellow!10,
+        sharp corners,
+        left=10pt,
+        right=10pt,
+        top=5pt,
+        bottom=5pt
+    ]\textbf{#1}
+    \end{tcolorbox}\vspace{-1em}
+    \stepcounter{promptcounter}
+}
+%% Footnotes
+
+\maketitle
+%%
+%% The abstract is a short summary of the work to be presented in the
+%% article.
+%TC:ignore
+\begin{abstract}
+    We present a novel, scalable approach for coarse-grained semantic profiling of literary texts, intended as an alternative to existing explorative approaches like topic modeling.
+    We propose using verb classes, essentially a coarse-grained variant of word sense disambiguation, to build interpretable semantic text profiles.
+    In our approach, we classify verbal phrases based on the semantic class of their full verb, as formalized in GermaNet and WordNet.
+    Our 10,000 manual annotations serve as a testbed for our retrieval-augmented generation (RAG) approach to classifying semantic verb classes.
+    We test foundation models in multiple prompting setups with few-shot learning and RAG, illustrating that our approaches can almost, but not quite, match the performance of human annotators.
+    Our application to four genre corpora (Romantic fiction, Regional literature, Crime fiction, Adventure fiction) of German-language texts demonstrates that such semantic profiles can reveal the thematic focuses of document collections.
+    We release our corpus of more than 10,000 verb class annotations.\footnote{The data is available at \url{https://github.com/forTEXT/verbclasses/}}
+    %In this work, we introduce novel annotations of semantic verb classes for literary texts on German data based on existing concepts.
+    %In the first step, we explore agreement scores in these verb class annotation, showcasing difficulties for our annotators.
+    %We propose to semantically profile texts by the verb classes therein.
+    %We present an LLM-based approach to identifying semantic verb fields in literary texts with the ultimate goal of scaling our annotations to the corpus level.
+    %Multiple recently released LLMs are tested on an annotation task typical for computational literary studies, potentially showing some guidelines for which models are appropriate for analyzing literary texts.
+    %We showcase the prompting-based approach and its problems, testing zero-shot and few-shot approaches.
+    %Our prompting approach performs very well and outperforms our human annotators.
+\end{abstract}
+%TC:endignore
+
+\section{Introduction}
+What is a text about? At first glance, the question seems straightforward; yet the wide range of scholarly approaches contests this assumption. For example, non-computational, qualitative German literary studies in the field of thematology are dominated by research that focuses on concepts such as ``Stoff'' or ``Motiv'' \cite{frenzelMotiveWeltliteraturLexikon1980custom,daemmrichThemenUndMotive1995}, which roughly means a canonical story pattern or plot material.
+However, their definition is often based on interpretative reading and lacks operational characteristics.
+%It is notoriously difficult to identify, quantitatively and unambiguously, which themes a text deals with.
+%The existing approaches and handbooks in German literary studies are oriented towards concepts such as "Stoff" or "Motiv" \cite{frenzelMotiveWeltliteraturLexikon1980custom,daemmrichThemenUndMotive1995}.
+%They are older and methodologically not without drawbacks. In addition, they are primarily used to identify historically conventionalized theme structures or plot aspects in texts. In computational literary studies, topic modeling has become established for the exploration of text content \cite{hatzelMachineLearningComputational2023}. In this work, we explore an alternative approach to this task by identifying the distribution of semantic classes of verbs across texts.
+In Computational Literary Studies (CLS), topic modeling has become an established technique for the exploration of text content \cite{hatzelMachineLearningComputational2023}. Nevertheless, in addition to its dependence on hyperparameters for which ideal values cannot trivially be determined \cite{uglanova_order_2020}, it is not a straightforward approach for thematic analysis, as it requires an interpretation of the `topics'.
+%Semantic role labeling is also much discussed, e.g., in the context of BookNLP
+%In this paper, we explore an alternative approach to this task by identifying the distribution of semantic classes of verbs in texts. From our point of view, the advantage is to be able to semantically explore groups of texts on a more objective basis.
+Resources like WordNet \cite{fellbaumWordNetElectronicLexical1998} and its German-language counterpart GermaNet \cite{hampGermaNetLexicalSemanticNet1997} do not depend on interpretation and parametrization because they provide a general semantic approach, listing numerous senses per lemma. FrameNet \cite{bakerBerkeleyFrameNetProject1998} defines a rich inventory of semantic frames and their roles. These fine-grained approaches, however, pose practical challenges. Relying on the occurrence statistics of hundreds of senses or frames across texts leads to sparsity issues, making direct comparison and semantic profiling difficult in practice.
+%Additionally, the fine-grained approach, annotating each lemma with a sense, leads to coverage issues.
+Our approach, following a previously published concept \cite{anonymous2025}, aims to enhance both interpretability and generalizability by identifying only the broad semantic areas of specific actions, thereby gaining a preliminary overview of the thematic profile that scales from single literary texts to entire corpora.
+We achieve this by using not the synsets but the semantic verb classes or fields in GermaNet, which are based on the verb classes by Levin, instead \cite{levinEnglishVerbClasses1993}.\footnote{\url{https://uni-tuebingen.de/en/faculties/faculty-of-humanities/departments/modern-languages/department-of-linguistics/chairs/general-and-computational-linguistics/ressources/lexica/germanet/description/verbs/verb-semantic-fields/}}
+They classify all verbs into 15 categories (see \autoref{tab:class_distribution} for a complete list of all classes).
+Verbs are central carriers of action and process \cite{maienbornEventSemantics2011}; they can be said to represent the events in a text at a micro level.
+Aggregated verb analysis provides a profile-like representation of a given text's event type distribution, which in turn correlates with genres and thematic patterns \cite{klavansRoleOfVerbs1998}.
+Moreover, verb class analysis facilitates the interpretation of its results, since verb classes do not constitute an overly fine-grained categorical system.
+
+%The task of verb class identification differs from the traditional word sense disambiguation (WSD) task \cite{bevilacquaRecentTrendsWord2021} in that it is less fine-grained. Previous approaches have used the lexicographic classes in WordNet, which largely align with the classes we are using \cite{ciaramitaBroadCoverageSenseDisambiguation2006}. Their tagger reached accuracy scores of around 80\% for the best-identified verb classes. This approach of super sense tagging is also implemented in BookNLP\footnote{\url{https://github.com/booknlp/booknlp}}, a Python package for computational analysis of English literature. \todo{Potentially remove this paragraph, we are not really after methodological novelty and its likely outdated} In terms of LLM-based approaches to WSD, we are only aware of one approach \cite{labaContextualEmbeddingsUkrainian2023} that actually makes use of embeddings rather than generative capabilities and operates on Ukrainian language text.Similarly, a zero-shot approach using embeddings of sense definitions was evaluated \cite{kumarZeroshotWordSense2019}. MonaPipe \cite{donickeMONAPipeModesNarration2022} is a system for German literature that, among other functionalities, offers rule-based WSD using the GermaNet sense inventory.
+
+In this paper, we first present the manual annotation task for verb classes (\autoref{sec:annotation}) and explore the resulting annotation data (\autoref{sec:data_exploration}).
+In the second step, we automate the annotation of these classes by comparing various prompting techniques across a range of large language models (LLMs) and validate our automated methods using manually annotated data (\autoref{sec:automation}).
+We then apply our approach to four genre corpora to examine the extent to which verb classes also indicate genres (\autoref{sec:corpus_application}).
+Finally, we provide a preliminary evaluation of our approach and the results (\autoref{sec:conclusion}).
+
+%This analysis includes verifying the quality of annotations using agreement scores and exploring the distribution of categories across texts and with existing annotations.
+
+%In the final step, we use automatic annotations to scale to a larger dataset, exploring patterns in verb classes at scale.
+
+%As mentioned before, our task is closely related to that of word sense disambiguation (WSD).
+%In WSD, given a specific term and a sense inventory, the specific sense is to be identified.
+
+
+\section{Annotation Procedure}%
+\label{sec:annotation}
+
+\begin{table}[ht]
+\small
+\centering
+\begin{tabular}{lrrrcr}
+\toprule
+& \multicolumn{3}{c}{Number of Annotations} & \\
+\cmidrule{2-4}
+Text Title & Annotator 1 & Annotator 2 & Annotator 3 & Fleiss' Kappa & Tokens \\
+\midrule
+%Das Erdbeben in Chili & 542  & 725  & 677  & 0.68 \\
+%Der blonde Eckbert    & 898  & 715  & 54   & 0.32 \\
+%Die Judenbuche        & 52   & 0    & 2269 & 0.66 \\
+%Die Verwandlung       & 2296 & 1646 & 53   & 0.76 \\
+%Krambambuli           & 135  & 0    & 485  & 0.62 \\
+Das Erdbeben in Chili & 666 & 725 & 677 & 0.64 & 6499 \\
+Der blonde Eckbert & 898 & 930 & 54 & 0.85 & 7508 \\
+Die Judenbuche & 52 & 0 & 2269 & 0.73 & 20129 \\
+Die Verwandlung & 2296 & 2283 & 53 & 0.69 & 22299\\
+Krambambuli & 135 & 0 & 507 & 0.76 & 4573 \\
+
+% & Heinrich von Kleist          
+% & Ludwig Tieck                 
+% & Annette von Droste-Hülshoff  
+% & Franz Kafka                  
+% & Marie von Ebner-Eschenbach   
+
+\bottomrule
+\end{tabular}
+\caption{Corpus statistics and agreement scores across texts in our dataset.}
+\label{tab:kappa_values}
+\end{table}
+
+We annotated five German prose texts, all of which were initially published between 1797 and 1915.
+Following previous work in computational literary studies \cite{vauthRichtlinienFurAnnotation2021}, our annotation units are individual verbal phrases.
+We instructed three annotators, university students of literary studies, to annotate verb classes in verb phrases.
+Each verb class is determined by the main verb; modal verbs are ignored.
+Annotators were encouraged to consult the GermaNet sense inventory via a web interface.\footnote{\url{https://weblicht.sfs.uni-tuebingen.de/rover/}}
+They received no explicit class definitions beyond the explanation on the GermaNet website.
+
+Our process involves annotating individual verbs with their corresponding verb class, utilizing GermaNet as a resource during this process.
+In cases where GermaNet does not cover a sense, the annotation task can become challenging. For example, the sense of the lemma ``legen'' (to lay) in the sentence ``Das Huhn legt ein Ei.'' (The chicken lays an egg) is not covered by GermaNet, despite covering eight specific senses and six verb classes.
+In these cases, annotators must select the correct class unaided.
+%At first sight, potential candidates (see \autoref{tab:class_distribution} for a list of all classes) for this example may be \textit{Körperfunktion} (Verbs of Body) or \textit{Schöpfung} (Verbs of Creation).
+%At the same time, the lemma ``melken'' (to milk), in the sense of milking cattle, is considered to be in the field of \textit{Veränderung} (Verbs of Change).
+%Perhaps more convincingly, the lemma ``gebären'' (to give birth), classified as \textit{Körperfunktion} (Verb of Body), may serve as a reference point.
+%Overall, as all reproduction-related terms are labeled as \textit{Körperfunktion}, we would consider this to be the correct label.
+
+%Our annotators are students of literary studies, paid as student assistants.
+
+
+%We used a total of three annotators.
+Each text was annotated in full by at least one annotator; to collect agreement scores, additional passages of each text were annotated by a second and, in three out of five cases, a third annotator.
+In \autoref{tab:kappa_values}, we list statistics on the annotations.
+
+\section{Data Exploration}\label{sec:data_exploration}
+Macro-averaging across texts, our annotators achieve a Fleiss' Kappa agreement of 0.73 on our 15-class classification task.
+As shown in \autoref{tab:kappa_values}, we have an agreement 0.64 or above for all texts.
+This is far from a perfect agreement, but we argue that it is expected in our case, as multiple classes could be considered correct in many cases. %\todo{Beispiel: sowas wie ``er sah das es gut war`` Kognition oder Perzeption, in dem Fall wohl eher Kognition aber schon sehr schwierig zu unterscheiden}
+
+%This outlier can be entirely explained by the performance of Annotator 3.
+%They achieve an overall Cohen's Kappa agreement of 0.54 with Annotator 1 and of 0.24 with Annotator 2, whereas Annotator 1 and Annotator 2 achieve an agreement of 0.77.
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/confusion-all-texts-all-annotators.png}
+    \caption{The confusion matrix for all spans with multiple annotations shows annotator (dis)agreement across all texts and annotator pairs. The values are row-normalized.}
+    \label{fig:confusion_matrix_all}
+\end{figure}
+
+The distribution of verb classes in our dataset is top-heavy, with around a quarter of our 11,545 annotations being of the \textit{Stative Verbs} (Allgemein) category. In contrast, rare categories like \textit{Competition} (Konkurrenz) only represent a small fraction (0.42\%) of all annotations.
+See Appendix \ref{app:class_distribution} for the detailed breakdown.
+
+\autoref{fig:confusion_matrix_all} shows a clear difference in difficulty across classes for human annotators.
+While the class \textit{Consumption} (Verbrauch) is identified with a perfect agreement, \textit{Competition} (Konkurrenz) is often also identified as \textit{Communication} (Kommunikation), \textit{Location} (Lokation), \textit{Creation} (Schöpfung), or \textit{Stative Verb} (Allgemein). %\todo{Frage Evelyn: Sind das wirklich (ausschließlich) statische Verben? Das ist verwirrend und mich würde interessieren, ob das im Annotationsprozess Probelme gemacht hat (und auch, ob das eine Reste-Kategorie ist oder nicht und ob die Annotator:innen sie unabhängig davon als Restekategorie genutzt haben}
+
+\subsection{Semantic Text Profiles}
+The diverging bar chart in \autoref{fig:radar_normalized} shows the ratio of verb class occurrences in each of our texts to the expected occurrence of each class given its frequency across all five texts and the given text's length; the plot is based on the data from the main annotator of each text.
+Since our frequency information is based only on the five texts, meaning the frequencies can be understood only as a comparison with the other texts, a larger reference corpus would be beneficial once automated classification is applied.
+%This selection reduces annotation quality, but as we do not have double annotations available for the whole text, including a second annotator's judgment would lead to a bias towards the sections of text that were doubly annotated.
+%For example, \textit{Naturphänomen} is more than three times more common in ``Das Erdbeben in Chili'' (The Earthquake in Chile) than across our corpus. 
+The text-specific representation of the verb classes reveals discrete semantic profiles in at least four of the five texts.
+In ``Das Erdbeben in Chili'', the class of natural phenomena is most prominent.
+This comes as no surprise, as the title (The Earthquake in Chile) already announces the earthquake that is central in the first part of the text.
+In contrast, Kafka's ``Verwandlung'' has the fewest verbs from the class of natural phenomena, which is also not unexpected, as the setting of this story is almost exclusively interior. 
+In the ``Krambambuli'' text, the dispute between two men over a dog takes the center of attention; here, the highest value is, by a wide margin, found in the \textit{Possession} (Besitz) class. These observations indicate that verb classes can be suitable for the semantic profiling of texts.
+
+In short texts, deviations from the expected value are common in rare classes since just a few instances can lead to the expected value being far surpassed.
+Aside from the previously mentioned lack of natural phenomena, the plots for the Kafka text and, above all, of ``Die Judenbuche'' prove to be less distinctive.
+
+Moreover, some common verb classes may be too broad and can contribute to non-distinctive profiles, as evidenced by classes like \textit{Stative Verbs} (Allgemein) and \textit{Cognition} (Kognition), in which we observe little deviation.
+Finally, we see a sizable spread in the frequency of the \textit{Location} (Lokation) class despite its frequency.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\textwidth]{figures/dataset_frequencies.png}
+    \caption{The comparative frequency of verb classes in our analyzed texts, normalized by the expected number of class occurrences given the corpus-wide distribution and the text length.}
+    \label{fig:radar_normalized}
+\end{figure}
+
+\section{Automation}
+\label{sec:automation}
+For our initial model comparison, we randomly sample 10 instances from each class, for a total of 150 samples.
+This stratified sampling approach eliminates bias against underrepresented classes in our evaluation data, thereby improving the robustness of our approach to unseen data with potentially different distributions. %but not in unseen data.
+While such a bias would improve inference results on our data, it would also impact generalization, especially when estimating the relative class frequencies for entire works on a corpus level.
+As we consider this sample, our development set, we retain three texts (``Der blonde Eckbert'', ``Krambambuli'', and ``Die Verwandlung'') for subsequent testing and do not include them in our development set.
+%Further, the evaluation of LLMs is resource-intensive, and limiting our initial exploration to 150 samples makes the evaluation less costly, enabling a broader exploration of possible approaches.
+%Instead, sampling only those annotations where two or more annotators agree would lead to potentially sampling the easy cases, perhaps for lemmas with few very distinct cases that are all present in GermaNet already.
+
+\subsection{Prompting Setups}\label{sec:automation_prompting}
+% Examples for why its hard: jammern, ergreifen from few-shot
+We test multiple prompting setups to compare their classification performance.
+All setups are tested in a multi-turn conversion.
+The first step asks the model to identify the full verb given the manually selected verbal phrase.
+The second step asks it to reason about the potential verb classes; the third step asks for the actual classification decision.
+We test adding a retrieval-augmented generation (RAG) \cite{liSurveyRetrievalAugmentedText2022} component to this setup, which queries GermaNet for the lemma identified in step one.
+Generally, RAG involves passing a generative model an additional input containing information relevant to the task at hand, often using an embedding-based search.
+For example, this can mean providing results from a web search to an LLM that is composing the answer to a user's question by including them in the model's input.
+Our RAG approach searches GermaNet using the lemma previously extracted by the LLM and inputs a textual representation of all synsets for the lemma, including sample usages and definitions.
+This textual representation is passed to the model alongside the verbal phrase, its lemma, and the context.
+Thus, in a strict sense, our approach does not conform to the standard RAG pipeline, relying on string search rather than embedding search.
+We test the effect of in-context few-shot learning for our task.
+
+\begin{table}
+    \centering
+    \begin{tabular}{lccccc}
+        \toprule
+        \multirow{2}{*}{Model Name} & \multirowcell{2}{LLM-arena \\ ELO} & \multicolumn{2}{c}{Zero-Shot} & \multicolumn{2}{c}{Few-Shot}  \\
+        \cmidrule(lr){3-4} \cmidrule(lr){5-6}
+            & & no RAG & RAG & no RAG & RAG  \\
+            \midrule
+            Random Baseline & - & 0.07 & - & - & - \\
+            Lemma's Random Sense & - & 0.41 & - & - & - \\
+            \midrule
+            %Command R+ & 1188 & 0.35 & 0.62 & 0.45 & 0.66\\
+            Llama-3-70B-Instruct  \cite{grattafiori2024llama3herdmodels} & 1275 & 0.43 & 0.61 & 0.48 & 0.68 \\
+            Gemma-3-27B-it \cite{gemmateam2025gemma3technicalreport} & 1365 & 0.47 & 0.68 & 0.49 & 0.69\\
+            GPT-4.1\footnotemark & 1412 & 0.53 & \textbf{0.75} & 0.54 & \textbf{0.74} \\
+            %Qwen2-72B-Instruct & 1133 & 0.44 & 0.67 & 0.52 & 0.64 \\
+            %Mixtral-8x22b-Instruct-v0.1 & 1127 & 0.41 & 0.41 & 0.43 & 0.29 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Model accuracy in classifying semantic verb classes on our class-balanced development set. For reference, we provide German LM-arena ELO scores as of 2025-07-09.}
+    \label{tab:model_performance_dev}
+    \footnotetext{\url{https://openai.com/index/gpt-4-1/}}
+\end{table}
+%\thefootnote{\url{https://chat.lmsys.org/}}
+
+We focus on testing open-weight models, selecting Llama-3  \cite{grattafiori2024llama3herdmodels} as a popular choice in the NLP and DH communities and Gemma-3 27B \cite{gemmateam2025gemma3technicalreport}, a smaller, more recent model.
+We test both models at 16-bit precision but acknowledge that quantization could be explored to apply our approach to more data.
+For comparison, we also test GPT-4, the latest non-reasoning non-preview model by OpenAI.\footnote{Specifically, we use gpt-4.1-2025-04-14.}
+%Specifically, these are Command R+ by Cohere, Llama-3-70b\footnote{\url{https://ai.meta.com/blog/meta-llama-3/}} by Meta in its instruct variant, Qwen2-72B\footnote{\url{https://qwenlm.github.io/blog/qwen2/}} by Qwen in its instruct variant, and Mixtral-8x22B\footnote{\url{https://mistral.ai/news/mixtral-8x22b/}} by Mistral in its instruct variant.
+%Mixtral and Command R+ are mixture-of-expert systems with more than 100 billion parameters, while Qwen2 and Llama3 each have around 70 billion parameters.
+%All models are evaluated in 16-bit precision using Ollama as an inference server\footnote{\url{https://ollama.com/}}.
+
+\autoref{tab:model_performance_dev} shows the models' performance on our task and their LM arena ELO score \cite{chiangChatbotArenaOpen2024}.
+ELO is a win-rate-based measure, in this case based on LLM-arena votes, with users choosing which of two random models' outputs they prefer.
+
+As a baseline, we add an approach that outputs a verb class of random sense out of those present for the lemma.
+Each lemma typically has a few senses, many of which may share the same verb classes.
+This baseline already considerably outperforms the random baseline, reaching an accuracy of 0.41 compared to the random baseline's 0.07.
+As the more recent model, Gemma-3 unsurprisingly exhibits a better arena score than Llama-3 but scores below GPT-4.
+
+
+%In the few-shot setup, most models barely outperform the random lemma sense baseline, reaching scores of 0.45, 0.43, and 0.45 as compared to the baseline's 0.41.
+%Only Qwen2 performs better by a wide margin in this setup, reaching an accuracy of 0.52.
+%All models except for Mixtral perform much better in the RAG setup.
+%The best model is Llama-3 in a few-shot setup with RAG, resulting in an accuracy of 0.68.
+%Interestingly, Qwen2 performs on par with Llama-3 but only in the zero-shot RAG setup.
+%After validating that this is not an effect caused by length limitations, the only plausible explanation is that the few-shot examples bias the model toward classes in those examples.
+%In fact, we find a Spearman correlation of 0.41 between the number of times Qwen2 predicts a label in the few-shot RAG setup and its inclusion in the five-shot training data.
+%On the other hand, for the same setup with Llama 3, we only find a correlation of 0.05; for Llama3, there is only a slight bias towards classes in the few-shot examples.
+%Therefore, we attribute Qwen2's underperformance in the RAG few-shot scenario on our task to its bias toward classes present in the few-shot examples.
+%In principle, Qwen2 supports longer contexts, but we could not evaluate that for the full precision model due to memory limitations.
+%Llama3, on the other hand, only supports around 8,000 tokens, making it unable to handle few-shot examples for each class in our data.
+
+The RAG-based approach outperforms the others by far. This raises the question: does the model only disambiguate between existing word senses, or  does it sometimes use semantic classes different from those present in GermaNet?
+To this end, we evaluate the accuracy of our model given specific coverage scenarios.
+The results are based on lemmas that are automatically extracted by the LLM.
+Either there are definitions for a given lemma (``Lemma and Class Covered''), or there are no matching definitions (``Lemma not Covered'').
+In the former case, there is also the option that none of the definitions in GermaNet have the correct verb class (``Lemma Covered but not Class'').
+
+\begin{table}[t]
+    %\centering
+    %\caption{We list the percentage of GermaNet coverage cases given a correct or incorrect classification by our Llama3 System. The last column gives the percentage of uncovered classes being caused by the lemma not being known to GermaNet in the first place.}
+  \label{tab:just_retrieving}
+%
+    %\begin{tabular}{lcccc}
+    %    \toprule
+    %     Given Classification Result & Total & Covered Class & Uncovered Class & Covered Lemma but Uncovered Sense \\
+    %    \midrule
+    %     Correct   & 68\% &  91.26\% & 8.74\% &  5.82\% \\
+    %     Incorrect & 32\% &  51.06\% & 48.94\%  & 38.29\% \\
+    %     \bottomrule
+    %\end{tabular}
+    \centering
+    \begin{tabular}{lcccc}
+        \toprule
+                   & \multicolumn{3}{c}{Accuracy} \\
+                   \cmidrule{2-4}
+                   & RAG + Few-Shot & RAG & Few-Shot \\
+        \midrule
+         Lemma and Class Covered      & 79.77\% & 76.40\% & 49.43\%\\
+         Lemma not Covered            & 50.00\% & 50.00\% & 50.00\%\\
+         Lemma Covered but not Class  & 54.23\% & 59.32\% & 47.46\%\\
+         \bottomrule
+    \end{tabular}
+    \caption{We list the accuracy of Gemma-3 given specific GermaNet coverage scenarios. Of our 150 development set examples, only two lemmas are not covered at all in GermaNet.}
+    \label{tab:just_retrieving}
+\end{table}
+\autoref{tab:just_retrieving} shows these results for the Gemma-3 model.
+We can observe that, given an example with the correct class for a given lemma is present in GermaNet, the chance of a correct output is almost 80\%.
+If no definitions are available for the lemma, the performance drops to around 70\%.
+In the worst case, however, senses are available for a lemma, but none offer the correct verb class, meaning the model has to select a class not covered by the definitions.
+In our setup, Gemma-3 still achieves a 54.23\% accuracy for those examples.
+We observe that the RAG approach with few-shot examples yields increased accuracy compared to the RAG approach only when the lemma and class are covered.
+Given that the RAG few-shot examples specifically instruct the model to check all senses individually, this is hardly surprising.
+In conclusion, we observe that the model disambiguates between existing senses and even picks the correct senses when the retrieval results are misleading in that they only contain other senses.
+
+In preliminary experiments, the reasoning models o3\footnote{\url{https://platform.openai.com/docs/models/o3}} and DeepSeek-R1 \cite{deepseekai2025deepseekr1incentivizingreasoningcapability} did not achieve competitive performance; we suspect that this may be caused by our prompting setup.
+For our further experiments, we select Gemma-3 with RAG and few-shot examples, although there is no appreciable difference to the setup without few-shot data.
+While GPT-4.1 performs better than the open-weight models we test, it is cost-prohibitive for our application.\footnote{We extrapolated an expected cost of around \$150 for inference on the corpus introduced in \autoref{sec:corpus_application}.}
+
+%Only 8.74\% of the correct decisions where made without the GermaNet defintions containing the correct verb class.
+%For incorrect decisions on the other hand, the correct class was listed in the definitions in just over half the cases.
+%In other words: given that the incorrect decision was mad for a given lemma there is about a 50\% chance that the verb class was not covered by GermaNet.
+
+
+%\subsection{Baseline: MonaPipe with GermaNet Word Senses}
+%As a baseline, we use the MonaPipe system \cite{donickeMONAPipeModesNarration2022}.
+%Among a wide range of other functionalities, it offers a semantic GermaNet tagger.
+%The tagger is largely based on lexical unit matches based on spacy's lemmatization.
+%In the case of ambiguous lexical mentions, however, the GermaNet graph is used to disambiguate.
+%
+%In practice, their approach, however, already fails for relatively simple constructions.
+%For example the sentence ``Ich lese ein Buch'' (I read a book) get.
+
+\subsection{Results}\label{sec:llm_results}
+In this section, after exploring the capability of multiple models on a balanced dataset, we present the result of our automation approach on a held-out test set with natural class distribution.
+Here, we only consider spans with two or more manual annotations.
+\autoref{tab:accuracy_test} shows the accuracy of all annotators measured by comparing their labels to the predictions of all human annotators (micro-averaged).
+This effectively serves as an inter-annotator agreement: annotators with high accuracy agree with many annotations.
+Due to limited annotation resources and a requirement for a sizable dataset to adequately cover rare classes, no gold standard was created.
+Accordingly, the only way to evaluate the performance of a given annotator is to assess how many of the others agree with them.
+This also means that perfect accuracy is not attainable for anyone, given that two other annotators disagree on one or more classification across the dataset.
+To more accurately measure the exact performance of our automated approach, we would have to create gold annotations.
+
+
+%TC:ignore
+\begin{table}[!h]
+    \centering
+    % W/o llama
+    %Accuracy TH 0.8386055519690123
+    %Accuracy Kim 0.8427672955974843
+    %Accuracy llama3 0.90625
+    %Accuracy MW 0.8088235294117647
+    \begin{tabular}{llcc}
+    \toprule
+        Data Split & Annotator & Accuracy \\
+        \midrule
+        \multirow{4}{*}{Test} & Annotator 1 & 0.81 \\ % TH
+        & Annotator 2 & 0.81 \\ % Kimberly
+        & Annotator 3 & 0.76 \\ % MW
+        & Gemma 3 & 0.65 \\ % MW
+        %& Llama-3 & \bf{0.91} & \bf{0.91} & 3072 \\ % llama3
+        %\midrule
+        %\multirow{4}{*}{Eckbert} & Annotator 1 & 0.58 \\ %TH
+        %& Annotator 2 & 0.61 \\ % Kim
+        %& Annotator 3 & 0.62 \\ % MW
+        %& Gemma 3 & 0.62 \\ % MW
+        %& Llama-3 & \bf{0.80} & \bf{0.80} & 989 \\
+    \bottomrule
+% Eckbert w/o/llama
+%    Accuracy Kim 0.5768421052631579
+%Accuracy TH 0.614314115308151
+%Accuracy llama3 0.7997977755308392
+%Accuracy MW 0.618421052631579
+    \end{tabular}
+    \caption{Accuracy score for all pairs of predictions in our test set when considering any matching annotation as a gold label. Note that the test set is not class-balanced.}
+    \label{tab:accuracy_test}
+\end{table}
+%TC:endignore
+
+
+%These results indicate that Llama-3 is better than our annotators for this task.
+%Previous work has shown that LLMs can outperform crowd workers and experts on specific tasks \cite{tornbergChatGPT4OutperformsExperts2023}.
+We have not performed extensive out-of-domain validation, so the automated approach could conceivably fail on some other data.
+However, it is worth noting that our task-specific training data is limited to the few-shot examples we provide.
+
+%\todo{There are some class combinations that turn out to be more difficult than others. Let's comment on that here.}
+
+\section{Corpus Application}\label{sec:corpus_application}
+To explore how the distribution of verb classes in texts may indicate genre patterns, we extracted four subcorpora from the d-Prose 1870-1920 corpus \cite{dprosecorpus}.
+This corpus comprises 2,511 German-language prose texts published between 1870 and 1920, including both popular and highbrow literature.
+Our subcorpora comprise 29 texts, totaling approximately 1.3 million tokens. 
+In terms of individual length, the texts range from just over 1,000 tokens to around 144,000 tokens.
+For a full list of all works, see Appendix \ref{app:corpus}.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{figures/genres_both_normalized.png}
+    \caption{Normalized frequency of each verb class in the four subcorpora. The expected frequency for each class is based on the corpus-wide frequency of the class.}
+    \label{fig:genre_classes}
+\end{figure}
+We formed the four genre subcorpora (adventure, crime, regional literature, and romantic fiction) based on attributions in existing research, selecting the genres according to their popularity during this period.
+Applying our automated method (\autoref{sec:annotation}) yielded the class distributions shown in \autoref{fig:genre_classes}; verb class frequencies are normalized to account for subcorpus sizes and the corpus wide frequency of each class.
+The bar chart exhibits some genre-specific outcomes: In romantic fiction, there is a markedly higher prevalence of verbs related to emotion, society, and cognition, reflecting the genre's focus on feelings and interpersonal relationships. The notably lower proportions of contact and bodily function classes may stem from prevailing social conventions and taboos of the era, which necessitated avoiding overt depictions of physical intimacy or sexuality. Thus, romantic fiction of the time tended to feature idealized, emotionally and morally charged -- but not erotic -- portrayals of love.
+Romantic and crime fiction both show elevated frequencies of cognition verbs, reflecting a shared emphasis on psychological processes. In crime fiction, the prevalence of cognitive verbs highlights mental activities like thinking, suspicion, inference, and character profiling. The high frequency  of communicative verbs corresponds to genre-typical elements such as interrogations, witness statements, or dialogues among investigators \cite{parraMembrivesFacettenKriminalromans2015}. 
+In our crime fiction corpus, natural phenomena play a below-average role -- perhaps due to the urban, social, or institutional contexts of most plots -- whereas verbs denoting natural phenomena dominate in both adventure fiction and regional literature. This difference in distribution aligns with genre expectations: regional literature often glorifies or provides identity-forming descriptions of the native environment, and its emphasis on social integration and interpersonal relations \cite{braungartHeimatliteraturReallexikonDeutschen2010} correlates with frequent use of verbs from the society and contact classes.
+Our analysis characterizes adventure fiction by high proportions of verbs in the \textit{Location}, \textit{Change}, \textit{Bodily Function}, \textit{Consumption}, and \textit{Natural Phenomenon} classes.
+These reflect core narrative features of the genre: movement, physical challenges, and encounters with extreme, often nature-driven situations \cite{koppenfelsAbenteuerErzaehlmusterFormprinzip2019}. The prevalence of location verbs may point to frequent changes of place, travel, and exploration of unknown spaces -- central motifs of adventure narratives -- while abundant change verbs signal the dynamic character of texts in which characters, situations, or external circumstances continually transform.
+
+
+%TC:ignore
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{figures/scatter_genres.png}
+    \caption{The relative frequencies of select verb classes (here \textit{Natural Phenomenon} and \textit{Emotion}) can exhibit clear differences in their distribution across genres.}
+    \label{fig:genre_separation}
+\end{figure}
+%TC:endignore
+
+\autoref{fig:genre_separation} illustrates that the frequency profile of verb classes can surface genre-defining features.
+The plot visualizes an opposition between romantic and adventure fiction (emotional vs. nature-oriented).
+Crime fiction and regional literature occupy intermediate positions, with regional literature positioned closer to adventure narratives, due to the latter's emphasis on natural phenomena.
+The clear separation of love stories and adventure stories suggests that verb class profiles can serve as a defining feature in genre classification.
+%Using hold-one-out cross validation and a Gaussian Naïve Bayes classifier, we were able to reach 50\% accuracy for genre classification on our dataset (with the random baseline performing at 25\% accuracy).
+A more robust analysis, based on a larger corpus, would be required to definitively indicate that verb classes are a sufficient feature for genre classification.%; nonetheless, our results suggest that verb class profiles capture relevant semantic information.
+
+\FloatBarrier
+\section{Conclusion}\label{sec:conclusion}
+In this work, we showcase an approach to the scalable semantic profiling of texts.
+We employ LLMs to resolve the classes of verbs in context and build class frequency profiles on a text or corpus level.
+The LLM inference in our approach is computationally expensive and can be costly to apply to large text corpora, but can yield robust representations of a text's themes.
+For the LLM evaluation, it is essential to emphasize that the performance of all models is potentially sensitive to the choice of prompt and the exact task formulation; no conclusions as to each model's generalized performance characteristics can be made.
+
+Our exploratory data analysis shows that our approach can detect not only genre-typical actions and themes within texts and corpora, but may also support genre comparison and the diachronic investigation of genre or genre traditions, as demonstrated by the absence of body-related verbs in romantic fiction from the d-Prose corpus and thus from the late 19th and early 20th centuries.
+
+For extended usage of our approach, we intend to explore two avenues of reducing the computational effort: (a) testing quantized versions of the current models and (b) training smaller models in a student-teacher setup to perform the task more efficiently at inference time.
+
+%Overall, we present a method for characterizing the semantic composition of narrative texts.
+In the future, we aim to apply this method to larger corpora, analyzing additional phenomena, such as literary movements and diachronic analysis.
+We believe our approach can serve as an interpretable yet reliable exploration tool for literary scholars, while also providing a feature set on which to build text classification approaches for phenomena like genre or literary movement.
+%\todo{Chris asks us to add more motivation here!}
+
+%We demonstrate that our Llama-3 prompting approach with few-shot learning and retrieval-augmented generation (RAG) outperforms human annotators on our semantic classification task.
+
+%Nonetheless, our evaluation may serve as a data point to guide comparable studies in their choice of models.
+
+
+%% The acknowledgments section is defined using the "acknowledgments" environment
+%% (and NOT an unnumbered section). This ensures the proper
+%% identification of the section in the article metadata, and the
+%% consistent spelling of the heading.
+%\begin{acknowledgments}
+%    Acknowledgments will go here.
+%\end{acknowledgments}
+
+%%
+%% Define the bibliography file to be used
+
+%%
+%% If your work has an appendix, this is the place to put it.
+%TC:ignore 
+\printbibliography
+\appendix
+
+\section{Dataset Statistics}\label{app:class_distribution}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{llrr}
+        \toprule
+        Category & Translation & Count & Percentage of Instances \\
+        \midrule
+        %Allgemein     &  Stative Verbs               & 2,778 & 24.37\% \\
+        %Lokation      &  Verbs of Location           & 2,068 & 18.14\% \\
+        %Kognition     &  Verbs of Cognition          & 1,256 & 11.02\% \\
+        %Kommunikation &  Verbs of Communication      & 1,085 & 9.52\% \\
+        %Veränderung   &  Verbs of Change             & 993   & 8.71\% \\
+        %Perzeption    &  Verbs of Perception         & 796   & 6.98\% \\
+        %Gefühl        &  Verbs of Emotion            & 558   & 4.90\% \\
+        %Gesellschaft  &  Social Verbs                & 536   & 4.70\% \\
+        %Besitz        &  Verbs of Possession         & 388   & 3.40\% \\
+        %Kontakt       &  Verbs of Contact            & 344   & 3.02\% \\
+        %Körperfunktion&  Verbs of Body               & 290   & 2.54\% \\
+        %Schöpfung     &  Verbs of Creation          & 95     & 0.83\% \\
+        %Verbrauch     &  Verbs of Consumption        & 83    & 0.73\% \\
+        %Naturphänomen &  Verbs of natural Phenomenon & 82    & 0.72\% \\
+        %Konkurrenz    &  Verbs of Competition        & 47    & 0.41\% \\
+        Allgemein & Stative Verbs & 2811 & 24.35\% \\
+        Lokation & Location & 2088 & 18.09\% \\
+        Kognition & Cognition & 1263 & 10.94\% \\
+        Kommunikation & Communication & 1108 & 9.60\% \\
+        Veränderung & Change & 1009 & 8.74\% \\
+        Perzeption & Perception & 803 & 6.96\% \\
+        Gefühl & Emotion & 559 & 4.84\% \\
+        Gesellschaft & Social & 555 & 4.81\% \\
+        Besitz & Possession & 392 & 3.40\% \\
+        Kontakt & Contact & 357 & 3.09\% \\
+        Körperfunktion & Bodily Function & 291 & 2.52\% \\
+        Schöpfung & Creation & 96 & 0.83\% \\
+        Verbrauch & Consumption & 83 & 0.72\% \\
+        Naturphänomen & Natural Phenomenon & 82 & 0.71\% \\
+        Konkurrenz & Competition & 48 & 0.42\% \\
+                
+        \bottomrule
+    \end{tabular}
+    \caption{Verb classes ordered by number of occurrences across all our annotations.}
+    \label{tab:class_distribution}
+\end{table}
+\section{Prompts}
+Our prompting setup is performed in multiple steps.
+In all prompts, we show the ``...'' notation indicates a response being generated by the LLM, whereas all other messages are passed in as input.
+
+\noindent By using the Ollama chat API we apply the appropriate chat template for each model. Other than that, we use no model-specific prompts.
+The few-shot examples, provided only in the few-shot setup, are customized in two variants depending on whether RAG is enabled.
+The RAG few-shot examples directly reference the GermaNet senses and provide a textual description of checking every sense.
+
+\subsection{Lemma Extraction}
+The first, lemma extraction is always performed in a few-shot setup using the following prompt, with \texttt{<Phrase>} replaced by the phrase in question.
+For the lemma extraction, after the system prompt we provide a set of 19 few-shot examples, which we omit here for brevity.
+\begin{llmprompt}
+\system{Du bist ein hilfreicher Assistent.}
+\interruption{\texttt{<Few-Shot Examples>}}
+\user{Was ist das syntaktisch obserste Vollverb in der Phrase '\texttt{<Phrase>}'? Bitte antworte nur mit dem Lemma des Vollverbs}
+\assistant{...}
+\end{llmprompt}
+\vfill
+
+\subsection{Classification}
+For the verb class identification itself we use the following prompt, where \texttt{<List Of Classes>} is a list of the names of all classes in German. Additionally, we now include a few sentences of context (\texttt{<Context>}) to enable a better disambiguation. We found that instructions in the system prompt were better at constraining the model to this output, additionally we used minimal edit-distance to the gold classes to be able to assign any output to a valid class.
+\begin{llmprompt}
+\system{Du bist ein Annotator mit linguistischem Expertenwissen und annotierst Verbklassen nach dem Schema von GermaNet. Auf eine Frage die darum bittet nur mit der Klasse zu antworten, antworte stehts nur mit einer der folgenden Klassen: \texttt{<List Of Classes>}}
+\interruption{\texttt{<Few-Shot Examples>}}
+\user{Gegeben folgenden Kontext: '\texttt{<Context>}' Um welche Klassen könnte es sich bei dem Lemma \texttt{<Lemma>} in der Phrase: '\texttt{<Phrase>}' handeln? Erläutere deine Entscheidung.}
+\assistant{...}
+\user{Alles in allem, welche der 15 Klassen ist es also wohl? Antworte nur mit der Klasse!}
+\assistant{...}
+\end{llmprompt}
+
+%In the RAG setup we provide a verbalization of the sense inventory for a given lemma. For the lemma "schätzen" (estimate) it looks as follows.
+%\begin{quote}
+%Zur Referenz, GermaNet enthält 4 Enträge zum lemma 'schätzen':
+%1. 'schätzen' aus der Verbklasse Kommunikation
+%Definition: --
+%Eine Besipielhafte verwendung wäre: 'Er schätzte seine Tochter.'
+%Synonyme sind: hochachten, ästimieren, würdigen
+%
+%2. 'schätzen' aus der Verbklasse Kognition
+%Definition: Zahlenwerte, Größen oder Ähnliches aufgrund bekannter Tatsachen näherungsweise bestimmen
+%Eine Besipielhafte verwendung wäre: 'Sie schätzte sie auf fünfzig Jahre.'
+%
+%3. 'schätzen' aus der Verbklasse Kognition
+%Definition: vermuten
+%Eine Besipielhafte verwendung wäre: 'Ich schätze, dass es gleich regnet.'
+%Synonyme sind: vermuten, mutmaßen, annehmen
+%
+%4. 'schätzen' aus der Verbklasse Kognition
+%Definition: gerne mögen
+%Eine Besipielhafte verwendung wäre: 'Er schätzt seine Eltern sehr.'
+%Synonyme sind: hoch schätzen, wertschätzen
+%\end{quote}
+
+
+\section{Few-Shot Examples}
+As a sample, we provide one example for each setup (in-context few-shot learning with and without RAG). The actual model is always provided five examples, one each for the classes \textit{Lokation}, \textit{Allgemein}, \textit{Perception}, \textit{Kognition}, and \textit{Kontakt}.
+The system prompt is omitted for brevity.
+
+In the RAG setup our example explicitly checks all provided senses against the example in question.
+\begin{llmprompt}
+\user{Gegeben folgenden Kontext: [...] Er senkte sich so tief, daß seine Stirn den Boden berührte, Gott für seine wunderbare Errettung zu danken; [...]
+
+Um welche Klassen könnte es sich bei dem Lemma 'berühren' in der Phrase: 'daß seine Stirn den Boden berührte' handeln? Erläutere deine Entscheidung.\\
+Zur Referenz, GermaNet enthält 3 Enträge zum Lemma 'berühren':\\
+
+1. 'berühren' aus der Verbklasse Kontakt\\
+Definition: jemanden / etwas berühren; mit dem Äußeren seines Körpers absichtlich mit etwas Fassbarem in Berührung kommen\\
+Eine Besipielhafte verwendung wäre: 'Sie berührte ihn am Arm.'\\
+
+2. 'berühren' aus der Verbklasse Gefuehl\\
+Definition: jemanden berühren; zur Trauer oder Nachdenklichkeit anregen
+Eine Besipielhafte verwendung wäre: 'Das Theaterstück hat mich berührt.'
+Synonyme sind: anrühren, ergreifen, beseelen, rühren\\
+
+3. 'berühren' aus der Verbklasse Kommunikation\\
+Definition: --\\
+Eine Besipielhafte verwendung wäre: 'Sie berührten das Phänomen bei der Besprechung nicht.'}
+\assistant{Das Lemma 'berühren' hat drei Einträge in GermaNet. Ich prüfe für alle, ob sie zu unserem Beispiel passen.\\
+1. Ja: Die Definition erscheint passend, es geht bei uns um das Berühren der Stirn mit dem Boden. Also mit dem Äußeren des Körpers etwas "Fassbares" zu berühren.\\
+2. Nein: Es geht in unserem Beispiel nicht um eine emotionale Berührtheit wie in diesem Eintrag.\\
+3. Nein: Bei unserem Beispiel geht es nicht um Berühren im Sinne dessen, ein Thema anzusprechen.\\
+Nur 1. erscheint passend, und die dazugehörige Verbklasse "Kontakt" passt auch eindeutig zu unserem Beispiel.}
+\user{Alles in allem, welche der 15 Klassen ist es also wohl? Antworte nur mit der Klasse!}
+\assistant{Kontakt}
+\end{llmprompt}
+\noindent In the few-shot setup without RAG the few-shot example instead argues based on the class semantics without additonal guidance:
+\begin{llmprompt}
+\user{Gegeben folgenden Kontext: [...] Er senkte sich so tief, daß seine Stirn den Boden berührte, Gott für seine wunderbare Errettung zu danken; [...]
+Um welche Klassen könnte es sich bei dem Lemma 'berühren' in der Phrase: 'daß seine Stirn den Boden berührte' handeln? Erläutere deine Entscheidung.}
+\assistant{Die Berührung bezieht sich hier auf das physische berühren des Bodens mit der Strin. Derartiger physischer Kontakt ist mit der Klasse 'Kontakt' zu annotieren.}
+\user{Alles in allem, welche der 15 Klassen ist es also wohl? Antworte nur mit der Klasse!}
+\assistant{Kontakt}
+\end{llmprompt}
+%TC:endignore
+
+\section{Genre Corpus}\label{app:corpus}
+
+\begin{table}[ht]
+\centering
+\tiny
+\begin{tabular}{llp{5cm}c}
+\toprule
+Genre & Author & Title [English Translation] & Year of Publication \\
+\midrule
+Adventure fiction & Ernst Constantin & Das warme Polarland [The Warm Polar Land] & 1895 \\
+ & Friedrich Gerstäcker & Das Wrack [The Wreck] & 1864 \\
+ & Johannes Gillhoff & Juernjakob Swehn, der Amerikafahrer [Juernjakob Swehn, the American Traveler] & 1917 \\
+ & Robert Kraft & Der Medizinmann [The Medicine Man] & 1900 \\
+ & Karl May & Der Oelprinz [The Oil Prince] & 1893 \\
+ & Karl May & Eine Seehundsjagd [A Seal Hunt] & 1891 \\
+ & Karl May & Im wilden Westen Nordamerikas [In the Wild West of North America] & 1890 \\
+ & Friedrich Joachim Pajeken & Bob, der Fallensteller [Bob the Trapper] & 1899 \\
+ & Alois Theodor Sonnleitner & Die Höhlenkinder im heimlichen Grund [The Cave Children in the Hidden Ground] & 1907 \\
+ & Fedor von Zobelitz & Der Kurier des Kaisers [The Emperor’s Courier] & 1908 \\ 
+\midrule
+Crime fiction & Matthias Blank & Der Mord im Ballsaal [The Murder in the Ballroom] & 1909 \\
+ & Adalbert Goldscheider & Detektiv Dagobert. Eine Verhaftung [Detective Dagobert: An Arrest] & 1910 \\
+ & Auguste Groner & Der rote Merkur [The Red Mercury] & 1910 \\
+ & Jenny Hirsch & Ein seltsamer Fall [A Strange Case] & 1876 \\
+ & Alfred Schirokauer & Die graue Macht [The Grey Power] & 1910 \\
+ \midrule
+Regional literature & Ludwig Ganghofer & Der Jaeger von Fall [The Hunter of Fall] & 1883 \\
+ & Ludwig Ganghofer & Der Weissbacher [The Weissbacher] & 1906 \\
+ & Wilhelm Jensen & Vor der Elbmündung [At the Elbe Estuary] & 1905 \\
+ & Timm Kröger & Auf der Heide [On the Heath] & 1891 \\
+ & Hermann Löns & Die Häuser von Ohlenhof [The Houses of Ohlenhof] & 1917 \\
+ & Peter Rosegger & Der Pfarrersbub [The Parson's Boy] & 1880 \\
+ \midrule
+Romantic fiction & Elisabeth Bürstenbinder & Adlerflug [Eagle's Flight] & 1886 \\
+ & Hermann Heiberg & Küsse [Kisses] & 1896 \\
+ & Hermann Sudermann & Jolanthes Hochzeit [Jolanthe’s Wedding] & 1892 \\
+ & Arthur Zapp & Zapp Arthur Das Liebesleben [The Love Life] & 1920 \\
+ & Stefan Zweig & Die Liebe der Erika [Erika’s Love] & 1904 \\
+ & Karl Emmerich Robert von Bayer & Lydia [Lydia] & 1879 \\
+ & Eduard Graf von Keyserling & Bunte Herzen [Colorful Hearts] & 1909 \\
+ & Ferdinand Ludwig Adam von Saar  & Requiem der Liebe [Requiem of Love] & 1908 \\
+ \bottomrule
+ \end{tabular}
+    \caption{Our genre corpus consists of four genres with all works being drawn from the d-Prose 1870-1920 corpus \cite{dprosecorpus}.}
+    \label{tab:corpus}
+\end{table}
+
+\end{document}
+
+
+
+%%
+%% End of file

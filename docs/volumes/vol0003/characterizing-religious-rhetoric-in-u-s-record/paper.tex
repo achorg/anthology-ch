@@ -1,0 +1,523 @@
+% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
+% *Anthology of Computers and the Humanities*. ADD THE OPTION
+% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
+% DO NOT change the documentclass
+\documentclass[final]{anthology-ch}
+%\RequirePackage{silence}
+%\WarningFilter*{latexfont}{Font shape}
+%\WarningFilter*{latexfont}{Some font shapes}
+\RequirePackage{fontspec} 
+\setmainfont{Tinos}
+
+
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage[most]{tcolorbox}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{hyperref}
+
+\addbibresource{bibliography.bib}
+
+\captionsetup[figure]{hypcap=false}
+
+\newtcolorbox{llmprompt}{
+  colback=gray!10,
+  colframe=gray!50,
+  boxrule=0.5pt,
+  arc=3pt,
+  beforeafter skip=10pt,
+  enhanced,
+  fontupper=\ttfamily,
+}
+
+% TITLE OF THE SUBMISSION
+% Change this to the name of your submission
+\title{Characterizing Religious Rhetoric in the U.S. Congressional Record}
+
+% AUTHOR AND AFFILIATION INFORMATION
+% For each author, include a new call to the \author command, with
+% the numbers in brackets indicating the associated affiliations 
+% (next section) and ORCID-ID for each author.  
+\author[1]{Lavinia Dunagan}[
+  orcid=0000-0001-7331-2484
+]
+
+\author[1]{Dallas Card}[
+  orcid=0000-0001-5573-8836
+]
+
+% There should be one call to \affiliation for each affiliation of
+% the authors. Multiple affiliations can be given to each author
+% and an affiliation can be given to multiple authors. 
+\affiliation{1}{School of Information, University of Michigan, Ann Arbor, United States}
+
+% KEYWORDS
+% Provide one or more keywords or key phrases seperated by commas
+% using the following command
+\keywords{natural language processing, religious studies, religion in politics, text reuse}
+
+% METADATA FOR THE PUBLICATION
+% This will be filled in when the document is published; the values can
+% be kept as their defaults when the file is submitted
+\pubyear{2025}
+\pubvolume{3}
+\pagestart{652}
+\pageend{671}
+\conferencename{Computational Humanities Research 2025}
+\conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
+\doi{10.63744/PfmVXNYwYxq6}  
+\paperorder{41}
+
+\addbibresource{bibliography.bib}
+
+\makeatletter
+\def\Hy@Warning#1{}
+\makeatother
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Christianity has historically been a potent force in American culture. In order to understand the place of religious expression in an increasingly secular and polarized society, we study the prevalence of religious rhetoric in the Congressional Record over the past three decades. We capture religious rhetoric through two distinct approaches: counting mentions of religious terms and identifying exact or approximate quotations of Bible verses using a combination of textual overlap and verse embeddings. While members of both parties routinely mention God and occasionally reference scripture, Republicans have used these signals more and more over the course of the last two decades to evoke a distinct cultural identity in addition to justifying normative commitments. Despite a pronounced decline in overall religiosity in the United States over the past fifty years, religious rhetoric remains a powerful yet flexible way for legislators, especially conservatives, to negotiate a highly partisan discursive environment while connecting their politics to a broader historical tradition.
+\end{abstract}
+
+\section{Introduction}
+In the United States, the centrality of religious identity to the national political culture is evident in the long history of religiously inflected oratory. Despite a tradition of secular government, religious rhetoric is a key component of the American state's sacred texts \parencite{kalscheur_2005}, from the Declaration of Independence to the modern Pledge of Allegiance. Whether concluding a speech with ``God bless America'' or using a verse from the Bible to bolster a point, politicians in the United States have engaged with Christian discourses since the origin of the country \parencite{bellahCivilReligionAmerica1967}. In the past half-century, however, this aspect of American political identity has been reconfigured by gradual secularization and the rise of the religious right \parencite{perryMatingCallDog2023}. Even as many segments of American society are reexamining religion, one may still perceive echoes of ancient scripture in political discourse. Prior work on this subject has focused on presidential speeches, but ignored more everyday expressions of religious ideas in political contexts. To fill this gap, we carry out the first large scale computational analysis of where, when, and how religious speech becomes enshrined in the official proceedings of the U.S. Congress.
+
+
+Using the Congressional Record (CR) from the past three decades---comprising over one million speeches in the House and Senate---we identify major shifts in the partisan valence of religious speech, from relatively equal use by Democrats and Republicans, to a striking divergence over the past decade. 
+In particular, we make use of lexical markers and recognizable references to the Bible, found via a combination of embedding- and token-based similarity metrics, to measure the use of religious rhetoric over time and across speakers.
+Doing so reveals sparse but increasingly common religious expression in Congress. Our results also suggest that Republicans emphasize a potent mixture of cultural, religious, and military values while advancing their vision of America. We make all code necessary to replicate our experiments available at the link below.\footnote{\url{https://github.com/laviniakd/religion_in_congress/}} 
+
+
+\section{Background}
+\label{sec:background}
+
+As in many countries, religion occupies a contested space in American politics. Robert Bellah \cite{bellahCivilReligionAmerica1967} famously observed that American political culture is defined by a quasi-Christian set of norms and rituals. The U.S. is unusually religious in comparison with other developed nations \parencite{starkSecularization1999, schnabelPersistentExceptionalIntensity2017}, with about 96\% of members of the 119th Congress (2025--27) having some religious affiliation \parencite{Diamant_2025}. At the same time, the American electorate has steadily become less religious \parencite{Smith_Cooperman_Alper_Mohamed_Rotolo_Tevington_Nortey_Kallo_Diamant_Fahmy_2025,fahmy.2018.americans}, illustrated by a thirteen-point drop in Christian identification in the United States from 2007 to 2019 (78.4\% to 65\%) \parencite{Mitchell_2019}. Secularization, referring both to a cultural shift towards ``rationalization-disenchantment'' and to a pattern of declining religious belief and behavior, has reshaped norms surrounding religious speech, at least outside political contexts \parencite{swatos_christiano_1999, marshall_2002_three_bs}.
+
+Modern scholarship examining religious rhetoric in American political speech has focused primarily on Presidential communications (e.g., \cite{smith_faith_presidency, Endy_1975, hughesThouArtDeal2020}), finding that presidents have used less explicitly Christian speech over time \parencite{Coe_Chenoweth_2013}, but with candidates using religious rhetoric more when campaigning in religious areas \parencite{Coe_Chapp_2017}. 
+The one relevant prior study on Congress examined the use of religious speech by members of Congress on Twitter during 2018 \parencite{bramlettGodTalkDigital2021}. Using a handful of religious keywords, the authors found that religious speech in this context was rare overall, but more frequently used by Republicans, men, and during times of celebration or crisis. We turn our attention to the Congressional Record itself because of its unique status as a long-running, totemic, and highly multivocal reflection of political discourse in the United States.
+
+The role religion plays in this context also recalls the work of Benedict Anderson on nationalism. He emphasizes the importance of \emph{shared texts}, such as newspapers and popular novels, in the creation of a canonical national culture \parencite{anderson1983imagined}. The prominence of the Bible in America, both in political rhetoric and in newspapers themselves \cite{mullen2023america}, reflects that these shared texts need not be generated by the national context itself. Although national identity is cast in opposition to preexisting religious modes of social identification by Anderson and contemporaries, elaborations on that work by other scholars of nationalism have emphasized the continuing significance of religious identity in many countries \parencite{tiryakian2011missing}. 
+
+Numerous religious traditions are present in American culture; however, we focus primarily on markers of Christian religious expression. While excluding other religions limits our ability to understand their presence in American political discourse, we focus on Christianity because of both its historical and contemporary importance to U.S. politics and its overall prominence. Among those expressing some religious affiliation, approximately 91\% of Members of Congress in 2025 and 88\% of the broader U.S. population identify with a Christian tradition \parencite{Diamant_2025, Smith_Cooperman_Alper_Mohamed_Rotolo_Tevington_Nortey_Kallo_Diamant_Fahmy_2025}.\footnote{There is also some overlap of Christian language with that of the next most prominent religions in the U.S. (Judaism and Islam).}
+
+Our work draws on both social scientific and humanistic accounts of religious speech in political settings. As we explore throughout this paper, large-scale cultural change in the United States has not resulted in a proportional reduction in religious expression in a body that is idealized as nationally representative. Refracted through the interpretive frames of partisan politics, the use of religious symbols is loaded with a tension between universalism and those symbols' growing association with particular identities.
+
+\section{Data}
+\label{sec:data}
+
+
+
+\noindent
+\textbf{The Congressional Record}
+We focus on the Congressional Record (CR)---the official proceedings of all speeches given in the U.S. House and Senate. Since our focus is on recent trends, including the emergence of the present partisan divide around religion, we limit our study to the past three decades (since 1995). The CR reflects changing political discourses in the United States---influenced by the emergence of new media and rising polarization---and has thus been previously used as a data source for computational analysis   \parencite{Jensen_etal_2012,gentzkow.2019.measuring,card.2022.computational}. Although some political scientists dismiss communications in Congress as a low-impact form of speech \parencite{Parker_1981, doerfler_2017}, we nevertheless treat it as a culturally significant archive that captures the expressed opinions of members of the legislative branch. For additional details, please refer to Appendix \ref{sec:appendix:data}.
+
+
+
+
+\noindent
+\textbf{Sermon Central}
+Our reference for Christian religious speech in America is a dataset first presented in \cite{boussalisPoliticalSpeechReligious2021} that consists of approximately 140,000 sermons from an online sermon sharing platform named Sermon Central. It is predominantly used by Protestant preachers (at least 1,500 Catholic homilies are also included).\footnote{\url{https://www.sermoncentral.com/}} Although we cannot capture religious language in the U.S. via a single corpus, Sermon Central reflects a variety of language associated with American Christianity. Since members of recent Congresses have been majority Protestant, and at least 87\% Christian \parencite{Diamant_2025}, we posit that Sermon Central will reflect most of the religious discourse they use.
+
+
+
+
+\noindent
+\textbf{The King James Bible}
+For the purpose of identifying references to the Bible in CR, we use the King James version, as the most influential version within the English-speaking world \parencite{Bagley_2011, byrdAmericaPublicBible2018}. It retains the coupled grammatical structures of the source texts \parencite{assisChiasmusBiblicalNarrative2002}, while its Elizabethan style has entered popular culture as that of Biblical speech \parencite{dreisbachBiblePoliticalRhetoric2011}.
+
+\section{Measuring Religious Language in Congress}
+\label{sec:keywords}
+
+We begin our analysis by measuring the prevalence of religious language in the CR. In order to do so, we construct a keyword list reflecting terms that make up contemporary Christian speech in the United States. Although this may not capture more subtle references, it is highly interpretable and efficient; it also ensures we capture the most salient signals of religious rhetoric. We aim to broadly identify who uses Christian terms, how this has changed over time, and what signals are most widely used.
+
+
+
+\noindent
+\textbf{Methods}
+To construct a religious lexicon, we begin by comparing the CR to sermons from Sermon Central. 
+In particular, we use the prior-modified log odds ratio \parencite{jm22}, to identify words that are used much more frequently than would be expected in one compared to another, with reference to a background corpus (details in Appendix \ref{sec:appendix:kws}). For a background corpus, we use the Corpus of Contemporary American English (COCA; \parencite{davies.2008.coca}). In constructing this list, we preserved capitalization, rather than lowercasing, as religious language sometimes distinguishes meaningfully between upper- and lowercase versions of words (e.g., ``Him'' vs. ``him''). From among the resulting terms, we filtered out stopwords and verbs; we also excluded all short tokens ($<3$ characters), and those that are used less than five times in either corpus. 
+
+This results in a list that includes both culturally salient terminology (e.g., ``sinners'') and terms referring to entities in the Bible, such as ``Philippian''. We augment the list with one-word synonyms of ``God'' and ``Jesus'' using WordNet \parencite{fellbaum1998wordnet}, since their relative frequency in everyday American English means they are not found by the log-odds method. We also include all words from the only other paper to study religious speech by members of Congress \parencite{bramlettGodTalkDigital2021}. We keep the top 150 words from the log-odds method plus the 15 from the augmentation, with the full list given in Appendix \ref{sec:appendix:kws}.
+
+To quantify the degree of religious signaling in speech, we use two measures: i) the proportion of words in a Congressional speech that appear on our keyword list, and ii) a binary measure of whether or not a given speech contains any religious keywords. We are interested both in overall levels of religious lexicality in a given speech and whether any religious words are used; the first is a signal of a speech's focus on religion, while the second captures casual religious references which may not be related to the narrative character of a speech. 
+\newline
+\newline
+\noindent
+\begin{minipage}[h]{0.47\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/word_counts.png}
+    \captionof{figure}{Counts of the 25 most common religious keywords in the Congressional Record. ``God'' is the most commonly used term in our lexicon, followed by ``faith'' and variants of ``pray''.}
+    \label{fig:kw_counts}
+\end{minipage}
+\hfill
+\begin{minipage}[h]{0.47\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/kw_rates_over_time.png}
+    \captionof{figure}{Average rates of religious keywords per 1000 words in the Congressional Record over time, along with standard errors. Republicans have used more religious language than Democrats recently, but both parties have increased their usage over time.}
+    \label{fig:kw_rate_over_time}
+\end{minipage}
+
+
+
+\noindent
+\textbf{Results}
+First examining the prominence of each of the words in our lexicon, we find that the distribution words used in the CR is extremely skewed (as shown in Figure 
+\ref{fig:kw_counts}). ``God'' is the most commonly used word in our lexicon, being mentioned around 54,000 times in the Congressional Record from 1995 to 2022; this is discussed further below. Out of the approximately 1,614 speakers represented in the preprocessed CR, only 33\% of them \emph{never} use the word God. Both Christian and nonspecific religious words are among the most prevalent terms; ``Bible'', ``Jesus'', and ``Christ'' each appear thousands of times.
+
+Notably, we see a significant divergence between Democrats and Republicans since around 2001 (see Figure \ref{fig:kw_rate_over_time}). The parties used religious terms at approximately the same rate during the 1990s. Since then, however, Republicans have used religious language with greater frequency than Democrats in every year since 2000, dramatically so since 2010. Moreover, the frequency with which Republicans use religious terms has increased three-fold since 1995. Nevertheless, the occasional use of religious terms is bipartisan. Within our sample, 72\% of Democrats who speak in Congress have used at least one religious keyword, while about 79\% of Republicans have. Partisan differences in both keyword rate and inclusion of at least one religious keyword in a speech are both significant per a two-tailed \textit{t}-test and a $\chi^2$ test ($p<0.0001$ in both cases).  
+
+As shown in Figure \ref{fig:keyword-map}, religious language in Congress is also to some extent a \emph{regional} phenomenon. Although there is considerable variation even between neighboring states (with outliers in both the House and Senate), religious keywords are more frequent in speeches by members of Congress representing the South. At the extremes, religious keywords are more than six times as common in speeches by legislators representing the Carolinas and Georgia compared to Maine and Vermont. This likely reflects both party dominance within states and variation in overall religiosity across states \parencite{pew.2016.states}. Religious language in U.S. politics is still broadly national, in that religious terms are used by speakers from every state, but the variation across states emphasizes the cultural differences that underlie certain coalitions and communities.
+
+These results reflect both the polyvalent nature of religious language and its relationship in the United States to reaffirmations of a national community. Even though past work has identified a much earlier start to politically inflected cultural sorting in the U.S. \parencite{gentzkow.2019.measuring}, our data suggest that both parties used religious language at similar rates until 2000. The performance of partisan identity did not necessarily entail a religious component until very recently. Moreover, despite broad social trends toward secularization, we see both parties \emph{increasing} their use of religious language over time.
+
+
+\begin{figure}[t!]
+    \centering
+    \includegraphics[width=0.5\linewidth]{figures/keyword_rate_per_1000_map.png}
+    \caption{Average rate of religious keywords usage by state (per thousand words), showing a clear regional trend, with more frequent mentions in the U.S. South.}
+    \label{fig:keyword-map}
+\end{figure}
+
+
+
+\noindent
+\textbf{Mentions of God}
+\label{par:mentions_of_god}
+
+Given the extent to which the word ``God'' is present in the CR, we also briefly investigate how this term is used in the corpus. Compared to explicitly Christian terms, ``God'' is relevant to a much broader space of religious beliefs. At the same time, \cite{Tagliamonte_Jankowski_2019} note that ``God'' and related terms have undergone semantic bleaching in interjective settings (as in ``oh my god!''). In order to understand how the term ``God'' is being used in Congress, we explore its usages in context. We collect all 5-grams which include the word ``God'' and gather together the most common phrases or subphrases. To understand the overall contexts in which the term ``God'' is mentioned in Congress, we use the \texttt{wordtree} algorithm to visualize the most frequent n-grams containing it \parencite{Wattenberg_Viegas_2008}.\footnote{\url{https://github.com/willcrichton/wordtree}} Figure \ref{fig:wordtree} shows the most common overlapping fragments of phrases that involve the word ``God''. Size indicates frequency, scaled using a cube root function, to accentuate differences.
+As shown, ``thank'' is the most common verb taking God as an object, and ``bless'' is the most common verb with God as the subject.
+
+\begin{figure}[t!]
+    \centering
+    \includegraphics[width=0.75\linewidth]{figures/god.png}
+    \caption{A wordtree visualization showing the many occurrences of ``God'' in our dataset, with size reflecting counts of subphrases.}
+    \label{fig:wordtree}
+\end{figure}
+
+Many other phrases are also common, including ``church of God'', ``faith in God'', and ``God forbid''. The most commonly used phrase comes from the Pledge of Allegiance---``one nation under God, indivisible, with liberty and justice for all''---representing around 7\% of mentions. Although many mentions of God in Congress are relatively standardized, as in phrases like ``God bless America'', such pro forma mentions do not capture the entirety of uses. Indeed, of the approximately 30,000 distinct five-grams centered on ``God'', almost 25,000 (83\%) only occur once.
+
+
+\section{Quoting the Bible}
+\label{sec:bib_ref}
+
+The above analyses focused on a purely lexical method for identifying religious speech, which does not adequately distinguish between pro forma mentions, generic expressions of religiosity, and more explicitly Christian rhetoric. It also fails to capture the deeply textual character of Christianity \parencite{Juzwik_2014}. In order to detect more meaningful uses of religious ideas, we develop a method to identify exact or approximate quotes from the Bible. References to the Bible are a natural target of analysis because they index both the ideas explicated by a given verse and familiarity with the text itself; the Bible is also shared across Christian denominations.
+
+
+
+
+\noindent
+\textbf{Methods}
+Various methods have been proposed to detect text reuse and reference, including those based on n-gram overlap \parencite{Smith_Cordell_Mullen_2015}, TF-IDF representations \parencite{mullen2023america}, and contextual embeddings \parencite{thai-etal-2022-relic}. Here, to identify whether a given sentence is a reference to a specific Bible verse, we combine two methods---one which uses cosine similarities of contextual embeddings, and another which measures the degree of overlap of their constitutive n-grams. 
+Even though it would not be a scalable solution for our full corpus, we also experiment with prompting language models to identify references to the Bible, and consider using this to filter out false positives.  
+
+For each sentence in the CR (excluding those shorter than five tokens), we compare it to the 1,000 most frequently referenced Bible verses in the Sermon Central dataset, according to two metrics. 
+The first metric computes the cosine similarity between vectors after embedding both the CR sentence and a Bible verse using MPNet \parencite{Song_mpnet}. We choose MPNet because it was trained to produce similar representations of semantically equivalent paraphrases and is thus well-suited for our goal of finding both paraphrases and different translations of Bible verses, as well as verbatim quotes. The second metric uses n-gram shingling, computing the number of unique n-grams that are common between a CR sentence and each target Bible verse, with $n=5$.\footnote{Although the shingling metric is sometimes normalized by the union of n-grams between the two texts, here we simply take the intersection, per \cite{Smith_Cordell_Mullen_2015}.} A sentence is considered a reference to a particular Bible verse if it meets either the cosine similarity threshold with some verse or the shared n-gram threshold, and it has the highest similarity score across all target Bible verses.
+
+In order to tune the thresholds for our method, we first scored sentences in the CR according to the embedding metric. We then sampled instances from each embedding metric decile, along with their highest-scoring Bible verse matches, and labeled whether the match was correct. This yielded 150 ground-truth triplets of sentence, label, and verse. These matches were annotated independently by the authors of this paper, resulting in an inter-annotator agreement of Cohen's $\kappa=0.98$. Based on these annotations, we chose a cosine similarity threshold of $\geq 0.75$ and shingling threshold of at least five 5-grams in common, as the combination that resulted in the best performance on the validation data ($F_1=0.91$, weighted by class).
+
+To produce a final performance estimate for our method, we collect an annotated test sample of 136 instances in the same stratified manner as above. On this, the method combining cosine similarity and n-gram overlap attained a weighted $F_1=0.81$ (with weighted precision of $0.87$ and weighted recall of $0.84$). Although the best performing prompting method (using Claude 3.7 Sonnet with a one-shot example) achieved strong results on the validation data (weighted $F_1$ of $0.98$), it was ultimately not helpful with identifying false positives. Only a small number of matches from our method were identified as false positives by the prompting approach, and manual inspection revealed that these were overwhelmingly correctly matched (see Appendix \ref{sec:appendix:references} for full details). Prompting-based approaches could in principle lead to higher recall, but the size of the CR dataset makes this infeasible. As such, our final set of Biblical references is derived without the help of language models.
+
+
+
+
+\noindent
+\textbf{Results}
+Using the method above, we identify 1,555 total references to 279 different Bible verses in the CR, occurring in 898 speeches by 355 speakers (or 0.04\% of all non-procedural speeches).\footnote{For the most frequently cited verses, and a random sample of matching CR sentences, please refer to Appendix \ref{sec:appendix:references}.} Overall, references to the Bible are rare and tend to be produced in multiples by the same speaker, sometimes within the same speech. The distribution of the verses themselves is also extremely skewed (see Appendix Figure \ref{fig:specific_verse_counts}). Of the small set of verses referred to many times, most are from the New Testament and several are from the Gospel of John, a book of the Bible which is frequently emphasized in American Christianity \parencite{Malina_Rohrbaugh_1998}. 
+
+
+As with religious keywords, Republicans have increased their use of Bible quotations over time, with a difference between parties emerging in the past decade (see Figure \ref{fig:refcountsperyear}). In fact, the divergence in the two parties' use of the Bible is even greater than that of religious terms.
+Democrats have actually made less frequent references to the Bible over time
+($\rho=-0.62$, $p<0.001$), in step with the broader pattern of secularization, while Republicans have relied more and more on the moral authority attributed to Scripture. Among Republicans, 2018 is a notable outlier. Manual inspection revealed that many verse usages were prompted by the death of a famous evangelical preacher, Billy Graham. This speaks to a common mode of Biblical citation---to memorialize or otherwise honor an individual (see Qualitative Examination below). 
+
+
+
+\begin{figure}[t!]
+    \centering
+    \includegraphics[width=0.5\linewidth]{figures/br_count_over_time.png}
+    \caption{Number of identified references to the Bible per year, split by party. As with religious keywords, we see a pattern of polarization between the parties in the past decade, with Democrats making less frequent references to the Bible over time.}
+    \label{fig:refcountsperyear}
+\end{figure}
+
+
+We also find several long-serving members of Congress from both parties who are notable users of Biblical references.
+As shown in Figure \ref{fig:br_speaker_barplot}, there are six Democrats and fourteen Republicans among the twenty most prolific users of the Bible; however, there is once again a prominent regional pattern in who cites Scripture most frequently. Of the speakers shown, most are from the South or Midwest, including all six of the Democrats. 
+
+\noindent
+\begin{minipage}[h]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/br_top20_speakers.png}
+    \captionof{figure}{The 20 most prolific users of exact or approximate quotations from the Bible in our dataset.
+    }
+    \label{fig:br_speaker_barplot}
+\end{minipage}
+\hfill
+\begin{minipage}[t!]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/br_partisan_counts_both_sides.png}
+    \captionof{figure}{Counts of Republican and Democratic uses of the 20 most popular verses overall.}
+    \label{fig:partisan_verse_usage}
+\end{minipage}
+\newline
+\newline
+
+John 15:13 is by far the most popular Bible verse, which in the King James Version reads: ``Greater love hath no man than this, that a man lay down his life for his friends.'' 
+As one might expect, manual inspection reveals that this verse features prominently in discussion of the military, as a means of affirming the virtue of both military service and the military as an institution.
+The Bible's utility for addressing this issue is elucidated further by the \emph{second} most popular reference: Matthew 5:9. It reads: ``Blessed are the peacemakers: for they shall be called the children of God.'' 
+This verse also lends itself to endorsement of certain beliefs about foreign policy, but it is usually used to affirm diplomacy and nonviolent resolutions to conflict. Republicans are \emph{far} more likely to refer to John 15:13 than Democrats (see Figure \ref{fig:partisan_verse_usage}), reflecting its more hawkish implications.\footnote{Although many verses show an association with party, based on a binomial test ($p<0.05$), only John 15:13 remains significant after applying a Bonferroni correction for the 279 verses mentioned in the CR.} This suggests that even memorializing speeches about specific constituents---e.g., those who serve in the military---have some partisan valence. As Benedict Anderson recognized, modern national identity as a \emph{cultural} object tends to involve an ethic of sacrifice which explicitly glorifies the military.
+
+
+Although not significant after correcting for multiple comparison, other verse usage patterns suggest partisan divides on domestic issues. Genesis 2:24 is referenced 15 times by Republicans and reads, ``Therefore shall a man leave his father and his mother, and shall cleave unto his wife: and they shall be one flesh.'' This verse is frequently used to justify a conception of marriage as an exclusively heterosexual institution \parencite{warner2017therefore}. Indeed, the only Democrat who used this verse is Robert Byrd, a conservative West Virginia senator who co-sponsored the Defense of Marriage Act.
+
+
+
+
+\noindent
+\textbf{Qualitative examination of Bible quotes}
+Given the sparser nature of actual quotations of Scripture, we can understand Bible use in terms of rhetorical strategies rather than merely keywords; drawing on previous work \cite{So2019Race}, we examine the \emph{proximal contexts} of references to the Bible---not the entire speech, but rather the immediate environment in which a quote is being used. We begin with a random set of 32 verified references to the Bible from the corpus.
+
+A typology emerges from a close examination of these speeches. First, representatives frequently commemorate individuals by speaking their achievements into the Congressional Record. These individuals range from deceased constituents to public figures with national profiles. The second type of use entails references to the Bible in the context of celebrations of Christianity like the National Prayer Breakfast. The third and arguably most important use of Bible verses is constituted by references to Scripture as authoritative with respect to a policy issue. Verses are a flexible means of articulating an underlying value and its relationship to the speaker's argument while presupposing the universality of the value. For example, Rick Allen (R-TX) described Exodus in a 2018 speech more broadly celebrating National Bible Week: ``God created the law, the Ten Commandments... Government was instituted by God for one purpose: to restrain evil and promote good'' (1 Peter 2:13-14).
+
+
+The flexibility of the Bible is sometimes evident in the use of verses to support diametrically opposed positions on a given issue. Roscoe Bartlett (R-MD) referred to the Bible verses used in the New England Primer (a popular educational booklet during the colonial era) in order to support the use of religious language, including prayer, in schools. Meanwhile, Bob Wise (D-WV) used Matthew 6:6 (``and when thou prayest, pray to thy father in private and he shall hear you'') in 1998 in order to advocate against a resolution that would endorse prayer in schools.
+
+The inclusive mode’s use of Bible verses varies, from more universalizing strategies to such phrases as ``in the Christian faith'' (deployed by Cory Booker, D-NJ, in a 2021 speech memorializing a police officer who died as a consequence of January 6th); the latter qualifier signals the specificity of the words on which Booker draws. In contrast, the universality claimed by Republican speakers is usually being deployed in order to assert the essential truth of Christian teachings. As Roscoe Barlett put it, ``The sacred rights of mankind... are written as with a sunbeam in the whole volume of human nature by the hands of the divinity itself and can never be erased or obscured by mortal power.'' We can understand references to the Bible in our corpus as tied to a desire, irrespective of party, to establish links between fleeting legislative speech and the American project's place in history. As Shalev \parencite{Shalev_2010} observed in the texts of the early United States, a Biblical style is a means of conveying such timelessness; it is also a way for insurgent political currents, especially ones that claim to hearken back to antiquity, to ground themselves in recognizable motifs.
+
+\section{Discussion}
+
+Religious rhetoric shows no sign of disappearing from the American political scene. At one time in the not so distant past, it was primarily a nonpartisan means of connecting everyday American political life to grand historical concerns. American civil religion entailed a quiet pluralism---one that did not explicitly assume the correctness of one religious tradition \parencite{bellahCivilReligionAmerica1967}. 
+This mode of politics uses the Bible more as a common reference, like the mass print media Benedict Anderson sees as essential for nationalism,
+than as an instruction manual, and Christian rhetoric more as a flourish than as an appeal to identity. Nonetheless, numerous other approaches also characterize religious expression in this sphere. Some conservatives have historically referred to the Bible in order to justify restrictive social norms \parencite{hardingBookJerryFalwell2018,hollingerChristianityAmericanFate2022}. For these political actors, Christianity is embedded in a very particular set of goals for government; Christian language is a means of communicating a blend of nationalism and political alignment with other Christians \parencite{perryMatingCallDog2023}. 
+
+On a methodological note, the techniques used in this paper are reflective of a philosophy of triangulation of different quantitative approaches in order to approximate qualitative insight at scale. This paper entails the description of a multifaceted phenomenon---religious discourse in American politics---which operates through explicit lexical signals, implicit motifs, and textual references that can be either obvious or subtle. We thus chose to use multiple methods, rather than one, to operationalize these different linguistic practices. As we discuss in Appendix \ref{sec:appendix:limitations}, our methods are imperfect. Nevertheless, our findings indicate real change in the status of religious speech in the public sphere.
+
+Both the Congressional Record and the Bible are important textual landmarks in American political culture.  Rather than tracking the observed decline in religiosity among Americans, we find that religious terms are \emph{more prevalent over time} in Congressional speeches by both parties, although the effect is much greater for Republicans. The use of the Bible is more clearly differentiated by ideology; since Obama's inauguration, Republicans have continued to refer to it steadily, while Democrats have begun to do less frequently. A universalist mode of Biblical reference is residually present in our corpus, as both Republicans and Democrats use the Bible to articulate moral foundations for policy, but Republicans also use the Bible to argue for specifically conservative beliefs. 
+
+We hypothesize that this arises from broader cultural trends in the United States: polarization and aforementioned secularization. Religiosity is more associated with partisanship than ever; this has produced a cultural environment in which Christian cultural markers are progressively more enmeshed with conservative political ideology \cite{perryMatingCallDog2023}. In other words, the meaning of the Bible in political contexts has been reconfigured by changes in American society. In the Congressional Record---a corpus which arguably functions as \emph{the} massively multivocal symbol of political discourse in America---we find evidence of political actors expressing different and sometimes opposing positions via a text whose long history and claim to cosmic relevance coexist with evolving interpretations and cultural connotations. Future work on this subject may deploy similar methods to explore other types of intertextual discourse, religious or not, surrounding authoritative texts like the Constitution in Congress and beyond.
+
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+The preceding analyses constitute the first large-scale exploration of religious (especially Christian) language in the U.S. Congressional Record over the past 30 years. Religious rhetoric has been examined in prior work as a significant component of American textual culture writ broadly and political discourse in particular, but its realization in the diverse and multivocal speech of the Congressional Record over a longer period has been unexplored. We establish the existence of relative similarity between Democrats and Republicans in the 1990s followed by divergence in the 2000s; Democrats followed the secularizing path of American culture while Republicans claimed Christianity as a component of their sociocultural identity. Furthermore, we find evidence of Members of Congress using the Bible to affirm the traditional relationship between it and American political discourse \emph{and} to assert the truth of particularistic moral injunctions from Scripture. More broadly, we show that the decline of Christian belief in America has not led to a commensurate decline in Christian language in the most hallowed halls of American politics. A religious vision of the world instead appears to have attained greater prominence in Congress as legislators articulate their place and purpose in the 21st century.
+
+\section*{Acknowledgements}
+We thank Andrew Murphy, Joyojeet Pal, and anonymous reviewers for their invaluable comments on a draft version of this paper and the project as a whole. We also thank Mirya Holman for kindly sharing the SermonCentral dataset and Kevin Coe for his advice at the start of this project. This material is based upon work supported by the National Science Foundation Graduate Research Fellowship under Grant No. DGE-2241144.
+
+%TC:ignore
+
+\clearpage
+\printbibliography
+
+\clearpage
+
+\appendix
+
+\section{Limitations}
+\label{sec:appendix:limitations}
+
+We used a set of complementary techniques to identify religious speech, each with its own advantages and disadvantages. The use of keywords is highly interpretable and easy to validate, but may miss more subtle forms of religious expression. Although our list is more extensive than has been used by past work on this topic (e.g., \parencite{bramlettGodTalkDigital2021}), the use of keywords still entails a lack of sensitivity to context. Our keyword list is also based on a comparison to exclusively Christian and mostly Protestant sermons, and thus does not capture terms specific to other religions. We expect non-Christian religious speech to be rare in Congress, given the overwhelmingly Christian makeup of its members. Our verse retrieval method is similarly specific to the Christian Bible, and only captures references to specific passages. The Bible's influence can also be found in various motifs and archetypes \parencite{auerbach_mimesis}. During validation, we identified a handful of references to other Christian texts, such as phrases from popular hymns (e.g., George W. Bush's reference to ``wonder-working power'' \parencite{albertsonDogWhistlePoliticsMultivocal2015}) which is beyond the purview of our detection system.
+
+We also restrict our study to the past few decades of the Congressional Record. 
+This does not include the period when Christian conservatism was first ascendant, or the period when the latest broad-based liberal movement which used widespread religious language---the civil rights movement---was active. Ultimately, we chose to focus on the recent past due to a combination of data compatibility and a desire to avoid major problems with language change.
+
+
+Finally, it is worth noting that Congress is only one arena in which notions of religious destiny and American nationalism are negotiated. As noted above, considerable focus has been directed towards \emph{presidential} speech. The only previous quantitative paper on speech by members of Congress, \cite{bramlettGodTalkDigital2021}, focused on their speech on Twitter rather than in the halls of the Capitol. Other work in political science and religious studies \parencite{Allen_Olson_2022, hardingBookJerryFalwell2018, lieneschContestingCivilReligion2018} has explored how political speech in American religious spaces informs the voting behavior and political beliefs of religious adherents, especially when the religion in question is felt to be in opposition to the majority of society. Our work is complementary to these, and future work could investigate how the religious speech found in Congress is both informed by and influences the religious and political rhetoric of other domains.
+
+
+\section{Additional Details on Data}
+\label{sec:appendix:data}
+
+
+
+\noindent
+\textbf{Congressional Record:} We obtain the Congressional Record using publicly accessible code for downloading and processing the online editions: \url{github.com/unitedstates/congress}. Using this approach, we obtain all speeches given in the House and Senate from 1995 through 2022---the second half of the Clinton administration through the first half of the Biden administration---comprising 2.4 million speeches in total. Using the model from \cite{card.2022.computational}, we filter out procedural speeches (e.g., ``without exception it is so ordered''), leaving 1.4 million non-procedural speeches. Speaker metadata is obtained from the same source, including speaker gender, party, chamber, and state.
+
+
+
+\noindent
+\textbf{Sermon Central:} We obtained a copy of the Sermon Central dataset from the authors of \cite{boussalisPoliticalSpeechReligious2021}. 
+Each sermon is typically associated with a particular verse of the Bible, the most common of which are given in Figure \ref{fig:verses_in_sc}.  As can be seen, the distribution is skewed towards certain popular verses.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.55\linewidth]{figures/verse_dist_in_sermoncentral.png}
+    \caption{Counts of the 25 most popular verses in Sermon Central. 
+    %John 3:16 is commonly seen as summarizing the most important aspects of Christian belief.
+    }
+    \label{fig:verses_in_sc}
+\end{figure}
+
+
+\section{Religious Keywords}
+\label{sec:appendix:kws}
+
+
+
+\noindent
+\textbf{Lexicon creation:} As described in the main paper we compare Sermon Central to the CR, looking for words that are used disproportionately more in the former, with COCA as a background corpus. 
+Specifically, given a vocabulary of $N$ words $\{w_1...w_N\}$ and corresponding counts of occurrences for each corpus, $\{n^{S}_1...n^{S}_N\}$, $\{n^{C}_1...n^{C}_v\}$, and $\{n^{B}_1...n^{B}_N\}$ for Sermon Central,  the Congressional Record, and the background corpus, respectively, the scoring function for a word $w_i$ is given by
+$$f(w_i)=\log \left( \frac{n^{S}_i + \alpha \cdot n^{B}_i}{- n^{S}_i - \alpha \cdot n^{B}_i + \alpha_0 + \sum_{j=1}^{N} n^{S}_j } \right)$$$$-\log \left( \frac{n^{C}_i + \alpha \cdot n^{B}_i}{- n^{C}_i - \alpha \cdot n^{B}_i + \alpha_0 + \sum_{j=1}^{N} n^{C}_j } \right)$$
+
+where $\alpha$ is a smoothing parameter, which we set at $0.1$, and $\alpha_0 = \sum_{j=1}^N \alpha \cdot n_j^B $. 
+
+
+
+\noindent
+\textbf{Keyword list:}
+Counts for the most common religious keywords in the Congressional Record are shown in Figure \ref{fig:kw_counts} in the main paper. Note that we also include ``Bible'', ``faith'', and four variants of ``pray'' based on the terms from  \cite{bramlettGodTalkDigital2021}. 
+
+The full list is here: Abed\-nego, abid\-eth, Abram, adul\-ter\-ers, Ah\-ab, AM\-EN, Ana\-ni\-as, apos\-tle, apos\-tles, Ar\-en, ark, Ba\-al, Bap\-tism, Be\-liev\-ers, be\-liev\-eth, Beth\-phage, Bi\-ble, Bo\-az, bride\-groom, Ca\-ia\-phas, cen\-tu\-ri\-on, Ce\-ph\-as, Christ, Chron, Co\-los\-si\-ans, con\-ceit\-ed, Cor, Co\-rin\-thi\-ans, cov\-et\-ous\-ness, De\-ity, De\-liv\-er\-er, dis\-ci\-ple, dis\-ci\-ples, dis\-obe\-di\-ent, dis\-sen\-sions, Di\-vin\-i\-ty, do\-eth, dwell\-eth, Eph\-es\-i\-ans, Eph\-es\-us, faith, FAITH, Gala\-tia, Gala\-ti\-ans, Ga\-li\-lee, GEN\-E\-SIS, Gen\-til\-es, God, GOD, god\-less\-ness, god\-li\-ness, God\-li\-ness, god\-ly, God\-ly, Ha\-ba\-kkuk, Ha\-man, Ha\-ran, hast, He\-brews, He\-rod, Him, Him\-self, ho\-li\-ness, Id\-ol, id\-ol\-a\-try, Im\-mor\-tal, im\-per\-ish\-able, in\-iq\-ui\-ties, in\-iq\-ui\-ty, Isa, Is\-rael\-ites, Ja\-bez, Jeph\-thah, Je\-sus, Je\-ze\-bel, Joab, Ju\-dah, Ju\-das, KJV, know\-eth, le\-gal\-ism, Lep\-rosy, Le\-vite, liv\-eth, Ly\-stra, Ma\-gi, meek\-ness, MER\-CY, Me\-sh\-ach, Mes\-si\-ah, NASB, Neb\-uchad\-nez\-zar, Ne\-he\-mi\-ah, Obe\-di\-ence, Oliv\-es, OUR, para\-ble, Pa\-ra\-ble, pa\-ra\-bles, par\-tak\-ers, Pen\-te\-cost, Pha\-raoh, Phar\-isees, Phi\-lip\-pi, Phi\-lip\-pi\-an, Phi\-lip\-pi\-ans, Phi\-lis\-tine, Phi\-lis\-tines, Pi\-late, pray, pray\-ed, pray\-er, pray\-ing, pro\-phets, Pro\-phets, Ra\-hab, Re\-deemer, re\-pen\-tance, Re\-pen\-tance, res\-ur\-rec\-tion, Rev\-e\-la\-tion, righ\-teous\-ness, Righ\-teous\-ness, Rom, sack\-cloth, sai\-th, sal\-va\-tion, sanc\-ti\-fi\-ca\-tion, San\-hedr\-in, Sa\-tan, Sav\-ior, Sav\-iour, scof\-fers, see\-th, Ser\-mon, Sha\-drach, sin\-ful, sin\-ful\-ness, sin\-ner, sin\-ners, So\-dom, sow\-er, Sow\-er, spake, Swin\-doll, ta\-ber\-na\-cle, Thes\-sa\-lo\-ni\-ans, un\-be\-lief, un\-be\-liev\-er, un\-be\-liev\-ers, un\-be\-liev\-ing, un\-de\-filed, un\-fruit\-ful, un\-god\-li\-ness, un\-righ\-te\-ous, un\-righ\-te\-ous\-ness, Ver\-i\-ly, who\-so\-ev\-er, wi\-cked\-ness, will\-i\-am, wine\-skins,\- Your\-selves, Za\-c\-cha\-eus, Zech\-ari\-ah, Zed\-eki\-ah
+
+
+
+\noindent
+\textbf{Common terms.} The most common terms from our list in the CR are ``God'' and ``faith''. In line with the wordtree diagram presented in the main paper (see Figure \ref{fig:wordtree}), we also created a wordtree diagram showing what the most typical uses of faith look like. As shown in Figure \ref{fig:faith_wordtree}, there are a number of mentions of faith that are indeed religious; however, some other uses---see ``in good faith'' and ``full faith and credit''---are false positives. The former phrase is not religious in nature, while the second appears in the Constitution.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{figures/faith_wordtree.png}
+    \caption{Wordtree diagram of the most common 5-grams in which the term ``faith'' appears.}
+    \label{fig:faith_wordtree}
+\end{figure}
+
+
+\section{Biblical Quotations}
+\label{sec:appendix:references}
+
+
+
+
+\noindent
+\textbf{Identifying Biblical quotations:} Working with the validation data, we found both that both embedding similarity and n-grams had some value in recognizing different types of exact or approximate quotations. Using the annotated validation data (described in Section \ref{sec:bib_ref} in the main paper), we used a grid search over threshold values for minimum $5$-gram overlap and minimum cosine similarity, and took the combination that resulted in the highest validation $F_1$ score. For the resulting combination ($\geq 0.75$ cosine similarity OR at least five unique $5$-grams), there was a slight drop in performance from validation to test (from 0.91 to 0.81 $F_1$), suggesting some overfitting to the validation data, but overall our method performed well, and could scale to the full size of the congressional record.
+
+
+
+
+\noindent
+\textbf{Quote identification using language models:}
+In order to evaluate the capabilities of language models on two tasks---detecting whether a sentence refers to a Bible verse as well as which verse---we used the validation and test sets discussed in Section \ref{sec:bib_ref} to compare different models and prompting strategies. It was not feasible to use a prompting-based method to detect Bible references across the entire corpus, given computational limitations, but we were able to evaluate various models and prompting strategies.
+
+The experiments described in this section were done with two closed models with API access: OpenAI's \texttt{gpt-4o-2024-08-06} and Anthropic's \texttt{claude-3-7-sonnet-20250219}. They were also done with four open models: Meta's \texttt{Llama-\-3.2-\-3B-\-Instruct}, Meta's \texttt{Llama-\-3.1-\-8B\-Instruct}, Mistral's \texttt{Ministral-\-8B-\-Instruct-\-2410}, and AI2's \texttt{OLMo-\-2-\-0325-\-32B-\-Instruct} (all taken from HuggingFace).\footnote{The open models were run on A6000s GPUs. Our experiments with Claude cost about USD\$50, while our experiments with GPT-4o cost about USD\$30.} We used the validation set to choose effective prompts for each model; we then evaluated each model with its corresponding best prompt on the test set.\footnote{We also ran preliminary experiments with the validation set to explore the impact of generation temperature; we found that 0.25 was effective for all models.}
+Overall, we tried 90 variations of the prompt below. Ultimately, we ruled out smaller models, partly based on noncompliance with our instructions.
+
+
+
+\noindent
+\textbf{Prompt:} We began with a base prompt that captures two tasks of interest: identifying \emph{whether} a sentence is a reference to a Bible verse and \emph{which} verse it refers to, if so. We experimented with several prompting strategies that have been widely reported in other literature: trying different requested outputs, adding a chain-of-thought instruction, and few-shot provision of a positive example, a negative example, or both. The best prompt for \texttt{claude-3-7-sonnet-20250219} is shown below.
+
+\begin{llmprompt}
+\footnotesize
+CONTEXT: You are tasked with determining whether a given string is paraphrasing or quoting a Bible verse, then identifying which verse if so.
+\newline
+\newline
+TASK 1:\newline
+For the input string, analyze it and determine if it's a Bible verse reference. Print ``YES'' if it is a Bible verse reference, and ``NO'' if it is not. Do not explain your answer.
+\newline
+\newline
+TASK 2:\newline
+If the input string is a Bible verse, output the relevant citation (e.g., ``John 3:16''). If it is not a Bible verse, output ``NOT VERSE''. Do not explain your answer.
+\newline
+\newline
+OUTPUT FORMAT: \newline
+Separate the outputs for 1 and 2 with a newline.
+\newline
+\newline
+The following example represents a correctly formatted input string-output pair.\newline
+EXAMPLE INPUT: \newline
+It may seem strange that any men should dare to ask a just God's assistance in wringing their bread from the sweat of other men's faces but let us judge not that we be not judged.
+\newline
+\newline
+EXAMPLE OUTPUT: \newline
+Verse
+\newline
+Genesis 3:19
+\newline
+\newline
+Output ``Verse'' if it is a Bible verse reference, and ``Not Verse'' if it is not. Do not explain your answer.
+\newline
+\newline
+INPUT STRING:
+\end{llmprompt}
+
+
+
+\noindent
+\textbf{Results:} We find that large closed models in particular are generally very good at detecting Bible verses (see Figure \ref{tab:br_test_performance}). The smallest models were unable to comply with instructions, as shown in Figure \ref{fig:br_test_compliance}. We exclude these models from the following performance evaluation. 
+
+Among those models that had high compliance, GPT-4o and Claude 3.7 Sonnet stand out as being very good at recognizing Biblical references, as shown in Table \ref{tab:br_test_performance}.\footnote{Note that noncompliant responses were understood as predictions that a sentence was not a verse for the purposes of Table \ref{tab:br_test_performance}.}
+The models that were good at identifying that something was a verse were also the prompt were able to also consistently identify the correct verse. On this second task, OLMo 2, GPT-4o, and Claude 3.7 Sonnet all reach accuracy rates about $0.93$. 
+
+Notably, the embedding and n-gram method we use in the main paper has higher precision---only mislabeling a single positive verse---and is faster; these results are somewhat in line with other work on use of language models in historical document annotation, such as that by the Library of Congress (see \url{https://labs.loc.gov/work/experiments/ECD/}), that suggest a synthetic approach that incorporates both language models and structured measures of textual similarity is best for some multi-part classification and detection tasks. 
+
+\begin{figure}[t!]
+\footnotesize
+\centering
+\includegraphics[width=0.5\textwidth]{figures/biblical_reference_compliance.png}
+\caption{Compliance in output format with respect to our instructions. The smallest models frequently produced Python code, repeated instructions, or otherwise failed entirely to create usable output.}
+\label{fig:br_test_compliance}
+\end{figure}
+
+\begin{table}[t!]
+\footnotesize
+\centering
+\begin{tabular}{lccc}
+\hline
+\textbf{Model} & \textbf{F1} & \textbf{Precision} & \textbf{Recall} \\
+\hline
+Baseline & 0.807 & 0.867 & 0.838 \\
+Llama 3.1 8B & 0.836 & 0.845 & 0.831 \\
+OLMo 2 32B & 0.918 & 0.918 & 0.919 \\
+GPT-4o & 0.970 & 0.972 & 0.971 \\
+Claude 3.7 Sonnet & \textbf{0.978} & 0.978 & 0.978 \\
+%Baseline with Claude & 0.807 & 0.867 & 0.838 \\
+\hline
+\end{tabular}
+\caption{Weighted F1, precision, and recall for each model and its best prompt (with respect to the validation set) on the test set. Baseline is the method described in the main paper.}
+\label{tab:br_test_performance}
+\end{table}
+
+
+
+
+\noindent
+\textbf{Filtering baseline predictions:} Given the excellent performance of Claude 3.7 Sonnet on this task, we explored using it as a way to filter out potential false positives from our baseline method's predictions. Out of 1,555 Biblical references identified my our method, 37 were identified by the prompting-based approach as false positives. However, manually inspecting these revealed that only 6 of these were actually false positives. The rest were mistakes by the language method, and tended to be references to verses that have become relatively common sayings, such as ``The Good Book tells us that the truth will make you free'' (John 8:32), or ``We are all children of God'' (Galatians 3:26). 
+
+
+
+
+\noindent
+\textbf{Biblical references in the Congressional Record:} Figure \ref{fig:specific_verse_counts} shows the 25 most frequently quoted Bible verses in the Congressional Record, based on our analyses. To give a better sense of what verse matches look like in practice, Table \ref{tab:high_cosine_similarity} shows a random sample of 15 examples where our method found high cosine similarity between a sentence from the Congressional Record, and a verse from the Bible.
+
+
+
+\begin{table*}[ht]
+    \centering
+    \tiny
+    \begin{tabular}{ p{1.6in} p{1.6in} l r l l }
+        Text & Detected Verse & Citation & Cosine & Name & Party \\
+        \hline
+        \hline
+        And this is the condemnation: that light is come unto the world, and men loved darkness rather than light, because their deeds were evil. & And this is the condemnation, that light is come into the world, and men loved darkness rather than light, because their deeds were evil. & John 3:19 & 0.98 & William Barrett & R \\\hline And He said unto them, Go ye into the world, and preach the gospel to every creature. & And he said unto them, Go ye into all the world, and preach the gospel to every creature. & Mark 16:15 & 0.99  & Bennie Thompson & D \\\hline Guide us, thine own, aright Teach us by day, by night, To keep thine honor bright, For thee to fight. & Obey them that have the rule over you, and submit yourselves: for they watch for your souls, as they that must give account, that they may do it with joy, and not with grief: for that is unprofitable for you. & Hebrews 13:17 & 0.82 & John Shimkus & R \\\hline For we know what is impossible with men is possible with God. & But Jesus beheld them, and said unto them, With men this is impossible; but with God all things are possible. & Matthew 19:26 & 0.81 & Emanuel Cleaver & D \\\hline And remember the words of the Lord Jesus, that He said, `It is more blessed to give than to receive.' & I have shewed you all things, how that so labouring ye ought to support the weak, and to remember the words of the Lord Jesus, how he said, It is more blessed to give than to receive. & Acts 20:35 & 0.83 & Sanford Bishop & D \\\hline The Lord is my shepherd; I shall not want. & \{A Psalm of David.\} The LORD is my shepherd; I shall not want. & Psalm 23:1 & 0.91 & Mark Pryor & D \\\hline As he said, greater love hath no man, no one, than this, that he lay down his life for his friends. & Greater love hath no man than this, that a man lay down his life for his friends. & John 15:13 & 0.92 & Louie Gohmert & R \\\hline The verse concludes: Therefore shall a man leave his father and his mother, and shall cleave unto his wife: and they shall be one flesh. & Therefore shall a man leave his father and his mother, and shall cleave unto his wife: and they shall be one flesh. & Genesis 2:24 & 0.93 & Addison McConnell & R \\\hline ``He has told you, O mortal, what is good; and what does the Lord require of you but to do justice, and to love kindness, and to walk humbly with your God? & He hath shewed thee, O man, what is good; and what doth the LORD require of thee, but to do justly, and to love mercy, and to walk humbly with thy God? & Micah 6:8 & 0.85 & John Boehner & R \\\hline But to do justly, to love mercy and to walk humbly with your God.'' & He hath shewed thee, O man, what is good; and what doth the Lord require of thee, but to do justly, and to love mercy, and to walk humbly with thy God? & Micah 6:8 & 0.88 & Bobby Rush & D \\\hline
+        Arise, walk through the land in the length of it and in the breadth of it; for I will give it to thee. & All that the Father giveth me shall come to me; and him that cometh to me I will in no wise cast out. & John 6:37 & 0.81 & James Inhofe & R \\\hline The Word of God is the source of love, joy, peace, patience, kindness, goodness, and self-control. & For the word of God is quick, and powerful, and sharper than any twoedged sword, piercing even to the dividing asunder of soul and spirit, and of the joints and marrow, and is a discerner of the thoughts and intents of the heart. & Hebrews 4:12 & 0.82 & Cathy McMorris Rodgers & R \\\hline In the Name of the Father, the Son and the Holy Spirit, Amen. & But grow in grace, and in the knowledge of our Lord and Saviour Jesus Christ. To him be glory both now and for ever. Amen. & 2 Peter 3:18 & 0.81 & Daniel Akaka & D \\\hline For we do not wrestle against flesh and blood, but against the rulers, against the authorities, against this present darkness, against the spiritual forces of evil in the heavenly places. & For we wrestle not against flesh and blood, but against principalities, against powers, against the rulers of the darkness of this world, against spiritual wickedness in high places. & Ephesians 6:12 & 0.96 & Rick Allen & R \\\hline Today in the town of David a savior has been born to you. & For unto you is born this day in the city of David a Saviour, which is Christ the Lord. & Luke 2:11 & 0.84 & Vicky Hartzler & R
+    \end{tabular}
+    \caption{A random sample of 15 Congressional Record sentences whose embeddings from MPNet had high cosine similarity with that of the most similar verse.}
+    \label{tab:high_cosine_similarity}
+\end{table*}
+
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.5\linewidth]{figures/br_top_25_references.png}
+    \caption{Absolute counts of how many times the most popular verses are quoted.
+    }
+    \label{fig:specific_verse_counts}
+\end{figure}
+
+
+%TC:endignore
+\end{document}

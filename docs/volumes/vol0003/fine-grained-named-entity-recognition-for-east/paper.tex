@@ -1,0 +1,602 @@
+% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
+% *Anthology of Computers and the Humanities*. ADD THE OPTION
+% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
+% DO NOT change the documentclass
+%\documentclass[final]{anthology-ch} % for the final version
+
+
+
+\documentclass[final]{anthology-ch}         % for the submission
+
+% LOAD LaTeX PACKAGES
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{linguex}
+% ADD your own packages using \usepackage{}
+
+% TITLE OF THE SUBMISSION
+% Change this to the name of your submission
+\title{Fine-grained Named-Entity Recognition for the East-India Company domain}
+
+% AUTHOR AND AFFILIATION INFORMATION
+% For each author, include a new call to the \author command, with
+% the numbers in brackets indicating the associated affiliations 
+% (next section) and ORCID-ID for each author.  
+\author[1]{Sophie Arnoult}[
+  orcid=0000-0001-7828-0960
+]
+
+\author[2]{Brecht Nijman}[
+  orcid=0000-0002-4161-1030
+]
+
+% While we encourage including ORCID-IDs for all authors, you can
+% include authors that do not have one by definining an empty ID.
+\author[3]{Leon van Wissen}[
+  orcid=0000-0001-8672-025X
+]
+
+% There should be one call to \affiliation for each affiliation of
+% the authors. Multiple affiliations can be given to each author
+% and an affiliation can be given to multiple authors. 
+\affiliation{1}{VU University, Amsterdam, The Netherlands}
+\affiliation{2}{Huygens Institute, Amsterdam, The Netherlands}
+\affiliation{3}{University of Amsterdam, Amsterdam, The Netherlands}
+
+% KEYWORDS
+% Provide one or more keywords or key phrases seperated by commas
+% using the following command
+\keywords{Dutch historical domain, named-entity recognition, pretrained language models, data augmentation}
+
+% METADATA FOR THE PUBLICATION
+% This will be filled in when the document is published; the values can
+% be kept as their defaults when the file is submitted
+\pubyear{2025}
+\pubvolume{3}
+\pagestart{900}
+\pageend{914}
+\conferencename{Computational Humanities Research 2025}
+\conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
+\doi{10.63744/DRbhWNTzqNzR}  
+\paperorder{55}
+\addbibresource{bibliography.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HERE IS THE START OF THE TEXT
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+The Digital Humanities can nowadays benefit from easily accessible tools and pretrained models. Questions remain about the adequation between the data used to train these models and the task data. For a task like Named-Entity Recognition, domain specificity expresses itself not only in the linguistic domain but also in the entities of interest. While fine-grained entity tagsets are valuable, they are harder to annotate, leading to smaller, less representative training data, and may also be less interoperable with other NER label sets. In this work, we introduce a new fine-grained NER dataset for early modern Dutch texts related to the Dutch East India Company, covering 15 NER tags and 8000 mentions. We show that training a language model on the task data improves NER performance compared to off-the-shelf multilingual pretrained models. We further introduce a new method, class-agnostic co-training, to augment training data with existing NER datasets from the same domain, but with more restricted tagsets. We demonstrate that this method improves performance for augmented tags while increasing overall precision. Our annotations and code are publicly available.\footnote{\url{https://github.com/globalise-huygens/finegrained-hist-ner}. A copy of the repository is deposited on Zenodo: \url{https://doi.org/10.5281/zenodo.17457075}}
+\end{abstract}
+
+
+
+\section{Introduction}\label{introduction}
+Named Entity Recognition (NER) is a well-understood task, but one that is difficult to apply, as it is domain sensitive, both in terms of source text and of target labels.
+Tools such as spaCy \cite{spacy} and GLINER~\cite{zaratiana_gliner_2023},
+ while they lower the barrier 
+for non-specialists to apply machine learning techniques, are 
+of limited practical applicability to historical and literary sources, as they are trained 
+on modern news sources, and only provide generic labels.
+
+
+Pretrained language models~\cite{devlin_bert_2019, radford_language_2019} form a better starting point for domain-specific applications, as transformer encoders~\cite{vaswani_attention_2017} can notably be finetuned to predict NER classes at the token and subtoken levels. For the historical domain, one can directly apply multilingual models such as mBERT~\cite{devlin_bert_2019} or XLM-RoBERTa~\cite{conneau_unsupervised_2020}, which have been shown to generalise well to other languages for various tasks~\cite{wu_beto_2019}, or models trained on historical data~\cite{manjavacas-fonteyn-2022-adapting, manjavacas-arevalo-fonteyn-2022-non}. Resources permitting, one can adapt language models to the source domain by continuing pretraining~\cite{gururangan_dont_2020}, or directly training a model on the task data~\cite{Gu_domain_2020}.
+
+However, finetuning pretrained language models still requires annotated data for training. This in turn requires domain-trained annotators and time and effort to refine guidelines and produce annotations. Refining tagsets for specialised domains increases the task's complexity, reducing the final amount of annotated data for a given time budget.  
+Although data augmentation techniques~\cite{zhou_melm_2022, hu-etal-2023-entity, wang-etal-2024-order} can be used to increase training data, one would also want to reuse annotations beyond their application within a given project. In this work, we consider how to augment fine-grained training data with existing NER data from the same domain but with a more restricted tagset. We propose to co-train a NER model with external data by adapting the loss computation to make the model agnostic to task-specific tags when facing sequences from the external data. We call this method class-agnostic co-training. We show that this method performs well, improving model performance on augmented NER tags, while preserving the performance on task-specific tags.
+
+The domain we consider in this work is 
+that of texts produced by the 
+Dutch East India Company (VOC) in the seventeenth and eighteenth century. Specifically, we work with the collection of the \textit{Overgekomen Brieven en Papieren} (Letters and Papers Received, \textsc{OBP}) of the VOC~\cite{project_voc_2024}, 
+which consists of nearly 4.8M scans of hand-written text processed with Loghi~\cite{van_koert_loghi_2024}.
+The linguistic characteristics of these documents differ from those of contemporary Dutch in the sense 
+that orthographic conventions and grammar were not yet standardised, sentence structures were often long 
+and convoluted, and the meaning of words could shift depending on historical and colonial 
+context. 
+Nevertheless, the corpus's discourse is relatively consistent. Originating from a single administrative entity (the VOC), the documents revolve around a recurring set of administrative and commercial topics, including trade, logistics, personnel, finances, and enslavement. 
+
+The standard NER categories (among others, Person, Location, and 
+Organization) are insufficient to capture the full range of information relevant to the VOC 
+archive and colonial discourse more broadly. To adequately support research on trade, governance, 
+and daily life in the early modern colonial world, a historical NER model 
+must also be able to identify entities such as commodities, units of measurement, and ships,
+ as well as finer-grained personal identifiers such as status or profession.
+This expansion of entity types contributes towards a better understanding of such corpora, making 
+it easier for researchers to contextualise and reconstruct semantic and institutional structures embedded in 
+the text, besides offering a useful aid on the surface level for terms and 
+references once linked to knowledge bases and vocabularies. 
+In this paper, we present the annotation process leading to a new NER dataset with 15 entity labels and close to 8000 entity mentions for early modern Dutch and the Dutch East-India Company domain. 
+
+Multilingual pretrained encoder models form a good basis for historical Dutch~\cite{arnoult_batavia_2021, koolen_accessing_2024, provatorova_too_2024} and serve as baselines in this work. We compare models of different sizes to trade off performance and computational cost: while larger models are expected to perform better, they would lead to higher inference costs on the full \textsc{OBP} corpus. 
+In addition, as \cite{gururangan_dont_2020} point to the benefit of adapting language models to the target domain and task data, we also experiment with a model trained on the \textsc{OBP} corpus, 
+gloBERTise~\cite{verkijk-etal-2025-language}. We find that finetuning this model for NER outperforms larger models such as multilingual BERT-base~\cite{devlin_bert_2019} and XLM-Roberta-Base~\cite{conneau_unsupervised_2020}, being competitive 
+with the 4-times larger XLM-Roberta-Large.
+
+
+There exist several NER datasets for the VOC data or Dutch historical 
+texts of the same period~\cite{arnoult_batavia_2021,koolen_accessing_2024, provatorova_too_2024} that could serve as augmentation data. Leveraging other datasets is difficult in practice, as datasets differ in the size of the label set and in the definition of entity types. When datasets are not built from the same source, this also leads to differences in context for entities~\cite{ghosh_aclm_2023}. 
+We expect that the datasets of \cite{arnoult_batavia_2021, provatorova_too_2024}, which 
+both overlap with the \textsc{OBP} corpus and have annotation guidelines closer to \cite{koolen_accessing_2024}, are close enough in terms of the source domain and that, therefore, their tagset can be seen as a subset of ours.    
+We focus on the \textit{voc-gm-ner} dataset of \cite{arnoult_batavia_2021}, which uses 6 of our 15 tags. We present data-augmentation experiments where we compare the effect of adding task-internal training data to adding data from the \textit{voc-gm-ner} dataset. We show that our class-agnostic co-training method yields improvements even as more task-internal data become available.
+
+
+\section{Annotations}\label{annotations}
+\subsection{Data selection}\label{data-selection}
+The corpus consists of a subseries within the VOC-archive, the \textsc{OBP}. This series consists of documents in a variety of genres, including but not limited to letters, court cases, and cargo lists. We use the HTR-transcriptions of the corpus published by the GLOBALISE project \cite{project_voc_2024}. We selected 26 documents for annotation, spanning from 1618 to 1782. During selection, HTR quality was taken into account. We selected documents where the layout recognition had performed well, meaning that headers, paragraphs, and marginalia were clearly separated in the resulting machine-readable text. The overall quality of the HTR was deemed very high, suitable for manual reading and automatic processing.
+
+% * (1) Entities, types, process, guidelines, correction, revised guidelines, scores. 
+\subsection{Annotation task}\label{task}
+The label set for this annotation task consists of fifteen labels describing seven larger entity types: \textit{persons}, \textit{locations}, \textit{organizations}, \textit{polities}, \textit{commodities}, \textit{ships}, and \textit{documents}, as well as \textit{dates} (see Table~\ref{tab:tag-set} for an overview including descriptions of each entity type). This label set was developed in collaboration with domain experts. The reasons to extend the label set beyond the more common categories of \textit{Person}, \textit{Location}, and \textit{Organisation} are twofold. First, the set of entities considered is expanded to include other entities of historical significance, such as documents, commodities, and ships. The labels \texttt{DOC}, \texttt{CMTY\_NAME}, \texttt{CMTY\_QUAL}, \texttt{CMTY\_QUANT}, and \texttt{SHIP} were added to cover these additional entities. Second, additional labels are added to cover unnamed instances of various entities, particularly persons. This is done in an effort to compensate for the colonial imbalance in the corpus, since colonial subjects are less likely to be mentioned by name and are instead often referred to by their status, title, or profession \cite{luthra_unsilencing_2023}. The labels \texttt{PRF}, \texttt{STATUS}, \texttt{PER\_ATTR}, and \texttt{ETH\_REL} can cover such unnamed instances of people in the corpus. In doing so, they provide an additional entrypoint for researchers to locate these individuals.
+
+The labels are mutually exclusive, any span can only be annotated with a single label. Compositional references are split into sequences, see examples \ref{ex:ambassador} and \ref{ex:danish}. 
+
+\ex. [Mousabeeck]$_{\textrm{PER\_NAME}}$, [Ambassadeur]$_{\textrm{PRF}}$ den [Conincks]$_{\textrm{PRF}}$ van [Persia]$_{\textrm{LOC\_NAME}}$\footnote{Musa Beg, Ambassador to the King of Persia}\label{ex:ambassador}
+
+\ex. een [deens]$_{\textrm{LOC\_ADJ}}$ [comp„s]$_{\textrm{ORG}}$ [scheepje]$_{\textrm{SHIP\_TYPE}}$\footnote{a small Danish comp[any] ship}\label{ex:danish}
+
+\begin{table}[t]
+\centering
+\caption{Label set with corresponding entities}
+  \label{tab:tag-set}
+\begin{tabular}{llll}
+\hline
+\multicolumn{1}{c}{\textbf{NER label}} & \multicolumn{1}{c}{\textbf{Description}}                                                                                    & \multicolumn{1}{c}{\textbf{Related entities}}                                   \\ \hline
+PER\_NAME                              & Name of person                                                                                                              & persons                                                                         \\
+PRF                                    & Profession, title                                                                                                           & persons                                                                         \\
+STATUS                                 & (Civic) status                                                                                                              & persons                                                                         \\
+PER\_ATTR                              & Person attributes         & persons      \\                    & (other than PRF or STATUS)                                               \\
+LOC\_NAME                              & Name of Location                                                                                                            & locations, polities                                                             \\
+LOC\_ADJ                               & Derived form of Location name     & persons, any \\
+&& (through qualification) \\
+ETH\_REL                               & Ethnic, religious or ethno-religious & persons, any \\
+& appellation, not derived from location name & (through qualification) \\
+CMTY\_NAME                             & Name of Commodity                                                                                                           & commodities                                                                     \\
+CMTY\_QUAL                             & Commodity qualifier: colors, processing                                                                                     & commodities                                                                     \\
+CMTY\_QUANT                            & Quantity                                                                                                                    & commodities                                                                     \\
+SHIP                                   & Ship name                                                                                                                   & ships                                                                           \\
+SHIP\_TYPE                             & Ship type                                                                                                                   & ships                                                                           \\
+ORG                                    & Organisation                                                                                                                & organisations, polities                                                         \\
+DATE                                   & Date                                                                                                                        & dates                                                                           \\
+DOC                                    & Document                                                                                                                    & documents                                                                       \\ \hline
+
+\end{tabular}
+\end{table}
+
+\subsection{Annotation process}\label{annotation-process}
+The INCEpTION platform was used for annotation \cite{klie_inception_2018}. All annotations were made by historians with prior familiarity with the corpus or similar corpora. Analysis of an initial pilot annotation round of annotations with four annotators led to a reduction in entity labels from 21 to 15. This was achieved by reducing the number of fine-grained person related labels by combining them, as well as removing the distinction between \textit{locations} and \textit{polities} (similar to GPE). The results of this pilot annotation round are not included in the subsequent analysis of this paper. In all subsequent annotation rounds annotators worked in pairs, allowing annotators to discuss difficult cases and cross-check each others work within the annotator pairs.
+
+These changes, as well as further clarifications in the annotation guidelines\footnote{Guidelines are included in the data and code repository, https://github.com/globalise-huygens/finegrained-hist-ner} led to improvement in label agreement from about 80\% to 90\%, even with the introduction of new annotators. Disagreement persists in cases where distinction between labels requires specific domain knowledge and cannot be derived from linguistic context alone. For instance, in the following example \ref{ex:samarin} \textit{Samarijnsche} refers to \textit{Zamorin}, the title of the ruler of Calicut (label \texttt{PRF}). However, if this is not known, it can easily be confused with an adjectival form of a location (label \texttt{LOC\_ADJ}). Similarly, the \texttt{ETH\_REL} and \texttt{LOC\_ADJ} labels can be easily confused. See examples \ref{ex:tidor} and \ref{ex:alfoer}: \textit{Tidoorsche} is a derived form of Tidore, an island and polity in what is now eastern Indonesia; \textit{Alfoerese}, does not refer to a place but to a colonially applied ethnic category. 
+
+\ex. Het geheele Samarijnsche land\footnote{the entire Zamorin land} \label{ex:samarin}
+
+\ex. Tidoorsche grooten\label{ex:tidor}
+
+\ex. Alfoerese grooten\label{ex:alfoer}
+
+In order to reduce such confusion, annotators have access to glossaries and reference data relevant to the corpus. 
+Additionally, all documents are checked by a designated curator for final quality control.
+
+
+\section{From annotations to training data}\label{data}
+\subsection{Preprocessing}\label{preprocessing}
+Data are pretokenised with spaCy (\texttt{nl-core-news-lg} model) \cite{spacy} prior to annotating. 
+For training, as the
+model does not allow for a reliable sectioning of text into
+sentences, due to the irregular use of punctuation in these historical texts, long passages are segmented into sequences by their number of 
+tokens. We found that a maximum length of 240 tokens was enough to ensure that the
+data would remain within a length of 512 subtokens for the XLM-Roberta
+tokenizer. As all tested pretrained models have a smaller or same-sized vocabulary, we assume that
+this limit is adequate for them too. For simplicity's sake, the data are preprocessed with this
+maximum token length for all data and all pretrained-model tokenizers. Finally, span-level annotations are converted to IOB token-level labels~\cite{ramshaw_text_1999}.
+
+\subsection{Data splits}\label{data-splits}
+The annotated data were produced and curated in successive rounds, and resulted into two sets of annotations for this work: the first set of annotations was used for early experiments and validating models, while the second set of annotations was used for evaluating the effect of internal data augmentation and for testing.
+
+The models were trained and validated on the first set of annotations. To allow for a
+representative validation set within these data, we shuffled sequences
+in the data; folded them into 5 datasets with an 80\%-20\%
+training/validation split; finetuned XLM-Roberta-Base on the
+five resulting datasets; and finally selected the split that led to
+median performance. The resulting data subsets are referred to as
+\texttt{train-A} and \texttt{validation} henceforth.
+
+The second set of annotations was used to provide additional training data and
+a heldout test set. These are split by document to minimise possible
+overlap between training and test data. We selected three
+documents for testing based on their size and entity distribution,
+aiming at a balanced distribution and a size comparable to that of the
+validation data. The resulting splits are referred to as
+\texttt{train-B} and \texttt{test} in what follows.
+
+Entity type distributions in the resulting training, validation, and test
+sets are shown in Figure~\ref{fig:entity-dist}.
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=\linewidth]{figures/entity_distribution.png}
+  \caption{Entity distribution in data splits. The first training set \textit{A} and the validation data have similar distributions as they are sampled by sequence from the same first set of annotations and so as to obtain median performance on the validation set. The \textit{B} training set and the test set, which are taken from a second set of annotations, are more dissimilar as they come from different documents, containing less commodity-related annotations and more person-related annotations; their distributions are also different from each other as they were split by document.}
+  \label{fig:entity-dist}
+\end{figure}
+
+\subsection{Mapping entities to
+subtokens}\label{mapping-entities-to-subtokens}
+Subtoken IOB tags are derived from token-level IOB labels  
+as if by applying the IOB scheme directly to span-level entity
+annotations: the \emph{first subtoken} of the \emph{first
+token} of an entity of type X is labelled as B-X, and all other
+subtokens in the entity's span are labelled as I-X. Subtokens of
+O-labelled tokens are tagged as O. For instance, the sequence \textit{Sijbrandt Harmansz van Giever} is labelled as follows at the span level (annotations), token level (after tokenization by spaCy) and subtoken levels (after tokenization by gloBERTise, see section~\ref{sec:ptm}):
+\begin{description}
+    \item[span] [Sijbrandt Harmansz]$_{\textrm{PER\_NAME}}$ van [Giever]$_{\textrm{LOC\_NAME}}$
+    \item[token]  [Sijbrandt]$_{\textrm{B-PER\_NAME}}$ [Harmansz]$_{\textrm{I-PER\_NAME}}$ [van]$_O$ [Giever]$_{\textrm{B-LOC\_NAME}}$
+    \item[subtoken]  [Sij]$_{\textrm{B-PER\_NAME}}$ [\_brandt]$_{\textrm{I-PER\_NAME}}$ [Harmansz]$_{\textrm{I-PER\_NAME}}$ [van]$_O$ [Gie]$_{\textrm{B-LOC\_NAME}}$ [\_ver]$_{\textrm{I-LOC\_NAME}}$
+\end{description}
+
+
+Past training, subtoken predictions are reconstructed
+into span-level predictions following the reverse operation: the
+predictions of token-initial subtokens are mapped to token-level
+predictions, and these IOB tags are mapped to span predictions following
+a non-strict scheme: entities are identified in principle by B-tags
+optionally followed by sequences of I-tags of the same type; I-tags that
+follow on an O-tag are considered as also marking the start of an entity
+and reinterpreted as B-tags.
+
+\subsection{Metrics}\label{metrics}
+Training validation uses \emph{token-level} F1 scores (micro, macro and
+weighted) as metrics, whereby O-class true positives are ignored so as
+to prevent them from weighing out scores. F1 scores are computed on 
+token-initial subtokens only, to reflect final span-level computations more closely\footnote{In contrast, loss is computed at the subtoken level.}. 
+Consequently, F1 scores are  
+computed only on token-initial subtoken predictions for which at least
+the predicted or the true label is not O. 
+
+Testing is performed at the entity-span level with \emph{seqeval}~\cite{seqeval}, using
+the non-strict IOB2 scheme.
+
+
+
+\section{Finetuning pretrained language models for NER}\label{sec:ptm}
+
+\subsection{Pretrained models}
+All models are based on pretrained transformer-encoder language models 
+supplemented with a token classification layer. We experimented with four 
+multilingual models: multilingual BERT-base~\cite{devlin_bert_2019}, its 
+distilled variant~\cite{sanh_distilbert_2020}, and the base and large 
+variants of XLM-Roberta~\cite{conneau_unsupervised_2020}; we also experimented 
+with a pretrained language model, gloBERTise~\cite{verkijk-etal-2025-language,verkijk_globertise_2025}, trained directly on the \textsc{OBP} data, 
+and based on RoBERTa~\cite{liu_roberta_2019}. We did not experiment with Gysbert~\cite{manjavacas-arevalo-fonteyn-2022-non}: while its training data covers the historical period of the VOC, it includes more out-of-domain data through literary texts. Therefore, we expected that it would perform less well than gloBERTise. 
+
+Models vary in the size of the 
+tokenizer vocabulary, the number of attention layers, and hidden dimensions as reported in 
+Table~\ref{tab:model-sizes}.
+
+\begin{table}[h]
+\centering
+\caption{Pretrained-model parameters and sizes}
+  \label{tab:model-sizes}
+\begin{tabular}{lrrrrrr}
+\toprule\noalign{}
+  model & vocabulary & layers & dimension & \multicolumn{3}{c}{parameters (M)}   \\
+  & (k) & & & embeddings & attention & total\\
+\midrule\noalign{}
+  gloBERTise & 50 & 12 & 768 & 40 & 85 & 125 \\
+  dist-mBERT & 120 & 6 & 768 & 92 & 43 & 135 \\
+  mBERT & 120 & 12 & 768& 92 & 85 &177  \\
+  XLMR-base & 250 & 12 & 768& 192 & 85 &277 \\
+  XLMR-large & 250 & 24 & 1024 & 257 & 302 &558 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Experimental setup}\label{experimental-setup}
+Models are optimised with Adam~\cite{kingma-2014-adam}, using default parameters and
+adapting only the learning rate. For XLM-Roberta-Large, the initial
+learning rate is $2e^{-5}$ for a batch size is 16; for the other models, the
+initial learning rate is $4e^{-5}$ for a batch size of 32. The learning rate is
+halved every time the token-level micro-F1 fails to increase for more
+than 3 epochs. All models are trained for up to 40 epochs.
+
+All experiments use the same single seed, except for model validation,
+where experiments with two more seeds are added.
+For model validation, evaluation is based on the best average F1 (micro, macro and weighted, respectively) over three seeds within 40 epochs. 
+For testing, the initial seed is used, conducting an evaluation on the checkpoint with the best micro-F1 within 40 epochs. 
+
+
+\subsection{Model validation}
+Table~\ref{tab:model-validation} reports model performance based on the underlying 
+pretrained language model, and averaged over three seeds, selecting the epoch with the best average micro F1 for each model. Model performance increases overall with 
+model size, except for gloBERTise, which performs comparably to the four-times larger 
+XLM-Roberta-Large.
+We see here the effect of the gloBERTise vocabulary being fit to the \textsc{OBP} data; this effect is also 
+reflected by faster model convergence, with the best results being reached after 15 epochs, against 29 to 40 for the other models.
+
+\begin{table}[h]
+\centering
+  \caption{Validation scores for models trained on the train-A set, averaged over 3 seeds. The best average metric scores 
+  are reported along with the epoch at which they were measured and with  standard deviation.}
+  \label{tab:model-validation}
+\begin{tabular}{lrllrllrll}
+\toprule\noalign{}
+    & \multicolumn{3}{c}{micro F1}& \multicolumn{3}{c}{macro F1}& \multicolumn{3}{c}{weighted F1} \\
+model & epoch & F1 & std & epoch & F1 & std & epoch & F1 & std \\
+\midrule\noalign{}
+gloBERTise & 15 & \textbf{81.8} & 0.3 & 29 & 70.7 & 1.0 & 12 & \textbf{82.5} & 0.44 \\
+dist-mBERT & 40 & 72.3 & 0.31 & 40 & 65.5 & 1.33 & 26 & 73.4 & 0.62 \\
+mBERT & 29 & 77.6 & 0.83 & 29 & 69.5 & 3.56 & 29 & 78.3 & 1.07 \\
+XLMR-base & 40 & 77.1 & 0.44 & 40 & 69.8 & 0.78 & 34 & 78.4 & 1.19 \\
+XLMR-large & 36 & 81.1 & 1.37 & 22 & \textbf{72.1} & 1.84 & 39 & 81.7 & 1.56 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The advantage of gloBERTise for our case carries out to unseen data as shown by the test results in Table~\ref{tab:model-test}:
+ even though the best XLM-Roberta-Large model performs better overall than the gloBERTise one on validation data, its performance 
+ is lower on the test data.
+
+\begin{table}[h]
+  \centering 
+  \caption{Pretrained-model comparison by validation (token and seqeval) and test seqeval scores for best micro-F1 checkpoint (single seed).}
+  \label{tab:model-test}
+  \begin{tabular}{lrlllllllll}
+\toprule
+& \multicolumn{4}{c}{validation token F1}& \multicolumn{3}{c}{validation seqeval F1}& \multicolumn{3}{c}{test seqeval F1} \\
+    model	&epoch&	mic.&	mac.&	weigh. &	mic. &	mac. &	weigh. &	mic. &	mac. &	weigh. \\
+\midrule
+      gloBERTise&	15&	81.7&	70.0	&82.2	&82.2	&78.3	&82.1&	\textbf{66.6}&	\textbf{60.8}&	\textbf{64.2}
+\\
+        dist-mBERT	&39&	72.3	&65.3&	73.0	&72.0	&67.4	&72.5	&53.6&	48.3	&52.0
+\\
+    mBERT&	29	&78.5	&71.9	&79.4	&79.5	&75.0	&79.4	&57.4	&49.0	&54.5
+\\
+    XLMR-base	&28&	78.1	&71.4	&78.5	&79.1	&74.5	&78.9	&55.1	&48.6	&50.5
+\\
+    XLMR-large&	37	&\textbf{82.6}	&\textbf{72.2}	&\textbf{83.1}	&\textbf{84.2}	&\textbf{80.3}	&\textbf{84.2}	&65.9	&59.1	&62.8\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The good performance obtained with gloBERTise is encouraging, as it allows us to experiment with a lighter model, 
+leading to decreasing development, training, and inference times for our NER model. 
+
+\section{Data augmentation with unknown
+classes}\label{data-augmentation-with-unknown-classes}
+
+\subsection{The voc-gm-ner corpus}\label{the-vocgm-data}
+
+The voc-gm-ner corpus \cite{arnoult_batavia_2021, arnoult_voc_2022} is textually close to the \textsc{OBP}-data: it is
+taken in part from the \emph{Generale Missiven} corpus, which is a
+subset of the \textsc{OBP} corpus; for the other part, it consists of 20th
+century Dutch editorial notes and comments on the historical text. While
+this second part is not included in the \textsc{OBP} corpus, it follows closely
+on it, notably mentioning entities that are relevant to the \textsc{OBP}. The
+ data set also differs from the \textsc{OBP} data in that it was derived from
+ digitised OCRed texts, whereas we work with HTR data.
+
+When it comes to entity types, the version of the corpus provided for training (the \textit{datasplit\_all\_standard} 
+view of the corpus~\cite{arnoult_voc_2022}, which we refer to henceforth as \textit{vocgm} for VOC Generale Missiven) uses a subset of our
+label set, corresponding to the following types: \texttt{ETH\_REL},
+\texttt{LOC\_ADJ}, \texttt{LOC\_NAME}, \texttt{ORG}, \texttt{PER\_NAME}
+and \texttt{SHIP}. We 
+assume at least that the entity types defined in
+the corpus are close enough to our own definitions to be mapped
+directly to these labels. This leaves us with nine entity types that are
+defined in our data, probably well represented in the \textit{vocgm} data, but
+labelled as non-entities \texttt{O}. 
+
+As the \textit{vocgm} dataset is larger
+than ours (with about 18.7k training entity mentions against 3.9k for train-A and 5.9k for the joint train-A and B sets), 
+simply joining the training data would prevent correct learning
+of these types, as their predictions would be penalised against
+\texttt{O} reference labels in the \textit{vocgm} data.
+To limit this effect, we experimented with both data selection and class-agnostic co-training.
+
+\subsection{Selecting data by entity density}
+We experimented with selecting sequences with a minimum entity density, i.e. proportion of entity tokens in a sequence. 
+Enforcing a threshold on entity density decreases the size difference between our data and 
+the augmentation data, and might decrease the representation of unseen entities. Note that this last hypothesis rests 
+on an independence assumption of entity type occurrences, which is likely to hold better for some types than 
+others: it seems likely enough for commodity listings, but not for letters where attributive types like \texttt{PER\_ATTR} or 
+\texttt{SHIP\_TYPE} can be expected to occur closely to \texttt{PER\_NAME} and \texttt{SHIP}, respectively.
+
+We experimented with two thresholds, 0.05 and 0.1, selecting \textit{vocgm} 
+sequences with at least 5\% and 10\% of entity tokens.
+
+\subsection{Class-agnostic co-training}\label{reference-driven-class-agnosticism}
+
+To counteract the effect of unseen types in the \textit{vocgm} dataset on the learning of these types, we can consider that \texttt{O} annotations in the \textit{vocgm} data
+are not truly representative of \texttt{O} classes, but of any type in
+the union set of \texttt{O} and the \textit{vocgm}-unknown 9 classes. To align
+the model with these reference data, one can then make it equally
+agnostic, by reporting the probability mass of \textit{vocgm}-unknown types to
+the \texttt{O} class before computing the loss, as shown in Figure~\ref{fig:class-agnosticism}.
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=0.6\linewidth]{figures/example_w_dist.png}
+  \caption{Class-agnostic co-training. Generic entity labels are represented for brevity, but they stand for corresponding B or I tags. The example \textit{vocgm} training sequence contains a token, \textit{Radja}, that is tagged as \textit{O} whereas the target tag should be \textit{PRF}. As cross-entropy loss for that token is computed against the model's output for the \textit{O} class, we want to report the softmax weight of the target class \textit{PRF} onto that of the \textit{O} class to avoid penalizing true-class predictions. As the true class cannot be known for a given \textit{vocgm} \textit{O} class, one reports the softmax weights of \textit{all} \textit{vocgm}-unknown target classes to that of the \textit{O} class for \textit{vocgm} training sequences.}
+  \label{fig:class-agnosticism}
+\end{figure}
+
+In practice, a mask of unknown classes is attached to \textit{vocgm} sequences when
+adding them to the training data (sequences from our annotations and \textit{vocgm} data are shuffled through each other in the training data, whereas the validation data consist only of
+\textsc{OBP} data). The output of the model for these sequences is passed through
+a softmax to obtain class probability estimates, and the mask is used to
+compute the sum of the unknown-class probability mass, which is then added
+to the softmax value of the \texttt{O} class. Subsequently, instead of
+directly computing cross-entropy loss over output logits for these
+sequences, one computes the negative log-likelihood loss over (the log
+of) the recomputed softmax values.
+
+
+\subsection{Model validation}
+Table~\ref{tab:vocgm-aug-val} shows that class-agnostic co-training generally improves 
+model performance. Entity-density selection has a small positive effect on its own, but micro F1 are lower than for the gloBERTise baseline trained on the \texttt{A} training dataset only. In contrast, models with class-agnostic co-training benefit from the addition of external data, and perform slightly better as more external data is included. 
+We adopt class-agnostic co-training with the full \textit{vocgm} as setting for the following external-data augmented experiments.
+
+\begin{table}[ht!]
+\centering
+  \caption{Data augmentation of the \textit{train-A} set with the \textit{vocgm} training data. Effect of
+entity-density threshold (\textit{edt}) and class-agnostic co-training (\textit{cact}) with
+  gloBERTise on validation scores. Training size refers to the number of entities.}
+  \label{tab:vocgm-aug-val}
+\begin{tabular}{lccrllrllrll}
+\toprule\noalign{}
+    &&training & \multicolumn{3}{c}{micro F1}& \multicolumn{3}{c}{macro F1}& \multicolumn{3}{c}{weighted F1} \\
+edt& cact &size (k)&epoch& F1&std& epoch&F1 &std&epoch& F1 & std\\
+\midrule\noalign{}
+\multicolumn{2}{c}{\textit{train A}} & 3.9 & 15 & 81.8 & 0.3 & 29 & 70.7 & 1.0 & 12 & 82.5 & 0.44 \\
+\midrule
+0 & no & 22.6 &33 & 80.8 & 0.31 & 33 & 72.6 & 1.19 & 33 & 83.2 & 0.26 \\
+0.05 & no & 19.3 &20 & 81.4 & 0.33 & 25 & 73.4 & 3.15 & 10 & 83.5 & 0.98 \\
+0.1 & no & 12.5& 18 & 81.3 & 0.49 & 34 & 73.4 & 0.46 & 23 & 83.3 & 0.78 \\
+\midrule
+0 & yes & 22.6 &6 & \textbf{82.7} & 0.27 & 11 & \textbf{74.7} & 1.55 & 7 & \textbf{84.3} & 0.79 \\
+0.05 & yes & 19.3 &6 & 82.4 & 0.98 & 26 & 74.1 & 1.04 & 15 & 83.2 & 0.61 \\
+0.1 & yes & 12.5 & 10 & 82.5 & 0.62 & 24 & 74.4 & 1.85 & 34 & 83.5 & 0.69 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Data augmentation with task data and external data}
+As more annotations become available in a project, one can wonder if there is still benefit in augmenting data from external datasets. Validation experiments on task-internal data with the \textit{train-B} set and on \textit{vocgm}-augmented data show that both kinds of data are beneficial to model performance, both separately and when combined, as shown in Table~\ref{tab:data-aug-val}. One can also observe that models trained on the B set only score poorly on the validation data, reflecting their difference in entity distribution with the \texttt{train-A} and validation sets. 
+
+\begin{table}[ht!]
+  \centering 
+  \caption{Data augmentation with task-data (\textit{train-B}) and external data (\textit{vocgm}). Finetuning scores on the train-A, train-B, joint A and B sets, and \textit{vocgm}-augmented sets.}
+  \label{tab:data-aug-val}
+  \begin{tabular}{lrllrllrll}
+\toprule\noalign{}
+& \multicolumn{3}{c}{micro F1}& \multicolumn{3}{c}{macro F1}& \multicolumn{3}{c}{weighted F1} \\
+training data & epoch & F1 & std & epoch & F1 & std & epoch & F1 & std \\
+\midrule\noalign{}
+A & 15 & 81.8 & 0.3 & 29 & 70.7 & 1.0 & 12 & 82.5 & 0.44 \\
+B & 36 & 66.2 & 0.84 & 37 & 53.2 & 2.25 & 36 & 67.6 & 0.75 \\ 
+\midrule
+A+B & 28 & 83.2 & 0.62 & 14 & 71.6 & 0.75 & 20 & 83.5 & 1.04 \\ 
+A+vocgm& 6 & 82.7 & 0.27 & 11 & 74.7 & 1.55 & 7 & 84.3 & 0.79  \\
+A+B+vocgm &  35 & \textbf{84.3} & 0.46 & 13 & \textbf{76.1} & 1.23 & 39 & \textbf{84.8} & 0.36 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+In contrast, test results, reported in Table~\ref{tab:data-aug-test}, show that models co-trained on the \texttt{train-B} set perform relatively better on the test data, reflecting the somewhat closer distributions within the \texttt{train-B/test} set of annotations. Class-agnostic co-training with the \textit{vocgm} data however still provides gains for micro and macro F1 test seqeval scores.
+
+
+\begin{table}[ht!]
+  \centering 
+  \caption{Data augmentation: validation (token and seqeval) and test seqeval scores for best micro-F1 checkpoint (single seed). All checkpoints use the same initial seed, and are selected by (token) micro F1 scores.}
+  \label{tab:data-aug-test}
+  \begin{tabular}{lrlllllllll} 
+\toprule
+& \multicolumn{4}{c}{validation token F1}& \multicolumn{3}{c}{validation seqeval F1}& \multicolumn{3}{c}{test seqeval F1} \\
+    training data	&ep.&	mic.&	mac.&	weigh. &	mic. &	mac. &	weigh. &	mic. &	mac. &	weigh. \\
+\midrule
+
+    A & 15 & 81.7 & 70.0 & 82.2 & 82.2 & 78.3 & 82.1 & 66.6&60.8&64.2\\
+
+    %B & 39 & 67.4 & 55.2 & 68.0 & 68.5 & 61.2 & 67.6 & 65.5&59.4&64.8\\
+    B & 40 & 66.2 & 54.6 & 67.9 & 65.9 &58.3 & 64.4 &64.9 & 57.9 & 63.9 \\
+
+\midrule
+    %A+B & 38 & 83.6 & 73.4 & 84.1 & 83.9 & 80.7 & 84.0 & 69.6&66.2&67.4\\
+     A$+$B & 8 & 83.0 & 69.5 & 83.2 & 82.6 & 78.0 & 82.5 & 69.0 & 63.6 & \textbf{67.2}\\
+    A$+$vocgm & 15 & 82.8 & \textbf{75.5} & \textbf{84.1} & 85.3 & 81.6 & 85.3 & 67.9&63.4&63.3\\
+    %A+B+vocgm & 12 & 83.5 & 74.8 & 84.9 & 85.2 & 81.6 & 85.1 & 67.9&63.8&64.2\\
+    A$+$B$+$vocgm & 40 & \textbf{83.1} & 75.0 & 83.4 & \textbf{85.8} & \textbf{82.4} & \textbf{85.8} & \textbf{69.7} & \textbf{64.7} & 66.4 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+A comparison of precision and recall, shown in Table~\ref{tab:data-aug-pr}, shows that 
+\textit{vocgm} augmented models have higher overall precision but lower recall on the test data.
+\begin{table}[ht!]
+  \centering 
+  \caption{Data augmentation with task-data (\textit{train-B}) and external data (\textit{vocgm}): seqeval precision and recall. Best test scores for augmented data models are boldfaced.}
+  \label{tab:data-aug-pr}
+  \begin{tabular}{lcccccccccccc}
+\toprule\noalign{}
+& \multicolumn{6}{c}{validation}& \multicolumn{6}{c}{test}\\
+training & \multicolumn{2}{c}{micro}& \multicolumn{2}{c}{macro}& \multicolumn{2}{c}{weight.}& \multicolumn{2}{c}{micro}& \multicolumn{2}{c}{macro}& \multicolumn{2}{c}{weight.}\\
+ data   & P & R& P & R& P & R& P & R& P & R& P & R\\
+\midrule\noalign{}
+A &  80.8 &     83.5 & 79.9 &     78.6 & 81.2 &     83.5 &  72.2 &     61.9 & 65.2 &     60.9 &  74.8 &     61.9 \\ 
+B & 65.3 &       66.5 &       61.1 &       58.8 &   65.4 &       66.5 &     63.7 &       66.3 &    57.0 &       60.5 &   63.4 &       66.3\\
+%& 67.1 &     70.0 & 62.0 &     62.4 & 67.0 &     70.0 & 63.1 &     68.1 &   56.9 &     63.0 &  62.8 &     68.1 \\ 
+    \midrule
+A+B &  83.1 &     84.8 &  80.9 &     81.4 & 83.6 &     84.8 &  74.5 &     \textbf{65.3} & 69.2 &     \textbf{65.9} &    74.8 &     \textbf{65.3} \\ 
+ %81.4 &     83.8 &     79.6 &     78.7 &    81.9 &     83.8 &   73.9 &     64.7 & 67.5 &     62.7 &     74.5 &     64.7 &    
+A+vocgm&  85.6 &     85.0 &  83.6 &     80.8 &    86.0 &     85.0 &   77.6 &     60.4 &   \textbf{74.4} &     60.2 & \textbf{80.5} &     60.4 \\ 
+%A+B+vocgm & 84.8 &     85.6 &  83.7 &     81.3 & 85.2 &     85.6 &    75.3 &     61.7 &   71.2 &     62.2 & 76.7 &     61.7\\
+ABvocgm & 85.1 &      86.6 &   83.7 &      82.4 &      85.4 &      86.6 &      \textbf{77.7} &      63.1 &      71.6 &      62.8 &      79.3 &      63.1 \\     
+    \bottomrule
+  \end{tabular}
+\end{table}
+The higher precision of \textit{vocgm}-augmented models can be attributed to the larger training data: as models are exposed to more data during training, even \texttt{O} instances contribute to penalizing false positives. 
+
+
+\begin{table}[h!]
+  \centering 
+  \caption{Type level seqeval scores for the in-task (\textit{A+B}) and external (\textit{A+B+vocgm}) augmented training data. 
+  We separate types by their presence in the \textit{vocgm} training data. Best F1 scores per type are boldfaced; 
+  underlined values highlight types for which the \textit{A+B+vocgm} trained model has higher precision on unknown types 
+  and types for which the non-\textit{vocgm}-augmented model has higher precision or recall on augmented types.}
+  \label{tab:seqeval-detail}
+  \begin{tabular}{lrlllrlllr}
+\toprule
+ & train & \multicolumn{3}{c}{A+B}& train & \multicolumn{3}{c}{A+B+vocgm}& test \\
+      &support &	prec.&	recall &	F1 &	support &	prec.&	recall &	F1 & supp. \\
+\midrule
+CMTY\_NAME & 857 &   87.5 &      77.8 &      82.4 &   857 &  \underline{97.2} &      77.8 &      \textbf{86.4} & 45
+ \\
+CMTY\_QUAL & 136 & 0.0  & 0.0  & 0.0 &  136 & 0.0 &  0.0  & 0.0& 4
+ \\
+CMTY\_QUANT & 526 &  80.0 &      57.1 &      \textbf{66.7} &   526 &  63.6 &      50.0 &      56.0 &   14
+ \\
+DATE & 370 &  72.5 &      80.6 &      \textbf{76.3} &  370 &  61.9 &      72.2 &      66.7 & 37
+ \\
+DOC & 201 &  67.9 &      51.4 &      \textbf{58.5} &   201 &   \underline{73.8} &      44.3 &      55.4 &  71
+ \\
+
+PER\_ATTR & 417 &  79.3 &      34.0 &      \textbf{47.6}  & 417 &  \underline{85.5} &      23.2 &      36.4 & 203
+ \\
+
+PRF & 866 &  70.7 &      80.0 &      75.1 &   866 &  70.6 &      81.1 &      \textbf{75.5} &   175
+ \\
+ SHIP\_TYPE & 364 &  83.3 &      95.2 &      \textbf{88.9}  & 364 & \underline{86.4} &      90.5 &      88.4 &  21
+ \\
+STATUS & 156 &  64.5 &      74.1 &      69.0 &    156 &  \underline{69.0} &      74.1 &      \textbf{71.4} &  27
+ \\
+ \midrule
+    ETH\_REL & 57 &   33.3 &      9.1 &      14.3  & 262 & 75.0 &      27.3 &      \textbf{40.0} &  11
+ \\
+LOC\_ADJ & 260 & 46.2 &      66.7 &      54.5 &  3105 &   58.3 &      77.8 &      \textbf{66.7} &   18
+ \\
+LOC\_NAME & 636 &   88.6 &      84.8 &      86.7 & 9173 &  91.4 &      92.4 &      \textbf{91.9} &  92
+ \\
+ORG & 162 &  70.2 &      72.7 &      71.4 & 1760 &  85.7 &      76.4 &      \textbf{80.8} &  110
+ \\
+ PER\_NAME & 678 &   68.8 &      71.7 &      70.2   & 4700 &  71.4 &      76.1 &      \textbf{73.7} &  46
+ \\
+    SHIP & 247 & \underline{100.0} &      \underline{85.7} &      \textbf{92.3} &  1730 &  84.6 &      78.6 &      81.5 &  14\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+In some cases, namely \texttt{CMTY\_NAME}, \texttt{DOC}, \texttt{PER\_ATTR}, \texttt{SHIP\_TYPE}, and \texttt{STATUS}, this leads to a higher precision of the \textit{A+B+vocgm} model on \textit{vocgm}-unknown types, as shown in Table~\ref{tab:seqeval-detail}. 
+The lower test recall with the \textit{A+B+vocgm} model results mostly from the combination of poor recall for the \texttt{PER\_ATTR} class and the weight of that class in the text data, which also explains the lower overall weighted F1 score in Table~\ref{tab:data-aug-test}. The low recall for this class is the combined result of under-representation in the training data and over-representation in the test data (see Figure~\ref{fig:entity-dist}). 
+Whereas performance for this class should improve from retraining a NER model on all the data, this result shows how sensitive the less represented types are to differences between training and unseen data. 
+
+The type-level scores in Table~\ref{tab:seqeval-detail} also show that the decrease in recall with the external \textit{vocgm} data is mostly related to \textit{vocgm}-unknown classes, reflecting the fact that these classes become less well represented in the augmented training data.
+
+In contrast, the \textit{A+B+vocgm} model exhibits higher F1 scores for shared classes, with the notable exception of the \texttt{SHIP} class. Although the results for this class are subject to variance given its poor representation in the test data, we note that there is no direct overlap of the test instances with the rest of the data. As about 75\% of the \textit{vocgm} \texttt{SHIP} instances come from editorial notes rather than historical text~\cite{arnoult_batavia_2021}, we suspect that the lower score for this class may come from textual differences between the OBP and the editorial notes of the \textit{voc-gm-ner} corpus, which may be further aggravated by tokenization, as gloBERTise is trained on the \textsc{OBP} and not on the \textit{vocgm} data. It would be interesting to retrain a model using only the historical part of the \textit{voc-gm-ner} corpus in this respect.
+
+\section{Conclusion}
+We have presented a fine-grained NER dataset for VOC-related Dutch historical texts, covering 8000 mentions of 15 entity types for the VOC domain. NER modelling experiments on this dataset show the benefit of adapting the language model to the task's data, leading to a lightweight, performing model. We propose a simple technique, class-agnostic co-training, to leverage datasets from similar sources but with more restricted tagsets for data augmentation. We have shown that this method increases overall performance for the NER tags that are shared with the in-task data, while generally increasing precision for unknown tags. We hope that this method will encourage the reuse of existing datasets in specialised domains.
+
+\section*{Acknowledgements}
+This work was undertaken as part of the GLOBALISE project\footnote{Funded by the Dutch Research Council, \url{https://globalise.huygens.knaw.nl/}}. The overarching goal of GLOBALISE is to enrich VOC materials with structured, semantic annotations that aid users in reading, interpreting, and contextualizing the historical records in the vast corpus of texts created by the Company as kept in the National Archive of the Netherlands. By layering this information on top of the original texts and making it (re)searchable, the project aims to present the archival material in a digital infrastructure that bridges the temporal, linguistic, and cultural distance between then and now.
+
+We thank SURF (www.surf.nl) for the support in using the Dutch National Supercomputer Snellius, and the anonymous reviewers for their constructive comments.
+
+\printbibliography
+\end{document}

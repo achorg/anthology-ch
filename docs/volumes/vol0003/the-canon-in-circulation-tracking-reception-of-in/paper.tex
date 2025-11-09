@@ -1,0 +1,573 @@
+% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
+% *Anthology of Computers and the Humanities*. ADD THE OPTION
+% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
+% DO NOT change the documentclass
+%\documentclass[final]{anthology-ch} % for the final version
+\documentclass[final]{anthology-ch}         % for the submission
+
+\newcommand{\naal}{\textit{NAAL} }
+
+% LOAD LaTeX PACKAGES
+\usepackage{booktabs}
+\usepackage{graphicx}
+% ADD your own packages using \usepackage{}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tikz}
+\usepackage{float}
+
+
+\usepackage{pgf} % gives \pgfmathsetlengthmacro
+
+% Longest value = 73224; target max bar = 4cm
+\usepackage{xcolor}
+\usepackage{xfp} % robust floating-point calc: \fpeval
+
+\newlength{\sparklen}
+% scale to a 4cm max bar (change 4 to taste). Max value = 73224.
+\newcommand{\sparkbar}[1]{%
+  \setlength{\sparklen}{\fpeval{(#1/73224)*3}cm}%
+  \color{blue!60}\rule{\sparklen}{1.2ex}%
+}
+
+\newcommand{\sparkbarred}[1]{%
+  \setlength{\sparklen}{\fpeval{(#1/21652)*3}cm}%
+  \color{red!60}\rule{\sparklen}{1.2ex}%
+}
+
+
+
+% TITLE OF THE SUBMISSION
+% Change this to the name of your submission
+\title{The Canon in Circulation: Tracking the Reception of \textit{Norton Anthology} Authors in Library Checkout Data}
+
+% AUTHOR AND AFFILIATION INFORMATION
+% For each author, include a new call to the \author command, with
+% the numbers in brackets indicating the associated affiliations 
+% (next section) and ORCID-ID for each author.  
+\author[1]{Neel Gupta}[
+  orcid=0009-0000-1263-4009
+]
+
+\author[2]{Daniella Maor}[
+  orcid=
+]
+
+% While we encourage including ORCID-IDs for all authors, you can
+% include authors that do not have one by definining an empty ID.
+\author[2]{Karalee Harris}[
+  orcid=
+]
+
+\author[2]{Emily Backstrom}[
+  orcid=
+]
+
+\author[2]{Hongyuan Dong}[
+  orcid=
+]
+
+\author[1]{Melanie Walsh}[
+  orcid=0000-0003-4558-3310
+]
+
+
+
+
+
+% There should be one call to \affiliation for each affiliation of
+% the authors. Multiple affiliations can be given to each author
+% and an affiliation can be given to multiple authors. 
+\affiliation{1}{Information School, University of Washington, Seattle, USA}
+\affiliation{2}{University of Washington, Seattle, USA}
+
+
+% KEYWORDS
+% Provide one or more keywords or key phrases seperated by commas
+% using the following command
+\keywords{readers, reception, circulation, literature, metadata, bibliographic data}
+
+% METADATA FOR THE PUBLICATION
+% This will be filled in when the document is published; the values can
+% be kept as their defaults when the file is submitted
+\pubyear{2025}
+\pubvolume{3}
+\pagestart{1436}
+\pageend{1448}
+\conferencename{Computational Humanities Research 2025}
+\conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
+\doi{10.63744/P6qPH135jhY2}  
+\paperorder{94}
+
+\addbibresource{bibliography.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HERE IS THE START OF THE TEXT
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Which canonical American authors are the public reading, and why? We explore this question by analyzing nearly two decades of book circulation data from the Seattle Public Library (SPL), one of the only public libraries in the United States to make anonymized checkout data publicly available. Focusing on the 93 authors included in the post-1945 volume of \textit{The Norton Anthology of American Literature} (\textit{NAAL}), we examine 1.6k unique works and almost one million checkouts to better understand contemporary literary reception beyond the classroom. We present a novel dataset that can support future reception research and serve as a benchmark for future \textit{Work}-level clustering approaches. Our findings suggest that the few genre fiction authors in the \textit{NAAL}—particularly writers of science fiction—dominate the checkouts, and that circulation spikes are often triggered by high-profile media adaptations, the death of an author, and potentially even scandal. We share an open-source, interactive tool that allows users to explore checkout trends for any post-1945 \textit{NAAL} author or work over the last 20 years.
+\end{abstract}
+
+\section{Introduction} 
+
+Which canonical American authors are the public actually reading? What motivates readers to reach for particular literary works at particular times? These are difficult questions to answer, partly because reading and reception data is hard to come by. Today, scholars interested in large-scale reception evidence are mostly limited to sources like bestseller lists, which only a small fraction of authors ever appear on, and online book review data. In this paper, we seek to answer these questions by turning to a new book reception data resource from the Seattle Public Library (SPL). 
+
+The SPL is one of the few libraries in the United States to make anonymized book checkout data publicly available at a granular level—by minute for physical checkouts, and by month and medium for physical and digital checkouts \cite{Gupta_Christensen_Walsh_2025}. 
+% This data offers a unique resource for analyzing reading and reception trends for literary works and authors.
+We use the total checkouts dataset to analyze library checkout trends for works by every author included in Volume E (1945-) of the most recent 10th edition of \textit{The Norton Anthology of American Literature (NAAL)}, a resource that actively shapes the literary canon and curricula across the country \cite{fredner_counting_2024}. We seek to understand how and why contemporary American readers and library users are engaging with canonical American authors.
+
+
+% and what external stimuli may be driving periods of elevated interest. 
+%cPrior work in literary studies and sociology has long theorized how external forces shape readers’ engagement with texts.
+% Scholars have shown that cross-media adaptations can reignite interest in source material \cite{manshel2021tvadaptations, scott2009markets}; that author biography—especially death and posthumous attention—can reshape interpretation and popularity \cite{kelly_david_2010}; that speculative fiction may bridge “popular” and “serious” readerships \cite{levine_et_al_2022_norton_anthology, jameson_progress_1982, Delany_2012, Miller_2017}; and that publicity can amplify cultural attention regardless of valence \cite{Berger_Sorensen_Rasmussen_2010}. 
+
+Scholars have shown that cross-media adaptations can reignite interest in literary source material \cite{manshel2021tvadaptations, scott2009markets}; that an author's biography---especially their death and posthumous attention---can reshape the interpretation and popularity of their works \cite{kelly_david_2010}; and that publicity can amplify cultural attention, even if that publicity is negative \cite{Berger_Sorensen_Rasmussen_2010}. 
+
+Building on these perspectives, we seek to answer the following questions:
+\begin{enumerate}
+  \item What are the most popular post-1945 books and authors from the \textit{Norton Anthology} based on Seattle library checkouts?
+  \item How do film and television adaptations affect circulation of adapted literary works?
+  \item How do moments in an author’s life, like scandal and death, shape readership patterns?
+  % \item[\textbf{RQ3.}] How does genre mediate the relationship between the canon and popular readership?
+  % \item[\textbf{RQ4.}] How does public scandal influence readers' engagements with an author’s work?
+\end{enumerate}
+
+In addition to our findings, we also address a significant metadata challenge that arises when using bibliographic data for reception-related research: different editions and variations of the same work can have different titles. Author names can vary, too. It is very difficult to cluster variations of the same work and author at scale (even persistent identifiers like ISBNs cannot resolve these issues). With our mid-size dataset, we take a combined computational and manual clustering approach, and we share our data with the research community as a benchmark for larger-scale, automated methods. 
+
+Our overall contributions include:
+
+\begin{itemize}
+
+\item[1.] Findings on the most checked out \textit{NAAL} authors and works in Seattle over the past 20 years, which highlight the popularity of science fiction, and the impact of events like cross-media adaptation, authors' deaths, and public scandal on library circulation.
+
+\item[2.] A dataset of library circulation data clustered at the \textit{Work}-level (as opposed to edition- or format-level) for every author in Volume E of \textit{NAAL}. This dataset can support research on the reception of canonical post-1945 literature and serve as a benchmark for future \textit{Work}-level clustering methods.
+
+\item[3.] An open-source, interactive visualization tool that allows users to explore the checkouts for any \textit{NAAL} author or work over the last 20 years: \url{https://melaniewalsh.github.io/whats-seattle-reading/posts/norton-anthology-american/}.
+
+
+
+
+\end{itemize}
+
+
+\section{Methods} \label{methods}
+
+
+To identify library checkout records associated with each author, we query the \href{https://dev.socrata.com/foundry/data.seattle.gov/tmmm-ytt6}{Seattle Public Library (SPL) endpoint} of the Socrata Open Data API provided by the City of Seattle. Specifically, we search the “Creator” field using multiple known variants of each author's name. Author name representation in SPL data varies by medium (e.g., print book, ebook) and sometimes by edition or metadata formatting (see Table~\ref{tab:author_variants}). 
+We manually review and supplement name variants to capture as many relevant records as possible. Some works may still be missing if the author’s name is not included in the checkout record, but we believe such omissions are minimal.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{l}
+    \toprule
+    \textbf{Author Variants for Toni Morrison} \\
+    \midrule
+    Toni Morrison \\
+    Morrison, Toni \\
+    Morrison, Toni, 1931--2019, \\
+    Morrison, Toni, 1931--2019 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Variants of the author name Toni Morrison in SPL catalog data.}
+  \label{tab:author_variants}
+\end{table}
+
+
+To identify and group all existing works by each \textit{NAAL} author, we next cluster associated titles. Work titles often show even greater variation than author names (see Table~\ref{tab:title_variants}). Although SPL data now includes ISBNs, these identifiers correspond to specific editions rather than conceptual \textit{Works}, making them insufficient for \textit{Work}-level analysis \cite{tillett_what_2005, universal_bibliographic_control_and_international_marc_programme_functional_1998}.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{l}
+    \toprule
+    \textbf{Title Variants of \textit{Beloved} Data} \\
+    \midrule
+    Beloved \\
+    Beloved (Unabridged) \\
+    Beloved (unabridged) \\
+    Beloved: (unabridged) \\
+    Beloved / a novel by Toni Morrison ; [with a new foreword by the author]. \\
+    Beloved / a novel by Toni Morrison. \\
+    Billŏbidŭ : Tʻoni Morisŭn changpʻyŏn sosŏl = Beloved / Kim Sŏn-hyŏng omgim. \\
+    Beloved : a novel / by Toni Morrison. \\
+    \bottomrule
+  \end{tabular}
+  \caption{Variants of the title \textit{Beloved} in SPL catalog data.}
+  \label{tab:title_variants}
+\end{table}
+
+
+We use a hybrid computational and manual approach to cluster title variants. Computationally, we strip subtitles and parenthetical information (e.g., transforming “Beloved: (unabridged)” and “Beloved / a novel by Toni Morrison ; [with a new foreword by the author]” to simply “Beloved”), normalize punctuation, and standardize certain characters (e.g., replacing “\&” with “and”). We then manually identify and group translated editions and additional title variants.
+We finally filter the data to include only checkouts of print books, ebooks, and audiobooks, excluding other media such as DVDs and large print editions.
+
+To answer our research questions about how and why readers seek out literary fiction, we conduct exploratory data analysis on time series of selected authors and works, aligning spikes and periods of elevated interest with external events. We focus on notable media adaptations, author deaths, and public allegations of criminality or impropriety. The set of stimuli we identify is not exhaustive but rather a small sample of the types of external events that can drive coverage of, and interest in literary fiction. 
+
+
+
+% these variants included the name as listed in the Norton Anthology, “First Last”, “Last, First”, and “Last, First Middle”. Our API queries checked if any author records started with any of these variants, which produced mostly correct results with a few errors, such as missing author names with unique honorifics (e.g. “Reverend Martin Luther King Jr.”) or adding additional author names that were similar to the intended name (e.g. “Amy Tan” and “Amy Tangarine”). To identify errors, we manually reviewed the different unique identifiers per author to ensure the exclusion of different authors with similar names, and queried the API with minimum strings (e.g. “Merrill” for “James Merrill”) to identify any missing designations. Records with empty author fields or dramatic misspellings may be missed from our process. 
+
+
+% To cluster all the different editions and variations of the same work, we took a combined computational and manual approach. Our approach can be summarized as follows:
+%Set title to proper case
+%Replace specific titles (selected manually) that are made identifiable by characters that will be removed in later steps. (e.g “Co-Mix” to “Co Mix”; “Kurt Vonnegut : The Last Interview” to “Kurt Vonnegut The Last Interview”)
+%Substitute sets of characters that are related to minor formatting (e.g. substitute apostrophes for empty strings) or are shortened versions of another word (e.g. substitute “Mr.” for “Mister”; ampersand for “And”)
+%Cut the string at certain sets of characters (e.g. colons; opening parentheses). This removes additional text like subtitles or edition notes.
+%Replace specific titles if the start of a set of characters is found (selected manually) (e.g. “Slaughter” to “Slaughterhouse Five, “; “El Color Púrpura” and “Zi Se Zi Mei Hua” to “The Color Purple”). This is done to translate foreign language titles and to normalize the formatting of English titles when other steps did not already catch it.
+%Translated titles are selected based on books created by the author. They are not a direct translation of the text in the title field. If no English book with a similar title by the author was found, the title was not altered in this step. Additionally, books written in English and titled using a foreign language (e.g. Vieux Carré) were not changed.
+%Title text that contains multiple titles was set to the first one and marked as a collection.
+%Replace specific titles if they contain a set of characters (selected manually). Like step 6, this normalizes the formatting of titles when other steps did not already catch it, but it also includes titles that contain a unique string in the middle or end of their text(e.g. “Selected Poems Including The Woman At The Washington Zoo” to ”The Woman At The Washington Zoo”)
+%Remove any additional whitespace
+
+% We used the Norton Anthology to source our group of authors, but gathered data on all unique works by those authors in the SPL dataset regardless if the work appeared in our specific edition of the Norton Anthology. We approached works inclusively because the Norton Anthology often removes or replaces works by the same authors across different volumes in order to accommodate a larger selection of authors; anthologization is more legible as an elevation of authorship than an elevation of a specific piece of literature (Fredner and Porter). Often, the most popular and circulated texts by Norton Anthology authors aren’t the texts that are referenced in the anthology. For example, Sandra Cisnero’s House on Mango Street is not recognized in the Norton Anthology’s 10th Edition Volume E but has almost nine times the checkouts of the anthologized Woman Hollering Creek.
+
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[width=.7\linewidth]{figures/top-authors.png}
+%   \caption{Genre fiction authors are the most checked out subset of the \naal.}
+  \label{Top Authors}
+%   
+% \end{figure}
+
+
+
+\section{Data}
+
+The dataset used in this study links authors from Volume E of the 10th edition of the \naal with SPL checkout records from April 2005-June 2025. We share this data with the research community.\footnote{\url{https://seattle-library-checkout-data.s3.us-west-2.amazonaws.com/norton-anthology_spl-checkouts_2005-2025.csv}} The dataset contains 93 unique authors and 1,603 unique works, with nearly one million total checkouts (Table~\ref{summary statistic}). 
+
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{cc}
+    \toprule
+    Category & \#\\
+    \midrule
+    Unique Authors & 93 \\
+    Unique Works & 1,603 \\
+    Total Checkouts & 980,620 \\
+    Total Checkouts per Author (Mean) & 10,544 \\
+    Total Checkouts per Work (Mean) & 612 \\
+    % Avg. Checkouts per Author\\(per Month) & 42 \\
+    % Avg. Checkouts per Title\\(per Month) & 2 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Summary Statistics of SPL Checkout Data Since 2005 with authors from the NAAL.}
+  \label{summary statistic}
+\end{table}
+
+
+
+To address inconsistencies in catalog records, we include \textit{Normalized.Creator} and \textit{Normalized.Title} fields, which represent our reconciliations of author and title variants across the SPL data.
+The dataset also includes a \textit{Works.In.Norton} field to identify works explicitly named in the most recent edition of the \textit{NAAL}.
+This list may change across editions, as editors often replace one work by an author with another by the same author \cite{fredner_counting_2024}.
+
+\section{Findings}
+
+\subsection{Most Popular Books and Authors}
+
+We identify the most-checked out \naal authors at the Seattle Public Library (Table \ref{Top Authors}). The list is dominated by genre fiction writers---particularly those working in science fiction---including Ursula K. Le Guin, Octavia Butler, N.K. Jemisin, and Kurt Vonnegut. 
+% Four of the top 10 authors come from the newly minted Bodies as Technology section in the \textit{NAAL} (Figure \ref{bodies as technology}), highlighting the unique profile of speculative fiction as both popular genre fiction and as an increasingly canonized and studied literary genre \cite{jameson_progress_1982, Delany_2012, Miller_2017}. 
+
+
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[width=1\linewidth]{figures/top-titles.png}
+%   \caption{Speculative fiction titles are extremely popular compared to most other works by \naal authors.}
+  \label{Top Titles}
+%   
+% \end{figure}
+
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{p{5cm} r l}
+\toprule
+Author & Total Checkouts & \\
+\midrule
+Ursula K. Le Guin    & 73,224 & \sparkbar{73224} \\
+Octavia E. Butler    & 65,386 & \sparkbar{65386} \\
+Louise Erdrich       & 60,846 & \sparkbar{60846} \\
+N. K. Jemisin        & 59,859 & \sparkbar{59859} \\
+Toni Morrison        & 47,501 & \sparkbar{47501} \\
+Kurt Vonnegut        & 41,462 & \sparkbar{41462} \\
+George Saunders      & 38,838 & \sparkbar{38838} \\
+Philip K. Dick       & 38,230 & \sparkbar{38230} \\
+Sherman Alexie       & 37,477 & \sparkbar{37477} \\
+James Baldwin        & 32,463 & \sparkbar{32463} \\
+\bottomrule
+\end{tabular}
+\caption{Total checkouts by author in the \naal dataset. Genre fiction authors are the most checked out subset of the \naal.}
+\label{Top Authors}
+\end{table}
+
+% \begin{table}[htbp]
+% \centering
+% \begin{tabular}{p{5cm} r}
+% \toprule
+% Author & Total Checkouts \\
+% \midrule
+% Ursula K. Le Guin    & 73,224 \\
+% Octavia E. Butler    & 65,386 \\
+% Louise Erdrich       & 60,846 \\
+% N. K. Jemisin        & 59,859 \\
+% Toni Morrison        & 47,501 \\
+% Kurt Vonnegut        & 41,462 \\
+% George Saunders      & 38,838 \\
+% Philip K. Dick       & 38,230 \\
+% Sherman Alexie       & 37,477 \\
+% James Baldwin        & 32,463 \\
+% \bottomrule
+% \end{tabular}
+% \caption{Total checkouts by author in the \naal dataset. Genre fiction authors are the most checked out subset of the \naal.}
+  \label{Top Authors}
+% 
+% \end{table}
+
+
+% \begin{table}[htbp]
+% \centering
+% \begin{tabular}{p{5cm} p{4cm} r}
+% \toprule
+% Title & Author & Checkouts \\
+% \midrule
+% Parable Of The Sower & Octavia E. Butler & 21,652 \\
+% Lincoln In The Bardo & George Saunders & 17,356 \\
+% The Fifth Season & N. K. Jemisin & 17,223 \\
+% The Sympathizer & Viet Thanh Nguyen & 12,792 \\
+% Kindred & Octavia E. Butler & 12,591 \\
+% Beloved & Toni Morrison & 12,330 \\
+% The Left Hand Of Darkness & Ursula K. Le Guin & 12,148 \\
+% The Absolutely True Diary Of A Part-Time Indian & Sherman Alexie & 12,043 \\
+% The Year Of Magical Thinking & Joan Didion & 10,907 \\
+% The Sentence & Louise Erdrich & 10,658 \\
+% \bottomrule
+% \end{tabular}
+% \caption{Most frequently checked-out \naal titles. Speculative fiction titles are extremely popular compared to most other works by \naal authors.}
+  \label{Top Titles}
+% 
+% \end{table}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{p{5cm} p{4cm} r @{\hspace{0.75em}} l}
+\toprule
+Title & Author & Checkouts & \\
+\midrule
+\textit{Parable Of The Sower} & Octavia E. Butler & 21,652 & \sparkbarred{21652} \\
+\textit{Lincoln In The Bardo} & George Saunders & 17,356 & \sparkbarred{17356} \\
+\textit{The Fifth Season} & N. K. Jemisin & 17,223 & \sparkbarred{17223} \\
+\textit{The Sympathizer} & Viet Thanh Nguyen & 12,792 & \sparkbarred{12792} \\
+\textit{Kindred} & Octavia E. Butler & 12,591 & \sparkbarred{12591} \\
+\textit{Beloved} & Toni Morrison & 12,330 & \sparkbarred{12330} \\
+\textit{The Left Hand Of Darkness} & Ursula K. Le Guin & 12,148 & \sparkbarred{12148} \\
+\textit{The Absolutely True Diary Of A Part-Time Indian} & Sherman Alexie & 12,043 & \sparkbarred{12043} \\
+\textit{The Year Of Magical Thinking} & Joan Didion & 10,907 & \sparkbarred{10907} \\
+\textit{The Sentence} & Louise Erdrich & 10,658 & \sparkbarred{10658} \\
+\bottomrule
+\end{tabular}
+\caption{Most frequently checked-out \naal titles. Speculative fiction titles are extremely popular compared to most other works by \naal authors.}
+\label{Top Titles}
+\end{table}
+
+
+We also present the most checked-out titles (Table \ref{Top Titles}). We again find the outsized popularity of genre fiction, as top borrowed works include Butler's \textit{Kindred} (1979) and Jemisin's \textit{The Fifth Season} (2015). Butler's  novel \textit{Parable of the Sower} (1993) was the most popular title across this 20-year period, and received a surge of checkouts in 2024 (Figure \ref{sower}), the same year that the futuristic novel begins and the same year that the SPL selected the novel for its city-wide reading initiative, \href{https://www.spl.org/programs-and-services/authors-and-books/seattle-reads/seattle-reads-2024}{``Seattle Reads''}.
+ The sharp spike in checkouts of \textit{Parable of the Sower} coinciding with the Seattle Reads campaign supports  research showing that city-wide reading initiatives can significantly boost circulation \cite{shanahanReadingChicagoReading2020}. 
+% \textit{Parable of the Sower}, a speculative fiction title written in 1993 is in fact set in 2024 \cite{wythoff_time_2025}, the year of its spike in the circulation data. \textit{Parable of the Sower's} cultural relevance in 2024 as a novel explicitly set in 2024 likely 
+
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.7\linewidth]{figures/parable-sower.png}
+  \caption{Timeseries of Octavia E. Butler's \textit{Parable of the Sower} checkouts in the SPL. \textit{Parable of the Sower} was widely read in the SPL in 2024 because of the Seattle Reads program.}
+  \label{sower}
+\end{figure}
+
+\subsection{TV and Film Adaptation Influence}
+
+Prior work suggests that TV adaptations are often associated with higher readership and engagement for adapted books relative to peer titles \cite{manshel2021tvadaptations}, and that movies can encourage habitual nonreaders to purchase the source book \cite{scott2009markets}. We investigate whether those findings are supported by the SPL checkout data. 
+
+We identify six major films and three major TV show adaptions based on works by \textit{NAAL} authors, and visualize the adaption dates alongside the source material's checkout trends (Figures \ref{movie_adaptations} and \ref{tv_adaptations}). The adaptations we identify are not exhaustive, but rather salient, high-profile examples. 
+
+For book-to-movie adaptations, a dashed line indicates when the movie adaptation was released to theaters, and a dotted line indicates the release on streaming services. For book-to-TV adaptations, a dotted line represents when the first and last episodes aired; the shaded region indicates general runtime.
+
+We observe prominent spikes in checkouts around the time of release date for all book-to-movie adaptations. Notably, James Baldwin's \textit{If Beale Street Could Talk} (1974), which had previously been checked out at a rate of 5 checkouts a month, rose to 88 checkouts in January 2019, and continued to rise until it reached a peak in April, a month after it was released to streaming services (Figure \ref{movie_adaptations}).
+Don DeLillo's novel \textit{White Noise} (1985) exhibited a similar stark spike. Upon the theater release of its film adaptation in November 2022, checkouts in December rose to 88. After the film's release to streaming at the end of the same month, the book reached its peak of 156 checkouts in January (the next month), despite the book having steady low checkouts counts of only 11 books only a month prior. (Figure \ref{movie_adaptations}).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\linewidth]{figures/movie-2releases.png}
+  \caption{SPL checkouts of \naal source texts with prominent movie adaptations. Movie adaptations are associated with spikes in reader interest of source material.}
+  \label{movie_adaptations}
+\end{figure}
+
+% Despite the book having steady low checkouts of around 10 books a month prior, checkouts were on a steady rise starting in September to November of 2022, going up by about 10 checkouts a month, after the movie release at the end of August 2022, though checkouts reached an ultimate peak in January of 2023 with 156 checkouts.
+
+% Denis Villenueve's 2017 blockbuster sequel to Blade Runner also seems to have coincided with a rise of interest in Philip K. Dick's source text, but interest seems to spike just before the movie's release. Perhaps prominent marketing material, teasers and trailers, and revisits to Ridley Scott's classic original adaptation drove a surge of interest in \textit{Do Androids Dream of Electric Sheep.}
+
+TV adaptations show similar trends. While checkouts for Octavia Butler's \textit{Kindred} (1979) were already on a steady rise,
+the show's premiere in December 2022 brought with it a new high of 368 checkouts in a single month. \textit{Man in the High Castle} (1962) by Philip K. Dick was also checked out significantly more frequently throughout its TV adaptation runtime between 2015 and 2019. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{figures/tv-adapt.png}
+  \caption{SPL checkouts of \naal source texts with prominent TV adaptations. TV adaptations are sometimes associated with elevated readership of source material during runtime.}
+  \label{tv_adaptations}
+\end{figure}
+
+% Prior to the release of the first episode, Man in the High Castle had around 7 checkouts a month, while in the midst of the show's run, checkouts reached a high of 125 and sustained an average of 
+
+% checkouts had only reached a high of 185 checkouts back in December 2020 before the show's premier. 
+
+% The premiere in December 2022 however brought with it a new high of 368 checkouts. \textit{Man in the High Castle}, by Philip K. Dick was checked out more frequently throughout the show's runtime between 2015 and 2019. Prior to the release of the first episode, Man in the High Castle had around 7 checkouts a month, while in the midst of the show's run, checkouts reached a high of 118 in May of 2016. 
+
+The clear exception to the adaptation-driven circulation boost is Viet Thanh Nguyen’s \textit{The Sympathizer} (2015). Already a widely recognized and celebrated title—having won the Pulitzer Prize in 2016 and having appeared on several “Best of the Decade” lists in 2019 and 2020 \cite{esquire_best_books_2010s, paste_best_novels_2010s}—\textit{The Sympathizer} saw elevated checkouts well before the announcement or release of its TV adaptation. Unlike other cases, the HBO adaptation failed to generate renewed interest in the source text in the circulation data. 
+
+% The novel maintained a steady rate of circulation even prior to its screen debut and did not experience any elevated increase in checkouts in the months surrounding the show’s release, suggesting that the novel’s sustained cultural prominence may have tempered the impact of its adaptation. Rather than the adaptation driving readership, Nguyen’s novel represents most obviously the reverse dynamic present across all our cases: novels' critical success and enduring popularity motivate adaptation. But unlike those other cases, Park Chan-Wook's adaptation of \textit{The Symptahizer} failed to generate a feedback loop of renewed interest—at least not as reflected in Seattle Public Library checkouts.
+
+
+\subsection{The Death of the Author}
+
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=1\linewidth]{figures/death-plots.png}
+  \caption{SPL checkouts of \naal authors with deaths in the SPL timeframe. Authorial death is consistently associated with checkout spikes in the author's work.}
+  \label{death_plots}
+\end{figure}
+
+Literary scholars have long examined the relationship between authors and their works. Famously, Roland Barthes argues that the act of meaning-making lies with the reader, marking a ``death of the author'' \cite{barthes1967death}. Yet in terms of circulation and popularity, literary works are not easily separated from the lives of their creators. The case of \textit{NAAL} author David Foster Wallace is striking and well-documented: his death by suicide defined and propelled his literary and cultural legacy \cite{kelly_david_2010}. Likewise in the checkout data, Wallace's works experienced a step change in readership after his death, rising from roughly 20 checkouts per month to an average of more than 130. How about for other authors in the \textit{NAAL}? Did authors who died within the same time period also experience a boost in engagement with their works?
+
+
+To explore this phenomenon, we focus on authors from the \textit{NAAL} who died after 2005, when the SPL began collecting checkout data. We exclude authors with consistently low circulation (e.g., Lucille Clifton, who averaged fewer than ten checkouts per month), in order to prioritize cases with sufficient data density. This filtering left us with eight authors: David Foster Wallace, Joan Didion, John Updike, Mary Oliver, N. Scott Momaday, Philip Roth, Toni Morrison, and Ursula K. Le Guin. We visualize each author's monthly checkout trends, annotated with the date of their death (Figure \ref{death_plots}).
+
+Across all eights authors, we observe a pronounced and immediate increase in checkouts in the month following their death. Mary Oliver, for instance, had 138 checkouts in December 2018—the month before she died—and 545 in February 2019, the month afterward. Unlike David Foster Wallace, her checkouts then declined in subsequent months, as is the case for authors like Philip Roth and John Updike.
+
+
+\subsection{Is All Publicity Good Publicity?}
+
+Prior work suggests that bad publicity can sometimes boost book sales by increasing product awareness \cite{Berger_Sorensen_Rasmussen_2010}. The \textit{NAAL} authors however already are high-profile figures, and their works already have widespread recognition. In this context, we examine how public scandal—specifically sexual assault allegations during the MeToo era—shapes checkout trends for authors accused of sexual misconduct or harassment.
+We specifically examine the borrowing patterns for Junot Díaz and Sherman Alexie (Figure \ref{cancellatio-plots-2}).
+
+In 2018, a series of writers and graduate students, including \textit{NAAL} author Carmen Maria Machado, raised allegations against Díaz, which included claims of misogynistic behavior and inappropriate advances \cite{alter_writer_2018}.
+Since then, Díaz has largely retained his professional roles.
+He still contributes to the \textit{New York Times} and remains a faculty member at MIT. 
+However, while he is included in the \textit{NAAL} and even highlighted in the introduction, he was recently dropped from the most recent edition of the \textit{Norton Anthology of World Literature}, an act that Rafael Walker attributes to his ``cancellation'' \cite{walker_opinion_2025}. 
+His status within the literary world and popularity with the public remains unclear.
+
+% highlighted as an author that is blending the literary and the popular in his famous novel \textit{The Brief Wondrous Live of Oscar Wao} \cite{levine_et_al_2022_norton_anthology}. However, Díaz 
+% was recently dropped from the recent edition of the \textit{Norton Anthology of World Literature}, an act that Rafael Walker attributes to 'cancellation' \cite{walker_opinion_2025}. 
+% In terms of canonization and prestige, "cancellation's" effects on Díaz's career and legacy are mixed. The circulation data also suggest a complex story.
+
+Around the slew of accusations against Díaz in 2018, checkouts of his work jumped from 75 to 175 in a month, before slowly decaying over the next two years. However, these accusations also line up almost precisely with the release of Díaz's children's novel \textit{Islandborn} (2018), which makes it difficult to say whether this increased popularity stems from scandal or the debut of a new novel.
+
+% . The release of the new novel is an obvious confounder that complicates hypothesizing causal impact from visual data analysis. 
+
+
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=1\linewidth]{figures/cancellation-plots.png}
+  \caption{SPL checkouts of \naal authors with allegations of impropriety in the SPL timeframe. Major public scandals for \naal authors line up with surges of interest in their work in the checkout data, but similarly timed book releases confound causal claims.}
+  \label{cancellation-plots}
+\end{figure}
+
+Similarly, when Sherman Alexie was accused of sexual assault in early 2018 \cite{neary_it_2018}, Alexie's professional career suffered.
+The Institute of American Indian Arts renamed the Sherman Alexie Scholarship to the MFA Alumni Scholarship, and the American Indian Library Association voided the Best Young Adult Book Award that Alexie had won in 2008. 
+% for \textit{The Absolutely True Diary of a Part-Time Indian}.
+% For Alexie as well, the circulation data is inconclusive due to obvious confounders. 
+In July 2017, checkouts of Alexie's work spiked from around 250 checkouts a month to a peak of over 800, before decaying over the next year.
+However, the spike predates the first accusation against Alexie in January 2018.
+Instead, the increased borrowing is more obviously aligned with the June release of his award-winning memoir, \textit{You Don't Have to Say You Love Me: A Memoir} (2018). 
+
+
+
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=1\linewidth]{figures/cancellation-plots-2.png}
+  \caption{SPL checkouts of \naal authors with allegations of impropriety in the SPL timeframe without newly released titles. Excluding newly released books from both author's checkouts suggests that Junot Díaz may have gained a short-term boost in readership around his public controversy.}
+  \label{cancellatio-plots-2}
+\end{figure}
+
+In Figure \ref{cancellatio-plots-2}, we plot checkouts for both authors excluding their newly released books, in an attempt to isolate the effects of ``cancellation'' or scandal. While both figures more clearly show distinct spikes around the dates when accusations first surfaced, disentangling the impact of scandal from potential synergistic effects—such as renewed interest in an author's backlist triggered by a new release \cite{berglund_is_2021}—is beyond the scope of our methods.
+
+\section{SPL Checkout Data Viewer and Explorer}
+
+We present an interactive tool that allows users to explore checkout trends for any \textit{NAAL} author or work in the last 20 years: \url{https://melaniewalsh.github.io/whats-seattle-reading/posts/norton-anthology-american/}.
+
+This resource enables users to examine specific trends discussed in this paper as well as other phenomena.
+
+\section{Discussion}
+
+It is difficult—if not impossible—to determine with certainty why readers flock to certain authors at certain moments, or why they turn away from them.
+Yet by combining large-scale library checkout data with interpretive case studies, we are able to surface meaningful patterns and propose hypotheses about the social and cultural dynamics that shape literary circulation.
+
+Our findings suggest that literary popularity is not static and inevitable, but dynamic and socially mediated.
+Of course, works do not rise to prominence solely because of their aesthetic merit or inclusion in a syllabus.
+Rather, they are activated by external events and shifting cultural contexts.  
+% Rather, they are activated by external events, amplified by cultural institutions, and made newly visible through shifting tides of public attention.
+
+% This observation aligns with longstanding humanistic understandings of canon formation, while also resonating with sociological theories of cultural consecration and institutional gatekeeping.
+
+Our analysis further suggests that authors’ biographies—particularly moments of personal crisis or public visibility—continue to shape their readership. 
+We observe repeated and significant increases in borrowing following an author’s death, underscoring how literary texts remain entangled with narratives about their creators.
+Similarly, media adaptations are consistently associated with spikes in checkout activity, demonstrating the role of cross-platform exposure in renewing interest in specific books and authors. These events may drive circulation simply because of increased media coverage, which may explain why a previously ubiquitously discussed novel like \textit{The Sympathizer} failed to receive a boost in circulation following its adaptation.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.75\linewidth]{figures/scifi.png}
+  \caption{Table of Contents of \textit{Norton Anthology} Volume E}
+  \label{bodies as technology}
+\end{figure}
+
+
+We also find that science fiction writers outperform the more typical literary fiction from the \naal in the SPL checkout data. In the introduction to Volume E of the \textit{NAAL}, the editors ask, “Do readers have to choose between the academic and the popular, between ‘serious’ and ‘entertaining’?” \cite{levine_et_al_2022_norton_anthology}. The editors' inclusion of four speculative fiction authors in a special section titled “Bodies as Technology: Science Fiction” represents a meaningful effort to bridge that divide, while also demonstrating the privileged position of science fiction relative to its generic peers as an increasingly canonized and studied literary genre \cite{jameson_progress_1982, Delany_2012, Miller_2017}. These authors—three women and two people of color—constitute just over 4\% of the authors in our dataset, yet account for approximately 25\% of all checkouts. This sharp disparity highlights the tension between what readers seek out and what the \naal has historically prioritized. A small topical subsection of the anthology commands an outsized share of actual reader attention. 
+% For literary scholars, these findings speak to the permeability of the canon and the interplay between institutional authority and reader response.
+
+% This disproportionate engagement suggests that readers today are especially interested in works by underrepresented voices and in genres that are belatedly gettbroader representation—both in terms of genre and identity—resonates with contemporary readers and may, in turn, influence the evolving boundaries of the literary canon. 
+% For sociologists, they illustrate how cultural consumption is shaped by identity, media ecosystems, and historical timing.
+
+For computational researchers, this study underscores the value—and limits—of data-driven cultural analysis. Computational work modeling book sales has helped reveal aggregate trends in sales after release and quantify the impact of variables like presence on bestseller lists and genre identification on commercial success \cite{Yucesoy_Wang_Huang_Barabási_2018, Wang_Yucesoy_Varol_Eliassi-Rad_Barabási_2019, sorensen_bestseller_2007}. However, such large-scale approaches can struggle to account for the impact of book-specific contextual events that resist clean, scalable data streams. 
+
+Our approach in contrast is not predictive and is unable to quantify the causal impact of external stimuli, nor model circulation patterns at scale. 
+Rather, it models how large-scale data, humanistic reasoning, and exploratory data analysis \cite{Tukey_1977} can illuminate patterns of cultural attention and value that would otherwise remain hidden. 
+
+
+
+
+% It is difficult, if not impossible, to say for certain why library patrons flock to certain authors in certain moments, or why they turn away from them.
+% However, our data-informed case studies enable us to form some broad hypotheses about reading and literary circulation patterns. 
+
+% One of our key takeaways is that literary popularity is not static or inevitable bur rather dynamic and socially mediated.
+% Works become ``popular'' at moments in time not simply because of their aesthetic value, but because they are activated by external events, amplified by institutions, and made visible through renewed public attention. 
+% % Without holistic econometric modeling techniques and access to confounding data streams like library programming, seasonal reading behavior, and genre trends, it is difficult to quantify the exact bump in checkouts we can attribute to specific external factors. 
+% % Economists have modeled book sales data over large sample sizes in order to understand aggregate trends \cite{Yucesoy_Wang_Huang_Barabási_2018, Wang_Yucesoy_Varol_Eliassi-Rad_Barabási_2019, sorensen_bestseller_2007}, and key variables that impact performance after release, but our approach focuses instead on individual case studies that reflect responses to discrete, book and author specific events. 
+
+% We also show that authors' real lives and biographies heavily influence their readership.
+% By showing that authorial deaths often lead to huge increases in borrowing for their works, we show that literary works are not easily separated from the lives of their creators.
+
+% We show, for example, that authorial deaths and major media adaptations are consistently associated with increased library borrowing—and, presumably, with increased book sales and readership. 
+% % spikes and sustained increases in library checkouts—signals of heightened readership and renewed cultural attention. 
+
+% Lastly, we show that science fiction is perhaps the most popular corner of the post-1945 American literary canon, and we believe that this popularity may have a shaping influence on the canon itself.
+% In the introduction to Volume E of the \textit{NAAL}, the editors write, "Do readers have to choose between the academic and the popular, between 'serious' and 'entertaining'? \cite{levine_et_al_2022_norton_anthology}." 
+% The addendum of the four speculative fiction authors in the Bodies as Technology section of the Table of Contents represents a serious attempt from the \textit{NAAL} at bridging that divide. Notably, these authors are not only working within a genre often marginalized in literary canons, but also bring historically underrepresented identities to the fore—three are women, and two are people of color. Together, they account for approximately 25\% of all checkouts in our dataset, while making up just over 4\% of the authors represented. 
+
+% Their prominence in reader engagement suggests that broader representation—both in terms of genre and identity—resonates with contemporary audiences.
+
+\section{Conclusion}
+
+We present a novel dataset of clustered Seattle Public Library checkout data from the 10th edition of the \textit{Norton Anthology of American Literature} (1945-) as both an avenue for future scholarship on the reception of canonical texts and authors and as an evaluation dataset for future book and \textit{Work}-clustering tools. Alongside the dataset we provide a tool for other scholars to explore and visualize checkout trends by author and title: \url{https://melaniewalsh.github.io/whats-seattle-reading/posts/norton-anthology-american/}.
+
+We find strong evidence of elevated readership of the few genre fiction authors from the anthology, all within the space of speculative or science fiction, a popular genre that has gained traction and prestige in literary scholarship. We also find compelling evidence around external events that impact book readership and drive popularity around titles in the SPL data, namely from SPL programming and marketing, large-scale adaptation on both the big and small screens, and authors' literal deaths. Controversy and scandal around authors may also drive short-term interest in their work, but more research is needed to isolate out confounding factors like concurrent book releases. 
+
+Future work should explore the range of additional variables that influence a book's readership over time, such as marketing materials, critical attention, political or cultural events, and prominent releases of complementary books. Timeseries readership data is difficult to find, but resources like the Seattle Public Library checkout data can provide powerful evidence for understanding how literary texts function in market environments, as cultural objects and commodities that ebb and flow in response to the world around them. 
+
+
+\section*{Acknowledgments}
+We would like to thank the University of Washington's Humanities Data Science Summer Institute (HDSSI) for funding and enabling the research in this paper, as well as for providing useful feedback. We'd also like to thank David Christensen for his help navigating the Seattle Public Library's checkout data. 
+
+% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
+\printbibliography
+
+ 
+
+\end{document}

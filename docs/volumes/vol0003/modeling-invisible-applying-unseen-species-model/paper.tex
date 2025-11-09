@@ -1,0 +1,261 @@
+% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
+% *Anthology of Computers and the Humanities*. ADD THE OPTION
+% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
+% DO NOT change the documentclass
+\documentclass[final]{anthology-ch} % for the final version
+%\documentclass{anthology-ch}         % for the submission
+
+% LOAD LaTeX PACKAGES
+%\usepackage[utf8]{inputenc}        
+%\usepackage[T1]{fontenc}           
+\usepackage{booktabs}
+\usepackage{graphicx}
+
+\addbibresource{bibliography.bib}
+
+%\usepackage{hyperref}              
+
+
+
+% ADD your own packages using \usepackage{}
+
+% TITLE OF THE SUBMISSION
+% Change this to the name of your submission
+\title{Modeling the Invisible: Applying the Unseen Species Model to Chivalric Literature in the Iberian Peninsula}
+% AUTHOR AND AFFILIATION INFORMATION
+% For each author, include a new call to the \author command, with
+% the numbers in brackets indicating the associated affiliations 
+% (next section) and ORCID-ID for each author.  
+\author[1,2]{Carolina Macedo}[
+  orcid=0009-0001-5972-0921
+]
+
+% There should be one call to \affiliation for each affiliation of
+% the authors. Multiple affiliations can be given to each author
+% and an affiliation can be given to multiple authors. 
+\affiliation{1}{École nationale des chartes, Paris, France}
+\affiliation{2}{Biblissima\+, cluster 7, Paris, France}
+
+% KEYWORDS
+% Provide one or more keywords or key phrases seperated by commas
+% using the following command
+\keywords{chivalric literature, Iberian Peninsula, manuscript studies, unseen species model, textual loss, digital humanities, computational philology}
+
+
+% METADATA FOR THE PUBLICATION
+% This will be filled in when the document is published; the values can
+% be kept as their defaults when the file is submitted
+\pubyear{2025}
+\pubvolume{3}
+\pagestart{1354}
+\pageend{1363}
+\conferencename{Computational Humanities Research 2025}
+\conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
+\doi{10.63744/qH01jSZULykB}  
+\paperorder{88}
+
+\addbibresource{bibliography.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HERE IS THE START OF THE TEXT
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This study applies an unseen species model—a non-parametric estimator originally developed in ecology—to the problem of textual loss in medieval Iberian chivalric literature. Drawing on abondance data for Castilian, Portuguese, and Catalan works, it estimates the number of lost or unrecorded texts based on the frequency of rare items. The results suggest that only about 40 \% of the original corpus and roughly 8 \% of individual documents have survived, indicating that the extant record represents only a small fraction of the field’s former scale. Beyond numerical estimation, the approach demonstrates how probabilistic modelling can inform literary historiography, providing a structured framework for reasoning about absence and survival. 
+\end{abstract}
+\section{Introduction}
+
+As with much of the historical record, medieval literature survives only in fragments, inevitably shaping a partial and biased understanding of the whole. Chivalric literature—a cornerstone of the medieval European imagination—played a vital role in shaping cultural memory and transmitting heroic ideals across generations. Widely copied, translated, and adapted, these narratives circulated broadly throughout the late Middle Ages, yet their manuscript transmission was uneven. Much of this corpus has been lost or survives only in fragmentary form, especially in the Iberian Peninsula, where French originals were early translated into Castilian, Catalan, and Portuguese. Scholars have long recognized this uneven preservation, but the magnitude of the loss—and its implications for literary history—remain difficult to quantify. The richness of Iberian chivalric production contrasts sharply with the fragility of its material record: most works are known from only a few manuscripts, many from none at all.
+
+Recent years have seen growing use of quantitative approaches in the study of cultural and philological domains, offering new ways to address problems of incompleteness and loss.
+Among these, \textit{unseen species models}—statistical tools originally developed in ecology to estimate biodiversity from partial samples—have proved especially promising. Designed to infer the number of unobserved species from the distribution of rare ones  \cite{good1953population, chaoNonparametricEstimationNumber1984, chaoSpeciesRichnessEstimation2016}, such models have since been adapted to different fields including literary studies. Kestemont \textit{et al.}~\cite{kestemontEstimatingLossMedieval2020, kestemontForgottenBooksApplication2022} applied this framework in their study \textit{Forgotten Books}, estimating the proportion of lost medieval works from the frequency of rarely attested texts.
+
+Building on this approach, the present article applies an unseen species model—specifically the Chao1 estimator—to a corpus of Iberian chivalric works in Castilian, Portuguese, and Catalan. It asks two related questions: (1) How extensive was textual loss within these traditions? and (2) What do these estimates reveal about the dynamics of preservation and disappearance across linguistic and institutional contexts?
+
+Treating the surviving corpus as a statistical sample rather than a fixed canon aligns with recent perspectives in evolutionary cultural studies that view transmission as a process shaped by selection, bias, and contingency  \cite{acerbiIndividualBasedModelsCultural2022, GaboraAerts2005}. The Iberian chivalric corpus thus serves as a test case for how probabilistic reasoning can complement historical interpretation—revealing not only what has been preserved, but also what patterns of survival disclose about the mechanisms of cultural endurance and forgetting.
+
+\section{Corpus}
+\subsection{Corpus Construction}
+
+The corpus\footnote{For a detailed overview of the corpus, see the \href{https://github.com/carolisteia/iberian_lit_chivalry_unseen_species_model/blob/main/data/adata_geocoded.csv}{CSV file}, which includes information on titles, authors, languages, dates of production, and the current locations of the manuscripts.} considered here brings together works of chivalric and heroic literature transmitted in manuscript form and produced or translated across the main vernacular traditions of the Iberian Peninsula—primarily Castilian, Catalan, and Portuguese (or Galician-Portuguese)—between the 13- 16\textsuperscript{th} centuries.
+The selection builds upon manuscript material identified in existing scholarship on Iberian romance literature 
+(e.g., \cite{sharrerCriticalBibliographyHispanic1977, aileniiOsPrimeirosTestemunhos2012, alvarPoesiaEpicaClerecia1988, balaguerNouFragmentLancalot1967, bogdanowVersionPostvulgateQueste1991, castroSobreDataIntroducao1983, cuestatorreTransmisionTextualDon1993, dealmeidatoledonetoOsTestemunhosPortugueses2012, luciamegiasLiterarutaCaballerescaCatalana2005}), as well as specialised bibliographic databases and dictionaries  \cite{faulhaberPhiloBiblon1997, luciamegiasDiccionarioFilologicoLiteratura2002, pichelgoterrezGuiaParaEstudo2021} and dedicated textual corpora \cite{CHCR}.
+Thematically, the study adopts the notion of \textit{materia caballeresca}, which encompasses not only traditional chivalric romances but also narrative texts that integrate heroic, epic, or hagiographic elements within a chivalric framework. This concept denotes a shared narrative imaginary rooted in medieval ideals of knighthood, adventure, and moral exemplarity, shaped by both military and courtly values and informed by codes of conduct that unite martial, social, and spiritual dimensions  \cite{GomezRedondo2008LitCaballeresca}.
+The corpus therefore comprises both original Iberian compositions---such as the \textit{Libro del caballero Zifar} and the \textit{Amadís de Gaula} (in its earliest version)---and medieval translations or adaptations of Arthurian material and other established chivalric cycles, including the \textit{Baladro del sabio Merlín} and the \textit{Demanda do Santo Graal}. It also encompasses the five hagiographic-chivalric texts contained in manuscript h-i-13 and the verse epic tradition, within which certain works of the \textit{mester de clerecía} exhibiting a chivalric dimension, such as \textit{El Libro de Alexandre}. These examples are illustrative rather than exhaustive, highlighting the generic and thematic range of the corpus.
+
+
+\subsection{Corpus Delimitation}
+We exclude from this corpus the so-called \textit{libros de caballerías}, even those that survive in manuscript form, as they are protagonists of the new, predominantly Castilian, print culture. They belong to a transitional phase of the genre between the late medieval and early modern periods, characterized by print transmission and a distinct literary culture. Most of the surviving manuscript witnesses are copies of printed editions---drafts or fair copies preserved in libraries without wide circulation, or professional and personal copies. These late \textit{libros de caballerías} manuscripts thus reproduce already printed material and participate in a fundamentally different mode of textual transmission. Consequently, this study excludes this group, along with other subgenres that emerged in close connection with print culture---such as the \textit{historias caballerescas breves} and the \textit{ficción sentimental}. These exclusions reflect not only the historical boundaries of the corpus but also the methodological distinctions required by our analytical framework. The dynamics of print transmission differ significantly from those of manuscript culture, and the methods applied to computational modeling likewise vary according to the nature of the material. This delimitation allows the study to focus exclusively on the medieval formation of chivalric narrative and its transmission within the manuscript tradition, prior to the transformations introduced by print.
+
+Also, since this study focuses on observable data—documents that are materially attested, either as complete \textit{codices} or identifiable fragments—texts known only through titles, summaries, or indirect mentions\footnote{The main sources of such indirect references include royal and ecclesiastical library catalogues, allusions in prologues or colophons of other works, and mentions preserved in last wills and household inventories.} were not included in the corpus,\footnote{Nor were those manuscripts found and subsequently lost again in recent decades, such as the fragments of the \textit{Lancelot} in Catalan: two folios from the mid-fourteenth century formerly held in the private library of Francesc Cruzate of Mataró.} which is therefore limited to works with surviving material witnesses.
+Although such references illuminate the cultural orientations of the ruling classes, they must be treated with caution: catalogues and inventories rarely reflect the full range of works in circulation.\footnote{As Sousa Viterbo \cite{sousaviterboLivrariaRealEspecialmente1901} notes, these lists were far from bibliographical catalogues in the modern sense: they emphasized the monetary and artistic value of books—particularly their bindings—rather than their intellectual content.} Often compiled as records of cultural treasures, these lists are vague, omitting titles or quantities, and most have not survived the passage of time, as Bogdanow  \cite{bogdanowVersionPostvulgateQueste1991} observes. Such material therefore belonged to a protected environment that favored—if only temporarily—their preservation, raising questions about the representativeness it conveys. Classical approaches to estimating the corpus of lost works \cite{Deyermond1975TheLG, deyermondLiteraturaPerdidaEdad1995, deyermondLostLiteratureMedieval1986, deyermondProblemLostEpics1978} rely heavily on this evidence, a method that risks bias by privileging institutionally preserved texts and underestimating the number and diversity of works circulating beyond such frameworks. By contrast, the approach adopted here grounds the model in verifiable data while allowing for the statistical estimation of additional works that may have existed but are no longer preserved in the surviving record.
+
+
+\subsection{Corpus Overview} 
+Although the transmission of medieval chivalric texts within the Iberian context reveals distinct tendencies among the various vernacular traditions, several striking commonalities nevertheless emerge. The study of these traditions invites a reconsideration of key aspects of the preservation and loss of such works. 
+In this regard, we have examined several features of the texts in our corpus—most notably their fragmentary condition, their generally late production, the predominance of Castilian manuscripts over those in other Iberian languages, and the comparatively fragile Portuguese tradition, preserved almost exclusively through unique manuscript witnesses.\footnote{These aspects are discussed in greater detail in Chapter~3, ``Trajectoire des manuscrits~: aperçus préliminaires sur leur conservation et leur disparition,'' of my MA thesis~\cite{Macedo2024}.} 
+
+While the chivalric romance genre is relatively well represented across the three traditions, the surviving evidence for the Iberian epic tradition is extremely scarce and, at least for now, limited to Castilian. This material absence has even led some researchers to doubt whether an epic tradition ever existed in Portuguese, for example. Even so, its narratives continued to circulate within other genres, particularly chronicles and later \textit{romanceros}. Some scholars have gone so far as to suggest that this now-lost corpus could be partially reconstructed—at least thematically—through the intertextual traces preserved in these later works  \cite{deyermondEpicPoetryClergy1968}, whose authors, over time, reformulated or suppressed parts of the original narratives according to the tastes and conventions of their own age.
+
+The corpus records 23 distinct works—each an immaterial entity upon which the text depends—and 45 surviving manuscript witnesses that materialize and transmit those works within the Iberian chivalric tradition. Most of the works are anonymous, and prose constitutes the predominant textual form. Chronologically, the witnesses range from the thirteenth to the sixteenth century, with a marked concentration in the fifteenth.
+The corpus is largely dominated by the \textit{romance de cavalaria} genre (21 occurrences), which accounts for nearly half of the surviving manuscripts.
+ Castilian is by far the most represented language (78.57\%), followed by Portuguese and Catalan—proportions that align with the broader linguistic and cultural patterns observable in the Iberian chivalric corpus.
+
+\section{The Unseen Species Model and Its Application to the Corpus}
+
+Originally developed in ecology to estimate species richness from incomplete samples \cite{chaoDecipheringEnigmaUndetected2017, chaoSpeciesRichnessEstimation2016, chaoNonparametricEstimationNumber1984}, unseen species models have since found broad application across diverse domains \cite{EfronThisted1976, Eren2012_richness}. More recently, they have been applied to the study of cultural and literary phenomena \cite{kestemontEstimatingLossMedieval2020, kestemontForgottenBooksApplication2022, karsdorpWhatShallWe, koeser2024missing}. In this context, the model enables researchers to estimate the probable number of lost or unobserved works by analyzing the frequency of rare items within a known corpus.
+To implement the model, each chivalric work was treated as a unique narrative item, and its frequency was defined by the number of distinct material witnesses in which it is attested. Within the unseen species framework, each work corresponds to a single “species,” while each material attestation—whether complete or fragmentary—constitutes an “observation” of that species.
+
+The key insight of the model is that a sample containing many rare items—particularly singletons (attested once) and doubletons (attested twice)—is statistically more likely to be incomplete \cite{good1953population, chaoQuantifyingSampleCompleteness2020}. The distribution of these rare items thus serves as a proxy for estimating the number of undetected species (here unobserved works), thereby approximating the original species richness.
+Several estimators are available to researchers for assessing species diversity. The most widely used methods for estimating species richness include the Chao estimators—named after biostatistician Anne Chao (Chao1 for \textit{abundance data} and Chao2 for \textit{incidence data})—and the jackknife estimator \cite{dalyEcologicalDiversityMeasuring2018, gotelliEstimatingSpeciesRichness2011}.
+Chao1 is one of the most commonly used estimators for measuring species richness, as this richness can neither be precisely quantified nor directly estimated through observation.
+This nonparametric lower-bound estimator can be defined as follows (e.g., \cite{chaoSpeciesRichnessEstimation2016, chaoDecipheringEnigmaUndetected2017}):
+
+
+\[
+\hat{S}_{\text{Chao1}} = S_{\text{obs}} + \frac{f_1^2}{2f_2}
+\]
+
+where:
+\begin{itemize}
+  \item $S_{\text{obs}}$ is the number of observed works in the dataset,
+  \item $f_1$ is the number of singletons,
+  \item $f_2$ is the number of doubletons.
+\end{itemize}
+
+
+
+The Chao1 estimator was applied to frequency data (our \textit{abondance data}) derived from the corpus described above.
+Although inevitably incomplete, the corpus internal frequency distribution allows for a statistically meaningful analysis. Rather than offering definitive totals, the results provide lower-bound estimates that complement traditional literary historiography and help quantify the scale of cultural loss in pre-modern textual traditions.
+This model is particularly well-suited to medieval textual traditions, which are often transmitted unevenly and preserved only in small, fragmentary datasets. It treats the observed corpus as a sample drawn from a larger population of original works, many of which may no longer survive.
+
+
+The statistical computation was performed using the \texttt{copia} Python package developed by Kestemont and Karsdorp \cite{kestemont_karsdorp_copia_2022}. This package implements the Chao1 estimator and other species richness estimators commonly used in ecology and cultural analytics. %If $f_2 = 0$, a bias-corrected version of the estimator is used to avoid division by zero.
+
+To assess the robustness of the approach, the model was applied to the complete corpus as well as to distinct linguistic subcorpora, allowing comparison across traditions with varying levels of attestation. For each language group (Castilian, Catalan, Portuguese), frequency distributions were compiled, and the counts of singletons ($f_1$) and doubletons ($f_2$) were extracted as model inputs.
+
+\section{Results}
+
+The application of the Chao1 estimator to the Iberian chivalric corpus reveals a significant degree of textual loss across all three linguistic traditions. The results presented below combine raw frequency data with statistical estimations and interpretative insights (developed in section \ref{sec:disc}), highlighting both the potential and the limits of the method.
+
+\subsection{Corpus Statistics}
+
+Table~\ref{tab:base_stats} summarizes the observed values for each subcorpus; these constitute our \textit{abondance data}. Portuguese and Catalan traditions present extremely small samples, with only 4 and 5 works respectively, and very few doubletons. Castilian, while somewhat larger, still reflects a high proportion of rare items (16 singletons out of 21 works), suggesting fragility in transmission.
+
+\subsection{Estimated Richness}
+
+In table \ref{tab:chao_estimates} the Chao1 estimator suggests that the actual number of distinct works is significantly higher than what survives. In Portuguese, the estimate nearly doubles the observed count. In Catalan, the estimate also doubles, indicating that for every known text, another likely existed. The Castilian tradition shows the largest gap, with a potential total of over 60 works—three times the number observed.
+These confidence intervals are extremely wide, especially in the Castilian case, where the upper bound exceeds 170. This may reflect the model's sensitivity to skewed data and the sparsity of multi-attested works. Despite this uncertainty, reflected in the wide confidence intervals, the estimates suggest a major loss of textual material.
+For Portuguese, the lower confidence bound falls slightly below the number of observed works ($S = 4$) due to sampling variance. In practice, however, the true number of works cannot be smaller than the observed richness, so this lower bound should be interpreted as a statistical artefact.
+
+
+\subsection{Combined Corpus and Survival Rates}
+
+When all three traditions are pooled into a single Iberian corpus (table \ref{tab:global}), the estimations remain more consistent: Chao1 suggests around 54 works once existed, versus 23 observed. For documents, the gap is even starker: from 44 known attestations, the model extrapolates nearly 500 potential documents.
+From these estimates, we derive survival rates: approximately 40\% of works and only 8\% of documents are currently known. The implied loss—60\% of works and over 90\% of manuscripts—is striking. This confirms the fragile nature of medieval literary transmission, especially for less-institutionalised or linguistically minor traditions.
+
+
+
+
+
+
+
+\section{Discussion}\label{sec:disc}
+
+The application of the unseen species model to the Iberian chivalric corpus offers a new perspective on a long-standing problem in literary history: the extent and impact of textual loss. While the fragmentary nature of medieval transmission has long been acknowledged, its magnitude has remained elusive. The estimates presented here do not recover missing works, but they provide a structured way to think about what has been lost—and what patterns this loss may reveal.
+
+One striking result is the high proportion of singletons in all three small subcorpora, which strongly influences the estimates of unseen works \cite{chaoDecipheringEnigmaUndetected2017}. This prevalence suggests a corpus characterized by instability: many works may have circulated in a very limited number of copies, increasing their vulnerability to disappearance. It also invites reflection on how textual survival is conditioned not only by production but by preservation, copying, storage, and cataloguing—processes that are historically contingent and unevenly distributed across regions and institutions.
+
+The overall abundance of surviving documents, even when all languages are considered, remains very modest. This scarcity, combined with the predominance of singletons ($f_1$), substantially increases the likelihood of loss. As Kestemont \textit{et al.} \cite{kestemontForgottenBooksApplication2022} observed for the French corpus, such long-tailed distributions make even large literatures vulnerable to \textit{immaterial loss}. For comparative purposes, we referred to the estimation plots of the languages analysed in \textit{Forgotten Books}, which highlight how the method behaves when applied to larger samples. Notably, the distribution for Castilian, while not identical, more closely resembles that of smaller literary traditions such as Icelandic or Irish within that corpus.
+
+The Iberian tradition thus presents several distinctive features when compared with other European contexts. In contrast to the vast and relatively well-preserved French corpus, Iberian chivalric literature survives in a far more fragmentary state. Within the Peninsula, the Portuguese and Catalan areas appear to have suffered particularly severe losses; paradoxically, however, the Portuguese corpus preserves the highest proportion of complete codices among all the traditions.
+Another distinctive feature is the late persistence of manuscript production: the habit of copying chivalric texts by hand extended well beyond the advent of print, reflecting the longevity of medieval scribal practices in the Iberian literary sphere — and carrying with it all the fragility inherent to manuscript transmission.
+
+In \textit{Forgotten Books}, Kestemont \textit{et al.} argue that evenness—the balanced distribution of elements within a system—enhances stability in both ecological and cultural contexts \cite{chaoQuantifyingEvennessLinking2019}. Just as uniform ecosystems tend to be more resilient to disruption, literary traditions with a more even distribution of works, such as Irish and Icelandic literatures, appear better preserved than larger, more uneven continental canons.
+The Iberian case, however, seems to illustrate this latter pattern more clearly. Despite its relative geographical isolation—almost insular in form—the region displays relative unevenness, and thus seems to have been less shielded from disruptive forces. Political fragmentation, linguistic diversity, and uneven institutional development may have weakened the mechanisms of textual preservation that, in more uniform traditions, foster resilience.  In the Iberian context, unevenness appears to have amplified vulnerability, exposing smaller or less institutionalised literary traditions, such as the Catalan corpus, to a higher risk of loss.
+
+From a methodological standpoint, the use of the Chao1 estimator demonstrates the potential of computational tools for literary historiography. It highlights the value of thinking probabilistically about the corpus—treating what survives as a sample rather than as a canon. Such an approach invites us to reconsider the notion of a stable canon and, instead, to think in terms of an ephemeral canon—one shaped as much by absence as by presence. What survives may reflect not intrinsic aesthetic or cultural value, but rather the contingencies of archival preservation, copying practices, institutional patronage, or simple randomness \cite{Camps2022LostMA}.
+
+\section{Conclusion}
+This study applied an unseen species model to a corpus of Iberian chivalric works in Castilian, Portuguese, and Catalan, estimating the extent of textual loss using frequency-based statistical methods. The results suggest that only about 40\% of original works and 8\% of documents have survived, pointing to a much larger literary field than the current corpus reflects.
+While the estimates cannot recover lost works, they provide a principled means of reasoning about what remains unknown and about the conditions that shape what survives. 
+
+
+This study demonstrates how computational approaches can contribute to literary historiography. Rather than replacing traditional philology, this approach complements it by offering a quantitative lens on cultural memory and loss. Quantitative modelling thus offers new perspectives on the gaps and silences of literary history. By adapting a model from ecology to the study of medieval literature, this work contributes to a broader rethinking of what it means to work with incomplete corpora—where absence, approached with the right tools, becomes a form of evidence.
+
+This paper represents only a preliminary outline of a larger project that remains to be developed. Future research may refine these estimates through a more precise delineation and analysis of the corpus, drawing on existing metadata on manuscript transmission and preservation to reveal additional patterns of survival.
+
+
+\section*{Acknowledgments}
+This article expands upon research initially conducted as part of a master’s thesis.\footnote{See the corresponding \href{https://github.com/carolisteia/iberian_lit_chivalry_unseen_species_model}{GitHub repository} that hosts the complete research project.} The study also builds on a computational approach recently proposed by Kestemont \textit{et al.}~\cite{kestemontEstimatingLossMedieval2020, kestemontForgottenBooksApplication2022}, specifically in their article \textit{Forgotten Books}. The author wishes to thank the anonymous reviewers for their insightful comments and suggestions, which greatly contributed to improving this paper.
+
+
+
+
+\printbibliography
+
+\appendix
+
+\section{Supplementary Tables}
+\label{app:tables}
+
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Language} & $f_1$ & $f_2$ & $S$ & $n$ & Repositories \\
+\midrule
+Portuguese & 3 & 1 & 4 & 5 & 5 \\
+Castilian  & 16 & 3 & 21 & 33 & 11 \\
+Catalan    & 4 & 1 & 5 & 6 & 6 \\
+\bottomrule
+\end{tabular}
+%\caption{Observed frequency statistics by language}
+  \label{tab:base_stats}
+\caption{Observed frequency statistics by language. 
+$f_1$ = singletons, 
+$f_2$ = doubletons, 
+$S$ = number of observed works, 
+$n$ = total number of observations, 
+and ``Repositories'' indicates the number of distinct source collections.}
+
+
+\end{table}
+
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Language} & \textbf{Estimate} & \textbf{Lower CI} & \textbf{Upper CI} \\
+\midrule
+Portuguese & 7.6  & 3.4  & 14.4  \\
+Castilian  & 62.3 & 20.4 & 176.2 \\
+Catalan    & 11.6 & 5.2  & 20.7  \\
+\bottomrule
+\end{tabular}
+\caption{Estimated number of distinct works using Chao1}
+\label{tab:chao_estimates}
+\end{table}
+
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Category} & \textbf{Estimate} & \textbf{Lower CI} & \textbf{Upper CI} \\
+\midrule
+Works     & 54.2 & 24.4  & 146.4  \\
+Documents & 496.8 & 56.5 & 2074.7 \\
+\bottomrule
+\end{tabular}
+\caption{Estimated richness for the aggregated Iberian corpus}
+\label{tab:global}
+\end{table}
+
+
+\end{document}
+

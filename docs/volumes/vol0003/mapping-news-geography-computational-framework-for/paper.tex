@@ -1,0 +1,536 @@
+% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
+% *Anthology of Computers and the Humanities*. ADD THE OPTION
+% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
+% DO NOT change the documentclass
+\documentclass[final]{anthology-ch} % for the final version
+%\documentclass{anthology-ch}         % for the submission
+
+% LOAD LaTeX PACKAGES
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{multirow}
+\usepackage{pdflscape}
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  columns=fullflexible,
+  backgroundcolor=\color{gray!10},
+  frame=single
+}
+
+% TITLE OF THE SUBMISSION
+\title{Mapping News Geography: A Computational Framework for Classifying Local Media Through Geographic Coverage Patterns}
+
+% AUTHOR AND AFFILIATION INFORMATION
+% For each author, include a new call to the \author command, with
+% the numbers in brackets indicating the associated affiliations 
+% (next section) and ORCID-ID for each author.  
+\author[1]{Simona Bisiani}[orcid=0000-0002-6359-6994]
+
+\author[2]{Agnes Gulyas}[orcid=]
+
+% While we encourage including ORCID-IDs for all authors, you can
+% include authors that do not have one by definining an empty ID.
+\author[1]{Bahareh Heravi}[orcid=0000-0002-6359-6994]
+
+\affiliation{1}{Institute for People-Centred AI, University of Surrey, Guildford, United Kingdom}
+\affiliation{2}{School of Creative Arts and Industries, Canterbury Christ Church University, Canterbury, United Kingdom}
+
+% KEYWORDS
+\keywords{local media, computational journalism, geographic coverage, geoparsing, media geography, outlet classification, content analysis, spatial analysis, clustering algorithms, news localisation}
+
+% METADATA FOR THE PUBLICATION
+% This will be filled in when the document is published; the values can
+% be kept as their defaults when the file is submitted
+\pubyear{2025}
+\pubvolume{3}
+\pagestart{824}
+\pageend{845}
+\conferencename{Computational Humanities Research 2025}
+\conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
+\doi{10.63744/PmuIcNvSnDuo}  
+\paperorder{50}
+\addbibresource{bibliography.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HERE IS THE START OF THE TEXT
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This study introduces a novel computational framework for defining local news outlets through their geographic coverage patterns. This approach addresses the growing disconnect between legacy spatial markers (e.g., newsroom location or circulation cut-offs) and the geographic dimension of news coverage amidst media ownership consolidation and digital transformation. We develop a four-step pipeline consisting of data sampling, geoparsing, feature engineering, and clustering analysis. Our approach employs large language models for toponym disambiguation and develops eight spatial metrics across four dimensions: spatial extent, administrative reach, spatial heterogeneity, and distance decay. We test this pipeline on a sample of more than 465,000 articles from 360 UK digital local news outlets. Clustering analysis of more than 1.3 million locations reveals six distinct outlet types, ranging from hyperlocal and metropolitan to national outlets. This classification reflects different scales and structures of news provision in the UK’s evolving media landscape. The method offers a scalable, open-source approach for mapping local news coverage and understanding the scope of local news providers as a function of their coverage, with implications for media geography and policy, ownership studies, and the computational humanities.
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Understanding the spatial focus of local media is crucial for studying the rise of "news deserts" \cite{abernathy_rise_2016, negreira-rey_no_2023, da_silva_local_2020, madrid-morales_computational_2023, metzger_state_2024, bisiani_uk_2024, verza_uncovering_2024}, the influence of local journalism on political participation \cite{hayes_decline_2018}, community engagement \cite{hayes_as_2015}, and the deterrence of corruption \cite{gao_financing_2020}. Prevailing methods to assign spatial references to news outlets include outlet self-declarations of their coverage area \cite{stonbely_what_2023, bisiani_uncovering_2023}, newsroom addresses \cite{metzger_state_2024}, or audience dispersion \cite{hagar_defining_2020}. While useful, these indicators provide only indirect evidence of which communities are actually represented in news content.
+
+The salience of this shortcoming has heightened as a result of increasing media ownership consolidation and digital transformation, which have centralised news production \cite{sharman_reach_2021} and increased both physical and editorial distance between journalists and local audiences \cite{mcadam_re-asserting_2024, karlsson_local_2019, kekezi_geography_2018}. As a result, established markers of \textit{localness} often fail to represent the true geography of news provision \cite{franklin_downgrading_2006}. While recent studies advocate for content-driven approaches to mapping local news in light of these conditions \cite{hagar_defining_2020, pinf_deserts_2023}, there remains no operational framework for empirically deriving a news outlet’s spatial focus from its own reporting.
+
+This work addresses this gap by introducing a computational approach to infer the editorial geography of news outlets using the locations mentioned in their published content. We ask:
+
+\begin{enumerate}[label=\textbf{RQ\arabic*:}, leftmargin=*]
+    \item \textit{How can a news outlet's spatial focus be computationally inferred from its content?}
+    \item \textit{What coverage patterns and spatial typologies emerge from such an analysis?}
+\end{enumerate}
+
+Our contributions are summarised here:
+\begin{enumerate}
+    \item We develop and validate a scalable, modular, and reproducible pipeline that infers the geographic focus of news outlets based on the locations mentioned in their reporting, moving beyond traditional proxies like self-declared coverage areas or newsroom addresses. This pipeline shifts from data collection, to geoparsing, then feature engineering, and finally clustering analysis. 
+
+    \item We test this pipeline on a large stratified sample of articles from UK local news outlets and derive a six-cluster typology of news outlets. Our analysis uncovers six distinct spatial typologies (Major Regional Daily, County and Regional, Major City and Regional, Market Town and Rural, Local,  Hyperlocal) that span five orders of magnitude in coverage area and are derived by a combination of spatial properties.    
+    
+    \item Our work makes original use of large language models (LLMs) to aid in several data annotation tasks. We favour open-source, locally-run LLMs as a means to make this pipeline reproducible and accessible. In doing so, we contribute to emerging research of responsible LLMs usage in media research.
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Background}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Spatiality of Local News and Media Provision}
+Each news organisation operates serving a geographically bounded audience \cite{picard_media_1989}. This is particularly true for local media, which targets spatially organised communities \cite{gasher_mapping_2008}. Historically, researchers have located local media using markers such as circulation thresholds \cite{ramsay_monopolising_2016}, self-declared coverage areas \cite{stonbely_what_2023, bisiani_uncovering_2023}, newsroom locations \cite{metzger_state_2024}, or audience distributions \cite{hagar_defining_2020}. However, structural transformations in this market have fundamentally altered the relationship between these markers and news coverage, meaning that the distance between the where an outlet appears to be, and the where it actually talks about in the news, has increased \cite{karlsson_local_2019, franklin_downgrading_2006}. The concept of “ghost newspapers” (outlets that exist nominally but rely largely on syndicated or wire content rather than original, community-centred reporting \cite{abernathy_news_2020}) exemplifies this phenomenon.
+
+Media ownership consolidation, propelled by declining print circulation, advertising revenue loss, and digital monetisation challenges \cite{noam_who_2016}, is often viewed as a driver of decrease in community-centric reporting \cite{hendrickx_why_2021}. Large conglomerates, such as Reach PLC—which controls roughly 13\% of UK local media \cite{the_media_reform_coalition_who_2025}—centralise newsroom functions into digital hubs servicing multiple regions \cite{moore_local_2024}, often resulting in newsroom closures and diminished local reporter presence \cite{sharman_reach_2021}. This centralisation reduces the “visibility” and “sensibility” of local journalism—its attunement to the communities it ostensibly serves \cite{mcadam_re-asserting_2024}. The geographic principle of “distance decay” predicts that increased physical distance weakens relationships, unless offset by targeted efforts \cite{kent_evaluating_2006}. Empirical studies confirm this: for example, Swedish municipalities without editorial offices experienced declines in original and community news coverage after newsroom centralisation \cite{karlsson_local_2019}.
+
+Digital transformation complicates this landscape further. While digital platforms enable theoretically boundary-less audience reach, structural factors—such as newsroom location and brand identity—continue to shape the spatial distribution of journalistic production \cite{mosco_political_2009}. Yet digital news consumption often privileges national or sensationalistic content aimed at mass audiences over nuanced, place-based reporting \cite{boczkowski_news_2013}. Particularly, intensified usage of content syndication across ownership networks \cite{garz_media_2025} and following a news-value system driven by consumption metrics \cite{kormelink_what_2018}, are two practices that have further diluted geographical focus in local news.
+
+These conditions have led to the emergence of novel forms of journalistic production. \textit{Hyperlocals} are borne out of dissatisfaction with mainstream media and the desire to fill gaps in local news coverage \cite{metzgar_defining_2011}. These outlets tend to have an intentionally narrow geographic focus (e.g., a small city or even a neighbourhood), and are constituting an increasingly important part of the local news ecosystem, often times being the sole source of local news for a specific community \cite{harcup_asking_2016}.
+
+These spatial dimensions of journalism are critical: media coverage influences democratic participation and community identity by shaping a “sense of place” through representation of events, people, and voices \cite{hess_river_2016}. Communities with weaker media infrastructures suffer from increased corruption, lower political engagement, and poorer public resource management \cite{hayes_as_2015, hayes_decline_2018, ramos_no_2023, gao_financing_2020}. Patterns of news coverage often reveal inequalities along urban-rural and socio-demographic lines \cite{usher_putting_2019}. 
+
+Geographic coverage reflects the aggregate outcome of countless editorial decisions about newsworthiness, resource allocation, and community relevance—revealing the implicit geographic logic that guides news production \cite{weiss_journalism_2018}. Unlike audience metrics, which may be influenced by algorithmic distribution or marketing strategies, or editorial statements, which may not reflect actual practice, location mentions in news content provide a direct trace of where outlets choose to focus their journalistic attention. We therefore conceptualise "local" news as journalism that demonstrates sustained geographical specificity in its content—that is, news production characterised by consistent attention to particular places, communities, and administrative jurisdictions. This definition encompasses outlets ranging from hyperlocal community blogs to regional newspapers, unified by their commitment to place-based reporting rather than their organisational structure or ownership.
+
+\subsection{Computational Approaches to News Geography}
+Recent advances in computational methods have significantly expanded our ability to study local news geography \cite{vogler_investigating_2023, khanom_news_2023, qin_where_2024, madrid-morales_computational_2023, wang_geography_2023}. Geoparsing techniques, including emerging methods leveraging large language models (LLMs) \cite{aubin_le_quere_towards_2024}, enable precise extraction of geographic locations from news text. Despite this, many studies reduce spatial analysis to simple frequency counts or binary presence measures aggregated at administrative levels \cite{vogler_investigating_2023, madrid-morales_computational_2023}. This approach overlooks a fundamental geographic principle that “near things are more related than distant things” \cite{tobler_computer_1970}: that space is relational rather than purely categorical.
+
+Some research has begun applying spatial statistics, such as Moran’s I and geographically weighted regression, to explore socio-demographic factors influencing newspaper survival and news coverage patterns \cite{wang_geography_2023, qin_where_2024}. These analyses reveal spatial heterogeneity and autocorrelation, suggesting that journalistic geography is neither random nor uniform. Studies leveraging social media data have further delineated local, regional, and national outlets based on audience spatial clustering around newsroom locations \cite{hagar_defining_2020}, operationalising the concept of distance decay within audience geography.
+
+\subsection{Limitations and Research Gap}
+While these contributions mark important progress, existing research tends to focus on either audience geography or simplistic spatial proxies, often neglecting the geography of news content. There is a lack of systematic, multidimensional frameworks combining content-based spatial features such as geographic extent, concentration, proximity, and alignment with political boundaries to characterise and classify subnational media outlets.
+
+Furthermore, common computational studies typically overlook relational spatial patterns, reducing geography to counts within predefined administrative units, and fail to incorporate spatial clustering or distance decay effects in their analyses of content. As \cite[p.21]{pinf_deserts_2023} notes, understanding “the news that each outlet produces—and whether that news covers the entire area the outlet claims to serve” is a crucial direction for future research.
+
+To address this gap, our work develops a transferable and scalable computational method that integrates geoparsing with spatial clustering techniques to infer the spatial focus of news outlets directly from their published content. This approach moves beyond traditional proxies to provide an empirically grounded classification of local news provision based on actual reporting geography. By doing so, we aim to enable researchers to reassess local news geographies, examine the impact of media ownership on editorial scope, and revisit the relevance of geographic proximity as a core journalistic value in the digital age.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Methodology}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The research design comprises four analytical stages: (1) data collection, (2) geoparsing, (3) feature engineering, and (4) coverage typologies identification. Following \cite{gulyas_local_2021}, we conceptualise "local" media as outlets targeting subnational, spatially identifiable audiences, thus we incorporate both large and small outlets in the study. We adopt as a case study the commercial and independent digital news sector in the United Kingdom, whose well-documented media landscape \cite{bisiani_uk_2024, bisiani_uncovering_2023, the_media_reform_coalition_who_2025}—with its mix of regional newspapers, city news sites, and hyperlocal digital outlets—provides an ideal setting for examining spatial dimensions of local news distribution. 
+
+\subsection{Data}
+Our analysis draws upon the UKTwitNewsCor dataset \cite{bisiani_uktwitnewscor_2025}, the largest openly available article collection for UK local news, containing over 2.5 million articles published between 2020-2022 across 360 UK local outlets. This Twitter-derived corpus captures news actively disseminated through social media by commercial and independent digital news outlets. The dataset covers 47\% of eligible UK local news domains active in 2022, distributed across 94\% of Local Authority Districts (LADs). Although this dataset does not cover the entire population of outlets, it offers meaningful coverage across a variety of publishers and locations (see \cite{bisiani_uktwitnewscor_2025} for more detail). The dataset's spatial coverage proves particularly valuable for our study. This extensive geographic representation, combined with the three-year temporal span, minimises seasonal or event-driven distortions in coverage patterns while capturing enduring spatial reporting tendencies.
+
+Due to computational constraints, we implemented a two-stage stratified cluster sampling. First, we stratified across geography and publishers to ensures balanced geographic and organisational representation \cite{long_obtaining_2005}. Then, we sampled temporally from each of these subgroups to minimise seasonal patterns in news coverage. We randomly selected eight weekdays per stratum-year (two per quarter) using the constructed week method \cite{luke_how_2011}. The resulting sample (465,105 articles, 18.35\% of corpus) maintains complete spatial and publisher coverage while preserving within-day editorial relationships.
+
+\subsection{Geoparsing}
+To extract geographic locations from the articles, we applied a geoparsing pipeline developed in a companion study \cite{bisiani_towards_2025}. First, we extracted locations using SpaCy's transformer-based named entity recognition model \cite{honnibal2020spacy}. Location entities were then linked to real-world coordinate-candidates using two popular gazetteers for the UK: Ordnance Survey Open Names and OpenStreetMap. The identification of the correct set of coordinates for each location, a task known as toponym disambiguation \cite{hu_how_2023}, was found by presenting a large language model (LLM), gemma2-9b \cite{team_gemma_2024}, with the location, its candidate options, and additional context to guide the selection. Context included the article and the website of the news outlet. Given LLMs' limitations in directly processing geographic coordinates in relation to text \cite{mai_opportunities_2024}, we reformulated the disambiguation task around administrative boundaries. We mapped each coordinate set to its Local Authority District and asked the LLMs to classify which administrative district corresponds to a given toponym. This approach leverages the fact that LLMs can use their stronger contextual interpretation capabilities rather than performing precise spatial computations. This pipeline has been validated on a gold standard dataset consisting of 182 articles and 1,313 locations extracted from the same corpus, achieving high classification accuracy (F1 = 0.88, Accuracy = 0.82) and falling just behind state-of-the-art, which leverages fine-tuning\cite{hu_toponym_2024}. Appendix \ref{appdx:second} provides additional information regarding this procedure.
+
+The geoparsing pipeline processed 465,105 articles, identifying location mentions in 365,714 articles (78.6\%). From these articles, 1,657,425 location mentions were extracted, with 1,388,720 (83.8\%) successfully geocoded to specific coordinates. The final analytical sample comprises 347,291 articles containing geocoded locations, representing 158,288 unique geographic locations across the UK. Pipeline performance varied by outlet, with the majority (75\%) achieving geocoding success rates above 75\% (Figure \ref{fig:geoparsing_stats}b). The relationship between total mentions and unique locations (Figure \ref{fig:geoparsing_stats}c) reveals that outlets with higher mention volumes tend to have proportionally fewer unique locations, reflecting both the finite nature of local geography and the tendency for outlets to repeatedly reference key locations within their coverage areas.
+
+% \begin{table}[h]
+%   \centering 
+%   \footnotesize
+%   \begin{tabular}{lrr}
+%     \toprule
+%     \textbf{Dimension} & \textbf{Count} & \textbf{Coverage}\\
+%     \midrule
+%     \multicolumn{3}{l}{\textit{Analytical Sample}} \\
+%     \quad Articles with geocoded locations & 347,291 & 74.7\% of initial sample \\
+%     \quad Total geocoded locations & 1,388,720 & 83.8\% of extracted \\
+%     \quad Unique locations & 158,288 & -- \\
+%     \multicolumn{3}{l}{\textit{Spatial Coverage}} \\
+%     \quad News outlets & 360 & 100\% \\
+%     \quad Local Authority Districts & 337 & 100\% \\
+%     \quad Publishers & 87 & 100\% \\
+%     \bottomrule
+%   \end{tabular}
+%   \caption{Final analytical sample characteristics.}
+  \label{tab:final_sample}
+%   
+% \end{table}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\linewidth]{figures/geoparsing_stats2.png}
+  \caption{(a) Box plots showing the number of articles for each outlet before and after geoparsing. (b) Histogram of the share of successfully geocoded articles across domains. (c) Relationship between total number of locations and percentage of unique locations.}
+  \label{fig:geoparsing_stats}
+\end{figure}
+
+\subsection{Feature Engineering} \label{sec:feat_eng}
+To systematically characterise local news coverage patterns, we develop a four-dimensional framework drawing on concepts from previous studies in news geography: distance decay \cite{karlsson_local_2019, hagar_defining_2020}, spatial extent and presence across administrative boundaries \cite{vogler_investigating_2023, lindgren_news_2009}, and spatial heterogeneity \cite{wang_geography_2023, qin_where_2024}. These dimensions operationalise different aspects of how news outlets construct their geographic coverage:
+
+\begin{enumerate}
+    \item \textbf{Spatial Extent}: This dimension captures the geographic footprint and shape of an outlet's coverage area, and distinguish between outlets with compact versus dispersed coverage patterns. We operationalise it using two metrics calculated on the top 75\% most frequently mentioned locations (i.e., after filtering out the bottom quartile by frequency), capturing geographic scope of the most relevant locations, accounting for occasional mentions of distant locations (e.g., Westminster or Downing Street): (1) the \textit{convex hull area} enclosing these locations (measured in km\textsuperscript{2}, where larger values indicate broader territorial coverage), and (2) the \textit{radial extent} from the most frequently mentioned location to the furthest location (measured in km, indicating the maximum reach of regular coverage).
+    
+    \item \textbf{Administrative Reach}: This dimension reflects how news coverage aligns with and crosses administrative boundaries. We measure this through (3) the total number of Lower Super Output Areas (LSOAs) Districts in which locations by news outlets are situated (higher counts indicate wider coverage), and (4) the \textit{Gini coefficient} of attention across different socio-demographic area types based on the LSOAC 2021/22 classifications.\footnote{Retrieved from: \url{https://data.geods.ac.uk/dataset/lsoac}.} This metric ranges from 0 (perfectly equal coverage across demographic areas) to 1 (highly concentrated coverage), revealing whether outlets provide balanced coverage across diverse communities or focus on particular demographic contexts. Appendix~\ref{appx:third} provides additional details about LSOAs the LSOAC classification system.
+    
+    \item \textbf{Spatial Heterogeneity}: This dimension assesses the diversity and clustering patterns of locations mentioned in news coverage. We use (5) \textit{Shannon's entropy} to quantify the evenness of coverage across administrative districts — higher values indicate more balanced attention across districts, whilst lower values suggest concentration on particular districts. Complementing this, we calculate (6) \textit{Moran's I} with a 50 km spatial weights matrix to detect spatial autocorrelation. Positive values indicate spatially clustered coverage (nearby locations mentioned together), negative values suggest dispersed patterns (nearby locations mentioned separately), and values near zero indicate random spatial distribution.
+    
+    \item \textbf{Distance Decay}: This dimension examines how coverage intensity diminishes with distance from an outlet's primary location, operationalising the principle that proximity often increases relevance in local journalism. We identify each outlet's focal point through an automated information extraction pipeline using OpenAI's o4-mini model with web search capabilities (see Appendix~\ref{appdx:first} for methodology). Manual validation of a 20\% random sample achieved 98\% agreement with human annotations. Distances from this focal point to all mentioned locations are then computed using the Haversine formula, with metrics including (7) the \textit{coefficient of variation} of distances (higher values indicate more scattered coverage patterns), and (8) the \textit{percentage of locations within ten kilometres} of the primary location (higher percentages indicate more localised coverage).
+\end{enumerate}
+
+Technical details for these metrics are provided in Appendix~\ref{appx:fourth}.
+
+\subsection{Clustering Analysis for Spatial Typology Identification}
+To identify empirical typologies of news outlet spatial coverage, we implemented an unsupervised clustering approach designed to let structural patterns emerge from the data. Because the geometry of spatial strategies in news coverage is unknown a priori, we systematically compared five different clustering algorithms: k-means (spherical/equally-sized clusters) \cite{jain_data_2008}, hierarchical clustering (Ward and complete linkages), Divisive Analysis (DIANA) for capturing hierarchical or nested structures, and HDBSCAN for density-based clusters and explicit outlier detection \cite{manoranjan_2000}. This ensemble allows us to test robustness across a range of plausible spatial organisational models (see Appendix~\ref{appdx:fifth} for technical details).
+
+\subsubsection{Dimensionality and Feature Selection}
+High correlations between spatial features and large number of variables introduce well-known clustering challenges \cite{verleysen_curse_2005}. To address this, we test different configurations of our feature dataset: (1) all engineered features as a baseline; (2) a reduced set of minimally correlated features based on pairwise analysis ($r>0.8$) \cite{kyriazos_dealing_2023}; and (3) Principal Component Analysis (PCA) to create orthogonal components explaining 80\%, 90\%, and 95\% of total variance \cite{jolliffe2016principal}. PCA revealed that coverage patterns reflect multiple independent dimensions, from local intensity to geographic scope and administrative complexity, rather than a simple local-to-national continuum (see Figure~\ref{fig:pca_overview}).
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\linewidth]{figures/pca.png}
+\caption{Principal Component Analysis of news coverage geography. (a) Scree plot showing variance explained by each component (dots) and cumulatively (steps); (b) Factor loadings for principal components.}
+\label{fig:pca_overview}
+\end{figure}
+
+\subsubsection{Experimental Design and Validation}
+To ensure that typology discovery was robust to both algorithm and feature selection, we systematically evaluated 25 combinations (5 algorithms $\times$ 5 feature sets). All features were z-score standardised prior to analysis. For methods requiring a set number of clusters, we tested values from $k=3$ to $6$, prioritising solutions with both interpretability and good silhouette widths; silhouette was our primary internal quality metric, while the elbow method and Adjusted Rand Index (ARI) assessed solution consistency \cite{hubert_comparing_1985}.
+
+Cluster characterisation was performed by examining the mean values of the original spatial features within each cluster, preserving interpretability in terms of spatial scale, concentration, proximity, and heterogeneity. Further diagnostic details and stability analysis are documented in Appendix~\ref{appdx:fifth}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Results}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Spatial Properties of News Coverage} \label{sec:results_features}
+News outlets in our sample display substantial diversity in the spatial characteristics of their coverage (Table~\ref{tab:descriptives}).
+
+\begin{table}[h] \centering \footnotesize
+\begin{tabular}{@{\extracolsep{5pt}}lrrrrr} 
+\\[-1.8ex]\toprule 
+\textbf{Variable (Units)} & \textbf{Mean} & \textbf{Median} & \textbf{SD} & \textbf{Min} & \textbf{Max} \\
+\midrule \\[-1.8ex]
+\textit{Spatial Extent} \\
+\quad Convex hull area (km²) & 4,556.68 & 1,988.77 & 10,731.07 & 4.46 & 123,047.90 \\
+\quad Radius of 75\% mentions (km) & 37.54 & 31.81 & 29.65 & 1.49 & 222.62 \\
+\textit{Administrative Reach} \\
+\quad Number of districts covered (count) & 346.28 & 235 & 331.07 & 6 & 1,881 \\
+\quad Gini coefficient (0–1) & 0.53 & 0.54 & 0.11 & 0.06 & 0.84 \\
+\textit{Spatial Heterogeneity} \\
+\quad Shannon entropy & 3.75 & 3.81 & 0.73 & 0.96 & 5.94 \\
+\quad Moran’s I ($-$1 to +1) & 0.04 & 0.03 & 0.04 & $-$0.20 & 0.17 \\
+\textit{Distance Decay} \\
+\quad Median distance to mentions (km) & 17.52 & 14.77 & 14.63 & 0.64 & 103.52 \\
+\quad Distance coefficient of variation (unitless) & 2.00 & 1.89 & 0.72 & 0.62 & 5.79 \\
+\quad Share of mentions within 10 km (\%) & 41.0 & 40.0 & 23.0 & 0.0 & 96.0 \\
+\bottomrule \\[-1.8ex]
+\end{tabular}
+\footnotesize
+\newline
+Notes: Statistics computed across 358 media outlets.
+\caption{Descriptive Statistics of Features}\label{tab:descriptives} 
+\end{table}
+
+Some outlets exhibit tightly localised coverage areas (as little as 4.5~km\textsuperscript{2}), while others reach over 123,000~km\textsuperscript{2}; there is similar variation in the number and distribution of administrative areas referenced. Coverage is rarely uniform: most outlets concentrate attention in a limited set of location types, with some demographic communities (e.g., Legacy Communities, Low-Skilled Migrant and Student Communities) disproportionately under-represented (Figure \ref{fig:demographics}a). Moderate to high spatial inequality (Gini $\approx$ 0.5) is common, and spatial clustering (Moran’s I $\approx$ 0) is typically low, indicating that mention patterns generally lack strong clustering or dispersion. Shannon entropy values further show that coverage is usually moderate in spatial diversity. Distance decay patterns also vary widely: some outlets achieve $75\%$ coverage within 25~km of their focal point, while others require more than 100~km, reflecting both hyperlocal and regional scales of operation (Figure \ref{fig:demographics}b). The proportion of highly local coverage (within 10~km) ranges from none to nearly all, with the distance coefficient of variation spanning 0.62 to nearly 6.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\linewidth]{figures/features_second_version2.png}
+    \caption{Distribution and correlation analysis of landscape metrics. (a) Distribution of eight landscape metrics across study areas, showing individual data points (grey dots) overlaid with boxplots indicating median, quartiles, and range. Values are displayed with abbreviated units for readability (k = thousands). (b) Pearson correlation matrix between landscape metrics, with correlation coefficients displayed and color-coded from dark green (strong negative correlation, -1.0) to purple (strong positive correlation, +1.0).}
+  \label{fig:features}
+\end{figure}
+
+Correlation analysis reveals several key structural relationships (Figure \ref{fig:features}b). The strongest positive correlation exists between area and radius (r = 0.9), confirming that larger coverage areas correspond to greater radial reach from the primary location. Strong positive correlations (r = 0.8) between Shannon’s entropy and the number of districts shows that outlets mentioning more districts also tend to distribute their coverage more evenly across them. Conversely, strong negative correlations are observed between radius and the percentage of mentions within 10 km (r = -0.6), suggesting that outlets with greater radial extent focus less on their immediate vicinity. Finally, we observe a moderate positive correlation between Entropy and Moran's I (r = 0.5), that outlets with more evenly distributed coverage across districts tend to exhibit regionally clustered patterns of attention, reflecting geographically balanced but locally coherent reporting.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\linewidth]{figures/features.png}
+    \caption{(a) Demographic representation across LSOAs. (b) Cumulative percentage distributions of distances of location mentions from primary location of news outlet.}
+  \label{fig:demographics}
+\end{figure}
+
+\subsection{Clustering} \label{sec:results_clustering}
+We systematically evaluated clustering solutions, finding that k-means with a highly reduced, decorrelated set of features yields the most interpretable, balanced spatial typologies.\footnote{For transparency, we have built an interactive dashboard that allows users to explore the results from this set of experiments: \url{https://simonabisiani-clustering-analysis-dashboard.share.connect.posit.cloud/}.} The optimal solution partitions outlets into six clusters, hierarchically arranged by area, administrative reach, and spatial diversity (see Table~\ref{tab:cluster_profiles_expanded}). This empirically supports the existence of multi-scalar news systems ranging from hyperlocal (typ. $<40$~km\textsuperscript{2}) through major city and county outlets, up to major regional dailies ($>70,000$~km\textsuperscript{2}).
+
+\begin{table}[h]
+\centering
+\footnotesize
+\begin{tabular}{lccccccccc}
+\toprule
+\textbf{Cluster Type} & \textbf{N} & \textbf{Area (km²)} & \textbf{Districts} & \textbf{Gini} & \textbf{Entropy} & \textbf{Moran's I} & \textbf{DistCV} & \textbf{Pct10km (\%)} \\
+\midrule
+Hyperlocal & 15 & 33 & 75 & 0.70 & 2.64 & -0.001 & 4.34 & 89.5 \\
+Local & 152 & 1,216 & 254 & 0.54 & 3.55 & 0.025 & 2.31 & 53.9 \\
+Market Town and Rural & 38 & 2,715 & 88 & 0.53 & 3.13 & -0.015 & 1.47 & 29.1 \\
+County and Regional & 90 & 5,769 & 234 & 0.56 & 3.87 & 0.070 & 1.56 & 24.2 \\
+Major City and Regional & 58 & 7,389 & 936 & 0.45 & 4.68 & 0.051 & 1.66 & 30.3 \\
+Major Regional Daily & 5 & 79,014 & 1,119 & 0.41 & 5.38 & 0.051 & 1.17 & 23.0 \\
+\bottomrule
+\end{tabular}
+\footnotesize
+\newline
+Notes: Cluster means shown. DistCV = Coefficient of Variation of distances; Pct10km = Percentage of location mentions within 10 km of outlet.
+\caption{Media Outlet Spatial Reach Typologies}\label{tab:cluster_profiles_expanded}
+\end{table}
+
+\begin{enumerate}
+\item \textit{Hyperlocal} outlets represent the smallest organisational scale with minimal spatial footprints (mean coverage 33 km²) and the highest concentration of mentions near their focal location (89.5\% within 10 km). Examples include \textit{brixtonblog.com} (South London), \textit{ec1echo.co.uk} (Central London postcode), and \textit{greatergovanhill.com} (Glasgow neighbourhood). These outlets exhibit extreme distance variability (DistCV = 4.34), though this metric is sensitive to the small mean distances characteristic of hyperlocal coverage. Spatial autocorrelation is negligible (Moran's I = -0.001), indicating mentions neither cluster nor disperse systematically beyond the compressed geographic scale.
+
+\item \textit{Local} outlets constitute the modal category (N = 152), characterised by intermediate coverage area (mean 1,216 km²) and moderate administrative penetration (254 districts). Examples include \textit{cambridge-news.co.uk}, \textit{nottinghampost.com}, and \textit{oxfordmail.co.uk}. These outlets demonstrate notable distance variability (DistCV = 2.31) with substantial local concentration (53.9\% of mentions within 10 km), indicating coverage focused on a primary urban centre with extensions to surrounding areas. Weak positive spatial autocorrelation (Moran's I = 0.025) suggests modest spatial clustering of coverage attention.
+
+\item \textit{Market Town and Rural} outlets serve smaller settlements and dispersed rural hinterlands (N = 38), with mean coverage area of 2,715 km² but the lowest administrative penetration (88 districts). Examples include \textit{brecon-radnor.co.uk} (rural Welsh counties), \textit{cambrian-news.co.uk}, and \textit{newry.ie} (border town). These outlets show moderate entropy (3.13) and 29.1\% of mentions within 10 km of their focal location. Slight negative spatial autocorrelation (Moran's I = -0.015) indicates coverage dispersed across geographic space rather than concentrated in contiguous zones, consistent with outlets serving scattered rural communities or isolated market towns.
+
+\item \textit{County and Regional} outlets (N = 90) occupy an intermediate position with mean coverage of 5,769 km² across 234 districts. Examples include \textit{southwalesargus.com}, \textit{ardrossanherald.com}, \textit{thewestmorlandgazette.co.uk}, and \textit{bordercountiesadvertizer.co.uk}. These outlets exhibit notably the highest spatial autocorrelation in the typology (Moran's I = 0.070), indicating location mentions cluster spatially where neighbouring locations receive similar coverage attention. Combined with higher entropy (3.87) and moderate Gini coefficient (0.56), this suggests coverage patterns extending across multiple administrative units with spatially coherent zones of attention rather than the dispersed patterns observed in Market Town outlets.
+
+\item \textit{Major City and Regional} outlets combine substantial coverage extent (mean 7,389 km²) with exceptionally high administrative complexity (936 districts), creating the highest districts-to-area ratio in the typology. Examples include \textit{belfasttelegraph.co.uk}, \textit{birminghammail.co.uk}, and \textit{manchestereveningnews.co.uk}. These outlets show the lowest Gini coefficient (0.45) alongside high entropy (4.68), indicating relatively even coverage distribution across diverse administrative units. Positive spatial autocorrelation (Moran's I = 0.051) suggests coverage attention clusters in spatially contiguous patterns despite the administrative complexity.
+
+\item \textit{Major Regional Daily} outlets represent the apex of geographic reach, with mean coverage of 79,014 km² spanning 1,119 districts. Examples include \textit{dailyrecord.co.uk}, \textit{scotsman.com}, and \textit{blackpoolgazette.co.uk}. This small group (N = 5) exhibits the highest spatial diversity (entropy = 5.38) and lowest inequality (Gini = 0.41), combined with the lowest distance variability (DistCV = 1.17). Positive spatial autocorrelation (0.051) persists despite vast geographic extent, indicating coverage attention maintains spatial structure across extensive territories.
+\end{enumerate}
+
+To validate our results, we projected our clustered data on the PCA components generated on the full feature dataset. The PCA projection confirms our clustering validity, with clusters occupying distinct regions of the reduced dimensional space (Figure \ref{fig:cluster_analysis}). The biplot reveals that spatial scale (Area, Districts, Entropy) forms the primary dimension of variation, whilst circulation concentration metrics (DistCV, Pct10km) and spatial clustering (Moran's I) contribute orthogonal dimensions. This dimensional structure validates our typology's theoretical foundation, demonstrating that media outlets' spatial reach patterns reflect fundamental trade-offs between geographic scale, administrative complexity, and audience concentration.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\linewidth]{figures/cluster_analysis_final.png}
+    \caption{Cluster analysis validation across key variable relationships. Left panels show scatter plots of highly correlated and discriminative variable pairs, with clusters colour-coded to demonstrate separation. Right panel shows PCA biplot validation with variable loadings, confirming that clusters separate cleanly in the reduced dimensional space.}
+  \label{fig:cluster_analysis}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Discussion and Conclusion}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This study shows that computational analysis of location mentions in news texts can provide a valid approach to classify subnational media into meaningful news outlet typologies, thus offering a novel approach to define local news \cite{gulyas_introduction_2020}. We find six empirically distinct scales and types of UK news outlets, confirming that subnational media organisation is inherently multi-scalar and reflective of differences in geography and socio-demographic characteristics across rural-urban spectrums. Computational approaches to measure spatial heterogeneity also reveal organisation forms (e.g.~urban clustering) that would be invisible using simple spatial thresholds. Our results do not validate whether, or how, the reported coverage overlaps with stated areas of coverage. Yet distinctive geographic scopes across outlets show that in order to understand how different communities are served by their local news providers, it is important we ask how that coverage is spatially organised.
+
+We identify three primary contributions of this work. First, it advances the field of media geography by operationalising local news provision through extraction and analysis of spatial references in news coverage. Second, it introduces scalable natural language processing techniques for geographic inference in journalism studies, enabling systematic empirical evaluation of editorial strategies. Third, it provides practical tools for identifying and responding to the effects of media consolidation, enabling regulators to assess whether ownership changes genuinely threaten local coverage diversity. In doing so, this work contributes to ongoing efforts to render the structure and functioning of local media systems more visible and intelligible. As \cite[p.12]{mcadam_re-asserting_2024} states: "Governments have a powerful role to play in securing the sustainability of local news and, as such, have a responsibility to hold to account those news outlets that purport to be \textit{local}".
+
+This work contributes new evidence of spatial organisational structures in the UK's commercial and independent subnational media market. In doing so, we offer a new angle from which to investigate whether outlets or publishers have diluted local news coverage in response to digital transformation or ownership consolidation. This approach is particularly valuable for identifying "ghost newspapers" that maintain local branding while providing minimal community-specific coverage \cite{abernathy_news_2020}, and for detecting the spatial reorganisation of news provision under ownership consolidation.
+
+This research opens several pathways: integrating with audience data to understand the relationship between geographic focus and audience demand, enabling content-based analyses of local news provision based on a systematic, multi-dimensional framework. Future research could build upon this framework by incorporating editorial weighting to distinguish between central coverage and passing mentions, developing methods to identify coverage gaps within outlets' stated territories, and systematically mapping spillover patterns where outlets cover unexpected geographic areas—advancing towards a more nuanced understanding of local news provision.
+
+It is perhaps useful to also indicate what this study does not do. Firstly, it does not incorporate temporal aspects into the analysis (despite the longitudinal span covering three years), yet this would constitute a valuable future work extension to understand shifts in coverage attention distributions. Secondly, this study does not contribute a transferable set of parameters or heuristics for deriving outlet typologies: different datasets, reflective of their markets, geographic settings, national contexts will likely produce uniquely relevant clustering profiles. Here, we offer a modular (features can be tested and included/excluded as one sees fit), scalable (this analysis can be done at national scale as demonstrated here, but the focus could be on smaller as well as larger datasets and contexts), and accessible (all software used, beyond GPT4o-mini in the outlet primary location identification step, is free and open-source). Beyond media, our framework can be applied to other domains, from cultural and heritage institutions to public services, to analyse how organisations construct and manage geographic scope in their communication.
+
+\subsection{Limitations}
+Our study is limited by its UK focus, which may affect generalisability. Future research should test the framework in other national, regional, or linguistic contexts. We acknowledge that our geoparsing pipeline, while achieving comparably satisfactory results \cite{hu_toponym_2024}, is not error-free and may under-represent certain place types or ambiguous references: further technical refinement is warranted. The UKTwitNewsCor dataset, while extensive, is sourced from Twitter, which may introduce biases in outlet representation. Specifically, commercial outlets with active social media strategies (e.g., Reach PLC) may dominate, while smaller hyperlocals or print-focused publishers could be underrepresented \cite{bisiani_uktwitnewscor_2025}; articles shared on Twitter may prioritise "clickworthy" topics (e.g., crime, events) over routine local governance coverage, potentially inflating mentions of certain locations (e.g., city centers) and underrepresenting others (e.g., rural districts). Future work could mitigate this by attempting a different approach to data collection, incorporating direct RSS feeds or news coverage from outlets' archives, where available.
+
+These limitations underscore the need to intersect spatial analysis with content quality metrics (e.g., \cite{bros_decoding_2025}’s proximity discourse analysis) and audience data to evaluate whether geographic coverage aligns with democratic needs. For instance, an outlet with broad spatial reach but superficial reporting may offer less value than a hyperlocal with deep, critical coverage. In doing so, researchers should be careful in associating proximity with positive representation. Extreme geographic proximity has been shown to paradoxically reduce journalistic quality, as editors prioritise place-making narratives over critical coverage to maintain community relations \cite{freeman_differentiating_2020}. This creates situations where the most geographically proximate outlets may provide inferior democratic accountability compared to more distant "local" providers. As such, while this work has contributed a deeper understanding of the \textit{where} of local news, at the outlet-level, this dimension will require intersecting with \textit{what}, \textit{how}, \textit{why} and \textit{when} to generate meaningful understanding of inequalities in news coverage.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Data Availability Statement}
+The analyses in this study can be reproduced through the following, permanently-stored, open-access code repository: \url{https://doi.org/10.7910/DVN/T7SE5F}. We have also developed a platform for users to interact with the data and explore how different outlets' coverage spread across a map: \url{https://simonabisiani-local-news-map-explorer.share.connect.posit.cloud/}.
+
+\section*{Acknowledgements}
+The classification of census tracts data used in this research have been provided by the Geographic Data Service, a Smart Data Research UK Investment, under project ID GeoDS 3139, ES/Z504464/1.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\printbibliography
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Geoparsing Methodology} \label{appdx:second}
+This appendix provides additional details on the geoparsing pipeline employed in this study, which was developed and validated in a companion paper that established accessible prompt-based methods for geoparsing UK local media \cite{bisiani_towards_2025}.
+
+\subsection{Pipeline Development and Validation}
+The geoparsing methodology was developed using the Local Media UK Geoparsing (LMUK-Geo) dataset, a newly created gold standard corpus of 182 UK local news articles containing 1,313 toponyms. The companion study addressed the lack of benchmarking resources for UK local media geoparsing, which presents unique challenges due to fine-grained geographies and colloquial place names underrepresented in existing international datasets. The pipeline development involved three main stages: \textbf{Toponym Recognition:} The companion study employed a two-stage annotation process. The first 100 articles were manually annotated using Prodigy, while the second 100 articles used SpaCy's transformer-based NER model (en\_core\_web\_trf). When validated against manual annotations, SpaCy achieved F1-score = 0.94, precision = 0.97, and recall = 0.91, demonstrating sufficient accuracy for automated extraction. \textbf{Candidate Generation:} For each identified toponym, coordinate candidates were generated by querying two gazetteers: Ordnance Survey Open Names (covering Great Britain) and OpenStreetMap Nominatim (providing additional coverage, particularly Northern Ireland). This produced 7,374 candidate locations across the dataset. For 52 toponyms that returned no matches, coordinates were manually retrieved using Google Maps with article context. \textbf{Toponym Disambiguation:} The companion study tested two approaches: (1) contextual disambiguation, where LLMs selected from the same candidate options presented to human annotators, and (2) few-shot classification, where LLMs identified Local Authority Districts without candidate lists. Given LLMs' limitations with coordinate calculations \cite{mai_opportunities_2024}, all approaches reformulated disambiguation as administrative boundary classification. The companion study systematically evaluated four open-source LLMs: Gemma2 (9B), Llama3.1 (8B), Qwen2 (7B), and Mistral (7B), testing various prompt configurations, metadata combinations, and temperature settings. The optimal configuration used a detailed prompt with one-shot examples, including only the publishing outlet's domain as metadata context. Individual model performance varied significantly, with Mistral performing notably worse across all configurations. The study implemented majority voting across the three best-performing models, but Gemma2-9b emerged as the strongest individual performer, achieving: Accuracy: 88.2\%; Precision: 88.0\%; Recall: 88.1\%; F1-score: 82.2\%.
+When compared against a state-of-the-art fine-tuned approach by \cite{hu_toponym_2024}, the prompt-based method achieved competitive performance while offering greater accessibility by eliminating resource-intensive fine-tuning requirements.
+
+\subsection{Adaptation for Large-Scale Application}
+For the present study's analysis of the sample extracted from UKTwitNewsCor, we adapted the validated methodology with the following considerations:
+\textbf{Model Selection:} Given computational resource constraints and Gemma2-9b's strong individual performance in the validation study, we deployed this single model rather than the ensemble approach. This decision was justified by Gemma2's robust standalone results and the impractical computational overhead of running multiple models across the full corpus. We implemented the optimal configuration identified in the validation study: Gemma2-9b with the detailed prompt format and domain metadata only. The administrative boundary classification approach was maintained, mapping all locations to Local Authority Districts before coordinate assignment. This methodology represents the first large-scale application of prompt-based LLM geoparsing to UK local media, demonstrating the practical scalability of the approach developed in the companion study (withheld for review).
+
+\section{Output Area Classification Overview} \label{appx:third}
+The UK Output Area Classification (OAC) 2021/22 categorises neighbourhoods into hierarchical groups—Supergroups, Groups, and Subgroups—based on 2021 Census data (England and Wales), modelled 2022 data (Scotland), and apportioned 2021 data (Northern Ireland). These were derived using clustering on 58 sociodemographic variables, including ethnicity, housing, and occupation, with assignments determined by proximity to cluster centroids. The classification contains 8 Supergroups, 21 Groups, and 52 Subgroups, aggregated to LSOA, DZ, and SDZ levels for analysis. This paper utilises the Supergroups to infer broader demographic trends, summarised as follows:
+
+\begin{enumerate}
+    \item \textbf{Retired Professionals}: Affluent, ageing populations in rural/low-density areas; characterised by high homeownership, detached housing, car ownership; predominantly White, UK-born retirees with managerial/professional backgrounds.
+    
+    \item \textbf{Suburbanites and Peri-Urbanites}: Middle-aged, home-owning families in suburban and rural-urban fringe areas; skilled/professional occupations, high education, low ethnic diversity, strong Christian affiliation.
+    
+    \item \textbf{Multicultural and Educated Urbanites}: Young-to-middle-aged, ethnically diverse urban dwellers; high private renting, student populations, degree-level education; concentrated in inner cities, especially London.
+    
+    \item \textbf{Low-Skilled Migrant and Student Communities}: Young, transient renters in high-density terraces/flats; overrepresented in low-skilled jobs, unemployment, ethnic minorities; common in industrial towns and outer London.
+    
+    \item \textbf{Diverse Suburban Professionals}: Multi-ethnic professionals in outer suburbs; high homeownership, managerial roles, degree qualifications; families with children and moderate religious diversity.
+    
+    \item \textbf{Baseline UK}: Modal UK characteristics with mixed housing tenure and intermediate occupations; overrepresented in south London; high unemployment and ethnic diversity.
+    
+    \item \textbf{Semi- and Unskilled Workforce}: Deprived, UK-born industrial communities; social renting, low education, elementary occupations; high disability rates; prevalent in former industrial regions.
+    
+    \item \textbf{Legacy Communities}: Ageing, isolated populations in flats and social housing; low skills, high unemployment and disability; concentrated in coastal and remote areas.
+\end{enumerate}
+
+\section{Prompt} \label{appdx:first}
+\begin{lstlisting}
+"Your task is to provide JSON-formatted spatial information regarding UK local news websites.
+
+Note: The news outlet may no longer be active, but provide an analysis based on any available information. Acceptable sources include: the domain itself, archived content (Wayback Machine), Wikipedia entries, local council websites, media directories, or third-party references to the publication. Return your response in valid JSON format with exactly these fields:
+
+{
+"domain": "the domain",
+"coverage_area_description": "Brief description of geographical coverage",
+"primary_location": "Single location name representing the main/central coverage area",
+"status": "active/inactive/unknown",
+"confidence": "high/medium/low",
+"scope": "small/medium/large"
+}
+
+Requirements:
+- coverage_area_description: Maximum 3 sentences.
+- primary_location: If multiple locations are equally central, choose the main town/city or most central location that best represents the coverage area.
+- scope: Use the following logic: Small: Coverage focuses on a single town or city. Medium: Coverage spans multiple towns, cities, or villages. Large: Coverage includes entire regions, counties, or large geographic areas.
+- ensure primary_location can be geocoded (e.g., 'Manchester', 'Scottish Borders', 'West Sussex') by solely providing location name and no additional text. If ambiguous, use the format "City, County".
+- If no information is found, use "unknown" for relevant fields.
+
+Example Input: example-gazette.co.uk
+Example Output:
+{
+"domain": "example-gazette.co.uk",
+"coverage_area_description": "Serves the market town of Exampleville and surrounding villages in North Yorkshire. Coverage includes local council news, community events, and business updates. Primary focus on the Exampleville district and nearby rural areas.",
+"primary_location": "Exampleville, North Yorkshire",
+"status": "active",
+"confidence": "high",
+"scope": "medium"
+}
+
+Now provide an output for this domain: {}"
+\end{lstlisting}
+
+\section{Technical Notes} \label{appx:fourth}
+
+All analyses were conducted in R (version 4.4.1) using spatial, statistical, and data wrangling libraries, including \texttt{tidyverse}, \texttt{sf}, \texttt{spdep}, \texttt{concaveman}, \texttt{ineq}, \texttt{geosphere}, and \texttt{DescTools}. To ensure stability in estimates, two outlets mentioning fewer than 10 locations were removed from the analysis. Spatial data were processed using the British National Grid (EPSG:27700) and WGS84 (EPSG:4326) projections as appropriate. Administrative boundary data for England, Scotland, Wales, and Northern Ireland were sourced from respective national statistical offices.
+
+\subsection{Metric Definitions}
+
+\subsubsection{Spatial Extent Metrics}
+
+\textit{Radius} measures the geographic reach from an outlet's primary location (the location with the most mentions). We calculated the smallest radius containing 75\% of all location mentions by frequency. The 75\% threshold captures core coverage areas while excluding occasional outlier mentions.
+
+\textit{Area} measures the size of the convex polygon enclosing all locations within the 75\% radius, calculated in km\textsuperscript{2}. This provides a two-dimensional measure of geographic footprint.
+
+\subsubsection{Administrative Reach Metrics}
+
+\textit{Districts} tallies the number of unique administrative districts covered by an outlet's location mentions, indicating administrative breadth.
+
+\textit{Gini} measures inequality in how mentions distribute across demographic area types (ONS Supergroup categories). Values range from 0 (perfectly equal distribution across area types) to 1 (mentions concentrated in one area type). Location mentions were assigned to districts via nearest-neighbour spatial joins, then classified by demographic supergroup.
+
+\subsubsection{Spatial Heterogeneity Metrics}
+
+\textit{Entropy} measures how evenly location mentions spread across districts. Higher values indicate more uniform geographic attention across administrative units, while lower values suggest concentration in fewer districts. Values approach $\log(D)$ for perfectly even distribution and 0 for complete concentration.
+
+\textit{Moran's I} measures spatial autocorrelation---whether nearby locations receive similar coverage attention. Positive values indicate clustering (neighbouring locations get similar mention frequencies), negative values indicate dispersion, and zero indicates random spatial distribution. We used a 50 km distance threshold, selected based on sensitivity analysis showing stable outlet rankings compared to 75 km (Spearman's $\rho = 0.95$) but greater divergence at 25 km ($\rho = 0.75$).
+
+\subsubsection{Distance Decay Metrics}
+
+\textit{Coefficient of variation} measures how variable distances are relative to mean distance from the outlet's primary location. Higher values indicate more scattered coverage patterns.
+
+\textit{Proportion within 10 km} calculates the fraction of all location mentions falling within 10 km of the outlet's primary location, indicating local coverage intensity.
+
+All distances calculated using the Haversine formula for geographic coordinates.
+
+% \subsubsection{Spatial Extent}
+% \textbf{Radius}: We identified the primary location $\mathbf{x}_0 = \arg\max_{\mathbf{x}} n(\mathbf{x})$ (location with maximum mentions $n$), then computed distances $d_i = \|\mathbf{x}_i - \mathbf{x}_0\|$ for all locations. The radius $r_{75}$ is defined as:
+% \[
+% r_{75} = \min\left\{ r \;\Big|\; \sum_{d_i \leq r} n(\mathbf{x}_i) \geq 0.75 \cdot \sum_{\mathbf{x}} n(\mathbf{x}) \right\}
+% \]
+% This calculates the smallest radius from the primary location that contains 75\% of all location mentions by frequency. Distances are calculated via the Haversine formula.
+
+% \textbf{Area}: For locations within $r_{75}$, we computed the minimum convex polygon $\mathcal{H}$ enclosing all points using the Jarvis march algorithm (via \texttt{concaveman}), then calculated its area in km\textsuperscript{2}:
+% \[
+% A = \iint_{\mathcal{H}} d\mathbf{x}
+% \]
+% This calculates the area of the smallest convex polygon that encloses all locations within the 75\% radius.
+
+% \subsubsection{Administrative Reach}
+% \textbf{District count}: The total unique districts $D$ covered by an outlet's mentions:
+% \[
+% D = \left|\left\{ \text{district}(x_i) \;|\; i = 1,\dots,N \right\}\right|
+% \]
+% This calculates the number of unique administrative districts mentioned across all location references.
+
+% \textbf{Gini coefficient}: For demographic concentration across Supergroups $S_1,\dots,S_K$, with mention counts $n(S_k)$:
+% \[
+% G = \frac{\sum_{k=1}^K \sum_{l=1}^K |n(S_k) - n(S_l)|}{2K \sum_{k=1}^K n(S_k)}
+% \]
+% This calculates how unequally location mentions are distributed across different demographic area types (0 = perfectly equal distribution, 1 = perfectly concentrated). Location mentions were first assigned to the nearest administrative district via nearest-neighbour spatial joins, then classified using ONS Supergroup demographic categories (implemented via \texttt{ineq::Gini}).
+
+% \subsubsection{Spatial Heterogeneity}
+
+% \textbf{Shannon entropy}: For district-level mention proportions $p_i = n(d_i)/\sum n(d_i)$:
+% \[
+% H = -\sum_{i=1}^D p_i \cdot \log(p_i + \epsilon), \quad \epsilon = 10^{-10}
+% \]
+% This calculates how evenly location mentions are spread across districts, where higher values indicate more even coverage. The parameter $\epsilon$ provides numerical stability when $p_i = 0$. Low entropy ($H \approx 0$) indicates concentrated coverage, whilst high entropy (approaching $\log(D)$) reflects uniform geographic attention.
+
+% \textbf{Moran's I}: For spatial autocorrelation of mentions at locations $\mathbf{x}_i$:
+% \[
+% I = \frac{N}{\sum_i \sum_j w_{ij}} \cdot \frac{\sum_i \sum_j w_{ij} (y_i - \bar{y})(y_j - \bar{y})}{\sum_i (y_i - \bar{y})^2}
+% \]
+% This calculates whether nearby locations have similar mention frequencies (positive values = clustering, negative values = dispersion, zero = random distribution). Here, $w_{ij} = \mathbb{I}(d_{ij} \leq 50\text{km})$ are binary spatial weights, $y_i = n(\mathbf{x}_i)$, and $N$ is total mentions. We selected the 50 km threshold following sensitivity analysis comparing 25, 50, and 75 km thresholds. Results showed stable outlet rankings between 50 km and 75 km thresholds (Spearman's $\rho = 0.95$), but greater divergence between 25 km and 75 km ($\rho = 0.75$), indicating that threshold choice meaningfully affects clustering detection for highly local outlets. The 50 km threshold balances local clustering capture with cross-outlet comparability.
+
+% \subsubsection{Distance Decay}
+% For each mention, distance to the outlet's primary location was calculated using the Haversine formula. Dispersion was summarised using:
+
+% \textbf{Coefficient of variation}:
+% \[
+% CV = \frac{\sigma_d}{\mu_d}, \quad \mu_d = \frac{1}{N}\sum_i d_i, \;\; \sigma_d^2 = \frac{1}{N}\sum_i (d_i - \mu_d)^2
+% \]
+% This calculates how variable the distances are relative to the average distance, where higher values indicate more scattered coverage patterns.
+
+% \textbf{Proportion within 10 km}:
+% \[
+% P_{10} = \frac{|\{d_i \leq 10\text{km}\}|}{N}
+% \]
+% This calculates the fraction of all location mentions that fall within 10 km of the outlet's primary location.
+
+\section{Clustering Experiments} \label{appdx:fifth}
+To identify optimal clustering solutions for media outlet spatial typologies, we conducted a comprehensive experimental evaluation across multiple algorithmic approaches and feature representations. This appendix documents the systematic comparison that informed our methodological choices and validates the robustness of our findings.
+
+Table \ref{tab:clustering_experiments} reveals systematic trade-offs between clustering quality and solution interpretability. DIANA clustering consistently achieved the highest silhouette scores (0.533–0.541) across all PCA configurations, yet produced severely imbalanced solutions with most outlets concentrated in single dominant clusters. Whilst these solutions demonstrate strong statistical separation, they offer limited analytical insight into outlet diversity.
+
+Density-based approaches (HDBSCAN) identified substantial outlier populations (47–170 outlets) across all feature configurations, reflecting the presence of outlets with unique spatial characteristics that resist categorisation. However, the resulting cluster structures often comprised small, highly specialised groups that, whilst statistically coherent, provided insufficient coverage for comprehensive typological analysis.
+
+The minimal feature set consistently outperformed dimensionally reduced alternatives in terms of identifying nuances subgroups in the data. K-means clustering on the minimal dataset achieved average statistical quality (silhouette = 0.335) but nonetheless produced six well-differentiated clusters with meaningful size distributions.
+
+Cross-validation analysis revealed some degree of consistency in cluster identification across different algorithmic approaches when applied to the minimal feature set. K-means, Ward hierarchical clustering, and complete linkage methods produced similar cluster numbers (6, 6, and 6 respectively) with comparable balance scores (0.58, 0.41, and 0.54), demonstrating robust identification of underlying outlet typologies independent of specific algorithmic assumptions.
+
+\begin{table}[ht]
+\centering
+\footnotesize
+\begin{tabular}{@{\extracolsep{4pt}}llccccl}
+\toprule
+\textbf{Dataset} & \textbf{Method} & \textbf{Silhouette} & \textbf{Clusters} & \textbf{Outliers} & \textbf{Cluster Sizes} \\
+\midrule
+\multicolumn{6}{l}{\textit{Top performing experiments}} \\
+PCA (80\%) & DIANA & 0.541 & 3 & 0 & 347, 9, 2 \\
+PCA (90\%) & DIANA & 0.537 & 3 & 0 & 347, 9, 2 \\
+Full & DIANA & 0.534 & 3 & 0 & 348, 8, 2 \\
+PCA (95\%) & DIANA & 0.533 & 3 & 0 & 347, 9, 2 \\
+Minimal & HDBSCAN & 0.490 & 2 & 47 & 8, 303 \\
+\addlinespace
+\multicolumn{6}{l}{\textit{Small dataset}} \\
+\textbf{Minimal} & \textbf{K-means} & \textbf{0.335} & \textbf{6} & \textbf{0} & \textbf{5, 152, 90, 15, 58, 38} \\
+Minimal & Ward & 0.331 & 6 & 0 & 102, 140, 20, 76, 8, 12 \\
+Minimal & DIANA & 0.343 & 3 & 0 & 260, 91, 7 \\
+Minimal & Complete & 0.305 & 6 & 0 & 180, 97, 20, 53, 5, 3 \\
+\addlinespace
+\multicolumn{6}{l}{\textit{PCA dataset}} \\
+PCA (80\%) & Complete & 0.456 & 3 & 0 & 340, 15, 3 \\
+PCA (80\%) & Ward & 0.300 & 6 & 0 & 23, 125, 123, 66, 8, 13 \\
+PCA (80\%) & K-means & 0.297 & 6 & 0 & 49, 8, 92, 134, 52, 23 \\
+\addlinespace
+\multicolumn{6}{l}{\textit{Full feature dataset}} \\
+Full & Complete & 0.434 & 3 & 0 & 340, 15, 3 \\
+Full & K-means & 0.256 & 3 & 0 & 8, 167, 183 \\
+Full & Ward & 0.223 & 3 & 0 & 222, 83, 53 \\
+Full & HDBSCAN & 0.195 & 4 & 170 & 7, 6, 6, 169 \\
+\bottomrule
+\end{tabular}
+\footnotesize
+\newline
+Notes: Selected results from the combinations tested. Bold indicates chosen solution. DIANA = Divisive Analysis; Complete = Hierarchical clustering with complete linkage; Ward = Hierarchical clustering with Ward linkage; HDBSCAN = Hierarchical Density-Based Spatial Clustering. PCA percentages indicate variance retention.
+\caption{Clustering Method Performance Comparison}\label{tab:clustering_experiments}
+\end{table}
+
+
+\end{document}
+
+
+

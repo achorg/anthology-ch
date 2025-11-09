@@ -1,0 +1,474 @@
+%deadline 18 of july
+%5000 words (ca. 10 pages, references, abstract and tables/illustrations excluded)
+
+% Proposition de tire : Who Wrote the Vie de saint Lambert? Combining HTR and Stylometry to explore Medieval Manuscripts
+% Investigating the Authorship of the Vie de saint Lambert
+%When Machines Read Saints' Lives: Testing Wauchier's Authorship of the Vie de saint Lambert
+
+\documentclass[final]{anthology-ch} % for the final version
+% \documentclass{anthology-ch} % for the submission
+% \documentclass{preprint}
+
+\usepackage{textcomp}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{array}
+
+% LOAD LaTeX PACKAGES
+\usepackage{booktabs}
+\usepackage{graphicx} % Required for inserting images
+
+\title{Wauchier, Is That You? A multi-manuscript authorship analysis of Saint Lambert's Life}
+
+\author[1]{Thibault Clérice}[
+orcid=0000-0003-1852-9204
+]
+\author[2]{Ariane Pinche}[
+orcid=0000-0002-7843-5050
+]
+\affiliation{1}{Inria, Paris, France}
+\affiliation{2}{CIHAM UMR 5648, CNRS, Lyon, France}
+
+% KEYWORDS
+% Provide one or more keywords or key phrases seperated by commas
+% using the following command
+\keywords{Automatic text recognition, Autorship attribution, Compilation, Hagiography, Medieval Manuscripts}
+
+% METADATA FOR THE PUBLICATION
+% This will be filled in when the document is published; the values can
+% be kept as their defaults when the file is submitted
+\pubyear{2025}
+\pubvolume{3}
+\pagestart{130}
+\pageend{146}
+\conferencename{Computational Humanities Research 2025}
+\conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
+\doi{10.63744/QsBV0XYj8wRC}
+\paperorder{11}
+
+
+\newcommand{\ccol}[1]{\multicolumn{1}{c}{#1}}
+
+\addbibresource{bibliography.bib}
+
+% Comment to have the preprint
+% \def\isanonymous{false}
+% Set \isanonymoustrue or \isanonymousfalse somewhere in your document preamble
+
+\newcommand{\conditionalfootnote}[2]{%
+  \ifdefined\isanonymous
+    \footnote{#1 will be made available upon acceptance.}%
+  \else
+    \footnote{#2}%
+  \fi
+}
+
+\newcommand{\jonas}[1]{\textit{Jonas #1}}
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We investigate the possible authorship of the \textit{Vie de saint Lambert}, an anonymous Old French hagiographic text. Building on previous research that noted a stylistic proximity between this text and the \textit{Seint Confessor} attributed to Wauchier de Denain, we expand the inquiry across ten manuscripts. Alongside our computational analysis, we provide a brief study of the manuscript tradition and the transmission of the Vita of Saint Lambert within the broader literary genre of hagiography. We work directly with automatic transcriptions from medieval manuscripts, enhancing the tooling for post-processing space errors and lemmatization. We employ the recent Bootstrap Distance Impostors (BDI) approach to improve precision in authorship verification tasks, and propose a methodology for addressing the challenges of massively anonymous corpora in this context. Our results confirm a tendency to attribute the \textit{Vie de saint Lambert} to Wauchier de Denain, though the stylistic alignment is less marked than in texts firmly attributed to him.
+\end{abstract}
+
+\section*{Introduction} 
+
+The notion of authorship in medieval French literature is often elusive. While a handful of names -- such as Chrétien de Troyes or Marie de France -- have come down to us, many works remain unattributed. Some other identifications are even challenging, as the identification of the author(s) of the \textit{Roman de la Rose} or of the \textit{Roman de Renart}. This anonymity is even more current in hagiographic literature, where most texts circulate without attribution, although a few names stand out, such as Jean de Vignay, Wace, or Wauchier de Denain. Hagiographic manuscripts from the 13\textsuperscript{th} century are compilations that combine mostly anonymous Lives of saints with a minority of texts attributed to known authors. Wauchier de Denain, a prolific 13\textsuperscript{th}-century writer, is known to be the author of two coherent collections of saints' lives: \textit{Li Seint Confessor}~\cite{wauchier_de_denain_li_2024} and the \textit{Vies des saints Peres d'Egipte}~\cite{wauchier_de_denain_histoire_1993}.
+ 
+During the 2019 \textit{Digital Humanities Conference}, Camps, Clérice, and Pinche~\cite{camps_noisy_2021} demonstrated that applying stylometry directly to Automatic Text Recognition (ATR)  output from a medieval manuscript could yield promising results. Such a pipeline, which operates on automatically produced and inherently imperfect transcriptions, requires working with noisy data: unnormalized texts, spelling variation, lack of modern punctuation, and inconsistent tokenization.
+Their case study, based on a single manuscript (BnF, fr. 412), confirmed a longstanding hypothesis by Paul Meyer regarding the structure of French hagiographic compilations, \textit{i.e.} that they were assembled from pre-existing thematic units. The analysis also revealed an unexplained proximity between the Lives from Wauchier de Denain's \textit{Seint Confessor} and an anonymous Life of Saint Lambert. Given that most of the Lives of Saints in Old French are translations of Latin sources, attributing a text to a known author could provide valuable insights into the context of its creation, its intended audience, and the reasons behind the emergence of vernacular prose hagiography in the early 13\textsuperscript{th} century.
+ 
+Building on this preliminary observation and recent improvements in both preprocessing (ATR specifically) and stylometry, specifically with Nagy's recent extension of the impostors approach~\cite{nagy_bootstrap_2024}, the present study aims to further investigate the authorship of the \textit{Vie de saint Lambert} by combining ATR and stylometric analysis across a broader corpus of manuscript witnesses. Rather than relying on edited or normalized texts, which may introduce editorial bias or alter original linguistic features, we work directly from automatic transcriptions, embracing the challenges of noisy, uncorrected data and enabling a more direct computational engagement with the materiality of medieval manuscripts. While the central question remains whether the \textit{Vie de saint Lambert} can be attributed to Wauchier de Denain, our objectives are twofold: first, to strengthen the hypothesis by testing it across ten manuscript witnesses (See Table \ref{tab:manuscriptindex}); and second, to refine the entire pipeline of data acquisition and preparation prior to stylometric analysis. By doing so, we aim not only to clarify a specific case of medieval authorship, but also to propose a reproducible methodology applicable to other unedited or partially edited medieval texts.  
+
+The outcomes of this paper are:
+\begin{itemize}
+    \item a corpus of ground-truth annotations used to benchmark our tools in ATR, layout analysis, word segmentation and abbreviation resolution;\conditionalfootnote{The ground-truth}{The ground-truth can be found at \url{https://github.com/PonteIneptique/st-lambert/}.}
+    \item a new corpus of ten manuscripts, split by text according to Jonas database\footnote{The Jonas database is a repertory of French and Occitan literary texts from the Middle Ages and early modern times. This resource is produced and distributed by the IRHT for research consultation, \url{https://jonas.irht.cnrs.fr}.}, with full-text recognition and various layers of annotation, including lemmatization and POS-tagging;\conditionalfootnote{The dataset and software}{The pipeline for building and analysing the data, and the data are available at \url{https://github.com/PonteIneptique/st-lambert-comput}.}
+    \item an adaptation of the previous work of Clérice~\cite{clerice2020evaluating} to resegment words in ATR outputs;\conditionalfootnote{The software}{\url{https://github.com/PonteIneptique/boudams2}.}
+    \item tooling to use a YOLO~\cite{khanam2024yolov11overviewkeyarchitectural} object detection model to do layout analysis and produce ALTO XML, a format compatible with the Kraken ATR library;\conditionalfootnote{The software}{\url{https://github.com/PonteIneptique/yolalto}.}
+    \item an analysis of Wauchier de Denain's relationship with the \textit{Vie de Saint Lambert}.
+\end{itemize}
+
+After a survey of related works in the realms of ATR and related technologies applied to medieval documents as well as of stylometry and, specifically, in a noisy context, we will introduce more the current state of the art regarding both French hagiographic collections and the subject of our paper, Wauchier de Denain and the Life of Saint Lambert. We will then explain our experiment, followed by a result analysis and a conclusion.
+
+%faire une annonce du plan 
+
+\section{Related work}
+
+\subsection{Handwritten Text Recognition for medieval manuscripts}
+
+ATR for medieval manuscripts has experienced significant advancements in recent years, driven by both improvements in model architectures and the availability of large, high-quality datasets. On the one hand, state-of-the-art neural network architectures have become widely accessible through off-the-shelf tools and software. For example, convolutional recurrent neural networks (RCNNs) are implemented effectively in frameworks such as Kraken~\cite{kraken_5} and PyLaia~\cite{tarride2024improving}, which allow researchers to train and deploy ATR models with relative ease. More sophisticated architectures, including transformer-based models like TrOCR~\cite{aguilar2025tridis} and Party~\cite{party}, push the performance envelope further, albeit requiring more computational resources and expertise to train and fine-tune.
+
+On the other hand, recent efforts have substantially expanded the corpus of annotated medieval manuscript data available for training and evaluation. Notably, the Tridris project~\cite{aguilar2025tridis} and the CATMuS corpus~\cite{clerice2024catmus} have contributed hundreds of thousands of labeled lines, providing a rich resource for supervised learning approaches. Since late 2024, CATMuS has also released segmentation datasets that facilitate the training of layout analysis models specifically tailored to the complexities of medieval manuscript page structures.\footnote{\url{https://huggingface.co/biglam/medieval-manuscript-yolov11}} These datasets cover a wide variety of scripts and layouts from the Middle Ages, enabling the development of robust segmentation and recognition pipelines.
+
+The combination of these well-curated datasets and advanced model architectures has resulted in significant improvements in recognition accuracy. For instance, the CATMuS Medieval 1.6.0 model~\cite{pinche_2025_15030337} achieves character accuracy over 95\% in optimal conditions, which represents a major milestone given the intrinsic challenges of medieval handwriting, such as irregular letterforms, variable abbreviations, and degraded manuscript quality. From CATMuS 1.6.0, \cite{buildingCatmus} has shown that a few hundred lines could yield significant character accuracy improvement, up to 30\%. 
+
+\subsection{Stylometry methods}
+
+The landscape of stylometry, specifically in authorship verification and authorship attribution, has seen limited advancement since our work on Wauchier first presented in 2019~\cite{camps_noisy_2021}. Despite increasing interest, improvements to existing approaches have been at best incremental. The feature sets in use remain largely the same: most frequent words~\cite{eder_rolling, rebora_stylometry}, function words, affixes~\cite{camps_noisy_2021}, and POS n-grams~\cite{cornmol}. Less common but still noteworthy features include rhymes~\cite{cornmol}, metrical patterns~\cite{nagy_metre}, and syntactic annotations~\cite{gorman_treebank}, although the latter are often constrained by annotation costs and limited tool availability. Noteworthy is the work of Eder regarding boosting the support of features \cite{eder2022boosting}.
+
+In terms of methodology, both supervised and unsupervised approaches continue to favor interpretability. Models such as SVMs and hierarchical clustering, using distance metrics like Burrows' Delta~\cite{burrows_delta}, Eder's Delta~\cite{eder2015taking}, Manhattan, or Cosine distance, remain prevalent. This is consistent with the emphasis on explainability in the computational and digital humanities. In authorship verification, methods like General Imposters (GI)~\cite{koppel2014determining}, introduced to the digital humanities by~\cite{kestemont2016authenticating}, have expanded the available toolkit. The General Impostors method compares a target text with candidate authors and impostors (authors or texts assumed not to be the true author) across multiple runs. In each run, a randomly selected subset of features is used, and the candidate most frequently identified as closest to the target text—according to a chosen distance metric—is considered the author. Nagy's Bootstrap Distance Impostors (BDI,~\cite{nagy_bootstrap_2024}) builds on GI by emphasizing precision over recall. BDI relativizes the original impostor percentage score (\% of run where the attribution is made with the candidate) using a distance-based metric, enabling density estimation and interpretation as a statistical likelihood, as proposed by Nagy. Less interpretable yet reusing the same standard features (\textit{i.e.} full text, but rather POS, affixes, etc.), \cite{clerice2023twenty} provides a deep learning approach with feature embedding comparison in a siamese network aimed at separating positive and negative pairs of texts.
+
+Stylometry on large collections of anonymous texts remains a major challenge, as most authorship verification methods rely on predefined positive or negative pairings. In the context of medieval corpora, feature-based approaches remain rare. \cite{camps2024authorship} applies such techniques to a small, controlled candidate set. \cite{beullens2024elementary} presents a direct reuse of BDI, while \cite{vandyck2024abbreviation} employs character n-grams for scribal attribution and dating in a parallel line of inquiry. \cite{hernandez2025stylometric} evaluates precision and recall for specific hyperparameters (e.g., number of most frequent words) for early modern Spanish, which appears to be edited as such and to bear the marks of editorial work. Overall, stylometric work on vernacular romance texts, specifically in their raw form, from the medieval period remains limited, in part due to the specific challenges posed by unfixed spelling, diachronic linguistic change, and transmission variability.
+
+
+\section{Saint Lambert's and its context}
+
+\subsection{French hagiographic collection}
+
+As revealed by Paul Meyer \cite{meyer_legendes_1906}, French hagiographic manuscripts often result from the accumulation of thematic collections of saints' lives. Meyer identified three major families of texts, which he labelled A, B, and C, each corresponding to a specific thematic unit: family A focuses on the Apostles, B on the Martyrs, and C on the Confessors. These units circulated independently or in combination, with manuscripts containing A, A+B, or the full A+B+C set, as exemplified by BnF fr. 412. 
+While this thematic structure seemed to dominate French hagiographic compilations in the 13\textsuperscript{th} century, their organisation gradually shifted over time. Later manuscripts increasingly adopt a structure aligned with the liturgical calendar, following the model of the \textit{Legenda Aurea}.\footnote{The \textit{Legenda Aurea} (Golden Legend) is a widely circulated Latin collection of saints' lives compiled in the 13\textsuperscript{th} century by Jacobus de Voragine, a Dominican friar and later Archbishop of Genoa. Organized according to the liturgical calendar, the work includes over 150 hagiographic narratives and became a standard reference for preachers and compilers of vernacular collections throughout medieval Europe. Its immense popularity led to numerous translations and adaptations, including into Old French, and it often served as a model for the structure and content of later hagiographic compilations.}
+
+Understanding these structural dynamics is crucial not only for the study of compilation practices but also to shed light on the development of French vernacular hagiography and the role it played within medieval devotional and literary culture.
+
+In particular, it may help us understand how the earliest compilations were constructed. As Guy Philippart has argued for Latin hagiographic collections, early compilations may have drawn on pre-existing thematic or authorial booklets \cite{philippart_legendiers_1977}. Investigating similar principles applied to Old French prose hagiography can shed light on how hagiographic texts circulated and were grouped in manuscript contexts.\footnote{Initial investigations have been made about the legendier Picard by Labie-Leurquin \cite{labie-leurquin_composition_2021}.}
+
+\subsection{Saint Lambert's Life and Wauchier de Denain}
+
+As an initial step, we focus on the \textit{Vie de saint Lambert}, a text classified within Family B (Martyrs), which was previously associated with the Lives of the \textit{Seint Confessor} in manuscript BnF fr. 412 through the research lead by Camps, Clérice, and Pinche. This version is a long French prose \textit{Vita} of the saint, based on the earliest Latin traditions.
+
+Lambert was bishop of Tongres-Maastricht during the reign of Childeric II and later under Pepin of Herstal, father of Charles Martel. He was assassinated between 696 and 705, and his relics were transferred to Liège, where his cult remains highly popular in Belgium to this day \cite{kupper_saint_2006}. The Latin Lives of Saint Lambert were widely disseminated in medieval manuscripts, and a short version was incorporated into the \textit{Legenda Aurea} \cite{kurth_etude_2023}.\footnote{The link to the list of the different versions are available in the base \textit{Légendiers latins}: "Lambertus04 = Lambertus ep. Traiectensis" 
+(permalink: \url{https://legendiers-latins.irht.cnrs.fr/37664)}, accessed on 04/07/2025.}
+
+Two major versions of the Latin Vita have come down to us. The earliest version, originally written by an anonymous author and later rewritten in more "elegant" Latin by Etienne, bishop of Liège, portrays Lambert’s death as the outcome of a local conflict between aristocratic families over control of episcopal property. A later version -- popularized through the \textit{Legenda Aurea} and widely transmitted by authors such as Adon of Vienne, Hucbald of Saint-Amand, Sigebert of Gembloux, and Nicolas of Saint-Denis -- frames his martyrdom as a punishment for condemning the illicit relationship between Pepin and his concubine Alpaïda. 
+
+Both versions were translated into the French vernacular hagiographic manuscripts. According to the Jonas database, 73 French witnesses of the \textit{Vie de saint Lambert} have been recorded. Among them, two principal versions of the text can be distinguished: one, identified as \jonas{3058}, consists of 30 witnesses and corresponds to the 14\textsuperscript{th}-century translation of the \textit{Legenda Aurea} by Jean de Vignay. The second, \jonas{1958}, has 20 witnesses -- six of which date from the 13\textsuperscript{th} century  -- and remains anonymous. This latter, older version is the one found in BnF fr. 412 and the one previously identified as potentially close in style to Wauchier de Denain's \textit{Seint Confessor}.
+
+Chronologically, the hypothesis is plausible. Wauchier de Denain was active in the early 13\textsuperscript{th} century. Furthermore, both of his major hagiographic collections, \textit{Li Seint Confessor} and  \textit{Les Vies des saints peres d'Egipte}, consist of French prose translations of renowned Latin \textit{Vitae}: the Life of saint Martin (from Sulpicius Severus), Life of saint Nicolas, and Life of saint Benoit (from Gregory the Great) \cite{wauchier_de_denain_li_2024}, suggesting that Wauchier was a well-educated cleric with access to reputable sources. As Paul Meyer noted, Wauchier's Lives are among the earliest vernacular prose versions of these texts and often present extensive and detailed narratives -- much like the long version of the \textit{Vie de saint Lambert}~(\jonas{1958}).
+
+Other converging elements strengthen the attribution hypothesis. Wauchier de Denain's works are associated with the court of Flanders, and writting about saints linked to that region~--~such as Lambert~--~would be consistent with his known affiliations.
+Significantly, the Latin Vita that may have served as the source for Wauchier's version is preserved in the 12\textsuperscript{th}-century manuscript Douai 856, which belonged to the library of the Abbey of Marchienne.\footnote{See description: \url{https://ccfr.bnf.fr/portailccfr/jsp/index_view_direct_anonymous.jsp?record=eadcgm:EADC:D06A14123}.} This abbey was part of a network of book exchanges during the 12\textsuperscript{th} and 13\textsuperscript{th} centuries that included the armarium of Saint-Amand~\cite{simeray_scriptorium_1990}. The latter is known to have contained several of the Latin sources used by Wauchier de Denain~\cite{thompson_vie_1999}, as attested by surviving inventories such as the Index Major~\cite{delisle_cabinet_1868}. Moreover, it is well documented that Etienne of Liege\footnote{Etienne, bishop of Liège from 901 to 920, is known for reworking the earliest and most historically grounded version of the Vita of Saint Lambert.} and Hucbald of Saint-Amand\footnote{Hucbald of Saint-Amand (d. after 930) was a monk and hagiographer affiliated with the abbey of Saint-Amand. He is the author of a Vita of Saint Lambert that follows the narrative structure of the second Latin version of the saint’s life.} were in contact and corresponded about their writing projects~\cite{demarteau_vie_1890}. This interconnection suggests that the Latin source material was accessible to Wauchier de Denain or someone working in the same area.
+
+Thematically, the \textit{Vie de saint Lambert} aligns closely with the \textit{Seint Confessor} corpus: the protagonist is a powerful bishop and spiritual advisor to rulers (as are Martin with the Emperor Julian, Benoit with Totila, or Martial with Duke Stephen). Furthermore, the theme of obedience~--~a central moral value in Wauchier's works~--~is also prominent in the text, notably in an episode where Lambert nearly dies of cold after obeying an abbot's order (similar stories appear in the \textit{Dialogues sur les vertus de saint Martin} or \textit{Vie de saint Benoit}).
+However, thematic similarities alone are insufficient. Certain stylistic features characteristic of Wauchier are absent: the \textit{Vie de saint Lambert} does not contain Latin insertions translated into French, nor poetic interpolations in prose, which are often found in Wauchier's corpus. Moreover, no authorial signature or dedicatory address has been identified in any of the digitized witnesses we consulted. These limitations led us to turn to stylometric analysis in the hope of uncovering new evidence to support or refute this potential attribution.
+
+\section{Experiments}
+
+\subsection{Data input and preprocessing}
+
+
+
+\noindent
+\textbf{Manuscripts}  
+We extend the experiment beyond the original study~\cite{camps_noisy_2021} by incorporating ten manuscripts representing various families and witnesses of French legendiers according to Paul Meyer. The selected manuscripts are listed in Table \ref{tab:manuscriptindex}. The corpus used in this study comprises several manuscripts belonging to different legendary groupings, each offering varying degrees of proximity to Wauchier de Denain's corpus. Among these manuscripts, BnF fr. 412 was already analyzed in \cite{camps_noisy_2021}. 
+
+\begin{table}[h]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lll|r|c|l|r|r}
+	\toprule
+	\textbf{City} & \textbf{Repository}               & \textbf{Shelfmark} & \textbf{Date} & \textbf{Family} & \textbf{Provenance} & \textbf{Nb of W. Texts} & \textbf{Nb of S. Conf. Texts}\\ \midrule
+	Paris         & Bibliothèque Sainte-Geneviève     & ms, 588            & 1296          & B                & île de france & 0 & 0     \\
+	Paris         & Bibliothèque nationale de France  & ms, fr. 00412      & 1285          & C                & Hainaut   &  9 & 9        \\
+	Paris         & Bibliothèque nationale de France  & ms, fr. 00411      & 1301-1400     & C                & Northern France  &  9 & 9     \\
+	Paris         & Bibliothèque nationale de France  & ms, fr. 17229      & 1201-1300     & D                & unknown     &  1 & 1          \\
+    Paris         & Bibliothèque nationale de France  & ms, fr. 06447      & 1275          & D1                & Northern France  &  3 & 2     \\
+	Chantilly     & Bibliothèque du Château           & 0734 (0456)        & 1312          & E                & Paris   &  7 & 7               \\
+	Basel         & Universitätsbibliothek            & Com. Lat. 102      & 1320-1330     & E                & Paris     &  7 & 7           \\
+	Paris         & Bibliothèque nationale de France  & ms, fr. 23117      & 1301-1400     & F                & unknown    &  7 & 7          \\
+	Paris         & Bibliothèque nationale de France  & ms, fr. 00185      & 1301-1400     & G                & unknown     &  10 & 7         \\
+	Paris         & Bibliothèque nationale de France  & NAF 23686          & 1250          & L                & unknown   &  7 & 6          \\
+ \bottomrule
+\end{tabular}%
+}
+\caption{List of the manuscripts used during the experiments}
+\label{tab:manuscriptindex}
+\end{table}
+
+BSG 588, a representative of Legendier Group B, contains no works attributed to Wauchier de Denain, as it preserves only texts related to the theme of martyrdom. Therefore, confessors, the central figures of Wauchier's collections, are absent from this compilation.
+
+BnF fr. 412 and BnF fr. 411, both representatives of Group C, preserve the most complete collections of Lives attributed to Wauchier de Denain. This family is the only one to transmit the full and ordered series of the \textit{Seint Confessor}, including the \textit{Dialogues sur les Vertus de saint Martin}. These witnesses, with the manuscript London, British Library, Royal 20.D.VI,\footnote{Unfortunately, no digitization of the manuscript is now available.} are considered the closest to the archetype of \textit{Li Seint Confessor}, especially in their preservation of verse passages, dedicatory addresses, and authorial signatures. We can also observe that the \textit{Vie de saint Lambert} is most frequently found in manuscripts that include the \textit{Seint Confessor}, rather than those containing the \textit{Vies des saints peres d'Egipte}. 
+
+BnF fr. 17229 and BnF fr. 6447 are the last surviving witnesses of Compilation D. However, fr. 6447 presents substantial textual variation in the Life of saint Martin. This version is classified in Group M of the stemma of the \textit{Seint Confessor} and shows affinities with the variant readings found in Legendary Groups G and L.~\cite{wauchier_de_denain_li_2024} This manuscript is the only one of the corpus to contain a Life of sainte Marthe written by Wauchier the Denain.
+
+Manuscripts from Group E (Chantilly and Basel) are also closely related, both in terms of composition and textual affiliation with the \textit{Seint Confessor}. Their production history suggests proximity as well. Both appear to originate from Parisian workshops: Chantilly's in 1312, and Basel's between 1320 and 1330. The miniatures in the Chantilly manuscript have been stylistically linked to Richard de Verdun, who may be the same artist as the illuminator known as the Maître de Papeleu, although this identification remains debated~\cite{rouse_manuscripts_2000, stones_gothic_2013, delarue_legendare_2021}. This connection is particularly noteworthy, as the Maître de Papeleu has also been identified as the illuminator of the Basel manuscript \cite{hochuli_dubois_manuscrits_2016}. These shared stylistic features may indicate that both manuscripts were produced within the same or closely connected ateliers.
+
+In Groups G and L, at least for the Lives of Saint Martin and Saint Nicolas attributed to Wauchier de Denain, a second redaction has been identified.\footnote{This observation was made by J. J. Thompson for the Life of Saint Nicolas \cite{thompson_vie_1999} and by Pinche for the Life of Saint Martin \cite{wauchier_de_denain_li_2024}.} This later version is characterized by the omission of verse passages and a partial modernization of the language, particularly in the use of function words \cite{wauchier_de_denain_li_2024}. Those manuscripts are also the only one of our corpus to mix Lifes from \textit{Li Seint Confessor} and \textit{Vies des saints peres d'Egipte}. It should be noted that  BnF NAF 23686 has been mutilated and contains numerous missing folios, resulting in partial losses of text throughout the manuscript. 
+
+All manuscript images were obtained from their respective repositories and processed through a semi-automated pipeline, described in the following section.
+
+
+
+\noindent
+\textbf{Text Recognition}  
+Our pipeline builds upon the CATMuS Medieval datasets~\cite{clerice2024catmus}, including both the textual and segmentation components. We employ a YOLOv11 model trained by W.~Mattingly~\cite{mattingly_biglammedieval}, capable of detecting both zones and lines, in conjunction with CATMuS Medieval 1.6.0~\cite{pinche_catmus_2025}, a Kraken-compatible model.
+
+To enhance the YOLOv11 predictions, we developed a custom Python adaptation that integrates the region-line binding and line-reordering heuristics from eScriptorium, along with a centerline generation procedure--derived from the bounding box centroid to meet Kraken's requirements. Within eScriptorium, segmentation results are manually reviewed to correct major errors, and incipit lines are annotated in preparation for later extraction of distinct literary units.
+
+We corrected a selection of pages from four manuscripts (Chantilly 734, CL 102, BnF Fr. 411, 6447, and 23117), resulting in a dataset of 1,017 lines for training and validation (excluding 23117), and 653 lines for testing. This data was used to fine-tune the generic CATMuS model, producing a new evaluation model (Table~\ref{tab:catmusfinetune}). Average character accuracy (CA) improves overall (+1.73\%), one manuscript showed a significant performance decrease (-0.83\%), but our only manuscript in test showed more than 1\% of improvement. The fine-tune is essential to address the reuse of the YOLO segmentation; prior research has shown that Kraken and similar models are sensitive to segmentation variation between training set and inference situations \cite{pinche_generic_2023, boillet2022robust}.
+
+\begin{table}[h]
+    \small \centering
+    \resizebox{\linewidth}{!}{%}
+    \begin{tabular}{lrrrrrrrrr}
+        \toprule
+         Model        & Lines   & Fr. 411        & Chant., 734    & CL 102          & Fr. 6447       & Fr. 23117, H1  & Fr. 23117, H2  & Micro-average  \\ 
+         \midrule
+         Catmus 1.6.0 & 190,000 & 95.92          & \textbf{93.05} & 97.78           & 96.74          & 92.56          & 94.12          & 93.21          \\
+         -- Finetuned & + 1017  & \textbf{97.00} & 92.22          & \textbf{98.07}  & \textbf{97.04} & \textbf{94.37} & \textbf{95.53} & \textbf{94.94} \\ 
+         \bottomrule
+    \end{tabular}}
+    \caption{Character Accuracy for CATMuS 1.6.0 model results and its fine-tune over our 5 test manuscripts. H stands for Hand.}
+    \label{tab:catmusfinetune}
+\end{table}
+
+
+
+\noindent
+\textbf{Text Post-Processing}  
+After identifying paratextual elements via Segmonto layout annotation, we extract individual works (literary units), such as the Life of saint Lambert or saint Martin, from each manuscript. Abbreviation patterns are scribe-specific, and they pose a blocking issue when comparing multiple manuscripts to each other, as each scribe may have a different abbreviation rate and practice. Given the original results of \cite{camps_noisy_2021}, we hypothesize that abbreviation noise has limited impact within a manuscript, especially if it has only one scribe.\footnote{Most manuscripts have a single hand, and others two, e.g. BnF fr. 185 (change of hand fol. 274) and BnF fr. 23117 (fol. 228).} As our approach involves only intra-manuscript comparison, and not inter-manuscript comparison, we depart from our 2021 work and do not resolve abbreviations.
+
+In medieval ATR, space is often responsible for a third of the errors, as spacing is fluctuating in manuscripts. We adapted the Boudams retokenizer~\cite{clerice2020evaluating} to address the situation, to retokenize the output of the ATR. Unlike the 2019 analysis of BnF, fr. 412, our implementation preserves original spacing and introduces a third character class to remove redundant spaces.\footnote{In our Boudams version, characters are categorized into: (1) Keep Class--for valid spaces and in-word characters, (2) Word-Ending Class--for inserting missing spaces, and (3) Extraneous Class--for removing superfluous spaces.} Missing and superfluous spaces respectively account for 12\% and 9.3\% of tokenization errors in our fine-tuned model, not including hyphenation issues.
+
+In addition to this adaptation, we trained the model on the full BFM corpus~\cite{guillot2018base}, augmented with synthetic spacing and abbreviation, as well as synthetic ATR errors after the spacing and abbreviation step. Evaluation against manual annotations is reported in Table~\ref{tab:boudams}, using raw ATR output (not ground truth) as input. Overall, not only does adding a class for removing spaces improve the results, but the model enhances spacing by up to 69\%, with only one case of (light) degradation for our overall best model configuration (CNN 7).
+
+\begin{table}[h]
+    \small \centering
+    \resizebox{\linewidth}{!}{%}
+    \begin{tabular}{l|rrrrrr}
+	\toprule
+	                               & Bnf Naf 23686 & Bnf fr. 10128 & Bnf fr. 23112 & Bnf fr. 23117 & Bnf fr. 24429 & Sainte Genevieve 588 \\
+	\midrule
+    Boudams V1 (CNN 5)  & 29.96          & \textbf{72.53} & -3.24          & -63.39        & -121.51       & -15.88               \\ \midrule
+    Ours (CNN 5)        & 54.05          & 69.55          & 23.01          & 3.47          & -36.19        & -24.86               \\ 
+    Ours (CNN 7)        & \textbf{55.47} & 66.74          & 15.68          & \textbf{6.18} & 0.14          & -4.21                \\
+    Ours (CNN 9)        & 46.71          & 69.72          & 15.68          & -8.90         & \textbf{5.20} & -24.86               \\
+    Ours (CNN 11)       & 40.63          & 65.27          & \textbf{23.11} & 3.47          & -25.89        & -10.01               \\ \midrule
+    Ours (RNN 1)        & -0.48          & 69.55          & -56.84         & -41.21        & -72.74        & -45.89               \\
+    Ours (RNN 2)        & 46.42          & 69.63          & 23.01          & -21.79        & -21.05        & \textbf{0.31}        \\
+	\bottomrule
+    
+\end{tabular}}
+    \caption{Character accuracy improvement on inference text. Negative values indicate a degradation of content: -121\% means that errors are more than doubled with the model. Positive numbers indicate that spacing was improved: 100\% would mean that no more spacing errors are present in the text. Overall, space correction (insertion+deletion) outperforms space insertion. Model variants are denoted as follows: (RNN X) refers to X layers of bidirectional GRUs, while (CNN X) indicates a sequence of 10 convolutional layers with kernel size X.}
+    \label{tab:boudams}
+\end{table}
+
+We then fine-tuned a model for Old French part-of-speech tagging and lemmatization using the latest PaPie version, including O.~Nedey implementation of vocabulary extension for fine-tuning~\cite{Manjavacas_Pa_PIE_A_Framework_2023}. Training was performed for five epochs on the OF3C training set~\cite{camps2021corpusmodelslemmatisationpostagging}, incorporating the same synthetic abbreviation and spacing rules as for the retokenizer. While performance metrics in Table~\ref{tab:pie} show a general drop in lemmatization and tagging accuracy, this decline is smaller when using the model fine-tuned on synthetic abbreviation data. As expected, lemmatization largely breaks the original clustering of data per manuscript by removing at least period or scribal noise (see \ref{fig:signallemma}).
+
+\begin{table}[h]
+\small \centering
+\begin{tabular}{ll|rrr|r}
+\toprule
+                                    &              & \multicolumn{3}{c|}{POS}                          & Lemmatization  \\ 
+                                    &              & Accuracy       & Precision      & Recall         & Accuracy       \\ \midrule
+                Original Test Set   & OF3C Model   & 94.82          & 73.19          & 73.2           & 93.65          \\ \midrule
+\multirow{2}{*}{Corrupted Test Set} & OF3C Model   & 87.74          & 61.69          & 60.95          & 83.02          \\
+                                    & -- Finetuned & \textbf{89.66} & \textbf{64.32} & \textbf{64.56} & \textbf{86.65} \\ \bottomrule 
+\end{tabular}
+\caption{Lemmatizer results using PaPie, in percent.}
+\label{tab:pie}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\begin{subfigure}{.48\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{figures/signal.forms.png}
+  \caption{UMAP of each individual work using the global 200 most frequent words' relative frequency.}
+  \label{fig:sub1}
+\end{subfigure}\hfill%
+\begin{subfigure}{.48\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{figures/signal.lemma.png}
+  \caption{UMAP of each individual work using the global 200 most frequent lemmas' relative frequency.}
+  \label{fig:sub2}
+\end{subfigure}
+\caption{UMAP representations of works accross manuscripts, using two different set of features (words vs. lemma). On the left, we see each manuscript clustered, with manuscript in the same legendier branch being closer to each other. On the right, the signal of legendiers branches as well as the manuscript is mostly gone, except for the manuscript Fr. 185 (Purple) whose lives vary heavily from the other branches.}
+\label{fig:signallemma}
+\end{figure}
+
+The resulting corpus shows a median length around 3000 tokens, with two manuscripts (BSG 588 and Basel CL 102) having the smallest texts of the whole corpus, which is coherent with the Legendier's classification of Meyer (see Table \ref{tab:corpus}).
+
+\begin{figure}
+    \centering
+    \begin{subfigure}{.40\linewidth}
+        \center \small
+        \begin{tabular}{lr}
+        \toprule
+        Manuscript    & Texts \\ \midrule
+        BnF fr. 185   & 133   \\
+        BnF NAF 23686 & 98    \\
+        BnF fr. 23117 & 98    \\
+        BnF fr. 6447  & 92    \\
+        Chantilly 734 & 87    \\
+        Basel cl 102  & 85    \\
+        BnF fr. 411   & 63    \\
+        BnF fr. 412   & 61    \\
+        BnF fr. 17229 & 61    \\
+        BSG 588       & 47    \\ \bottomrule
+        \end{tabular}%
+        \caption{Number of texts per manuscript.}
+  \label{tab:corpus}
+\end{subfigure}
+    \begin{subfigure}{.58\linewidth}
+        \centering
+        \includegraphics[width=.8\linewidth]{figures/token-size-distribution.png}
+        \caption{Distribution of texts size, as number of token, per manuscript.}
+    \end{subfigure}
+    \caption{Description of the generated output corpora}
+    
+\end{figure}
+
+
+\subsection{Experimental set-up}
+
+Like most authorship verification system, approaches such as the Bootstrap Distance Impostor (BDI) from Nagy~\cite{nagy_bootstrap_2024} aim at precision over recall, where false positives are much more problematic than false negatives. Given this situation, we design an experiment around (1) each manuscript and, in case of manuscripts with very few lives\footnote{BSG 588 has no lives of Wauchier outside of the hypothetical \textit{Vie de Saint Lambert}; BnF, fr. 6447 has only three; BnF Fr. 17229 has only one.}, (2) manuscripts with injected candidates from other ones (BnF fr. 412, Chantilly 734 and BnF fr. 185).
+
+
+
+\noindent
+\textbf{Evaluation loop}
+
+To determine whether Saint Lambert can be attributed to Wauchier de Denain, we apply the BDI's approach to each manuscript under three preprocessing schemes -- raw, tokenized, and lemmatized -- provided Wauchier has at least four texts in that codex. In every case, we extract up to two feature sets: (1) full tokens (words for raw and re-tokenized, lemmas for lemmatized) and (2) 3-gram affixes (only for raw and re-tokenized texts).
+
+For a given combination of preprocessing and feature set, we remove one of Wauchier's texts as the test text, denoted $T_{W}$, and group the remaining Wauchier texts into the candidate set $C_{W}$. We then randomly split all non-Wauchier texts into two equal halves: impostors $I_{\neg W}$, which challenge the attribution, and negatives $T_{\neg W}$, which serve as precision benchmarks.
+
+Next, every text is segmented into overlapping chunks of length $L=2500$ tokens with a sliding window of $O=1250$ tokens. We chose $L$ based on the median text lengths in our collection, ensuring robust sample sizes. From the union $C_{W} \cup I_{\neg W}$, we select the top $S$ most frequent features (with $S\in{200,250,300}$). We then reduce $T$ and Lambert to these features, and compute relative frequencies per text.
+
+Finally, we run the BDI algorithm as in Nagy's study--1000 bootstrap iterations, Ružička's distance metric, and a 35\% feature retention. For each iteration, we use all of $T$ as well as Lambert as queries against $C_{W}$, recording the maximum statistical likelihood (SL) for \textit{Vie de Saint Lambert}, comparing it to the SL distribution of $W_{\mathrm{test}}$, as well as each run's distance. Repeating this procedure across all held-out texts and corpus variants yields both an accuracy measure of Wauchier's internal consistency and a relative likelihood for attributing Saint Lambert to him.
+
+
+
+\noindent
+\textbf{The Lambert's situation again ?}
+
+As \textit{Saint Lambert} represents a particularly fortuitous discovery, other serendipitous finds cannot be ruled out.\footnote{Early experimental trials even identified several anonymous texts whose profiles closely resembled those of Wauchier's works.} To screen for these, we first process the entire corpus in its lemmatized form, supplementing any subset with fewer than four Wauchier texts by injecting the lemma corresponding to BnF, fr.~412. We then run BDI on each anonymous manuscript against both the complete set of Wauchier candidates ($C_{W}$) and the non-Wauchier impostors ($I_{\neg W}$). If an anonymous text achieves a statistical likelihood (SL) above 80\%, we provisionally mark it as a potential Wauchier match and remove it from further saint Lambert attribution tests.
+
+The pre-filtering step identified at least seven anonymous lives that matched Wauchier's profile in two or more manuscripts~--~three of which showed strong consistency across more than four manuscripts. In addition, 26 texts were excluded based on a single-manuscript match. Several of these texts appear to be unique to their respective manuscripts, suggesting that such isolated matches may result from manuscript-specific stylistic artefacts rather than true authorial overlap.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/BDI.drawio.png}
+    \caption{BDI Experiment pipeline, once pre-filtering has been applied.}
+    \label{fig:bdipipeline}
+\end{figure}
+
+\section{Results and interpretation}
+
+\subsection{Statistical likelihood}
+
+Attribution of $W_{T}$ remains at 100\% statistical likelihood, meaning BDI works on Wauchier. \textit{Saint Lambert}'s results (Table~\ref{tab:statistical-likelihood}) tend to support its attribution to Wauchier de Denain, with generally high scores -- often close to 100 percent -- on 8 out of 10 manuscripts. While retokenization increases scores for words and affixes (except in one case), lemmas generally yield lower scores, possibly due to noise introduced by automatic lemmatization (which was trained only on synthetic data). High scores are also found in two of the three manuscripts with a limited number of texts by Wauchier de Denain, namely BSG 588 and BnF fr. 6447, whose \textit{Lambert} shows greater affinity with Chantilly's (E) texts rather than with those in BnF fr. 412 (C) or BnF fr. 185 (G).
+
+Two manuscripts mark an exception: BnF fr. 17229 (D) and BnF fr. 23117 (F). Previous research on the \textit{Li Seint Confessor} \cite{thompson_translators_1993, wauchier_de_denain_li_2024} has shown that BnF fr. 17229 includes a version of the \textit{Life of Saint Martin} from the main branch of the textual tradition, but it contains no other works attributed to Wauchier. It is therefore plausible that the integration of Lives from different sources, along with the influence of scribal practices, may have introduced noise into the stylometric signal and blurred the attribution, yet BSG 588 (B) and BnF fr. 6447 (D as well) do not show this variation. 
+
+Regarding the second manuscript, BnF fr. 23117, previous analysis of \textit{Saint Martin} has shown evidence of contamination between the two main branches of the textual tradition \cite{wauchier_de_denain_li_2024}. Most importantly, there is a shift in hands at folio 228, meaning that \textit{La Vie de saint Lambert} was not copied in the manuscript by the same hand as the other Lives from the \textit{Seint Confessor}. However, a quick check of the ATR output showed no significant variation in text quality or scribal features.\footnote{CER and abbreviation rates vary by approximately 1\%; slight differences in the use of n, m, or r likely stem from ATR misreadings of downstrokes.} Both hybridizations may have disrupted the authorial signal and complicated the stylometric attribution. However, manuscripts G and L, which also exhibit hybridization in the composition of their Lives but not in their copying, do not display this phenomenon. Further investigation, including a full collation of the \textit{Vie de saint Lambert} across the relevant witnesses, will be necessary to clarify the extent and nature of this interference.
+
+\begin{table}[h]
+    \small \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{ll|rrrrrrrr||rr}
+        \toprule 
+        \multicolumn{2}{l|}{Meyer's Family}  & \ccol{B} & \multicolumn{2}{c}{C} & \ccol{D}  & \ccol{D1} & \multicolumn{2}{c}{E}          & \multicolumn{1}{c||}{F} & \ccol{G}     & \ccol{L}  \\
+        Manuscript            &              & BSG 588  & Fr. 412  & Fr. 411    & Fr. 17229 & Fr. 6447  & Chantilly, 734 & Basel, cl 102 &      Fr. 23117          &      Fr. 185 & NAF 23686 \\ \midrule 
+                 Raw          & affixes      &          & 100      & 100        &           &           & 92             & 99            & 0                       & 96           & 100       \\
+                              & words        &          & 100      & 96         &           &           & 97             & 94            & 0                       & 94           & 99        \\ \midrule 
+                 Retokenized  & affixes      &          & 100      & 100        &           &           & 100            & 100           & 0                       & 98           & 100       \\
+                              & words        &          & 100      & 99         &           &           & 98             & 96            & 0                       & 98           & 98        \\ \midrule 
+                 Lemmatized   & words        &          & 98       & 99         &           &           & 97             & 87            & 26                      & 95           & 93        \\
+                 + Fr. 412    & words        & 96       &          &            & 61        & 92        &                &               &                         &              &           \\
+                 + Fr. 185    & words        & 92       &          &            & 61        & 92        &                &               &                         &              &           \\
+                 + Chantilly  & words        & 97       &          &            & 40        & 98        &                &               &                         &              &           \\
+        \bottomrule
+    \end{tabular}%
+
+    }
+    \caption{Maximal statistical likelihood estimates attributing Lambert to Wauchier, based on Nagy's BDI function. Manuscripts lacking a sufficient number of saints' lives are evaluated solely through their lemma, with data from BnF Fr. 412 integrated to compensate for missing content. The scores shown reflect the highest possible classification as Wauchier (always 100\%) for the reference text. All "fr." or "NAF" manuscripts are from the BnF. 300 MFW}
+    \label{tab:statistical-likelihood}
+\end{table}
+
+\subsection{Kernel Density Estimation's interpretation}
+
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{P{.2\linewidth}|p{.8\linewidth}}  % Adjust width as needed
+        \toprule
+        KDE Peak on $x$ & Implications \\
+        \midrule
+        $ x > 0$ & Text is most likely authored by the candidate. \\
+        $ x = 0$ & Text is equally distant from both the candidate's texts and the impostors, implying that the text does not share an author with texts present in the corpus \\
+        $ x < 0$ & Text is more similar to one of the impostors than to the candidate, and is therefore most likely authored by the impostor that attracted it. \\
+        \bottomrule
+    \end{tabular}
+    \caption{Interpretation framework of Nagy's BDI KDE plots.}
+    \label{tab:readingframework}
+\end{table}
+
+\begin{figure}[h]
+    \centering
+
+    % Top row: A B C
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\linewidth]{figures/412-retokenized-bdi-dist-kde.png}
+        \caption{BnF fr. 412, Preprocessing scheme = Retokenized}
+  \label{fig:multifigure-bdi}
+\end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.24\textwidth}
+        \includegraphics[width=\linewidth]{figures/6447-chantilly-lemma-bdi-dist-kde.png}
+        \caption{BnF, fr. 6447 with lives injected from Chantilly 734,\\Preprocessing scheme = lemma}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.24\textwidth}
+        \includegraphics[width=\linewidth]{figures/17229-lemma-bdi-dist-kde.png}
+        \caption{BnF fr. 17229 with lives injected from Chantilly 734,\\Preprocessing scheme = lemma}
+    \end{subfigure}
+
+    \vspace{1em}
+
+    % Middle row: D E
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\linewidth]{figures/23117-retokenized-bdi-dist-kde.png}
+        \caption{BnF, fr. 23117, Preprocessing scheme = Retokenized}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\linewidth]{figures/23686-retokenized-bdi-dist-kde.png}
+        \caption{BnF, fr. 23686, Preprocessing scheme = Retokenized}
+    \end{subfigure}
+
+    \vspace{1em}
+
+    % Bottom row: F G
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\linewidth]{figures/chantilly-plain-bdi-dist-kde.png}
+        \caption{Chantilly 734, Preprocessing Scheme = Raw}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\linewidth]{figures/411-plain-bdi-dist-kde.png}
+        \caption{BnF fr. 411, Preprocessing Scheme = Raw}
+    \end{subfigure}
+
+    \caption{Distribution plots for various manuscripts and preprocessing schemes. (c) and (d) are negatives, (b) and (e) show some relatively good positive KDEs. Blue = $T_{W}$, gray = $T_{\neg W}$ and orange = Lambert.}
+    
+\end{figure}
+
+The KDE plots are much less definitive than the statistical likelihood, according to the reading framework of Nagy's (see Table \ref{tab:readingframework}).\footnote{The number of plots generated by the study is important (more than 30 generated plot, for which up to 9 KDE plot are produced), and we are not able to represent them all in the paper. We present a selected few, prototypes of the different situation we can find. All plots are however available in the pipeline repository, under \texttt{/data/plots}.} While we see that $T_{W}$ are correctly attracted by their pairs, we see \textit{Vie de Saint Lambert} only partially overlapping the wave of $T_{W}$ with small portions of its left roots starting before or around $x=0$. Of the two manuscripts found to have negative statistical likelihood, 23177 is definitely on the negative side of the plot, meaning that the author of \textit{Saint Lambert} in fr. 23117 would be attracted by another text in the corpus, which should not be of Wauchier because of our pre-filtering.
+
+Yet, it seems rather improbable that \textit{Saint Lambert} would not be drawn into the negative portion of the kernel. An attraction to the left, \textit{i.e.}, in the negative distance range, would indicate that one of the anonymous impostors is the author of the text, or, as Nagy noted in the review of our paper, that a combination of texts within the impostor set may collectively attract the target text through overlapping feature proximities. When we examine the majority of tested impostors ($T_{\neg W}$), they tend to cluster on the left, suggesting that most texts appear in thematic or stylistic pairs within the legendiers. Both versions of E show two peaks in the kernel density plot in the positive range, indicating that some Lives are more "Wauchierish" than others from BDI's ``point of view''.
+
+We propose three hypotheses, ranked from the most to the least probable based on the observed results:
+\begin{enumerate}
+    \item \textit{Saint Lambert} is less strongly attracted to Wauchier's texts because it is thematically more distant, and most importantly, because it does not belong to either the \textit{saints Peres d'Egipte} or \textit{Confessors} collections.
+    \item \textit{Saint Lambert} shows a weaker stylistic affinity with Wauchier’s texts, possibly because it is an earlier work or at least one composed for a different audience and in a different context, as suggested for instance by the absence of verse passages.
+    \item \textit{Saint Lambert} is not authored by Wauchier but remains close to his style, potentially because it was written using the same sources, in the same geographic and cultural environment, by an author whose style closely resembles that of Wauchier.
+\end{enumerate}
+
+\section*{Conclusion}
+
+The results mostly confirm the initial ``discovery'' in \cite{camps_noisy_2021}. While our stylometric analyses strengthen the attribution of \textit{Saint Lambert} to Wauchier de Denain, we remain cautious: BDI, though effective in clustering and detecting stylistic affinities, does not offer the highest precision for individual attribution decisions, and a margin of error persists. Notably, a few genuine texts by Wauchier in the test set were occasionally misclassified as non-Wauchier, underscoring the method’s limitations—particularly in the face of noise and sparse data.
+
+Nonetheless, when these stylometric findings are combined with manuscript and literary evidence, a coherent picture begins to emerge. Several converging signals suggest that \textit{Saint Lambert} may indeed be written by Wauchier, or at least the work of a closely affiliated author operating within the same geographic, cultural, and intellectual milieu. The stylistic proximity is too consistent to dismiss as coincidence, even if it cannot yet be certified with full certainty.
+
+Going forward, the next step is clear: to collate and publish a critical edition of the text of \textit{Vie de Saint Lambert}, allowing for more in-depth philological study and comparative textual analysis. Special attention should also be paid to those sections and texts excluded during preprocessing, which may contain valuable clues. If nothing else, this study highlights the inherent difficulty of applying authorship verification techniques to medieval corpora, where anonymous transmission is the norm rather than the exception, and where authorial identity is often blurred by layers of textual transmission and scribal intervention.
+
+While our stylometric resources are, for now, exhausted, the evidence we have gathered leans, cautiously but positively, toward affirming Wauchier's authorship of \textit{Saint Lambert}.
+
+\printbibliography
+
+\end{document}

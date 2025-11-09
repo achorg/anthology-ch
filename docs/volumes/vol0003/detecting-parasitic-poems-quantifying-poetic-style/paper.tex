@@ -1,0 +1,270 @@
+% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
+% *Anthology of Computers and the Humanities*. ADD THE OPTION
+% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
+% DO NOT change the documentclass
+\documentclass[final]{anthology-ch} % for the final version
+\usepackage{fontspec}
+%\setmainfont{Latin Modern Roman}
+
+%\documentclass{anthology-ch}         % for the submission
+
+% LOAD LaTeX PACKAGES
+\usepackage{booktabs}
+\usepackage{graphicx}
+
+%\setmainfont{TeX Gyre Termes}
+\usepackage{float}
+\usepackage{verbatim}
+
+
+
+\newfontfamily\zhfont{Songti SC}
+\DeclareTextFontCommand{\textzh}{\zhfont}
+
+% \usepackage[backend=biber,style=authoryear,maxnames=99,maxcitenames=99]{biblatex}
+% or if you prefer numeric style:
+% \usepackage[backend=biber,style=numeric,maxnames=99,maxcitenames=99]{biblatex}
+%\usepackage[backend=biber,style=authoryear]{biblatex}
+\addbibresource{bibliography.bib} 
+
+\usepackage{float}
+\usepackage{verbatim}
+% ADD your own packages using \usepackage{}
+\usepackage{CJK}
+
+% TITLE OF THE SUBMISSION
+% Change this to the name of your submission
+\title{Detecting ``Parasitic Poems'': Quantifying Poetic Style in Late Imperial Chinese Fiction}
+
+% AUTHOR AND AFFILIATION INFORMATION
+% For each author, include a new call to the \author command, with
+% the numbers in brackets indicating the associated affiliations 
+% (next section) and ORCID-ID for each author.  
+\author[1]{Jiayu Liu}[
+  orcid=https://orcid.org/0009-0003-2302-5833
+]
+
+\author[2]{Rongqian Ma}[
+  orcid=https://orcid.org/0000-0002-7141-1056
+]
+
+% While we encourage including ORCID-IDs for all authors, you can
+% include authors that do not have one by definining an empty ID.
+\author[3]{Keli Du}[
+  orcid=https://orcid.org/0000-0001-7800-0682
+]
+
+% There should be one call to \affiliation for each affiliation of
+% the authors. Multiple affiliations can be given to each author
+% and an affiliation can be given to multiple authors. 
+\affiliation{1}{Department of Statistics, College of Liberal Arts \& Sciences, University of Illinois Urbana-Champaign, Champaign, IL, USA}
+\affiliation{2}{Department of Information and Library Science, Luddy School of Informatics, Computing, and Engineering, Indiana University Bloomington, Bloomington, IN, USA}
+\affiliation{3}{Trier Center for Digital Humanities, University of Trier, Trier, Germany}
+
+% KEYWORDS
+% Provide one or more keywords or key phrases seperated by commas
+% using the following command
+\keywords{Late imperial Chinese fiction, parasitic poems, computational literary analysis}
+
+% METADATA FOR THE PUBLICATION
+% This will be filled in when the document is published; the values can
+% be kept as their defaults when the file is submitted
+\pubyear{2025}
+\pubvolume{3}
+\pagestart{1029}
+\pageend{1038}
+\conferencename{Computational Humanities Research 2025}
+\conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
+\doi{10.63744/N0PaywVKs6GJ}  
+\paperorder{62}
+
+\addbibresource{bibliography.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HERE IS THE START OF THE TEXT
+\begin{document}
+
+\maketitle 
+
+\begin{abstract}
+Embedded poetry is a defining feature of late imperial Chinese fiction, yet its narrative function remains contested. While some critics regard these poems as “parasitic”—reiterating surrounding prose with minimal contribution—others argue for their integral aesthetic and rhetorical roles. This study aims to explore if parasitic poems exist in late imperial Chinese fiction and how they can be systematically identified. We develop a computational framework to detect such poems across a corpus of Qing-dynasty novels, combining proxy-based measures (cosine similarity and mutual information) with prompt-based large language models (LLMs). Using a manually annotated dataset of 300 poem-context pairs, we evaluate each method’s alignment with human judgments. Our preliminary findings show that proxy models achieve higher accuracy but exhibit limited sensitivity to nonparasitic cases. A multilingual prompt-based approach yields a more balanced performance, suggesting LLMs can approximate literary interpretation when effectively prompted. Our work offers tools for analyzing Chinese poetry and demonstrates the potential of LLMs in modeling literary analysis. 
+\end{abstract}% 161 words
+
+\section{Introduction} 
+
+In late imperial Chinese fiction (1368-1912), the interplay between prose and poetry is a defining stylistic feature, with poems frequently embedded within the narrative fabric of novels. For example, in the Ming-dynasty (1368-1644) classical Chinese short story collection \textit{New Tales Under the Lamplight} (Jiandeng Xinhua \textzh{剪燈新話}) by Qu You \textzh{瞿佑} (1347-1433), more than half of the stories contain multiple poems, with some works devoting over 30\% of their content to poetry \cite{qu2001jiandengxinhua}. Late Ming classic novels such as the \textit{The Journey to the West} (Xiyou Ji \textzh{西遊記}) and \textit{The Plum in the Golden Vase} (Jinping Mei \textzh{金瓶梅}) also contain over 600 poems, which drastically increased since the emergence of the ``interweaving prose and verse'' (sanyun jiehe \textzh{散韻結合}) literary phenomenon in the Tang Dynasty (618-907).
+
+The earliest critique of the poems embedded in popular storytelling narratives can be traced to Zhao Yanwei’s \textzh{趙彥衛} \textit{Miscellaneous Notes from the Studio of Yunlu} (Yunlu Manchao \textzh{雲麓漫鈔}) in the Southern Song Dynasty (\textzh{南宋}, 1127–1279) \cite{zhao1966yunlu}. In his assessment, the primary motivation for including poetry in prose narratives was to showcase the writer’s literary skills (\textzh{蓋此等文備眾\\體，可以見史才，詩筆，議論})\cite{zhao1966yunlu}. This view has been echoed by contemporary critics, who emphasize the social function of such verses as a means of self-display, signaling the writer’s creativity and aligning the work with elite literary traditions \cite{hegel1985audiences}. Another school of thought explains this unique literary phenomenon from the need for performance. They demonstrated that since the Song-Yuan (960-1368) period, professional storytellers used the poem as a teaser to engage the audience across contexts (e.g., social gatherings, public events) \cite{luo1965zuiweng}. 
+
+Due to the complex motivations underlying their inclusion, the rhetorical function of embedded poems in fiction has long been a subject of debate among literary scholars, both historically and in contemporary scholarship, within China and beyond. A particular view of these poems sees them as ``parasitic'' (or ``decorative''). Parasitic poems, according to the Chinese literary scholar Zhao Yishan \textzh{趙義山}, are poems that merely repeat or rephrase content already conveyed in the surrounding prose, offering little to no advancement of plot or character, and often impeding narrative flow \cite{zhao2014}. Western scholars such as John Bishop view poetic insertions as once integral but later reduced to commentary or aesthetic embellishment, treating the parasitic poem phenomenon as a ``limitation'' of the late imperial Chinese fiction \cite{bishop}. 
+
+This perspective, however, has been contested by other literary scholars. Rao Longsun \textzh{饒龍隼}, for example, explicitly opposes the label of ``parasitic,'' arguing instead that verse and prose in late imperial fiction form a ``holistic organism,'' and should not be analytically separated \cite{rao2023}. According to Rao, the poetic elements are integral to the aesthetic, rhetorical, and structural coherence of the narratives. A third group of scholars takes a non-polemical stance, focusing on the function and origins of embedded verse rather than labeling it. For instance, Zhang Zhejun \textzh{張哲駿} sees the use of poetry as a means to confer textual authority, drawing upon classical precedents such as the \textit{Book of Songs} (Shijing \textzh{詩經}) \cite{zhang2015proven}. Similarly, Guo Jie \textzh{郭傑} traces the tradition of combining prose and verse with historiographical practices in the pre-Qin literature, suggesting that this hybrid verse-within-prose form has deep cultural roots \cite{guo1995shiwen}. Other literary scholars used a traditional close reading approach to analyze the narrative functions of specific poems incorporated in classic Ming-Qing novels, such as the \textit{Dream of the Red Chamber} (Honglou meng \textzh{紅樓夢}), showing the nonparasitic status as well as the storytelling value of these poems \cite{yeh2004}. 
+
+However, whether the poems embedded in late imperial Chinese fiction are truly ``parasitic,'' and how they are distributed across both canonical and lesser-known novels, remains an open question. Traditional literary criticism, grounded in the close reading approach and interpretive judgment, tends to focus on a small set of canonical works, and struggles to consistently distinguish parasitic poems from those that perform meaningful narrative functions. Given this methodological limitation, it is valuable to develop a quantifiable approach to evaluating the parasitic nature of poems embedded in late imperial Chinese vernacular fiction. 
+
+In this paper, we aim to address this problem by asking one simple research question: \textbf{\textit{How to measure and evaluate the parasiticism of poetry in late imperial Chinese fiction?}} We define parasitic poems as those that merely reiterate information already conveyed in the surrounding prose. These poems typically contribute little to no advancement of plot, character development, or thematic depth, and may even disrupt narrative flow. We aim to detect subtle stylistic patterns that differentiate parasitic from nonparasitic poems across a broad corpus of Ming-Qing fiction and test the efficacy of two different measures in capturing this stylistic distinction. Our method enables a more scalable and empirically grounded analysis of this literary phenomenon, moving beyond the anecdotal and interpretive limitations of prior scholarship. In doing so, we offer a more comprehensive view of the traits of so-called ``parasitic poems,'' highlighting how popular fiction writers engaged with elite literary forms in both aspirational and formulaic ways.
+%Here is an example of the first section of the paper. You may modify \texttt{paper.tex} by renaming, deleting, or adding sections of your own and substituting our instructional text with the text of your paper. Add references to previous work to \texttt{biblography.bib} as BibTeX entries. Refer to the Conference Call for Papers (CfP) for details about submission types and paper lengths. Do \textit{not} modify \texttt{anthology-ch.cls} when editing this template. 
+
+%\subsection{Debates on ``Parasitic Poems''} \label{sec:intro_details}
+
+\section{Data and Methods}
+
+\subsection{Dataset}
+
+Combining \textit{Daizhige Classics} \textzh{殆知閣古籍} \footnote{\href{https://github.com/garychowcmu/daizhigev20}{https://github.com/garychowcmu/daizhigev20}} and \textit{Chinese Text Project},\footnote{\href{https://ctext.org/}{https://ctext.org/}} we identified 614 titles of late imperial Chinese fiction in plain text. From the corpus, we randomly sampled 18 Qing dynasty (1644-1912) titles as our pilot dataset for this study. To extract poems from these novels, we used a two-step process. Chinese poetic lines typically follow fixed-length patterns, usually five or seven characters per line. In the first step, we automatically extracted all lines up to 20 characters long, along with the two preceding and following sentences. While this captured many embedded poems, it also included unrelated content such as couplets, chapter titles, or prose misidentified due to formatting inconsistencies. To refine the results, we used ChatGPT (GPT-3.5) with the prompt: “Analyze the text below to see if it contains poems, and if so, retell all the poems you find.” Despite being primarily trained on modern Chinese, ChatGPT effectively identified poems in both vernacular and classical Chinese. The final dataset included 339 poems. For each, we extracted 500 words of surrounding text both before and after the poem to form a unit of analysis comprising the poem and its narrative context. We then excluded all the ``opening poems'' (ruchang shi \textzh{入場詩}) and ``concluding poems'' (xiachang shi \textzh{下場詩}),
+ as they are accompanied by context on only one side—either before or after the poem—rather than both. This yielded 300 complete poem-context pairs.\footnote{Complete dataset is available at \href{https://github.com/dkltimon/parasitic_poems}{\url{https://github.com/dkltimon/parasitic_poems}}} Figure 1 presents an example from the final dataset.
+
+\begin{figure}[H]
+  \centering  \includegraphics[width=1.0\linewidth]{figures/figure_1.png}
+  \caption{Sample unit of analysis from the final dataset}
+  \label{fig:Figure 1}
+\end{figure}
+
+
+
+\subsection{Methods}
+
+ To distinguish ``parasitic'' poems from other nonparasitic poems within fictional narratives, one author with academic training backgrounds in Chinese literature manually annotated the 300 poems through close reading.  This annotation dataset served as the ground truth for subsequent computational evaluation. We then explored two different approaches to model this task: (1) Operationalizing the concept of parasitic poems using two proxies: cosine similarity and mutual information. Cosine similarity between vectorized representations of poems and their adjacent prose passages was used as a proxy for content redundancy \cite{hendrickx-etal-2009-reducing}. Mutual information was used as a measure of contextual informativeness, quantifying the reduction in uncertainty about the poem when conditioned on its prose context \cite{Kreer1957}. (2) We also experimented with prompting-based methods using large language models to assess whether a given poem introduces new narrative or thematic elements beyond what is already expressed in the surrounding text. For each method, we evaluated performance against our annotated dataset using accuracy and F1 score, and we analyzed cases of agreement and divergence between computational predictions and human annotations. Details of model selection, embedding strategies, mutual information estimation, and LLM prompts and specifics are provided in the following sections.
+\begin{comment}
+    
+
+\begin{table}[h]
+  \centering 
+  \begin{tabular}{ccc p{3cm}}  % changed the last column to p{}
+    \toprule
+    \textbf{Model} & \textbf{Computation} & \textbf{Goal} \\
+    \midrule
+    Cosine Similarity & Vector comparison & Detect semantic redundancy \\
+    Mutual Information & Informativeness score & Measure new information vs. context \\
+    Prompt-Based LLM & Model judgment via prompting & Approximate human-like evaluation \\
+    \bottomrule
+  \end{tabular}
+  \caption{Overview of computational approaches for identifying parasitic poems}
+  \label{tab:methods-overview}
+\end{table}
+
+\end{comment}
+
+\subsubsection{Operationalizing ``parasitic poem" using two proxies}
+
+To identify parasitic poems, we employed cosine similarity as a measure of semantic redundancy between each poem and its surrounding context. Cosine similarity is commonly used in natural language processing to assess the degree of similarity between two text segments based on the angle between their vector representations \cite{hendrickx-etal-2009-reducing}. It is well-suited for this task because it captures content-level overlap while being insensitive to text length. To generate vector representations for poems and their contexts, we used the pretrained BERT-base Chinese model provided by Hugging Face \cite{devlin-etal-2019-bert}.\footnote{https://huggingface.co/google-bert/bert-base-chinese}  We applied mean pooling over the token embeddings to obtain a fixed-length sentence-level representation for each text segment. For each poem in our dataset, we then computed the cosine similarity between its vectorized representation and that of its immediate narrative context, defined as the 500 words preceding and following the poem. The calculated \textbf{cosine similarity is our first feature} of representing the poems.
+
+In addition, we replaced each original poem with 10 randomly selected poems from the dataset and calculated the average cosine similarity between each of these replacements and the same context. Our hypothesis is that for parasitic poems, the cosine similarity of the original poem should exceed the average similarity of the 10 randomly inserted alternatives, suggesting that its content was more redundant with the surrounding prose than what would be expected from a randomly chosen poem. \textbf{The difference between the two values is our second feature}. 
+
+In addition to cosine similarities, we used \textbf{mutual information as our third feature}. It quantifies the informational relationship between a poem and its surrounding context. If a poem and its context have similar information, then it is a parasitic poem. In contrast, if a poem contributes more information to its surrounding context, then it is not a parasitic poem. To estimate this relationship, we used the GPT-2 model \footnote{\url{https://huggingface.co/uer/gpt2-distil-chinese-cluecorpussmall}} to approximate mutual information through negative log-likelihoods (NLL). NLL measures how surprising a text is under the predictions of a model:  higher NLL values indicate lower predictability, and lower values indicate greater predictability. Calculating mutual information involves four steps: 
+
+\begin{itemize}
+    \item First, we prepare three textual inputs: the context alone, the poem alone, and the full combined text with the poem inserted into its context. In our experiment, the context is defined as 500 Chinese characters both before and after the poem.
+    \item Second, we use the language model to compute the NLL of the poem without considering its context, denoted as NLL(poem).
+    \item Third, we compute the NLL of the poem considering its context, which is the difference between the NLL of the poem plus the context and the NLL of the context alone: 
+    \begin{align} NLL(poem | context) = NLL(poem + context) - NLL(context).\end{align}
+    \item Finally, we calculate the approximated mutual information:
+    \begin{align} I(poem; context) = NLL(poem) - NLL(poem | context).\end{align} 
+\end{itemize}
+
+Higher mutual information suggests greater redundancy between the poem and its context, signaling a parasitic relationship between them, whereas lower values indicate the poem contributes novel content and is therefore a nonparasitic poem.
+
+After calculating the mutual information of all the poems, we also performed the random replacement approach. For each poem, we replaced it with 10 random poems and calculated the average mutual information based on each of these replacements and the same context. We hypothesize that for parasitic poems, the mutual information score should be higher than the average mutual information score of the 10 randomly inserted alternatives. \textbf{The difference between these two scores is then our fourth and last feature}.
+
+After the feature engineering process, we performed classification on the poems to evaluate how good these four features can represent the difference between parasitic and nonparasitic poems. The classification was done as a 5-fold cross-validation with a linear SVM classifier. To deal with the class imbalance in our data, the SVM classifier was trained in the “balanced” mode to adjust the weights of the two classes.
+
+\subsubsection{Prompting}
+
+In addition to the proxy-based approach described above, we also adopted a more direct method, i.e., asking LLMs to read the poems and distinguish between “parasitic” and “nonparasitic” works. To this end, we experimented with three prompts using the GPT-4o model: In the first prompt (i.e., Prompt 1), we provided the model a short definition of a parasitic poem along with the poem itself and 500 Chinese characters before and after it as context. In the second prompt (i.e., Prompt 2), we simply described the ideas and characteristics of ``parasitic poems'' without explicitly defining them. Our motivation for experimenting with two prompting strategies stems from NLP research showing that reverse-dictionary tasks and descriptive prompts improve the performance of LLMs \cite{xu2024tip}. The third prompt is a multilingual one mixing Chinese and English instructions. We chose to try this because research literature suggests that multilingual prompts improve the performance of LLMs \cite{wang2024multilingual}. We then used the three prompts to ask the model to identify the poem type and evaluated its performance by comparing its responses with our annotated ground truth. 
+
+\begin{itemize}
+    \item \textbf{Prompt 1:} Please determine whether the following poem is used in a ``parasitic'' manner relative to its surrounding context. ``Parasitic'' means the poem does not add much meaningful information to its immediate contexts (e.g., repeating what has already been said in the contexts). \\
+    Please answer only ``Yes'' or ``No.''\\
+    Previous context: \{before\}\\
+    Poem: \{poem\}\\
+    Following context: \{after\}\\
+    If it is parasitic, please respond with 1; if it is not, please respond with 0. No explanation is needed.
+
+\end{itemize}
+
+\begin{itemize}
+    \item \textbf{Prompt 2:} Please determine whether the following poem does not add much meaningful information to its immediate contexts (e.g., repeating what has already been said in the contexts). Please answer only ``Yes'' or ``No.''\\
+    Previous context: \{before\}\\
+    Poem: \{poem\}\\
+    Following context: \{after\}\\
+    If yes, please respond with 1; if no, please respond with 0. No explanation is needed.
+\end{itemize}
+
+\begin{itemize}
+    \item \textbf{Prompt 3:} \textzh{请判断下面诗句相对于其上下文是否是“装饰性”使用。"装饰性"指}: Current definition for ``decorative poems" is that the poem does not add much meaningful information to its immediate contexts (e.g., repeating what has already been said in the contexts).\\
+    \textzh{只回答“是”或“否”。}\\
+    \textzh{上文:} \{before\} \\
+    \textzh{诗句:} \{poem\}\\
+    \textzh{下文:} \{after\}\\
+    \textzh{如果有请直接回答1，如果没有请直接回答0，不需要解释。}
+\end{itemize}
+
+\section{Results}
+
+Table \ref{tab:example} presents the classification results for distinguishing parasitic from nonparasitic poems using two approaches: proxy-based modeling and prompt-based LLM methods.\footnote{Full results are available at \href{https://github.com/dkltimon/parasitic_poems}{\url{https://github.com/dkltimon/parasitic_poems}}} Accuracy and F1 score are reported to evaluate alignment with human annotations. The proxy-based method, which relies on cosine similarity and mutual information to quantify semantic redundancy and contextual informativeness, achieved the highest accuracy of 0.70. This suggests that proxy measures capture broad trends in the annotated data, particularly those associated with the majority class. However, its F1 score is substantially lower (0.41), reflecting its limited ability to correctly identify nonparasitic poems. 
+
+Among the prompt-based approaches, the bilingual Prompt 3 performs the best, with an accuracy of 0.67 and an F1 score of 0.59. The confusion matrix (Figure~\ref{fig:confusionmatrix}) provides further insight: 170 of the 211 parasitic poems were correctly classified, resulting in a recall of 0.81 and a precision of 0.75, for an F1 score of approximately 0.78. This indicates that Prompt 3 aligns well with human judgments for the parasitic class. Performance was weaker for nonparasitic poems. Only 32 out of 89 were correctly identified, while 57 were misclassified as parasitic. This resulted in a precision and recall of 0.36, and an F1 score of 0.45 for the nonparasitic class. The macro-averaged F1 score for Prompt 3 was approximately 0.61, reflecting moderate overall performance but highlighting the ongoing difficulty with minority-class detection.
+
+Prompt 2 shows a moderate improvement over Prompt 1 (accuracy and F1 score of 0.52), while Prompt 1, the least effective prompt, results in the lowest accuracy and F1 score (0.42), indicating that its formulation probably failed to guide the model toward relevant interpretive cues.
+
+In general, all the approaches exhibited a tendency to over-classify poems as parasitic. This likely stems from both the class imbalance and the interpretive challenge of identifying subtle or indirect narrative contributions. Models appear to default to the more frequent class when uncertain, reflecting a broader limitation in computational approaches to literary analysis where interpretive nuance matters.\\
+
+\vspace{2mm}
+
+\begin{table}[h]
+  \centering 
+  \begin{tabular}{ccccc}
+    \toprule
+    & Proxies-based & Prompt1 & Prompt
+    2 & Prompt3 \\
+    \midrule
+    accuracy & 0.53 & 0.42 & 0.52 & 0.67\\
+    F1-score & 0.50 & 0.42 & 0.52 & 0.59\\
+    \bottomrule
+  \end{tabular}
+  \caption{Results of classification using two approaches}
+  \label{tab:example}
+\end{table}
+
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=1\linewidth]{figures/figure_2.png}
+    \caption{Confusion matrix of the classification result using Prompt 3.}
+    \label{fig:confusionmatrix}
+\end{figure}
+
+\section{Discussion and Future Work}
+The results suggest that parasitic poems are prevalent in late imperial Chinese fiction, although their boundary with nonparasitic poems remains ambiguous. While both cosine similarity and mutual information capture some features of parasitic poems, the complexity of the category probably explains the superior performance of prompt-based LLMs. These findings also shed light on the relationship between human annotation and computational classification, pointing to new directions for modeling literary analysis. 
+
+\subsection{Rethinking ``ground truth'' in literary analysis}
+The use of human annotations as ground truth in this study raises fundamental questions about the epistemological status of ``truth'' in literary interpretation. Unlike tasks with objective outcomes (e.g., authorship attribution, named entity recognition), the identification of ``parasitic'' versus ``nonparasitic'' poems depends on contextual judgment and interpretation, which are shaped by disciplinary norms and individual perspectives. While our annotated dataset provides a necessary reference point for evaluating computational models, it should be seen less as a fixed standard and more as a situated, interpretive construct. Although introducing more annotators may help reduce this subjectivity, we argue that this type of uncertainty is inherent to literary analysis, which makes the goal and approach of developing a definitive ``ground truth'' for computational methods both difficult and, to some extent, unrealistic. Literary meaning is often multivalent, context-sensitive, and shaped by divergent interpretive frameworks. What one reader considers parasitic, another may find meaningful or enriching. 
+
+Therefore, we call for a more reflexive approach to evaluation and propose two possible directions to address this issue. Instead of treating human annotation as a singular and definitive ``ground truth,'' future work could adopt more flexible and interpretively sensitive approaches, such as collecting annotations from multiple readers to capture diverse perspectives (multi-perspective annotation), asking annotators to explain their reasoning (annotator rationales), or using probabilistic labeling (e.g., 70\% parasitic and 30\% nonparasitic) to reflect uncertainty or disagreement in how a poem is classified. More importantly, given this inherent subjectivity of the task, we think that computational disagreement with human annotations in literary analysis should not automatically be framed as model error. Instead, such divergence can offer a meaningful approach to discussing literary ambiguity, assumptions, and diversity. In this light, annotations may be better conceived not as fixed labels, but as reference points to be cross-analyzed with model outputs. 
+
+\subsection{Prompt engineering as an alternative to metric-based models in computational literary analysis}
+
+Our experiments also show that prompt-based LLMs (especially Prompt 3) matches or even surpasses the traditional proxy-based approaches in both accuracy and interpretive alignment. Unlike proxy models that rely on predefined metrics such as cosine similarity or mutual information, prompt-based methods leverage the LLMs' latent knowledge and contextual reasoning. The strong performance of Prompt 3, which outperformed the proxy-based method in F1 while offering competitive accuracy, suggests that LLMs can internalize and apply interpretive heuristics when prompted effectively, even in nuanced domains like literary analysis. In future work, we will also test the prompting approach across various models, such as Gemini, Claude, Mistral, as well as those trained with Chinese resources, to provide guidance for applying LLMs for premodern Chinese literary analysis. Furthermore, given that existing models are likely trained primarily on modern Chinese texts, we will also explore the possibility of fine-tuning our own models using written vernacular Chinese texts in premodern periods \cite{blouin-etal-2023-unlocking}. At the same time, we observed that prompts written in different languages can influence the results. Therefore, we plan to continue testing prompts written entirely in Chinese, entirely in English, and in mixed Chinese-English formats.
+
+This opens the door to a new paradigm of literary modeling that uses prompting not just for classification, but potentially for explanation, comparison, and interpretive commentary as well. The challenge, then, shifts from designing numerical proxies to crafting cognitively meaningful prompts. This has important methodological implications: literary NLP tasks may benefit more from prompt engineering and zero-/few-shot LLM setups than from traditional supervised pipelines, especially when human interpretive judgments are the gold standard. While our experiments highlight the varying effectiveness of prompting strategies, including definition-based, description-based, and multilingual approaches, a deeper understanding of their impact on literary modeling and how this understanding can inform the design of more effective prompts remains an important direction for future research. 
+
+
+
+%\section*{Acknowledgements}
+
+
+
+% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
+
+
+
+\printbibliography
+
+% You can include an appendix using the following command
+\appendix
+
+%\section{First Appendix Section} \label{appdx:first}
+
+%Appendix sections should be ordered by letters rather than numbers, and their contents do not count towards the paper's length limit. Appendix sections may also contain additional tables and figures.  
+
+\end{document}

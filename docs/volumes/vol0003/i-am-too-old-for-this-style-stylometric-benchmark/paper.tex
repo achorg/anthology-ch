@@ -1,0 +1,408 @@
+% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
+% *Anthology of Computers and the Humanities*. ADD THE OPTION
+% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
+% DO NOT change the documentclass
+\documentclass[final]{anthology-ch} % for the final version
+% \documentclass{anthology-ch}         % for the submission
+% \documentclass{preprint}
+
+% LOAD LaTeX PACKAGES
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{caption}
+\usepackage{rotating}  % <-- key for landscape figures
+\usepackage{pdflscape}
+\usepackage{todonotes}
+% ADD your own packages using \usepackage{}
+
+% TITLE OF THE SUBMISSION
+% Change this to the name of your submission
+\title{``I Am Too Old For This Style!'' A Stylometric Benchmark of Age Effect on Authorship Attribution}
+
+% AUTHOR AND AFFILIATION INFORMATION
+% For each author, include a new call to the \author command, with
+% the numbers in brackets indicating the associated affiliations 
+% (next section) and ORCID-ID for each author.  
+\author[1]{Florian Cafiero}[
+  orcid=0000-0002-1951-6942
+]
+
+\author[2]{Lucence Ing}[
+  orcid=0000-0002-8742-3000
+]
+
+\author[3]{Simon Gabay}[
+  orcid=0000-0001-9094-4475
+]
+
+\author[2]{Thibault Clérice}[
+  orcid=0000-0003-1852-9204
+]
+% While we encourage including ORCID-IDs for all authors, you can
+% include authors that do not have one by definining an empty ID.
+
+% There should be one call to \affiliation for each affiliation of
+% the authors. Multiple affiliations can be given to each author
+% and an affiliation can be given to multiple authors. 
+\affiliation{1}{École nationale des chartes, Paris Sciences Lettres, Paris, France}
+\affiliation{2}{Inria, Paris, France}
+\affiliation{3}{Université de Genève, Genève, Switzerland}
+
+% KEYWORDS
+% Provide one or more keywords or key phrases seperated by commas
+% using the following command
+\keywords{Authorship verification, Style evolution, Stylometry}
+
+% METADATA FOR THE PUBLICATION
+% This will be filled in when the document is published; the values can
+% be kept as their defaults when the file is submitted
+\pubyear{2025}
+\pubvolume{3}
+\pagestart{1198}
+\pageend{1210}
+\conferencename{Computational Humanities Research 2025}
+\conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
+\doi{10.63744/By09x5ZX3yWX}  
+\paperorder{75}
+
+\addbibresource{bibliography.bib}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Can age act as a significant factor in determining authorship? While writers' styles are known to measurably evolve over time, most computational pipelines still treat them as time-invariant. Building on recent work that tracks idiolectal change in several literary traditions, we introduce the first controlled benchmark that quantifies how both the magnitude and the direction of temporal distance affect attribution. A diachronic corpus of French novelists is sampled at bidirectional gaps of ±1, ±5, ±10, and ±15 years. Verification is then tested with a generative Bootstrap Distance Impostors (BDI) model and a discriminative linear Support Vector Machine (SVM). Results reveal a near-linear loss of confidence as the gap widens, but --critically-- also show a systematic directional asymmetry: late-career texts remain recognisable when compared with early-career references, whereas early texts are markedly harder to verify against late ones, suggesting a cumulative rather than a substitutive evolution. The pattern persists under random-pair controls, confirming that it is not a sampling artefact. All code, data, and evaluation scripts are released to encourage further research on temporally robust authorship analysis and to quantify both the dynamics and amplitude of idiolectal change over time.
+\end{abstract}
+
+\section{Introduction} 
+
+Stylometry -- a quantitative analysis of style -- has long served as a cornerstone in the field of authorship attribution \cite{delcourt2002stylometry}. By examining features such as token frequency, syntactic and rhythmic patterns, stylometric methods aim to identify distinctive characteristics of an author's idiolect, among other things. These methods have been employed in a wide range of applications, from literary studies in digital humanities to forensic linguistics \cite{cafiero2022affaires}.
+
+However, just as the style of musicians and painters evolves over time, so too does the writing of an author. This phenomenon has been early addressed in musicology with Adorno's famous idea of a \textit{Spätstil Beethovens} \cite{adorno_spatstil_1937}, which necessarily implies the existence of something before, such as an early style, and therefore an inner evolution over time. The existence of a ``late style'' is obviously not limited to music and has been, for instance, commonly discussed in literary studies \cite{picon_admirable_1970,said_late_2006}, along with many derivative ideas such as that of maturity or early works \cite{vidotto_oeuvres_2023}.
+
+When evaluating authorship across a long temporal span, one must therefore reckon with the possibility of an evolution over the years. This problem raises a fundamental methodological question: to what extent can idiolectal homogeneity be expected or relied upon when the texts under scrutiny have been written at different dates? A problem that is particularly complex for the study of very old texts, whose dating is not always certain, and whose content may even have changed as a result of the copying process \cite{Kestemont01022012}.
+
+This paper outlines a methodological framework aimed at addressing the specific challenges posed by authorship verification in the case of authors with long writing careers. We benchmark several stylometric approaches by contrasting early-career and late-career works, focusing on French novels from the 19th century.\footnote{The code and dataset are available on GitHub: \href{https://github.com/DEFI-COLaF/french-romans}{https://github.com/DEFI-COLaF/french-romans}.} By using temporally distant samples from the same author, we seek to evaluate the robustness of authorship verification techniques in the face of potential idiolectal evolution. This contribution constitutes a first step toward a more comprehensive and historically informed approach to long-span authorship analysis. 
+
+Following a review of related work, we present our experimental benchmark setup. This includes a description of the dataset, its operationalisation, and the two computational approaches used for evaluation. The subsequent section analyses the results obtained from these experiments, and we conclude the paper by reflecting on the insights gained from our methodology.
+
+
+\section{Related works}
+
+Recent research in stylistics has increasingly focused on change, both at the individual and collective levels, with the aim of describing and understanding its causes \cite{philippe_pourquoi_2021}. Stylisticians now generally agree in rejecting the idea of abrupt stylistic ruptures, since ``the history of forms is made up of anticipations and survivals'' \cite{watine_style_2019}, yet the relative importance of each has rarely been quantitatively measured precisely. Such a theoretical stance explains a certain reluctance in literary studies  to employ concepts such as ``late style'' \cite{mcmullan_late_2016}. Regarding the latter, its existence has been examined through computational analyses--specifically a PCA on the 500 most frequent words by English-speaking authors \cite{reeve_late_2018}, and LIWC, network, and Zeta analyses for German-speaking authors \cite{rebora_late_2018}--yet these analyses yielded no clear evidence. Despite clear sensitivity to time \cite{rybicki_reading_2017}, computational methods seemed unable to capture a late style, whose existence therefore has to be questioned.
+
+Nonetheless, several studies have shown that idiolectal evolution across a writer's career is measurable. Earlier work has established that an author's idiolect is neither perfectly stable nor completely chaotic, but rather changes in measurable ways. Seminck et al. \cite{seminck2022evolution} quantify this phenomenon for eleven 19th-century French novelists, showing a nearly linear migration of function-word frequencies that suffices to timestamp novels with high accuracy. Complementing this granular view, a recent study \cite{rios2022detection} on syntactic and lexical n-grams demonstrates that simple n-gram profiles can already detect early- versus late-career phases with around 90\% accuracy and that linear models on these features reliably timestamp novels from eleven English-language authors, reinforcing the idea that function-word and shallow syntactic markers remain the workhorses of stylochronometry. Nieuwazny et al. \cite{nieuwazny2021can} examine texts by Arata Osada (1887-1961) written before and after his radical ideological reversal in post-war Japan and find that a transformer-based verifier misattributes many later works, even while maintaining high confidence, thus illustrating how profound topic or stance shifts can deceive state-of-the-art models using texts in their ``sequential'' form, and underscoring the need for temporally and thematically robust feature sets.
+
+Yet, despite extensive research on temporal classification and idiolectal change, the specific relationship between early- and late-career texts, specifically within the framework of authorship attribution, remains largely underexplored.
+
+\section{Experiments}
+
+\subsection{Dataset}
+
+We select six 19th-century French authors, who had long careers and wrote a minimum of 20 works, to make it possible to study the evolution of their idiolect. 
+%%%
+These authors are all well known, although their literary status and production differ from one another. Honoré de Balzac (1799-1850) and Émile Zola (1840-†1902) are major figures of the French literary canon. Alexandre Dumas (father, 1802-1870) and Jules Verne (1828-1905), while they are as renowned as Balzac and Zola, have a more uniform body of work, being largely confined to adventure literature. George Sand (1804–1876)'s works, the sole female author in our dataset, achieved significant recognition during her lifetime, but she is no longer regarded among the foremost French writers. Eugène Sue (1804–1857)'s works experienced a similar path to Sand's, achieving commercial success during his lifetime before later becoming marginalized in the literary canon. Although none of these authors have fallen into complete obscurity, differences in trajectory, style, gender, and literary genre allow us to avoid restricting our study to a single type of writing.
+
+Most of the data come from the Oeuvres corpus~\cite{glorieux2023verne,glorieux2023dumas,glorieux2021zola} and the eBalzac project~\cite{del2021ebalzac}. The works of Sue and Sand, by contrast, are sourced from a variety of digital collections, including the ANR Chapitres French novels corpus~\cite{anrchapitres}, the Bibliothèque numérique romande~\cite{bnr}, the Bibliothèque électronique du Québec~\cite{beq}, Wikisource, and Project Gutenberg. Table \ref{tab:basic-data-works} presents, for each author, the number of works and the publication period considered in this study.
+%, we try to cover some form of representativity, etc. etc.
+
+\begin{table}[!h]
+    \resizebox{.9\linewidth}{!}{
+    \begin{tabular}{l|c|c|rr}
+        \toprule
+      & & & \multicolumn{2}{c}{\textbf{Token Count per Work}} \\
+      \textbf{Author}   & \textbf{Publication timespan} & \textbf{Number of works} & \textbf{Average} & \textbf{Standard Deviation} \\
+      \midrule
+      Balzac & 1829-1848 & 84 & 45\,962 & 43\,877\\
+      Dumas   & 1837-1870 & 40 & 186\,263 & 165\,363\\
+      Sand & 1832-1875 & 70 & 69\,688 & 52\,311\\
+      Sue & 1830-1858 & 52 & 101\,543 & 70\,985\\
+      Verne & 1863-1905 & 35 & 79\,161 & 44\,551\\
+      Zola & 1871-1893 & 20 & 133\,738 & 28\,149 \\ \bottomrule
+    \end{tabular}}
+    \caption{Dataset overview: number of works included in the study and publication date range, by author.}
+    \label{tab:basic-data-works}
+    \centering
+\end{table}
+%% limitations
+
+The corpus presents several limitations. The distribution of works is uneven: for instance, Balzac is represented by substantially more texts than Zola. Moreover, text length varies across authors: Zola's works are consistently multi-hundred-page novels, whereas Sand's body of work ranges from similarly extensive fiction to much shorter narratives, resulting in unequal amounts of linguistic evidence for each writer. Also,  writers might collaborate with one or more ghostwriters, as in the case of Dumas \cite{mombert_dumas_2022}, which renders the actual share of authorship indeterminate and weakens the authorial signal.
+
+Another significant issue concerns the publication dates attributed to each work, which can be problematic for two main reasons. First, the date of composition can differ from the date of publication, especially for works written over an extended period, in which case the text may contain multiple stylistic layers. Second, the date retained may differ from that of the first publication: several editions of the work exist, and we generally use the date of the first edition, yet the available digital text may correspond to a later version, as in the case of \textit{La Salamandre} by Eugène Sue, first published in 1832, but whose Wikisource text comes from the 1850 edition.
+
+The choice of edition can affect the text subsequently analysed. For example, in \textit{La Salamandre}, on page 33 of the 1832 edition,\footnote{Available online at \url{https://www.digitale-sammlungen.de/en/view/bsb10100385} (visited on 2025/07/16).} the text reads ``\textit{mais enfin ton père était… était… frangier-drapier, rue aux Ours}''  whereas the 1850 edition published on Wikisource presents  ``\textit{mais enfin, ton père était… frangier, drapier, rue aux Ours}''. We observe here two differences, which we term variants in philology: the omission of one occurrence of \textit{était} in the 1850 text and the change from the compound profession \textit{frangier-drapier} to two distinct ones \textit{frangier, drapier}. These variants may be deliberate (the duplicated \textit{était} being treated as a dittography, an erroneous repetition to be corrected) or accidental, resulting from editorial oversight in the 1850 edition or in its digital transcription. Although their impact is likely marginal, given the large number of tokens available for each book, such variants can nonetheless introduce noise into the corpus and potentially affect our results.
+
+For the impostors and adversarial datasets (cf. §~\ref{sec:BDI} for an explanation), we use the corpus produced in the context of the ANR Chapitres covering the 19th and 20th centuries \cite{anrchapitres}, from which we exclude all target authors. 
+
+
+\subsection{Workflow} 
+
+To benchmark the impact of temporal distance on authorship verification, we define a set of four temporal ``gap'' ($g$) values that quantify the number of years separating works by the same author between candidate texts ($C$) and query texts ($Q$). The gap $g$ represents the minimal difference in publication years between paired works. We consider four absolute gap values (1, 5, 10, and 15 years) and both temporal directions: either attributing later works using earlier ones ($g < 0$) or earlier works using later ones ($g > 0$).
+
+For a given year $y$, we construct a query set $Q_{y}$ and a corresponding candidate or training set such that the candidate set is defined  as
+\[
+\begin{cases}
+  C_{y' \leq y + g } & \text{if } g < 0 \\
+  C_{y' \geq y + g }& \text{if } g > 0
+\end{cases}
+\]
+
+\noindent (see Figure \ref{fig:support}). Works from impostors are sampled independently of publication date for a temporally diverse set of adversarial data.
+
+The smallest gap value, $|g| = 1$, serves as a control condition, allowing us to evaluate the models' ability to attribute works across minimal temporal distances, where idiolectal change is expected to be negligible. We use a secondary set for control, to add the impact of low resource candidate set, where only $n$ samples are kept, where $n = min(|C_{g \in [-15,-10,-5,-1,1,5,10,15]}|)$. The minimal values are met in extremes where $|g|=15$, and are reported in Table \ref{tab:minimal-values}. For each of the control set set-up using $min(|C|)$, we draw three sets per year.
+
+\begin{table}[htp]
+    \centering
+{\small%
+\begin{tabular}{l|cccccc}
+\toprule
+Auteur          & Sue & Balzac & Dumas & Verne & Sand & Zola \\ \midrule
+Minimum samples & 14  & 29     & 29    & 32    & 39   & 47   \\ \bottomrule
+\end{tabular}
+}
+\caption{Minimum number of samples observed for each combination of Gap and Year across authors.}
+\label{tab:minimal-values}
+\end{table}
+
+Text vectorization is based on the relative frequency of function words. Each text is segmented into overlapping windows of 5\,000 tokens (excluding punctuation), sampled every 2\,500 tokens. 
+
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=\linewidth]{figures/support.png}
+    \caption{Number of works in $C$ per year and authors, considering $g$.}
+    \label{fig:support}
+\end{figure}
+
+\subsection{Experiments}
+
+To evaluate the robustness of authorship verification to the evolution of a style, we test  two complementary approaches.  
+The Bootstrapped Distance Impostors (BDI) verifier embodies a generative, distance-based philosophy: it models intra-author stability through bootstrap resampling of distance distributions.  
+Conversely, the Support Vector Machine (SVM) pipeline represents a discriminative stance, directly learning a decision boundary between the target author and impostors.  
+
+\subsubsection{Bootstrapped Distance Impostors}
+\label{sec:BDI}
+
+BDI~\cite{nagy2024bootstrap} is a compelling approach for the proposed task, as it emphasizes precision and provides a metric described by Nagy as the ``statistical likelihood'', a value derived from the distribution of BDI kernel distances around a neutral attribution point. Nagy does warn that this statistical likelihood  only reflects  that ``the likelihood that the question text is closer to the candidate set than the imposter set.''
+
+We adopt the same BDI settings as outlined in the original paper: 35\% of features are randomly sampled at each iteration, the distance metric (minmax) function, and the process is repeated over 1\,000 runs. For each year $y$, we randomly sample up to 50 query texts $Q_{y}$ from that year.
+
+For every combination of year, gap, and author, we record both the statistical likelihood of each sample and their distance arrays. This enables us to track and analyse the evolution of attribution confidence.
+
+
+\subsubsection{SVM Approach}
+
+Our SVM workflow mirrors that of the BDI verifier, with identical feature extraction, bootstrap and temporal splits.  The only difference is that we keep a held-out set of non-query impostor windows so that generalisation can be measured outside the candidate pool. 
+
+
+For each $5\,000$-token window we apply $\log(1+x)$ followed by $\ell_2$ scaling without centring so that SVM coefficients remain comparable to relative frequencies.
+
+For every $\langle$author, year, gap$\rangle$ we build
+\begin{itemize}
+ \item $Q$: up to 50 query windows drawn (with replacement) from the target author in year~\(y\);
+  \item $W$: all available candidate windows by the same author published in the gap-constrained years \(y\pm g\);
+  \item $I_{\text{train}}$: a 70\,\% bootstrap of impostors;
+  \item $I_{\text{test}}$: the held-out impostors.
+\end{itemize}
+Replications with fewer than two positives or negatives are discarded.
+
+
+A linear-kernel SVM with class-balanced weights is tuned over the $C$ parameter \cite{CortesVapnik1995} via \texttt{Halving} \texttt{GridSearchCV}, using 2–3 stratified folds (the smallest class dictates $k$).  
+Balanced accuracy serves as the cross-validation scorer.
+
+We repeat the entire procedure $n=20$ times; each replica averages posterior probabilities $p(x=\text{author})$ and margins~$\Delta(x)$.  
+
+\section{Results}
+
+\subsection{Diachronic change captured by BDI}
+
+\begin{itemize}
+    \item \textbf{Effect of temporal interval.} For all six authors (Balzac, Dumas, Sand, Sue, Verne, Zola) the median BDI distance increases almost linearly with the absolute time gap $|g|$ (Figure \ref{fig:bdi-distance-all}). The Pearson correlation between |gap| and mean probability is -0.97.
+
+     \item \textbf{Directional asymmetry (earlier\,$\rightarrow$\,later vs.\ later\,$\rightarrow$\,earlier).}  
+  Linguistic change over 15 years costs roughly 4–5 points of percentage (pp) in mean probability and 3 pp in binary success. The direction of the gap matters little up to ±10 years; at ±15 years the ``back-in-time'' tests (G-15) are 1.3 pp stronger than “forward” (G 15), suggesting later writings are slightly easier to verify against an earlier profile than vice-versa. (Figure~\ref{fig:bdi-stat-all}).  In other words, the \textit{late} authorial style is easier to recover from samples of the \textit{early} style than vice-versa, suggesting that core idiolectal traits become more firmly established over time and that new traits can appear and settle in.  Verne is the only partial exception: his early $\rightarrow$ late and late $\rightarrow$ early curves overlap within error bands.
+    
+    \item \textbf{Inter-author variability.} 
+     Zola and Verne remain extremely robust (Zola: \(0.996\) at \(g=+15\), \(0.982\) at \(g=-15\); Verne: \(0.992\) / \(0.959\)).  
+    Balzac, Dumas and Sand show stronger change (Balzac \(0.935\), Dumas \(0.953\), Sand \(0.926\) at \(g=+15\)).  
+    Sue is the weakest overall (less than 0.89 in both directions) and exhibits the largest dispersion (Figure~\ref{fig:bdi-distance-all}).
+
+\end{itemize}
+    
+    
+
+\noindent
+\textbf{Random-pair control.}
+Using gap-matched random impostors produces a substantially lower mean probability (\(0.865\)) yet retains a weak positive slope with career time (Figures~\ref{fig:bdi-distance-random} and~\ref{fig:bdi-distance-random-dispersion}).  
+This confirms that the consolidation of late style is genuine and not an artefact of the verification protocol.
+
+\subsection{SVM verification performance}\label{ssec:svm}
+
+
+\begin{itemize}
+    \item \textbf{Effect of temporal interval.} Up to $\pm 5$~years the SVM is solid (mean probability $\ge 0.88$, binary success $>95\,\%$) but trails BDI by $\approx 10$\,pp.  
+The raw 10-year gap hurts the SVM far more than BDI ($-11$\,pp vs.\ $-3$\,pp).  
+A curious rebound appears at $g=-15$ where performance rises again to $0.90$. Without being easy to interpret, it points to a greater vulnerability of the SVM setup to accidental changes.
+
+    \item \textbf{Posterior probabilities.}  
+  The SVM ensemble remains strong for short intervals, assigning a mean positive probability of
+  \(0.949\) at \(|g|\le 1\) and \(0.919\) at \(|g|\le 5\).
+  Accuracy falls steadily thereafter: \(0.883\) at \(|g| = 10\)~yr and
+  \(0.811\) at the extreme \(|g| = 15\)~yr (Figure~\ref{fig:bdi-svm-all}).
+    \item \textbf{Directional asymmetry}  
+  Except for Dumas, every author receives a higher score when the verifier looks \textit{back} in time.
+  For example, Zola: \(0.892\,(g=-15)\) vs.\ \(0.779\,(g=+15)\);
+  Verne: \(0.897\) vs.\ \(0.817\);
+  Sand: \(0.869\) vs.\ \(0.726\).
+  Dumas is almost symmetric (\(0.900\) vs.\ \(0.920\)).
+
+\end{itemize}
+
+\begin{landscape}
+\begin{figure}
+  \centering
+  % First minipage: A.png
+  \begin{minipage}[c]{0.75\linewidth}
+    \begin{subfigure}{\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/normalized_plot_bdi.png}
+    \caption{Result using $Q_{g}$}
+    \label{fig:bdi-stat-all}
+    \end{subfigure}
+  \end{minipage}%
+  \hfill
+  % Second minipage: B.png and C.png stacked vertically
+  \begin{minipage}[c]{0.25\linewidth}
+    \begin{subfigure}{\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/normalized_bdi_control.png}
+        \caption{Results per year using the random control set.}
+        \label{fig:bdi-stat-random}
+    \end{subfigure}
+    \vspace{0.5em} % Optional spacing
+    \begin{subfigure}{\linewidth}
+        \includegraphics[width=\linewidth]{figures/normalized_bdi_control_distrib.png}
+        \caption{Distribution for the random control set.}
+        \label{fig:bdi-stat-random-dispersion}
+    \end{subfigure}
+  \end{minipage}
+  \caption{BDI Statistical Likelihood Plots.}
+  \label{fig:bdi-stat}
+\end{figure}
+\end{landscape}
+
+\begin{landscape}
+\begin{figure}
+  \centering
+  % First minipage: A.png
+  \begin{minipage}[c]{0.75\linewidth}
+    \begin{subfigure}{\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/normalized_plot_bdi_distance.png}
+    \caption{Result using $Q_{g}$}
+    \label{fig:bdi-distance-all}
+    \end{subfigure}
+  \end{minipage}%
+  \hfill
+  % Second minipage: B.png and C.png stacked vertically
+  \begin{minipage}[c]{0.25\linewidth}
+    \begin{subfigure}{\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/normalized_bdi_control_distance.png}
+        \caption{Results per year using the random control set.}
+        \label{fig:bdi-distance-random}
+    \end{subfigure}
+    \vspace{0.5em} % Optional spacing
+    \begin{subfigure}{\linewidth}
+        \includegraphics[width=\linewidth]{figures/normalized_bdi_control_distrib_distance.png}
+        \caption{Distribution for the random control set.}
+        \label{fig:bdi-distance-random-dispersion}
+    \end{subfigure}
+  \end{minipage}
+  \caption{BDI Distance Plots.}
+  \label{fig:bdi-distance}
+\end{figure}
+\end{landscape}
+
+\begin{landscape}
+\begin{figure}
+  \centering
+  % First minipage: A.png
+  \begin{minipage}[c]{0.75\linewidth}
+    \begin{subfigure}{\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/normalized_plot_svm.png}
+    \caption{Result using $Q_{g}$}
+    \label{fig:bdi-svm-all}
+    \end{subfigure}
+  \end{minipage}%
+  \hfill
+  % Second minipage: B.png and C.png stacked vertically
+  \begin{minipage}[c]{0.25\linewidth}
+    \begin{subfigure}{\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/normalized_svm_control.png}
+        \caption{Results per year using the random control set.}
+        \label{fig:svm-random}
+    \end{subfigure}
+    \vspace{0.5em} % Optional spacing
+    \begin{subfigure}{\linewidth}
+        \includegraphics[width=\linewidth]{figures/normalized_svm_control_distrib.png}
+        \caption{Distribution for the random control set.}
+        \label{fig:svm-random-dispersion}
+    \end{subfigure}
+  \end{minipage}
+  \caption{SVM Plots.}
+  \label{fig:svm-plots}
+\end{figure}
+\end{landscape}
+
+
+\begin{itemize}
+  \item \textbf{Inter-author variability} Zola is the most readily verified by the SVM (overall mean probability $0.93\pm0.07$), closely followed by Balzac ($0.90\pm0.08$) and Verne ($0.89\pm0.13$). Dumas sits mid-pack ($0.86\pm0.14$), while Sand drops to $0.84\pm0.17$ and Sue trails well behind at $0.74\pm0.25$, reflecting the larger idiolectal spread in his heterogeneous corpus.
+\end{itemize}
+
+
+
+\noindent
+\textbf{Random-pair control.}
+Gap-matched random impostors yield a mean probability of \(0.764\) and erase the
+upward trend with career time (Figures~\ref{fig:svm-random} and~\ref{fig:svm-random-dispersion}),
+confirming that the apparent ease of verifying late texts is driven by genuine idiolectal consolidation
+rather than chance alignments.
+
+
+
+\subsection{Linking idiolectal change and verification}
+
+Cross-analysis  reveals:
+
+\begin{enumerate}
+    \item \textbf{notable exceptions}: Verne and Zola retain high SVM accuracy despite large BDI distances, indicating that their functional lexicon remains idiosyncratic even as thematic content evolves;
+    \item \textbf{low-ceiling cases}: Sue combines both high change and low accuracy. This could possibly point to a particularly plastic or heterogeneous style, but is most likely connected to the difference in size of his production across time, ranging from very short to extremely long novels.
+\end{enumerate}
+
+Overall, the results show (i) a progressive idiolectal change mainly driven by late-career texts, (ii) a concomitant degradation of automatic verification performance, and (iii) substantial author-level differences — some writers (Verne, Zola) maintain a robust signature, whereas others (Sue, Sand) display greater lexical plasticity. These findings motivate further investigation of textual factors (genre shifts, revisions, possible co-authorship) that may underlie the observed change, even though the third point can already be seen as confirming expectations, given the diversity of textual genres explored by Sand and Sue, in contrast to Verne and Zola, who remain within a single dominant genre.
+
+
+\section{Conclusion}
+
+This study was conducted within a single linguistic domain, as all texts were written in French, which consequently limits the generalizability of our findings. Furthermore, the temporal scope is restricted, focusing predominantly on the latter half of the nineteenth century, leaving the characteristics of other periods largely unexplored.
+
+The material under study consists of texts that offer one version of a novel among many, each version being inevitably the product of collaborative processes involving editors, printers, and contemporary transcribers. On the one hand, these invisible editorial fingerprints may blur the boundary between the authorial signal and external noise. On the other hand, we assume that fluctuations in the relative frequency of function words are likely to remain minimal, thereby limiting the impact of such interventions~\cite{maciejmind}. In addition, our use of 5\,000-token windows favours longer prose works and may under-represent shorter texts introducing an additional source of bias.
+
+Despite these limitations, our results suggest that, for most authors studied, their ``stylome'' \cite{halteren_new_2005} evolves over time. The idiolectal fingerprint appears to become more distinctive as time progresses, making later works more easily attributable on the basis of earlier ones, as if the later style comes to encompass both new features and earlier idiosyncratic traits. Conversely, earlier works may be more difficult to identify, possibly due to the emergence of new idiolectal features in later texts or the more diffuse nature of an author's early style. These findings are particularly sensitive to corpus size at larger temporal ``gaps'', especially for $|g|=15$, where the number of available samples near the boundaries of an author's career is limited.
+
+Interestingly, these findings align with long-standing critical intuitions of critics. Lanson noted in 1895 indeed that ``the farces of Molière's youth were the seeds of the comedies of his maturity'' \cite{lanson_histoire_1895}. By saying so, he proposes \textit{mutatis mutandis} a directional model in which stylistic evolution moves towards the future, with the past containing the seeds of later works. In the balance between stylistic ``anticipations and survivals'' \cite{watine_style_2019}, our results suggest that the survivals play a more important role than the anticipations. Thus, even if a ``late style'' as defined by Adorno or Saïd \cite{adorno_spatstil_1937,said_late_2006} does not exist, an author's later works differ from earlier ones as innovations accumulate on top of enduring idiosyncrasies.
+
+Future work will involve expanding the corpus under study, not only across languages and historical periods but also across different literary genres. This broader scope will help assess the robustness and generalizability of our findings and further refine our understanding of stylistic evolution over time.
+
+\section*{Acknowledgements}
+
+This research was supported by the \href{https://colaf.huma-num.fr/}{DEFI COLaF} funding.
+
+\printbibliography
+
+
+\end{document}

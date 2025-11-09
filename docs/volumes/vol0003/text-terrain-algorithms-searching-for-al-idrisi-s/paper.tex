@@ -1,0 +1,273 @@
+% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
+% *Anthology of Computers and the Humanities*. ADD THE OPTION
+% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
+% DO NOT change the documentclass
+\documentclass[final]{anthology-ch} % for the final version
+%\documentclass{anthology-ch}         % for the submission
+
+% LOAD LaTeX PACKAGES
+\usepackage{booktabs}
+\usepackage{graphicx}
+% ADD your own packages using \usepackage{}
+
+% TITLE OF THE SUBMISSION
+% Change this to the name of your submission
+\title{Text, Terrain, and Algorithms: Searching for  Al-Idrisi's \textit{Aqranus} with Formal Methods}
+
+% AUTHOR AND AFFILIATION INFORMATION
+% For each author, include a new call to the \author command, with
+% the numbers in brackets indicating the associated affiliations 
+% (next section) and ORCID-ID for each author.  
+
+\author[1]{Angel Bogdanov Grigorov}[
+  orcid=0009-0007-4625-3555
+]
+
+\author[2]{Adela Sobotkova}[
+  orcid=0000-0002-4541-3963
+]
+
+% There should be one call to \affiliation for each affiliation of
+% the authors. Multiple affiliations can be given to each author
+% and an affiliation can be given to multiple authors. 
+\affiliation{1}{National Archaeological Institute with Museum, Bulgarian Academy of Sciences, Sofia, Bulgaria}
+\affiliation{2}{Department of History and Classical Studies, Aarhus University, Aarhus, Denmark}
+
+% KEYWORDS
+% Provide one or more keywords or key phrases seperated by commas
+% using the following command
+\keywords{geocoding,  geoparsing, historical toponyms, historical geography, buffers, isochrones, road network analysis}
+
+% METADATA FOR THE PUBLICATION
+% This will be filled in when the document is published; the values can
+% be kept as their defaults when the file is submitted
+\pubyear{2025}
+\pubvolume{3}
+\pagestart{808}
+\pageend{823}
+\conferencename{Computational Humanities Research 2025}
+\conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
+\doi{10.63744/xJZ9UXNe8UDU}  
+\paperorder{49}
+\addbibresource{bibliography.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HERE IS THE START OF THE TEXT
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\textit{"Aqranus is a magnificent city located on a high mountain,"} writes the 12th-century Arab geographer al-Idrisi. Today, historians widely agree that \textit{Aqranus} refers to the medieval city of \textit{Kran} whose exact location remains uncertain. In this study, we test competing hypotheses for \textit{Kran}’s location by modeling spatial references from al-Idrisi in a GIS environment.
+Al-Idrisi records \textit{Aqranus} as lying six days of march from \textit{Istibuni} (modern Ihtiman), 40 miles from \textit{Farui} (Stara Zagora), and four days of march from \textit{Lufisa} (Lovech). We operationalize these distances using three progressively realistic spatial methods. First, we apply Euclidean distance buffers. Second, we model anisotropic, slope-dependent travel costs across the landscape. Third, we simulate travel within a reconstructed medieval road network. As model realism increases, the probable location of \textit{Aqranus} shifts westward.
+To assess the consistency of al-Idrisi’s account, we also incorporate two Byzantine sources describing \textit{Kran} as midway between \textit{Beroe} (Stara Zagora) and \textit{Tarnovo} (Veliko Tarnovo). Two least-cost path variants from this analysis suggest an alternative location, supporting a more easterly interpretation and challenging the current scholarly consensus. Rather than resolving the mystery, our findings expand the range of plausible candidates and underscore the problem of geocoding historical toponyms even where numerous linguistic and spatial clues are available. 
+\end{abstract}
+
+\section{Introduction} 
+Geocoding place names is a fundamental component of spatial analysis in a wide variety of disciplines from epidemiology to computer science \cite{zhang_survey_2024}. This process of linking  geospatial coordinates to toponyms from texts has traditionally relied on large, often crowdsourced gazetteers. These curated databases contain place names paired with coordinates, which can be searched and matched to textual references \cite{noauthor_geonames_nodate, barker_pleiades_2016, depauw_trismegistos_2018, rainer_linking_2015, noauthor_oldmaps_2025}. More recently, computational linguists have utilized natural language processing and deep learning to infer geographic context and to constrain resulting toponym geometries within bounding polygons \cite{gritta_whats_2018, goldberg_text_2007, jacques_deep_2021, karimzadeh_geotxt_2019, fernando_automated_2017}. Yet despite these advances, ambiguous or extinct place names frequently defy resolution. In historical geography incomplete spatial references abound. Where place names are similar, vague, or absent from modern gazetteers, geocoding remains a stubborn challenge \cite{gregory_geoparsing_2015, chiang_creating_2020, gregory_toward_2014, ma_geolocating_2021}. In such domains, geolocation still depends heavily on gazetteer construction and human interpretive labor \cite{barker_pleiades_2016, wallgrun_geocorpora_2018, gkadolou_historical_2021}. 
+
+In this paper, we demonstrate the complexity of geocoding historical toponyms on the example of \textit{Aqranus}, a city mentioned by the medieval cartographer al-Idrisi (AD 1100–1165), which has since disappeared from the map. Al-Idrisi’s text gives relative distances from \textit{Aqranus} to three known locations. We operationalize these as three different types of spatial measurement – Euclidean buffers, cost-based isochrones, and network distances – each reflecting a different model of medieval movement or representation of space. By intersecting the resulting spatial zones, we identify a plausible search area for the lost town and compare it against candidates proposed by the historical community.
+
+This case study illustrates how combining linguistic interpretation with diverse geospatial modeling techniques can refine toponym resolution. Such methods can inform the development of geoAI systems that must grapple with uncertainty, ambiguity, textual and historical context \cite{zekun_geolm_2023, gengchen_opportunities_2024, yibo_georeasoner_2024}.
+
+\section{Background}
+Locating a place solely on the basis of a historical text can be as uncertain as it is controversial. Locations of many events, such as, for example the burial of Attila the Hun, remain elusive due to sparse historical description. Heinrich Schliemann’s (and Frank Calvert’s) discovery of Homeric Troy irked the academic community because it defied the long-standing consensus that the \textit{Iliad} was unreliable as a historical source \cite{schliemann_ilios_1881, traill_schliemanns_1985}. Such situations are exceedingly rare, however; as the gap in time, space, and agenda between the historical author, the modern audience, and the events described increase the ambiguity of well-described places.  While multiple sources can sometimes be cross-referenced to narrow down specific locations, more often we are left with several alternative locations all based on imprecise clues. In such cases, especially where testing by archaeological excavation is impossible, creative methods must step in – including the spatial testing of historical claims using exclusionary and falsifiable models.
+
+The medieval city of \textit{Kran} offers one such example. Identified by modern scholars as the city of \textit{Aqranus} in the writing of al-Idrisi, \textit{Kran} is mentioned by multiple Byzantine writers, including Niketas Choniates \cite{nicetas_choniates_historia_1835},\footnote{\textit{Nic. Chon. Hist., 3, 3.}} George Pachymeres \cite{georgius_pachymeres_relationes_1984},\footnote{\textit{Geo. Pach. Hist., 3, 26.}} Manuel Philes \cite{manuel_philes_poems_1980-1},\footnote{\textit{Man. Phil. Poem., 234–239.}} and in the charter of Bulgarian tsar Ivan Asen II \cite{miklosich_monumenta_1858}. \textit{Kran} was a regional administrative centre and briefly a capital of a short-lived break-away polity in the centre of modern-day Bulgaria. While many scholars place it in the ruins above the modern town of Kran in the Kazanlak Valley \cite{skorpil_nyakoi_1885, avramov_voinata_1929, ovcharov_krepostta_1978, popov_kreposti_1982}, alternative hypotheses abound. Minkova and Ivanov \cite{ivanov_za_2013} locate it in Kazanlak itself; Yankov \cite{yankov_mestonakhozhdenieto_1999} points toward Slavyanin or the Golyam Visok Peak; others suggest the fortress near Tazha \cite{jirecek_patuvania_1974, nikov_iz_1938} (Fig. \ref{fig:buffers}). Most of these claims rest heavily on a single source: the 12th-century geographer al-Idrisi.
+
+Al-Idrisi, the court cartographer to King Roger II of Palermo, is best known for the \textit{Tabula Rogeriana} (AD 1154), one of the most sophisticated medieval geographic compendiums. In this book, also translated as \textit{The Book of Pleasant Journeys into Faraway Lands},\footnote{\textit{Nuzhat al-mushtāq f i’khtirāq al-āfāq.}} he detailed the geography of the known world, systematically recording itineraries and distances between cities. Among these entries he described the city of \textit{Aqranus} – widely assumed by modern scholars to be \textit{Kran} – as a \textit{"magnificent city located on a high mountain"} \cite{idrisi_bulgaria_1960}.\footnote{\textit{Idr., 6, 4.}} Crucially, he provided travel distances from \textit{Aqranus} to three neighboring towns, all of which are known and still exist today. Despite broad scholarly agreement on the identity of \textit{Aqranus} as \textit{Kran}, its precise location remains unknown. The ambiguity in both the textual descriptions and spatial clues leaves one enduring question: where exactly was \textit{Kran}?
+
+\section{From Text to Geospatial Models}
+This paper translates al-Idrisi’s spatial claims into three distinct geospatial distance models. First, we generate simple Euclidean buffers based on al-Idrisi's marching distances. Second, we simulate pedestrian movement across actual terrain and convert the reported distances and travel times into walking-time isochrones. Third, we perform an anisotropic road network analysis, modeling pedestrian travel along a reconstructed medieval road network accounting for terrain difficulty and direction of movement. Applying these to reach \textit{Aqranus} from the three neighboring towns, as described in the text, we triangulate the probable location of the lost town and test it against modern scholarly propositions. Acknowledging the limitations of relying on a single historical source, we further complement this investigation of al-Idrisi with least-cost path modeling based on two additional sources: George Akropolites \cite{george_akropolites_georgii_1903}\footnote{\textit{Akrop. 11.}} and Niketas Choniates \cite{nicetas_choniates_historia_1835},\footnote{\textit{ Nic. Chon. Hist., 3}} who reference \textit{Kran} in the context of a failed Byzantine military campaign. Incorporating these independent lines of evidence strengthens our analysis and mitigates the risk of source bias.
+
+\subsection{Translating al-Idrisi into GIS}
+Al-Idrisi measures distances using three main units: miles (sg. \textit{mīl}, pl. \textit{mīlan} or \textit{amyal}), days of walk (sg. \textit{yawm}, pl. \textit{ayyām}), and marching days (sg. \textit{marḥalah}, pl. \textit{marāḥil}). Typically, he expresses short distances in miles and longer ones in days, although he is not entirely consistent. The exact value of these units is debated. It is generally accepted that one mile equals approximately 1,555 meters. A day of walk is usually translated as a distance, stretching from a moderate distance of 23--25 miles to intensive travel of 30–36 miles. A marching day originates from the travel of caravans. It is counted not as miles, but rather as time, specifically seven to eight hours of travel.  Some translators of al-Idrisi’s work do not differentiate between \textit{marḥalah} and \textit{yawm}, rendering both as distances equivalent to the "day of walk" \cite{nedkov_vavedenie_1960, maqbul_cartography_1992}. We follow Nedkov’s \cite{nedkov_vavedenie_1960} translation of \textit{marḥalah} into seven hours of travel because it allows us to use time in our spatial models.  
+
+According to al-Idrisi, \textit{Aqranus} was six \textit{marāḥil} from \textit{Istibuni} (modern-day Ihtiman, Western Bulgaria), 40 \textit{mīlan} from \textit{Farui} (modern-day Stara Zagora, Central Bulgaria), and four \textit{marāḥil} from \textit{Lufisa} (modern-day Lovech, Northern Bulgaria) \cite{idrisi_bulgaria_1960}.\footnote{\textit{Idr., 6, 4.}} Assuming these distances are accurate, \textit{Aqranus} should lie near the intersection of these travel ranges \cite{yankov_mestonakhozhdenieto_1999}.
+
+We translate the historical references into three spatial distance models. This layered approach allows us to observe which of the three models of al-Idrisi’s distances comes the closest to the scholarly consensus on the potential location of \textit{Kran}.
+
+\subsubsection{Buffers}
+Buffers are the simplest form of proximity analysis, defining an abstract geometrical area within a specified maximum distance of a given point or a line \cite{conolly_geographical_2006}. It is a well-established technique in GIS-based archaeological and historical site catchment studies \cite{vita-finzi_prehistoric_1970, gaffney_gis_1991}. It has also been used to locate sites reported in historical texts, such as in Tzvetkova’s \cite{tzvetkova_gis_2018} study of the \textit{Tearos} River spring – an ancient waypoint for Darius’ army during his 512 BC campaign into Europe as described by Herodotus. Due to the scarcity of historical reference points for the spring, Tzvetkova uses the intersection of two buffers only, limiting the spatial precision of her results. In contrast, our analysis is based on three control points from al-Idrisi’s text, enabling a more constrained triangulation of \textit{Aqranus}’ potential location.
+
+In our analysis, we adopt Nedkov's \cite{nedkov_vavedenie_1960} interpretation for one mile of al-Idrisi as corresponding to approximately 1,555 meters and one \textit{marḥalah} covering about seven to eight hours of travel. To model movement, we use Murrieta-Flores’ \cite{murrieta-flores_travelling_2010} average speed of 4.9 km per hour for 20–60 year old men carrying nothing on his back. Applying these conversions, we derive the following modern equivalents:
+
+\begin{itemize}
+
+\item 6 \textit{marāḥil} from \textit{Istibuni} (Ihtiman) = 6  ×  7 hours × 4.9 km/h $\approx$ 205.8 km
+
+\item 4 \textit{marāḥil} from \textit{Lufisa} (Lovech) = 4 × 7 hours × 4.9 km/h $\approx$ 137.2 km
+
+\item 40 \textit{mīlan} from \textit{Farui} (Stara Zagora) = 40 miles × 1,555 km per mile $\approx$ 62.2 km    
+
+\end{itemize}
+
+
+
+\noindent
+\textbf{}
+Using these cumulative distances, we generate simple Euclidean buffer zones around each of the three cities mentioned by al-Idrisi. The area where these buffers intersect marks one possible location of \textit{Kran}.
+
+This approach, however, assumes straight-line ("as-the-crow-flies") travel across uniform terrain – a major simplification of the topographic reality and historical mobility which likely exaggerates the area accessible from the three starting points. As such, buffer-based triangulation serves as a useful baseline but must be supplemented with models that better reflect real-world movement and travelling conditions.
+
+\subsubsection{Walking Isochrones}
+In order to account for the friction of traversing the mountainous terrain in central Bulgaria, we calculate the cost of travel between the neighboring towns next \cite{conolly_geographical_2006, verhagen_modelling_2019}. We use the \texttt{movecost} package \cite{alberti_movecost_2023} and a terrain model to generate walking isochrones around each of the three cities. Walking isochrones encompass all locations that can be reached within a specific amount of walking time, accounting for factors like slope, barriers and direction to estimate the realistic extent of movement over a landscape. The cost is anisotropic, which means that walking from origin to destination and back along the same path is not reciprocal, but incurs different costs depending on terrain. The effect of slope on walking is estimated by the Tobler’s \cite{tobler_three_1993} hiking function, a popular formula in archaeological studies. This function adjusts for slope, assuming faster speeds downhill and slower speeds uphill due to higher energetic costs, and is well suited for pre-modern movement modeling \cite{verhagen_modelling_2019, herzog_potential_2013, herzog_theory_2013}.
+
+This analysis requires a digital model of elevation (DEM) to account for topography. We use the 25 m resolution EU-DEM v1.1 dataset from the European Environmental Agency \cite{european_environment_agency_copernicus_2022}. Since \texttt{movecost} calculates costs in time, we first convert al-Idrisi’s reported distances into estimated walking times. Al-Idrisi refers to ‘march’, which we interpret as seven hours of walk at the speed of 4.9 km per hour \cite{murrieta-flores_travelling_2010}. The following inputs represent the maximum time spent in marching to \textit{Aqranus} from each of the three cities:
+
+\begin{itemize}
+
+\item 6 \textit{marāḥil} from \textit{Istibuni} (Ihtiman) = 6  ×  7 h $\approx$ 42 walking hours
+
+\item 4 \textit{marāḥil} from \textit{Lufisa} (Lovech) = 4 × 7 h $\approx$ 28 walking hours
+
+\item 40 \textit{mīlan} from \textit{Farui} (Stara Zagora) = 62.2 km ÷  4.9 km/h $\approx$ 12.6 walking hours    
+
+\end{itemize}
+
+
+
+\noindent
+\textbf{}
+
+These values are used to generate walking-time isochrones around each reference city, with the boundary representing maximum reachable distance. 
+
+While this method provides a more realistic travel surface than terrain-agnostic buffers, it still assumes that people traveled freely across the landscape. In reality, natural barriers, social and cognitive factors, and existing roads heavily influenced route selection \cite{murrieta-flores_travelling_2010}. To address this, we incorporate road network analysis in the following section.
+
+\subsubsection{Anisotropic Road Network Distance}
+To move beyond slope as the major determinant of movement \cite{verhagen_modelling_2019}, we incorporated a network-based cost-distance analysis. With this method we model people moving along an actual transportation network rather than along straight lines between origin and destination. This approach more accurately reflects historical reality and cognitive tendencies, such as favoring existing paths and minimizing physical effort \cite{llobera_zigzagging_2007}. To implement this, we combined a reconstructed historical road network with slope-derived travel costs (derived from DEM) and applied Tobler’s \cite{tobler_three_1993} hiking algorithm to estimate walking time along each segment.
+
+Because no digitized medieval road data exist for the region, we vectorized the Eastern Balkan’s road network based on Wendel’s \cite{wendel_verkehrsanbindung_2005} historical reconstruction. We enriched this network with slope values extracted from the 25 m resolution EU-DEM \cite{european_environment_agency_copernicus_2022} and applied Tobler’s formula to estimate traversal time for each edge. Using this enhanced cost network and the \texttt{sfnetworks} package \cite{van_der_meert_sfnetworks_2024} we then calculated how far one could travel from each of the three origin points within the timeframes derived from al-Idrisi’s description:
+
+\begin{itemize}
+
+\item 6 \textit{marāḥil} from \textit{Istibuni} (Ihtiman) = 6  ×  7 h $\approx$ 42 walking hours
+
+\item 4 \textit{marāḥil} from \textit{Lufisa} (Lovech) = 4 × 7 h $\approx$ 28 walking hours
+
+\item 40 \textit{mīlan} from \textit{Farui} (Stara Zagora) = 62.2 km ÷  4.9 km/h $\approx$ 12.6 walking hours    
+
+\end{itemize}
+
+
+
+\noindent
+\textbf{}
+
+The resulting three network extents should represent the best (most historically accurate) approximations of al-Idrisi’s reported timeframes.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{figures/Figure 1.png}
+  \caption{The simplest model: al-Idrisi’s distances from \textit{Lufisa}, \textit{Istibuni} and \textit{Farui} represented as buffers.}
+  \label{fig:buffers}
+\end{figure}
+
+\subsection{Other Historians and the Medieval \textit{Kran}}
+One hardly needs to be a historian to recognize the risks of relying on a single source, which can introduce significant bias. Fortunately, in this case, we are not limited to al-Idrisi alone. We incorporate additional historical sources to evaluate and cross-check the results produced by the al-Idrisi-informed spatial models. Specifically, we draw on the accounts of the historians Akropolites and Choniates, both of whom wrote within a century of al-Idrisi. By identifying their references to \textit{Kran} with \textit{Aqranus} and translating them into spatial terms, we apply a simple yet powerful analytical method – least-cost path (LCP) analysis – to further refine our understanding of where \textit{Kran}, and thus \textit{Aqranus}, may have been located.
+
+Both George Akropolites \cite{george_akropolites_georgii_1903}\footnote{ [Akrop. 11]: \textit{"… and Asen, along with the army under his command, entered the small town called \textbf{Strinabos}."}} and Niketas Choniates \cite{nicetas_choniates_historia_1835}\footnote{[Nic. Chon. Hist., 3]: \textit{"…Therefore, he did not intend to retreat by the same route through which he had entered, but rather to take a \textbf{shorter} one by cutting through the mountains and, making his way down, reach \textbf{Beroe} through the passes leading there… …And the emperor, through the place called \textbf{Krenou, headed towards Beroe}…"}} recount the near escape of Emperor Isaac II Angelos from Bulgaria in AD 1190, offering spatial clues to the location of \textit{Aqranus}. Akropolites notes that Emperor Isaac was laying siege to tsar Asen at \textit{Strinabos}, north of the Stara Planina mountains, before he was forced to retreat south. Choniates adds that the emperor passed through \textit{Kran} during his flight, explicitly stating that the emperor took the shortest route out of Bulgaria and headed directly for the Byzantine city of \textit{Beroe}. 
+
+Most scholars identify \textit{Strinabos} with \textit{Trinobos}, the modern day city of Veliko Tarnovo, former capital of medieval Bulgaria from the late 11th to the 14th century \cite{avramov_voinata_1929}. An alternative hypothesis places \textit{Strinabos} in the village of Tsareva Livada,\footnote{The name can be translated as Tsar’s (King’s) Meadows which is one of the arguments of Avramov to place \textit{Strinabos} at this place \cite{avramov_voinata_1929}.} approximately 22 km southwest of Veliko Tarnovo in the Gabrovo region \cite{avramov_voinata_1929}. Byzantine \textit{Beroe} is al-Idrisi’s \textit{Farui}, known today as Stara Zagora.
+
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{figures/Figure 2.png}
+  \caption{The cost-model: al-Idrisi’s distances from \textit{Lufisa}, \textit{Istibuni} and \textit{Farui} represented as isochrones bounding the territory walkable within specified time from each reference city.}
+  \label{fig:isochrones}
+\end{figure}
+
+\subsubsection{Least-Cost Path versus the Shortest Historical Road to Kran}
+Following Niketas Choniates’ account that \textit{Kran} lay on the shortest route between \textit{Strinabos} and \textit{Beroe}, we calculated two types of LCP between the origin and destination, testing two proposed locations for \textit{Strinabos} – Veliko Tarnovo and Tsareva Livada. The first LCP used a terrain-based model, applying Tobler’s \cite{tobler_three_1993} hiking function over a digital elevation model to simulate the most efficient walking route across the landscape. As an alternative, we constructed a network-based LCP using Wendel’s \cite{wendel_verkehrsanbindung_2005} digitized reconstruction of the medieval road system, implemented through ArcGIS’s Road Network Analysis tool. This allowed us to model the optimal path a traveler might have taken along known historic routes rather than across open terrain.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{figures/Figure 3.png}
+  \caption{Al-Idrisi’s distances from \textit{Lufisa} (orange), \textit{Istibuni} (green) and \textit{Farui} (red) represented as road network extent walkable from each reference city within specified time. The numbered \textit{Aqranus} candidates represent 1) Tazha, 2) Golyam Visok, 3) Slavyanin, 4) Kran, 5) Kazanlak and the new one: 6) Maglizh}
+  \label{fig:roadnetwork}
+\end{figure}
+
+\section{Results}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{figures/Figure 4.png}
+  \caption{The close-up of Kazanlak Valley and the intersection of the anisotropic road network from the three reference cities.}
+  \label{fig:roadnetworkZOOM}
+\end{figure}
+
+If al-Idrisi’s statements are accurate, \textit{Aqranus} should lie at the intersection of at least one of the three distance models. The simplest method of circular buffers offers us the peak at the maximizing model. Buffer distances ignore terrain and slope and their boundary thereby represents the maximum potential distance reached by a troupe of travelers.  Figure \ref{fig:buffers} shows the three buffers originating from the reference cities mentioned in al-Idrisi vis-a-vis the five currently proposed candidates for \textit{Kran}. The buffer intersection lies far to the east, so much so that it misses the Kazanlak Valley and excludes all of the \textit{Kran} candidates.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{figures/Figure 5.png}
+  \caption{The results from the network-based and terrain-based least-cost path (LCP) analysis combined with the road network analysis as a comparison.}
+  \label{fig:LCP}
+\end{figure}
+
+Figure \ref{fig:isochrones} shows the temporal model, which improves upon the buffers by acknowledging terrain and accounting for the cost of crossing it. The isochrone boundaries show how far a traveler might get walking in a direct line from the point of origin for a set amount of time within the mountainous region. The reach of the isochrones is noticeably shorter than of the buffers and the area of overlap thus shifts westward, approaching the Kazanlak Valley. 
+
+The model depicted in Figures \ref{fig:roadnetwork} and \ref{fig:roadnetworkZOOM} shows spatial realism by incorporating terrain and route-based movement. The reconstructed medieval road network is shown in light grey (Fig. \ref{fig:roadnetwork}). The colored segments indicate the extent reachable from each reference city within the time indicated by al-Idrisi. In this final model, the roads leading from each of the three cities do overlap and intersect within the Kazanlak Valley. The overlap whose extent can be traced by following the tri-color lines in the close-up Figure \ref{fig:roadnetworkZOOM} reaches from the Dabovo Pass in the east to Slavyanin in the west, encompassing three of the proposed candidates: Kazanlak, Slavyanin, and Kran.
+
+The LCP analyses intended as validating evidence on the basis of additional Byzantine sources for \textit{Kran} offer little help with the existing candidates, but instead force us to open up the pool for additional alternatives. Specifically, the lines indicated in blue in Figure \ref{fig:LCP} represent routes calculated from the slope-based LCP while the yellow lines indicate those calculated from the medieval-network-based LCP. Regardless of the starting point at Veliko Tarnovo or Tsareva Livada, both routes pass through the eastern part of the Kazanlak Valley, taking the Dabovo Pass across the Stara Planina Mountain. None of these computer-generated paths comes near any of the currently proposed candidate sites for \textit{Kran}.
+
+
+\section{Discussion}
+The results demonstrate the persistent difficulty of geocoding historical places even where numerous historical sources are available and where spatial clues can be operationalized using increasingly realistic models. Computational reconstructions, no matter how advanced, cannot fully compensate for missing contextual information, historical inaccuracy, and interpretive limitations. Other factors may be at play, such as the low resolution of the terrain model used, which smooths the landscape and extends the distances reached. Similarly, long-distance journeys may need to be counted with slower average speed (potentially affecting \textit{Lufisa} and \textit{Istibuni}), and the calculations might need to respect the limitations of caravans and porters to specific slopes, all of which remain hard to quantify. 
+
+In our case, we can dismiss the two simplest models that locate \textit{Aqranus} farther east than anticipated by the prevailing historical and archaeological interpretations.  We instead focus on the most spatially realistic model and rank its three finalists on the basis of linguistic clues. The fortress above the town of Kran comes closest to being \textit{‘on a magnificent mountain’}, being perched up 100 m high on a steep slope of the Stara Planina offering a commanding view of the Kazanlak valley below. In contrast, the city of Kazanlak lies on the valley floor. Although the valley is encircled by two mountain ranges, interpreting al-Idrisi’s phrase as referring to Kazanlak would require a considerable metonymic stretch. The Slavyanin site is located on a southern slope of the Sredna Gora mountain. Although its location is less magnificent than that of Kran, it nonetheless fits the description, making Slavyanin a plausible but less probable candidate.
+
+\subsection{A Data-Driven Reconsideration: Maglizh and the Dabovo Pass
+}
+The LCP results complicate the ranking of winners from the road network model. While least-cost path analysis is often criticized as being theoretically optimal but practically flawed, we cannot dismiss the patterns it reveals outright. Both terrain-based and road network LCPs from Stara Zagora toward Veliko Tarnovo and Tsareva Livada converge at the Dabovo Pass. Although these algorithmic paths do not intersect with any of the currently proposed candidate sites, they highlight an area with considerable historical and topographic plausibility.
+
+
+The Dabovo Pass is flanked by steep mountain shields and lies near Maglizh, a site already known for its medieval remains. 
+The Archaeological Map of Bulgaria\footnote{The Bulgarian national archaeological gazetteer of sites, AKB (standing for \textit{"\textbf{A}rheologicheska \textbf{k}arta na \textbf{B}ulgaria"}), contains a complete record of all archaeological findings in Bulgaria since the 1970s to 2025.} \cite{kecheva_archaelogical_2019, GIS_2025} lists multiple 12th-century fortresses in this area, many of them perched high in the mountains, matching al-Idrisi’s description. Yet this region has been largely excluded from scholarly consideration, primarily because it is traditionally associated with another medieval toponym: \textit{Moglidzion}, presumed to be Maglizh \cite{popov_kreposti_1982}.
+
+The LCP’s eastern routing, combined with the archaeological presence and topographic match, suggests that Maglizh and the Dabovo Pass warrant renewed scrutiny. Rather than disqualify the area due to historical name assumptions, we argue that it should be revisited as a possible location for al-Idrisi’s \textit{Aqranus}.
+
+
+\subsection{Refining the Models: Distance, Error, and Interpretation
+}
+
+The second key consideration in assessing our models lies in minimizing error. Among al-Idrisi’s three spatial references, the distance to \textit{Farui} -- expressed as 40 \textit{mīlan}, or 62.2 km -- is the shortest and the only one given in miles. Following Occam’s razor, it is likely the most reliable. Distances from \textit{Istibuni} and \textit{Lufisa}, reported in marching days (\textit{marāḥil}), are long-distance and more prone to variation due to terrain, weather, and the unpredictable pace of medieval travel.
+
+Using the \textit{Farui} distance as a baseline, we can compare how closely each candidate site aligns with this reference. Maglizh lies just 24 km from Stara Zagora via the road network, and Dabovo Pass about 30 km -- both considerably shorter than al-Idrisi’s stated distance. The fortress of Kran, situated above the modern town, lies approximately 42 km away. It is still short, but comes closer to al-Idrisi’s 62.2 km than either of the previous candidates. Kran fortress also sits directly at the end of a branch of the reconstructed \textit{Farui} road network (Figure 4).
+
+Those concerned about the distance mismatch among the finalists should consider two additional caveats. Calculated distances are highly sensitive to model inputs, both in terms of landscape and textual interpretation. First, the resolution of the digital elevation model (DEM) plays a significant role. Our initial simulations used a 25 m DEM; when we repeated the anisotropic road network analysis with a coarser 30 m DEM, the modeled paths extended noticeably deeper into the mountain terrain.\footnote{Both DEMs are provided with the associated scripts in GitHub.}  This demonstrates how lower-resolution terrain data -- by smoothing steep gradients -- can exaggerate travel reach. It also suggests that al-Idrisi’s 40-mile journey from \textit{Farui} likely covered less actual distance across rugged terrain than our models imply. This increases the probability of candidates like Kran or Dabovo Pass, even if they appear "short" of the modeled target in strictly quantitative terms.
+
+Second, we must account for uncertainty in al-Idrisi’s distance metrics themselves. He alternates between miles (sg. \textit{mīl}, pl. \textit{mīlan} or \textit{amyal}), days (sg. \textit{yawm}, pl. \textit{ayyām}) and marching days (sg. \textit{marḥalah}, pl. \textit{marāḥil}), using them inconsistently and with context-dependent meaning. For instance, the distance to \textit{Farui}  is given in \textit{mīlan} while the distances to \textit{Istibuni} and \textit{Lufisa} are expressed in \textit{marāḥil}.  These may represent a seven to eight hour walk on flat terrain, but only five to six hours walk in mountainous regions like the Stara Planina. Following Nedkov \cite{nedkov_vavedenie_1960} we interpret \textit{marḥalah} as a seven hour march and a mile as 1,555 meters. These are conservative estimates appropriate for Bulgaria’s topography and our DEM resolution. Maqbul \cite{maqbul_cartography_1992}, however, suggests longer measures: 25–30 miles per \textit{marḥalah} and 1,882 meters per mile. While we favor Nedkov’s context-sensitive approach here, Maqbul’s longer distances warrant future testing, particularly in high-resolution or probabilistic models.
+
+All these issues echo longstanding critiques of deterministic spatial modeling. Terrain-based and road network models remain vulnerable to overgeneralization. As Verhagen et al.  \cite{verhagen_road_2013, verhagen_modelling_2019} argue, probabilistic or agent-based approaches offer more realistic alternatives, incorporating uncertainty, social decision-making, and deviation from topographic logic. 
+LCPs, while useful, often propose theoretically optimal paths that diverge from historically attested routes. Herzog \cite{herzog_least-cost_2014, herzog_dispersal_2016} emphasizes the need to integrate cultural and infrastructural factors into spatial inference. Similarly, Seifried and Gardner’s \cite{seifried_reconstructing_2019} show how travel accounts in historical Mani frequently deviate from algorithmically computed paths -- even when both rely on the same network of mountain routes.
+
+Our findings support these critiques: both Kran and Slavyanin, the finalists of network analysis, are short of the target \textit{Farui} distance. The LCPs, regardless of starting point, converging on the Dabovo Pass, an alternative location that modern scholarship has largely overlooked. 
+
+In the end, our analysis has perhaps raised more questions than answers. Al-Idrisi’s work remains invaluable for framing historical geography, but the precision of his referential distances falters at the scale of individual site identification.  Whether it is al-Idrisi’s measures that are too fuzzy or our interpretations and models that are too coarse, the exercise has underscored the complexity of historical spatial inference and the need for probabilistic modeling. Even powerful tools are not immune to the ambiguities of the past.
+
+
+\section{Conclusion}
+
+This study set out to geolocate al-Idrisi’s \textit{Aqranus}. We tested five potential candidates by translating al-Idrisi’s distance references into three progressively complex spatial models: buffers, isochrones, and road networks. We also incorporated independent evidence from Byzantine historians Akropolites and Choniates to assess how their descriptions align with existing candidates for \textit{Aqranus/Kran}.
+
+Our findings underscore the persistent difficulty of geocoding historical toponyms even when multiple spatial clues and textual sources are available. Although more realistic models (especially those incorporating terrain and road networks) bring us closer to the Kazanlak Valley and include established candidates like Kran and Slavyanin, the least-cost path results based on independent textual sources challenge these assumptions and highlight new contenders like Dabovo Pass and Maglizh. These results, rather than resolving the problem, expand the range of plausible locations and call into question the reliability of deterministic spatial models.
+
+Ultimately, this case study demonstrates the importance of probabilistic reasoning in historical geography. Rather than dismissing sources like al-Idrisi as too vague, we should develop tools – especially in geoAI and geoparsing – that embrace historical uncertainty. Spatial models can and should complement linguistic ones, anchoring historical toponyms in both text and terrain. The goal is not to find a single "correct" location, but to explore a range of possible landscapes that reflect both the ambiguity of the past and the complexity of interpreting it.
+
+\section*{Acknowledgements}
+
+This paper is based on the presentation given by Angel Bogdanov Grigorov in CAA 2025 in Athens called "Mapping the Lost City: Using Historical Texts and GIS to Rediscover \textit{Aqranus}"
+
+% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
+\printbibliography
+% You can include an appendix using the following command
+\appendix
+
+\section{Online Resources} \label{appdx:first}
+
+Code for this paper is available via
+\href{https://github.com/Angelaric/Aqranus}{GitHub}.
+
+\end{document}
