@@ -50,8 +50,8 @@
 % be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
-\pagestart{1275}
-\pageend{1286}
+\pagestart{1317}
+\pageend{1328}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
 \doi{10.63744/sLAHYnQdA8fu}  
@@ -66,21 +66,14 @@
 \maketitle
 
 \begin{abstract}
-% background 
 Training of Latin language models is rarely done with consideration of important historical watersheds.
-% purpose 
 Here we demonstrate how this leads to a poor performance when specific socio-temporal contextualisation is sought, something common to humanities research. We perform an evaluation that compares the historical adequacy of Latin language models, i.e. their ability to generate tokens, representative for a historical period.
-% methodology
 We adopt a previously established method and refine it to overcome limitations due to Latin being an under-resourced language and one with intense tradition of intertextuality. To do this we extract word lists and concordances from the LatinISE corpus and use them to compare seven masked language models trained for Latin. We further perform statistical analysis of the results in order to identify the best and worst performing models in each of the historical contexts of interest.
-% findings 
 We show that BERT medieval multilingual best captures the Classical linguistic context. Four models are indistinguishably good in our evaluation of the the Neo-Latin linguistic context.
-% impact 
-% relevance 
 These findings have broad implications for wider historical language research and beyond. Among these, we emphasise the need to train historical language models with due attention on consistent historical periods and we discuss the possible usefulness of noisy predictions.
 Historical research of language models provides a neat demonstration of how model biases could impact their performance in specific domains.
 \end{abstract}
 
-%\input{010-intro}
 \section{Introduction}
 
 The relevance of computational linguistics and language models to the digital humanities is continuously growing. BERT-like masked language models (MLMs) are a particularly important class of interest.
@@ -93,7 +86,6 @@ In this contribution we study the \emph{historical adequacy} of different MLMs f
 We do this by applying a technique that was previously used to measure such \emph{adequacy} of models to Early Modern English, by capturing the \emph{historical bias} of models and interpreting it as a representation of the socio-temporal context of the model training corpus~\cite{cuscito_shakespeare_2025}.
 Key here is an important assumption in computational humanities research, that often remains implicit: this socio-temporal context should be close to the one being studied using these models. Due to the nature of MLMs and the abundance of lexical resources in computational linguistics, this approach is inherently lexical, but evidence shows that it is also able to capture particularities in orthography, grammar, semantics and culture~\cite{cuscito_how_2024,cuscito_shakespeare_2025}. 
 
-%\input{020-background}
 \section{Background}
 
 To contextualise our work, this section provides an overview of available and relevant corpora and models within our knowledge.
@@ -102,7 +94,6 @@ To contextualise our work, this section provides an overview of available and re
 
 We present a number of corpora that are relevant to the experiments conducted here due to their impact in model training and broader computational linguistics. On a general note, a huge challenge in the context of historical research is the scarcity of corpora, due to a number of factors, including loss of manuscripts and limited digitisation. This, together with the inherent high intertextuality, leads to a noteworthy probability that the same text emerges across multiple corpora.
 
-%\input{027-tab-corpora}
 \begin{table}[ht]
   \centering 
   \begin{tabular}{llrrr}
@@ -330,13 +321,12 @@ For statistical significance testing, we fist perform repeated measures ANOVA on
 % \quad 
  % \includegraphics[width=.5\textwidth,trim={20 0 0 0},clip]{079-fig-significance-new-heatmap.pdf}
 % 
-\end{adjustbox}
+% \end{adjustbox}
   \caption{The pairwise statistical  analysis results, probabilities of t-tests and Cohen's \emph{d}.}
   \label{fig:significance}
 \end{figure*}
 
 An overview of the pairwise t-tests on \emph{historical adequacy} ($\delta$) scores could be seen in Fig~\ref{fig:significance}. In it only pairwise significant differences are shown, with reported direction of significance (color), t-test probability and effect size (Cohen's d).
-%\todo Note that the sign of Cohen's d does not always correspond with the direction of significance. This is due to the skew of the results per model (i.e. the upper tail in $\beta$ is larger than the lower one), but has no impact on the discussion below.
 The heatmap for \emph{Classica} sentences shows that \emph{BERT medieval multilingual} consistently outperforms other models, followed by \emph{RoBERTa medieval} and \emph{BERT adapter pfeiffer}. Then with less consistent significance, yet in this order, follow \emph{Cicero Similis} and \emph{LaBerta}, even if the former does not perform significantly better than the model that ranks last, i.e. \emph{Roberta Latin cased3}.
 The result for \emph{Nova} sentences shows that \emph{BERT adapter pfeiffer} is worse than the other models, followed by \emph{BERT medieval multilingual}. This pair is the only one that has statistical significance that is above the 1\textperthousand~confidence threshold, yet it is still below the 5\% threshold which is commonly accepted in the social sciences and humanities.
 As for the other models, they are statistically indistinguishable in the \emph{Nova} context.
