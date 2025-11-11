@@ -98,6 +98,27 @@ class LaTeXMetadataExtractor:
 
         return None, start_pos
 
+    def is_line_commented(self, text: str, match_start: int) -> bool:
+        """
+        Check if a regex match is on a commented-out line.
+
+        A line is considered commented if it starts with optional whitespace
+        followed by a % character before the match position.
+
+        Args:
+            text: The full text being searched
+            match_start: The start position of the match to check
+
+        Returns:
+            True if the match is on a commented line, False otherwise
+        """
+        # Find the start of the line containing this match
+        line_start = text.rfind('\n', 0, match_start) + 1
+        # Get the text from line start to the match
+        prefix = text[line_start:match_start]
+        # If the prefix contains only whitespace and then %, it's commented
+        return bool(re.match(r'^\s*%', prefix))
+
     def parse_key_value_pairs(self, content: str) -> Dict[str, Any]:
         """
         Parse key-value pairs from optional parameter content.
@@ -152,7 +173,7 @@ class LaTeXMetadataExtractor:
         Extract author macros with their complex structure.
 
         Parses \\author commands including optional affiliation numbers
-        and metadata like ORCID iDs and email addresses.
+        and metadata like ORCID iDs and email addresses. Excludes commented-out lines.
 
         Args:
             text: LaTeX source text containing \\author commands
@@ -173,6 +194,10 @@ class LaTeXMetadataExtractor:
         matches = list(re.finditer(author_pattern, text, re.DOTALL))
 
         for match in matches:
+            # Skip if this match is on a commented line
+            if self.is_line_commented(text, match.start()):
+                continue
+
             author_data = {
                 "name": match.group(2).strip(),
                 "affiliation_numbers": [],
@@ -219,7 +244,6 @@ class LaTeXMetadataExtractor:
         affiliations = []
 
         # Pattern for \affiliation{number}{text}
-        # We need to check that it's not commented out
         affiliation_pattern = (
             r"\\affiliation\s*\{([^}]*)\}\s*\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}"
         )
@@ -227,16 +251,13 @@ class LaTeXMetadataExtractor:
         matches = re.finditer(affiliation_pattern, text, re.DOTALL)
 
         for match in matches:
-            # Check if this match is on a commented line
-            # Find the start of the line containing this match
-            line_start = text.rfind('\n', 0, match.start()) + 1
-            # Get the text from line start to the match
-            prefix = text[line_start:match.start()]
-            # If the prefix contains only whitespace and then %, it's commented
-            if not re.match(r'^\s*%', prefix):
-                affiliations.append(
-                    {"number": match.group(1).strip(), "text": match.group(2).strip()}
-                )
+            # Skip if this match is on a commented line
+            if self.is_line_commented(text, match.start()):
+                continue
+
+            affiliations.append(
+                {"number": match.group(1).strip(), "text": match.group(2).strip()}
+            )
 
         return affiliations
 
@@ -244,7 +265,7 @@ class LaTeXMetadataExtractor:
         self, text: str, macro_names: Optional[List[str]] = None
     ) -> Dict[str, Any]:
         """
-        Extract simple macros like \\title{content}.
+        Extract simple macros like \\title{content}. Excludes commented-out lines.
 
         Args:
             text: LaTeX source text
@@ -270,13 +291,20 @@ class LaTeXMetadataExtractor:
 
         for macro_name in macro_names:
             pattern = f"\\\\{re.escape(macro_name)}\\s*\\{{([^{{}}]*(?:\\{{[^{{}}]*\\}}[^{{}}]*)*)}}"
-            matches = re.findall(pattern, text, re.DOTALL)
+            matches = re.finditer(pattern, text, re.DOTALL)
 
-            if matches:
-                if len(matches) == 1:
-                    results[macro_name] = matches[0].strip()
+            found_values = []
+            for match in matches:
+                # Skip if this match is on a commented line
+                if self.is_line_commented(text, match.start()):
+                    continue
+                found_values.append(match.group(1).strip())
+
+            if found_values:
+                if len(found_values) == 1:
+                    results[macro_name] = found_values[0]
                 else:
-                    results[macro_name] = [match.strip() for match in matches]
+                    results[macro_name] = found_values
 
         return results
 
