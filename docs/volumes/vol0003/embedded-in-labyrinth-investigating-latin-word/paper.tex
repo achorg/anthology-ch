@@ -1,65 +1,39 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-%\documentclass{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{multirow}
-% ADD your own packages using \usepackage{}
 
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{Embedded in the Labyrinth: Investigating Latin Word Senses through Transformer-Based Contextual Embeddings and Attention}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1]{Vojtěch Kaše}[
-  orcid=0000-0002-6601-1605
+orcid=0000-0002-6601-1605
 ]
 
 \author[2]{Sarah Lang}[
-  orcid=0000-0002-4618-9481
+orcid=0000-0002-4618-9481
 ]
 
-% While we encourage including ORCID-IDs for all authors, you can
-% include authors that do not have one by definining an empty ID.
 \author[1]{Petr Pavlas}[
-  orcid=0000-0001-9848-4995
+orcid=0000-0001-9848-4995
 ]
 
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 \affiliation{1}{Institute of Philosophy, Czech Academy of Sciences, Prague, Czech Republic}
 \affiliation{2}{Max Planck Institute for the History of Science, Berlin, Germany}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{labyrinth, keyword-in-context, computational Latin philology, contextual word embeddings, automatic word sense disambiguation, word sense induction, semantic change detection, metaphor detection}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
 \pagestart{481}
 \pageend{495}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/FuaAvdPMdtwW}  
+\doi{10.63744/FuaAvdPMdtwW}
 \paperorder{29}
 
 \addbibresource{bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
 
 \maketitle
@@ -92,7 +66,7 @@ These methodological discussions form the backdrop to our analysis. We position 
 
 Our analysis begins with the extraction of all occurrences of the term `labyrinthus' from the GreLa corpus, along with essential metadata, including the name of the author, the title of the work, and the date of composition or publication. Given that GreLa provides morphologically annotated and lemmatized data, it enables the precise retrieval of all instances of the term without recourse to wildcard characters or fuzzy search techniques.
 
-For each identified occurrence, we extracted four types of contextual information. First, we retrieved the raw text of the sentence in which the term appears. Second, we collected the full set of morphological annotations -- comprising the lemma and part-of-speech tag -- for each token within the sentence. Third, we extracted a broader context window consisting of the sentence containing the target term, preceded and followed by one adjacent sentence each. Finally, we constructed a concordance of morphologically annotated data comprising the ten tokens preceding the target term, the term itself, and the ten tokens following it. In our experimental setup, we assess the utility of these different types of contextual data as inputs for computational models. 
+For each identified occurrence, we extracted four types of contextual information. First, we retrieved the raw text of the sentence in which the term appears. Second, we collected the full set of morphological annotations -- comprising the lemma and part-of-speech tag -- for each token within the sentence. Third, we extracted a broader context window consisting of the sentence containing the target term, preceded and followed by one adjacent sentence each. Finally, we constructed a concordance of morphologically annotated data comprising the ten tokens preceding the target term, the term itself, and the ten tokens following it. In our experimental setup, we assess the utility of these different types of contextual data as inputs for computational models.
 
 \section{Methods}
 
@@ -100,30 +74,29 @@ For each identified occurrence, we extracted four types of contextual informatio
 To obtain classified sense labels for the usage of the term `labyrinthus' across the target sentences, the domain experts in our team inspected a random sample of sentences and designed a prompt for LLM to classify the sense into 6 different categories:
 
 \begin{enumerate}\small
-    \item[1 --] \textbf{Mythological:} References to the Cretan myth or its main figures and settings 
-    (Daedalus, Minotaur, Ariadne, Theseus, Crete).  
-    Restricted to explicit mythic allusions.
+\item[1 --] \textbf{Mythological:} References to the Cretan myth or its main figures and settings
+(Daedalus, Minotaur, Ariadne, Theseus, Crete).
+Restricted to explicit mythic allusions.
 
-    \item[2 --] \textbf{Technical literal:} Descriptions of actual or imagined physical labyrinths 
-    such as buildings, caves, mines, or mechanical structures, used non-figuratively.
+\item[2 --] \textbf{Technical literal:} Descriptions of actual or imagined physical labyrinths
+such as buildings, caves, mines, or mechanical structures, used non-figuratively.
 
-    \item[3 --] \textbf{Confusion metaphorics:} Figurative uses expressing moral, spiritual, or intellectual 
-    confusion, entrapment, or the search for guidance and clarity.
+\item[3 --] \textbf{Confusion metaphorics:} Figurative uses expressing moral, spiritual, or intellectual
+confusion, entrapment, or the search for guidance and clarity.
 
-    \item[4 --] \textbf{Scientific complexity metaphorics:} 
-    Uses in scientific or natural-philosophical discourse where “labyrinthus” conveys 
-    systemic or structural intricacy (as in nature, geometry, alchemy, or method).
+\item[4 --] \textbf{Scientific complexity metaphorics:}
+Uses in scientific or natural-philosophical discourse where “labyrinthus” conveys
+systemic or structural intricacy (as in nature, geometry, alchemy, or method).
 
-    \item[5 --] \textbf{Medical anatomical:} 
-    Anatomical or physiological contexts, especially references to the inner ear 
-    and related bodily structures.  
-    Applies even within scientific treatises.
+\item[5 --] \textbf{Medical anatomical:}
+Anatomical or physiological contexts, especially references to the inner ear
+and related bodily structures.
+Applies even within scientific treatises.
 
-    \item[6 --] \textbf{Ambiguous or indeterminate:} 
-    Bibliographic entries, cross-references, or fragmentary cases where the intended 
-    sense cannot be determined.
+\item[6 --] \textbf{Ambiguous or indeterminate:}
+Bibliographic entries, cross-references, or fragmentary cases where the intended
+sense cannot be determined.
 \end{enumerate}
-
 
 The prompt was then executed on our local server machine using Lamma 4 Scout (109B) LLM \cite{meta2024llama} as available through the ollama library \cite{ollama2023} (The full prompt is available as Appendix \ref{appdx:prompt}). Subsequently, we repeatedly inspected a random sample of 100 sentences to evaluate the performance of the LLM and the embedding-based models (see Appendix \ref{appdx:labellingResults}).
 
@@ -141,7 +114,6 @@ This procedure yielded 30 plus 30 plus 18 embedding variants per instance of \em
 
 As a non-transformer baseline, we also constructed word-document co-occurrence matrices from both sentence and concordance contexts, using the same lemmatized vocabulary as in the attention embeddings. Again, we retained both their sparse and SVD-reduced forms. Altogether, this yields a total of 82 individual embedding variants.
 
-
 \subsection{Word Sense Disambiguation Task}
 
 To evaluate the effectiveness of the embedding variants described above, we framed the task as a multiclass word sense disambiguation (WSD) problem. Each instance of the target lemma \emph{labyrinthus} was assigned a sense label using our large language model (LLM)-based classification pipeline (described in Appendix ~\ref{appdx:prompt}). We treated these labels as ground-truth classes and tested how well different embedding representations could predict them.
@@ -149,13 +121,13 @@ To evaluate the effectiveness of the embedding variants described above, we fram
 We experimented with four supervised classification algorithms, using the embedding vectors as input features:
 
 \begin{itemize}
-    \item \textbf{Multinomial Logistic Regression (LR)} \cite{theil1969multinomial}: A linear classifier that models class probabilities via a softmax function over linear combinations of input features.
-    
-    \item \textbf{Random Forest (RF)} \cite{breiman2001random}: An ensemble of decision trees trained via bootstrap aggregation (bagging), with random feature selection at each split to reduce overfitting and increase robustness.
+\item \textbf{Multinomial Logistic Regression (LR)} \cite{theil1969multinomial}: A linear classifier that models class probabilities via a softmax function over linear combinations of input features.
 
-    \item \textbf{Histogram-based Gradient Boosting (HGB)} \cite{ke2017lightgbm}: A boosting method that discretizes continuous input features into histograms, enabling fast training and efficient memory usage while capturing non-linear patterns.
+\item \textbf{Random Forest (RF)} \cite{breiman2001random}: An ensemble of decision trees trained via bootstrap aggregation (bagging), with random feature selection at each split to reduce overfitting and increase robustness.
 
-    \item \textbf{Multilayer Perceptron (MLP)} \cite{rosenblatt1958perceptron}: A feed-forward neural network with multiple hidden layers trained via backpropagation, capable of learning complex non-linear representations.
+\item \textbf{Histogram-based Gradient Boosting (HGB)} \cite{ke2017lightgbm}: A boosting method that discretizes continuous input features into histograms, enabling fast training and efficient memory usage while capturing non-linear patterns.
+
+\item \textbf{Multilayer Perceptron (MLP)} \cite{rosenblatt1958perceptron}: A feed-forward neural network with multiple hidden layers trained via backpropagation, capable of learning complex non-linear representations.
 \end{itemize}
 
 These classifiers were selected to capture a range of inductive biases and strengths across different types of input representations. Logistic Regression offers a fast, interpretable baseline and performs well on dense, low-dimensional data such as contextual embeddings. However, it struggles with sparse or non-linearly separable inputs. Random Forests are better suited for sparse and categorical features and can model non-linear interactions, though they may be less effective on high-dimensional dense inputs. Histogram-based Gradient Boosting provides a balance between flexibility and efficiency, handling both sparse and dense features while modeling complex interactions. Finally, the Multilayer Perceptron is well-suited for heterogeneous high-dimensional data, especially when combining sparse attention vectors with dense embeddings. Its strong non-linear modeling capacity makes it effective in capturing distributed semantic signal across diverse embedding variants.
@@ -169,10 +141,10 @@ All the below introduced analyses and visualizations were implemented using the 
 The automatic sense labeling task yielded a distribution of \emph{labyrinthus} instances across the six categories described in the previous section as visualized in Figure~\ref{fig:labels-distribution}. This distribution provides a first overview of the dominant and rare senses identified by the LLM classifier.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.8\linewidth]{figures/labyrinthus_classification_single_label_barplot.png}
-  \caption{Distribution of \emph{labyrinthus} sense labels across the dataset}
-  \label{fig:labels-distribution}
+\centering
+\includegraphics[width=0.8\linewidth]{figures/labyrinthus_classification_single_label_barplot.png}
+\caption{Distribution of \emph{labyrinthus} sense labels across the dataset}
+\label{fig:labels-distribution}
 \end{figure}
 
 As an initial sanity check and exploratory step, we examined 2-dimensional projections of the embedding variants using three dimensionality reduction techniques—UMAP, t-SNE, and PCA—each with three different parameterizations. These visualizations helped assess whether different senses exhibit distinguishable structure in embedding space.
@@ -182,19 +154,18 @@ Figure~\ref{fig:projections-baseline} shows the projections of the sentence-base
 Full projections for all 82 embedding variants and their combinations are available in the project repository under the path \texttt{./figures/labyrinthus\_projections\_*.png}.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.8\linewidth]{figures/labyrinthus_projections_svd400.png}
-  \caption{2D projections of the co-occurrence baseline embeddings (400D SVD of sentence-level co-occurrence matrix) using UMAP, t-SNE, and PCA.}
-  \label{fig:projections-baseline}
+\centering
+\includegraphics[width=0.8\linewidth]{figures/labyrinthus_projections_svd400.png}
+\caption{2D projections of the co-occurrence baseline embeddings (400D SVD of sentence-level co-occurrence matrix) using UMAP, t-SNE, and PCA.}
+\label{fig:projections-baseline}
 \end{figure}
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.8\linewidth]{figures/labyrinthus_projections_labert_wsd_embed_l9_labert_wsd_AND_att_l9_labert_wsd_svd400_embed.png}
-  \caption{2D projections of concatenated contextual and attention embeddings from layer 10 of WSD-optimized Latin BERT using UMAP, t-SNE, and PCA.}
-  \label{fig:projections-concatenated}
+\centering
+\includegraphics[width=0.8\linewidth]{figures/labyrinthus_projections_labert_wsd_embed_l9_labert_wsd_AND_att_l9_labert_wsd_svd400_embed.png}
+\caption{2D projections of concatenated contextual and attention embeddings from layer 10 of WSD-optimized Latin BERT using UMAP, t-SNE, and PCA.}
+\label{fig:projections-concatenated}
 \end{figure}
-
 
 \subsection{Sense Classification Evaluation}
 
@@ -203,17 +174,17 @@ To quantitatively evaluate the semantic signal captured by different embedding v
 Regarding individual classification algorithms, we observe that
 
 \begin{itemize}
-  \item \textbf{Logistic Regression (LR)} performed reasonably well in dense contextual embeddings, but failed to detect signals in inputs based on sparse raw attention embeddings.
-  \item \textbf{Random Forest (RF)} showed strong results with sparse attention embeddings, even after SVD projection, but underperformed on dense inputs.
-  \item \textbf{Histogram-based Gradient Boosting (HGB)} offered balanced performance across input types but was consistently outperformed by MLP.
-  \item \textbf{Multilayer Perceptron (MLP)} achieved the best performance across the majority of embedding variants, particularly with combined dense and sparse features.
+\item \textbf{Logistic Regression (LR)} performed reasonably well in dense contextual embeddings, but failed to detect signals in inputs based on sparse raw attention embeddings.
+\item \textbf{Random Forest (RF)} showed strong results with sparse attention embeddings, even after SVD projection, but underperformed on dense inputs.
+\item \textbf{Histogram-based Gradient Boosting (HGB)} offered balanced performance across input types but was consistently outperformed by MLP.
+\item \textbf{Multilayer Perceptron (MLP)} achieved the best performance across the majority of embedding variants, particularly with combined dense and sparse features.
 \end{itemize}
 
 The best-performing configuration was an MLP model trained on a concatenation of:
 \begin{itemize}
-    \item contextual embeddings (XLM-R, concordance context, layer 8),
-    \item raw attention embeddings (XLM-R, concordance context, layer 8), and
-    \item the concordance-level co-occurrence baseline (raw).
+\item contextual embeddings (XLM-R, concordance context, layer 8),
+\item raw attention embeddings (XLM-R, concordance context, layer 8), and
+\item the concordance-level co-occurrence baseline (raw).
 \end{itemize}
 This model achieved an average F1 score of 0.678365, with some runs reaching up to 0.689177.
 
@@ -229,24 +200,21 @@ For the more abstract or metaphorical usages, both attention-based embeddings an
 
 Overall, this diagnostic test should be viewed as an initial validation rather than a definitive benchmark, given the small and manually curated evaluation set. Nevertheless, the results indicate that models trained on LLM-labeled data retain meaningful signal when applied to human-verified sense distinctions.
 
-
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=1\linewidth]{figures/labyrinthus_confusion_matrix_best_models_GT.png}
-  \caption{Confusion matrices of the six best-performing models evaluated on a manually annotated sample of 100 labyrinthus instances, showing F1 results per class and misclassification patterns.}
-  \label{fig:confusion1}
+\centering
+\includegraphics[width=1\linewidth]{figures/labyrinthus_confusion_matrix_best_models_GT.png}
+\caption{Confusion matrices of the six best-performing models evaluated on a manually annotated sample of 100 labyrinthus instances, showing F1 results per class and misclassification patterns.}
+\label{fig:confusion1}
 \end{figure}
-
 
 Finally, to explore temporal trends, we extended our 2D projection setup by adding a third dimension: the date of composition of the containing text. Figure~\ref{fig:3d-projection} shows an example 3D projection using raw attention embeddings from layer 12 of WSD-optimized Latin BERT. Here we clearly observe the rise of the \emph{medical\_anatomical} sense and \emph{scientific\_complexity\_metaphorics} in Early Modern texts, in contrast to the \emph{mythological} and \emph{technical\_literal} sense, which dominates earlier periods. This illustrates the potential of transformer-based attention embeddings for studying semantic change over time.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=1\linewidth]{figures/labyrinthus_3d_projection.png}
-  \caption{3D projection of attention embeddings from layer 12 of WSD-optimized Latin BERT, with color-coded sense labels and date on the z-axis.}
-  \label{fig:3d-projection}
+\centering
+\includegraphics[width=1\linewidth]{figures/labyrinthus_3d_projection.png}
+\caption{3D projection of attention embeddings from layer 12 of WSD-optimized Latin BERT, with color-coded sense labels and date on the z-axis.}
+\label{fig:3d-projection}
 \end{figure}
-
 
 \section{Discussion}
 
@@ -262,32 +230,21 @@ Finally, our experiments only lightly addressed the diachronic dimension. Buildi
 
 Overall, this study demonstrates that the integration of LLM-based annotation with contextual, attention-based, and classical distributional embeddings can advance the precision and interpretive reach of computational philology. By linking quantitative modeling with philological judgment, such hybrid methods can help bridge the gap between statistical regularity and historical meaning—a step toward more systematic, yet still interpretively sensitive, digital scholarship in the humanities.
 
-\newpage 
+\newpage
 \section*{Acknowledgements}
 
 The work of VK and PP was supported by the TOME project (Ministry of Education, Youth and Sports of the Czech Republic, ERC CZ, project no. LL 2320). Special thanks go to Farzad Mahootian (NYU New York), whose invitation of VK, SL, and PP to the workshop “Alchemy of Global Partnerships” (NYU Abu Dhabi, May 14–17, 2025) brought the three of us together and inspired the inception of this project.
 
-%This unnumbered section should be blank when submitting your paper. After review, you may include lists of people and organizations who supported the work.
-
-% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
 \printbibliography
 
-% You can include an appendix using the following command
 \appendix
-
-%\section{First Appendix Section} \label{appdx:first}
-
-%Appendix sections should be ordered by letters rather than numbers, and their contents do not count towards the paper's length limit. Appendix sections may also contain additional tables and figures.  
 
 \appendix
 \section{LLM classification prompt}\label{appdx:prompt}
 
 To support the annotation of word sense labels, we implemented a lightweight prompt-based classification system using a local LLM API (based on \texttt{llama4:17b-scout-16e-instruct-q4\_K\_M}). The model was prompted with a few-shot instruction template and returned a numerical label representing one of ten predefined semantic categories. Each occurrence of the word \textit{labyrinthus} was classified into exactly one of the six categories.
 
-
-
-\noindent
-\textbf{Prompt}
+\paragraph{Prompt}
 The prompt included the classification instruction and a few-shot setup with three labeled examples. Each prediction was obtained by inserting the test passage as the final example:
 
 \footnotesize
@@ -332,64 +289,45 @@ Clarifications:
 – Use 2 for human moral or intellectual struggle, not for technical/analytic complexity.
 
 \end{verbatim}
-\normalsize 
+\normalsize
 
-
-
-\noindent
-\textbf{Prediction Protocol}
+\paragraph{Prediction Protocol}
 Each passage was submitted as a JSON payload via a REST API call. The model's prediction was parsed as an integer and matched against the predefined label map. This setup allowed us to rapidly assign semantic class labels to all instances of \textit{labyrinthus} in the corpus for supervised evaluation of embedding-based classifiers.
-
 
 \section{Discussion of results of the LLM labelling task}\label{appdx:labellingResults}
 
 In the classification task, human annotations were compared with outputs from the LLM classification and the predictions of the best performing models. Overall performance was strong across methods, with high agreement between human and machine annotations. Discrepancies typically arose from differences in granularity or interpretive framing rather than from clear misclassifications.
 
-The category system employed had a substantial impact on outcomes. Categories were selected to remain manageable, based initially on LLM-generated suggestions and refined to reduce ambiguity. However, the chosen set sometimes failed to reflect the nuances of metaphorical usage. 
+The category system employed had a substantial impact on outcomes. Categories were selected to remain manageable, based initially on LLM-generated suggestions and refined to reduce ambiguity. However, the chosen set sometimes failed to reflect the nuances of metaphorical usage.
 Overlapping or closely related domains frequently produced borderline cases where both human and machine classifications varied.
-
-%The LLM showed robust performance even without detailed category definitions, suggesting it can extrapolate context from minimal instruction. Notably, it handled noisy OCR data effectively, likely thus outperforming more brittle systems more reliant on correct input. It also seems that it may even have distinguished metaphorical from literal usage in terms such as \textit{medicina} (which frequently appear as metaphors in, for instance,  religious texts rather than indicating a medical context), likely because of the presence of more concrete cues within the `anatomical' category.
 
 However, misclassifications did occur. These were most serious when the LLM or the embedding based models failed to recognise clear disciplinary contexts, such as alchemical passages referencing Paracelsus, or astronomical texts dense with technical vocabulary. Such errors suggest limitations in the model, particularly in distinguishing overlapping terminology common in Early Modern texts. In these cases, domain-specific indicators that are readily identified by human reviewers were not consistently picked up by the automatic classifications.
 
-%More frequently, the models sometimes defaulted to broader categories, such as `metaphorical general,' where a human annotator might select a more specific label like `spiritual/religious.' Less frequent or less clearly defined categories, such as `historical/political', were particularly prone to underuse or misclassification, possibly due to their rarity in training data or insufficient semantic clarity in how to distinguish it from other categories. 
-
 The classification of metaphor relied on contextual cues rather than on function or type, echoing simple KWIC-based distributional semantics techniques previously suggested for the disambiguation of alchemical nomenclature through surrounding keywords \cite{Lang2022decknamen}. While effective in many cases, this approach would benefit from refinement. Incorporating bibliographic metadata, field-specific specialist vocabulary and clearly defined category boundaries could improve accuracy, especially in ambiguous cases. For instance, texts from the \textit{EMLAP} or \textit{NOSCEMUS} corpora often signalled alchemical or scholarly contexts that the LLM failed to fully exploit.
 
-Ultimately, model outputs largely aligned with human reasoning, especially where domain-specific vocabulary or concrete cues were present. However, future iterations would benefit from a finer-grained category system and explicit prompts to capture domain knowledge. 
-
+Ultimately, model outputs largely aligned with human reasoning, especially where domain-specific vocabulary or concrete cues were present. However, future iterations would benefit from a finer-grained category system and explicit prompts to capture domain knowledge.
 
 \section{Corpus Selection and Limitations}\label{appdx:corpusBias}
 
-%The primary contribution of our computational approach is not interpretive analysis, but rather a refined method of filtering historical texts, akin to an advanced form of keyword search. 
-
-
-\noindent
-\textbf{Motivation} 
+\paragraph{Motivation}
 Given the size and heterogeneity of available datasets, manual inspection of all occurrences of the term \textit{labyrinthus} proved impractical. Most instances are likely non-metaphorical and thus fall outside the scope of our investigation. Preliminary classification using LLMs and embedding models provided an effective means of narrowing the dataset to relevant cases.
 
+\paragraph{The aggregate corpus and its components}
+GreLa \cite{CCS2025_GreLaCorpus} constitutes an extensive corpus encompassing Greek and Latin literature from the eighth century BCE to the seventeenth century CE.
 
-
-\noindent
-\textbf{The aggregate corpus and its components} 
-GreLa \cite{CCS2025_GreLaCorpus} constitutes an extensive corpus encompassing Greek and Latin literature from the eighth century BCE to the seventeenth century CE. 
-%TODO question for VK: but noscemus actually includes up to 19th century, is this not included in GreLa? 
 It comprises over 11,000 individual works, amounting to approximately 26 million sentences and 380 million tokens. The corpus is the result of an integration of several pre-existing collections.
 
 Besides a Greek component derived from the LAGT (Lemmatized Ancient Greek Texts) Corpus \cite{Kase2024_LAGT_chrLabyrinth}, which consolidates ancient Greek texts from multiple sources, including the Perseus Digital Library, \textit{The First Thousand Years of Greek}, Glaux, and the OGA corpus but is not directly relevant to our current case study, there is an extensive Latin component. It incorporates material from \textit{Corpus Corporum} \cite{Roelli2014_CorpusCorporum_chrLabyrinth}, a broad-based Latin literature repository, as well as two databases focused on early modern scientific and alchemical texts: NOSCEMUS \cite{Korenjak2023_NoscemusProject_chrLabyrinth, Froestl2023_TranskribusAlchemica_chrLabyrinth, Zathammer2025_NoscemusSourcebook_chrLabyrinth}, which covers early modern scientific literature, and \textit{Early Modern Latin Alchemical Prints} (EMLAP, \cite{Hedesan2025_EMLAP_chrLabyrinth}).
 
-Our corpora vary significantly in composition and purpose. The \textit{NOSCEMUS} corpus, designed to trace the development of early modern science from circa 1450 to 1850, offers relatively balanced coverage across centuries. The \textit{EMLAP} corpus focuses on sixteenth-century Latin alchemical texts, though some texts may predate this period as the inclusion in the corpus is based only on appearance date of the specific edition included. These two corpora represent the quite systematically assembled components for their specific aims. 
+Our corpora vary significantly in composition and purpose. The \textit{NOSCEMUS} corpus, designed to trace the development of early modern science from circa 1450 to 1850, offers relatively balanced coverage across centuries. The \textit{EMLAP} corpus focuses on sixteenth-century Latin alchemical texts, though some texts may predate this period as the inclusion in the corpus is based only on appearance date of the specific edition included. These two corpora represent the quite systematically assembled components for their specific aims.
 In contrast, the \textit{Corpus Corporum} sources are more eclectic in their coverage. The corpus is shaped by availability of digitized sources, rather than a design aimed at thematic or chronological balance.
 
-
-
-\noindent
-\textbf{Representativeness}
+\paragraph{Representativeness}
 This unevenness in the GreLa corpus introduces bias. Scientific and alchemical texts are likely overrepresented, while other genres remain under-sampled. The dataset is therefore not suitable for answering general questions about metaphor usage in Latin literature. However, it is well suited to tracing metaphorical patterns in early modern scientific and alchemical writing, which we are particularly interested in. We expect these to be particularly present in paratextual or introductory sections of alchemical works.
 
 We also had to contend with the diachronic range of the corpus, which complicates metaphor identification due to shifting language use. Nonetheless, plotting metaphorical occurrences over time and by context remains potentially  informative, provided these limitations are kept in view.
 
-Although the corpus is imbalanced and incomplete, these features do not invalidate our method. These computational tools are used to guide close reading rather than replace it. In this sense, the visualisations and outputs are exploratory, pointing toward promising passages for detailed analysis in the form of close readings. 
+Although the corpus is imbalanced and incomplete, these features do not invalidate our method. These computational tools are used to guide close reading rather than replace it. In this sense, the visualisations and outputs are exploratory, pointing toward promising passages for detailed analysis in the form of close readings.
 
 Indeed, the very metaphor that sparked our interest in this study -- an intriguing alchemical use of \textit{labyrinthus} as a metaphor -- lies outside the scope of this corpus, underscoring that the methodological value of our study is not necessarily tied to the exhaustiveness of our corpus.
 

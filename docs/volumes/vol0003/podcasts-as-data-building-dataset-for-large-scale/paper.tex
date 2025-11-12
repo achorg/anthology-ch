@@ -1,41 +1,19 @@
-% Anthology of Computers and the Humanities Template
-\documentclass[final]{anthology-ch} % for the final version
+\documentclass[final]{anthology-ch}
 
-
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
 
-% Packages
-%\input{packages.tex}
-
-% Custom Commands
 \newcommand{\smallcaps}[1]{\textsc{\MakeLowercase{#1}}}
 
-% Metadata
-\title{Podcasts as Data: Building a Dataset for Large-Scale Audio Content Analysis
-}
+\title{Podcasts as Data: Building a Dataset for Large-Scale Audio Content Analysis}
 
-
-
-
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1,2,3]{Loren Verreyen}[
-  orcid=0000-0002-9785-789X
+orcid=0000-0002-9785-789X
 ]
-
-
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 
 \affiliation{1}{Antwerp Center for Digital Humanities and Literary Criticism (ACDC), University of Antwerp, Antwerp, Belgium}
 \affiliation{2}{Amsterdam School for Cultural Analysis (ASCA), University of Amsterdam, Amsterdam, the Netherlands}
 \affiliation{3}{Research Foundation Flanders (FWO), Brussels, Belgium}
-
 
 \keywords{podcasts, audio transcription, genre classification}
 
@@ -48,37 +26,31 @@
 \doi{10.63744/QgeF94c0fP7D}
 \paperorder{15}
 
-
-% Bibliography
 \addbibresource{bibliography.bib}
 
 \begin{document}
 
 \maketitle
 
-% Abstract
 \begin{abstract}
 In recent years, podcasts have rapidly emerged as a popular medium worldwide. In addition to their easy accessibility online, podcasts are characterised by an intimate, aural delivery of their narrative content, creating exciting opportunities for digital scholarship into storytelling. Computational literary studies, however, still remain (hyper)focused on written text, in spite of various calls for more multimodal research. This paper documents the construction of an open-source dataset of textual transcriptions, drawn from a large, representative sample of contemporary, English-language podcasts. The dataset covers a total of 412 days of audio content, transcribed and made available as bag-of-words frequency tables. By making these materials accessible, I hope to stimulate future study of podcasts using techniques from (computational) literary studies. Preliminary experiments suggest that podcast categories in particular offer a fruitful avenue to explore the various textual modes in which podcast producers successfully cater for a diverse global audience.
 \end{abstract}
 
-% Sections
 \section{introduction}
 
-Over the past two decades, the podcast medium has evolved from a niche audio format into a mainstream multimedial platform.\footnote{The dataset introduced in this paper is available at https://doi.org/10.5281/zenodo.17469222} Yet despite its cultural prominence and compelling characteristics, such as serialized storytelling structures and genre-blending possibilities, podcasts remain largely absent from large-scale computational analysis in the humanities. This absence is consistent with a wider methodological bias towards textual data, exemplified by substantial corpora built from novels, news articles, and social media posts that have become central to the Digital Humanities (e.g. \cite{piper2022conlit}, \cite{westerling2025lwmdb}, \cite{alles2021digital}). Both technical and institutional barriers contribute to this disparity. On the one hand, podcast’s audio based nature fundamentally complicates computational analysis, as employing computational methodologies requires integrating speech and audio processing techniques to handle non-textual data representations. On the other hand, commercial podcast directories such as Apple Podcasts and Spotify implement restrictive policies on bulk data access, complicating the process to assemble representative datasets at scale. 
-
+Over the past two decades, the podcast medium has evolved from a niche audio format into a mainstream multimedial platform.\footnote{The dataset introduced in this paper is available at https://doi.org/10.5281/zenodo.17469222} Yet despite its cultural prominence and compelling characteristics, such as serialized storytelling structures and genre-blending possibilities, podcasts remain largely absent from large-scale computational analysis in the humanities. This absence is consistent with a wider methodological bias towards textual data, exemplified by substantial corpora built from novels, news articles, and social media posts that have become central to the Digital Humanities (e.g. \cite{piper2022conlit}, \cite{westerling2025lwmdb}, \cite{alles2021digital}). Both technical and institutional barriers contribute to this disparity. On the one hand, podcast’s audio based nature fundamentally complicates computational analysis, as employing computational methodologies requires integrating speech and audio processing techniques to handle non-textual data representations. On the other hand, commercial podcast directories such as Apple Podcasts and Spotify implement restrictive policies on bulk data access, complicating the process to assemble representative datasets at scale.
 
 This paper addresses these challenges by introducing a new open-source dataset of transcribed English-language podcasts. I present a dataset of over 15,000 episodes across 1,900 shows, covering all 19 genres supported by Apple Podcasts, representing 412 days of audio. The contribution of this paper is threefold. First, I describe the methodology for working around data access restrictions imposed by commercial podcast platforms. Second, I provide a comprehensive evaluation of audio transcription quality using automatic speech recognition (ASR) models. Third, I demonstrate possible use cases through preliminary computational analysis, showing how the dataset can be leveraged for scholarly investigation into podcast content across genres.
 
 \section{Overview Existing Podcast Datasets}
 
-In December 2020, Spotify introduced \textit{100,000 Podcasts: A Spoken English Document Corpus}, the first large-scale dataset of transcribed podcasts \cite{clifton2020100}. Other notable podcast datasets are SPoRC (Structured Podcast Research Corpus), which includes transcripts of all English-language podcast episodes released between May and June 2020 that are made available through public RSS feeds \cite{litterer2024mapping}, and PodcastRE (Podcast Research), a dataset and user interface focusing on metadata and audio preservation \cite{morris2019podcastre}. 
+In December 2020, Spotify introduced \textit{100,000 Podcasts: A Spoken English Document Corpus}, the first large-scale dataset of transcribed podcasts \cite{clifton2020100}. Other notable podcast datasets are SPoRC (Structured Podcast Research Corpus), which includes transcripts of all English-language podcast episodes released between May and June 2020 that are made available through public RSS feeds \cite{litterer2024mapping}, and PodcastRE (Podcast Research), a dataset and user interface focusing on metadata and audio preservation \cite{morris2019podcastre}.
 A detailed comparison of these datasets alongside the dataset presented in this work is provided in Table \ref{tab:dataoverview}. As of December 2023, Spotify has discontinued access to their dataset, citing "shifting priorities" \cite{spotify_podcasts_2024}. Also in 2023, PodcastRE posted online that several features (such as researcher access, a specialized user status providing expanded access to the data) would be inconsistently available due to ongoing upgrades to its back-end infrastructure and workflows \cite{podcastre_about};  a notice that, at the time of writing, remains in effect. As such, access to some of the most prominent podcast datasets has become increasingly limited or inconsistent.
 
 Despite the limitations, these datasets offer(ed) a valuable window into the diverse and dynamic podcasting ecosystem, either through their extended temporal audio coverage (PodcastRE) or the volume of transcripts captured within a short time frame (SPoRC and the 100,000 Podcasts corpus). The dataset presented in this paper builds on these efforts by providing a more comprehensive temporal overview of podcasting practices. Rather than capturing a large number of episodes from a short period, it offers a representative selection of transcripts from a broader time span, allowing for a more nuanced understanding of changing podcast content over time.
 
-
 \begin{table}[]
-\resizebox{\columnwidth}{!}{%
+\resizebox{\columnwidth}{!}{
 \begin{tabular}{lrrrr}
 \hline
 \textbf{Dataset} & \textbf{Spotify} & \textbf{SPoRC} & \textbf{PodcastRE} & \textbf{Presented dataset} \\ \hline
@@ -87,11 +59,11 @@ Time Period & Jan 2019 - March 2020 & May - June 2020 & 2007 - May 2023 & Aug 20
 Size & \begin{tabular}[c]{@{}r@{}}105K+ episodes\\ 18K+ shows\end{tabular} & \begin{tabular}[c]{@{}r@{}}1.1M+ episodes \\ 247K+  shows\end{tabular} & \begin{tabular}[c]{@{}r@{}}5M+ episodes\\ 1K+ shows\end{tabular} & \begin{tabular}[c]{@{}r@{}}15K+ episodes\\ 1.9K shows\end{tabular} \\
 Transcriptions & All episodes & All episodes & ± 5000 episodes & All episodes \\
 ASR Model & Google Cloud Video & OpenAI Whisper & {[}?{]} & HuggingFace Distil Whisper large-v3 \\ \hline
-\end{tabular}%
+\end{tabular}
 }
 \caption{Overview Podcast Datasets}
 \label{tab:dataoverview}
-\end{table} 
+\end{table}
 
 \section{Metadata Collection}
 
@@ -115,7 +87,7 @@ To ensure consistency in the genre-based analysis discussed below, the dataset o
 From the full metadata dataset of over 1.5 million English-language podcasts with iTunes IDs, a stratified sample was constructed by selecting 100 podcasts per primary genre. Not all podcast episodes were downloaded for each show. Instead, a second sampling layer was applied at the episode level, randomly selecting 10 episodes for transcription. If a podcast had fewer than 10 episodes, its entire catalog was included, resulting in a genre-balanced corpus. All audio files were accessed through their RSS feeds collected in the previous step. Each RSS feed contains direct links to the episode audio files, embedded in media content tags. By parsing the RSS feeds, audio URLs were extracted and the files systematically downloaded for all selected episodes. This sampling produced a dataset comprising 1,900 podcasts and 15,716 episodes. A more detailed overview of the number of episodes collected per genre can be found in Table \ref{tab:genredata}.
 
 \begin{table}[]
-\resizebox{\columnwidth}{!}{%
+\resizebox{\columnwidth}{!}{
 \begin{tabular}{lllll}
 \hline
 Category & \begin{tabular}[c]{@{}l@{}}Total duration \\ all episodes \\ in hours\end{tabular} & \begin{tabular}[c]{@{}l@{}}Mean duration \\ per episode in \\ minutes\end{tabular} & \# Episodes & \# words \\ \hline
@@ -139,7 +111,7 @@ Technology & 455 & 35 & 782 & 4,484,418 \\
 True Crime & 546 & 39 & 833 & 5,265,348 \\
 TV \& Film & 763 & 56 & 814 & 7,707,154 \\ \hline
 \textbf{Total} & \begin{tabular}[c]{@{}l@{}}9,888\\ (= 412 days)\end{tabular} & 38 & 15,716 & 96,558,091
-\end{tabular}%
+\end{tabular}
 }
 \caption{Dataset composition across 19 podcast genres, showing total audio duration, mean episode length, episode count, and total word count per genre based on generated transcriptions
 .}
@@ -148,8 +120,7 @@ TV \& Film & 763 & 56 & 814 & 7,707,154 \\ \hline
 
 \section{Audio Transcription}
 
-
-Each collected audio file underwent automatic transcription, converting podcast episodes from audio to text. While this transformation inevitably sacrificed certain auditory dimensions such as voice, sound effects, and music, I proceeded with transcription for several reasons. First, focusing on transcriptions opens up an entry point through which the content of podcast shows can be accessed and analyzed, providing a first opportunity to investigate how meaning circulates through this form. Second, the relationship between written and spoken text represents a duality worthy of examination. Podcasts occupy a distinctive position between oral and written communication, retaining characteristics of speech, such as pauses, self-correction and listener engagement, even when informed by written scripts or outlines. This hybrid nature aligns with Ong’s concept of secondary orality, which refers to forms of communication shaped by writing yet manifested through oral media such as radio and television. Unlike primary orality, which emerges in cultures, untouched by writing, secondary orality is “essentially a more deliberate and self-conscious orality, based permanently on the use of writing and print,” while maintaining “striking resemblances to the old [primary orality] in its participatory mystique, its fostering of communal sense, its concentration on the present moment, and even its use of formulas” \cite{Ong1982}. Podcasts exemplify this distinctive nature, combining narrative involvement with informational delivery in ways that differentiate the medium both from conversation and traditional written text \cite{babayode2023structural}. By transcribing podcasts, converting this textually grounded speech back into written form, the dual nature becomes analytically visible, revealing the interplay of orality and literacy embedded in the medium, offering an opportunity to explore how modern narratives navigate the boundary between spoken and written expression. 
+Each collected audio file underwent automatic transcription, converting podcast episodes from audio to text. While this transformation inevitably sacrificed certain auditory dimensions such as voice, sound effects, and music, I proceeded with transcription for several reasons. First, focusing on transcriptions opens up an entry point through which the content of podcast shows can be accessed and analyzed, providing a first opportunity to investigate how meaning circulates through this form. Second, the relationship between written and spoken text represents a duality worthy of examination. Podcasts occupy a distinctive position between oral and written communication, retaining characteristics of speech, such as pauses, self-correction and listener engagement, even when informed by written scripts or outlines. This hybrid nature aligns with Ong’s concept of secondary orality, which refers to forms of communication shaped by writing yet manifested through oral media such as radio and television. Unlike primary orality, which emerges in cultures, untouched by writing, secondary orality is “essentially a more deliberate and self-conscious orality, based permanently on the use of writing and print,” while maintaining “striking resemblances to the old [primary orality] in its participatory mystique, its fostering of communal sense, its concentration on the present moment, and even its use of formulas” \cite{Ong1982}. Podcasts exemplify this distinctive nature, combining narrative involvement with informational delivery in ways that differentiate the medium both from conversation and traditional written text \cite{babayode2023structural}. By transcribing podcasts, converting this textually grounded speech back into written form, the dual nature becomes analytically visible, revealing the interplay of orality and literacy embedded in the medium, offering an opportunity to explore how modern narratives navigate the boundary between spoken and written expression.
 
 To automatically transcribe all podcast episodes, I experimented with OpenAI's automatic speech recognition (ASR) model \emph{Whisper} (\emph{Whisper-large-v3}) \cite{radford2022whisper} and \emph{HuggingFace}'s distilled version of the same model (\emph{Distil-large-v3}) \cite{gandhi2023distilwhisper}. Both models were selected as they achieved the lowest word error rate ({\textsc{WER}}) within their respective model families. Since each podcast show generally features a different host, resulting in a wide range of voices across the dataset, the models were not fine-tuned. A small dataset was compiled to evaluate both models, comprising two True Crime podcasts (\emph{Serial}; \emph{Bear Brook}) and two Fiction podcasts (\emph{The Magnus Archives}; \emph{The Black Tapes}). These podcasts were selected due to the availability of publicly accessible transcripts. For each podcast, the audio and transcript of the first five full episodes were collected, resulting in 719 minutes/12 hours of audio, of which 404 minutes were fiction and 315 minutes true crime. The collected ground truth consists of 65,216 words of true crime podcast transcriptions and 47,888 words of fiction podcast transcriptions. Where possible, the creators of the transcripts were contacted to verify their transcription methods, as evaluating ASR models against transcripts potentially generated by similar systems would risk circularity and undermine the evaluation’s validity. However, no responses were received. Consequently, I manually verified the accuracy of two episode transcripts per podcast as a quality check. Following the validation of the reference transcripts, both models were evaluated on the dataset, and their transcription performance was assessed using Word Error Rate (WER), ROUGE, and BLEU metrics (Tab.~\ref{tab:whisper_comparison}). A lower WER indicates higher transcription accuracy, while higher ROUGE and BLEU scores reflect greater overlap with reference transcripts and, thus, better performance, emphasizing precision and recall, respectively. To my best knowledge, this is the first study on podcast transcripts that evaluates the performance of the selected ASR models prior to applying them at scale. While ASR models have been used in previous podcast studies, existing work typically omits detailed reporting on model accuracy or performance before large-scale deployment.
 
@@ -167,16 +138,14 @@ $\sim$ time (min.) $\downarrow$ & 40 & 16 \\
 \bottomrule
 \end{tabular}
 \caption{Performance Comparison of Whisper Models}
-  \label{tab:transcription_comparison}
+
 \end{table}
 
 Hugging Face's \emph{Distil-large-v3} outperforms OpenAI's \emph{Whisper-large-v3} model in both transcription accuracy and efficiency. Specifically, \emph{Distil-large-v3} achieves lower Word Error Rate (11.54 vs. 19.19), and higher ROUGE (94.60 vs. 91.10) and BLEU (94.50 vs. 86.85) scores, indicating superior alignment with the reference transcripts. In addition, the model transcribes the dataset in less than half the time (16 minutes compared to 40 minutes), highlighting a significant advantage in computational efficiency. The comparative advantage of Hugging Face’s model is further underscored when considering the open and community-oriented ethos that characterizes the platform, as opposed to the focus of OpenAI on profit and proprietary control.  Genre-specific WER evaluation (True Crime: 12.72, Fiction: 10.19) revealed minimal variation from the overall average of 11.54, confirming that genre did not systematically influence model performance. Based on these results, the \emph{Distil-large-v3} model was used to transcribe the full dataset of 15,716 podcast episodes. The size of the resulting transcripts per genre is also reported in Table \ref{tab:genredata}.
 
-A manual inspection of the transcripts generated by both models revealed that \emph{Whisper-large-v3} falls short when transcribing more challenging audio, for example, recorded phone calls. One of the novelties of the well-known true crime podcast \emph{Serial}, in which Sarah Koenig revisits the 1999 murder of Hae Min Lee by reconstructing the trial and conviction of Lee's ex-boyfriend Adnan Syed, is that Koenig involves Syed in the story by calling him in prison. Many of these phone calls, while important features of the podcast, are absent in the \emph{Whisper-large-v3} transcript. A comparison of both models transcribing the same phone call (S.1, Ep.5, 1:41) can be seen in Table ~\ref{tab:transcription_comparison}. However, the transcription issues observed in \emph{Whisper-large-v3} are not always the result of audio quality alone, nor are they fully systematic. In some cases, the model appears to halt transcription altogether before resuming after a significant delay. This inconsistent behaviour results in large gaps in the output, even when the audio source is relatively clear and continuous. An example of this is shown in Table ~\ref{tab:magnusarchive}, which compares transcripts of \textit{The Magnus Archives} (S1, Ep.5, 2:34), where part of a coherent and uninterrupted speech segment is missing from the transcript produced by \emph{Whisper-large-v3}, whereas the same passage is captured fully by the smaller \emph{Distil-large-v3} model. This suggests that the larger model also struggles with reliably maintaining output across certain segments, independent of audio clarity or speaker variation. 
+A manual inspection of the transcripts generated by both models revealed that \emph{Whisper-large-v3} falls short when transcribing more challenging audio, for example, recorded phone calls. One of the novelties of the well-known true crime podcast \emph{Serial}, in which Sarah Koenig revisits the 1999 murder of Hae Min Lee by reconstructing the trial and conviction of Lee's ex-boyfriend Adnan Syed, is that Koenig involves Syed in the story by calling him in prison. Many of these phone calls, while important features of the podcast, are absent in the \emph{Whisper-large-v3} transcript. A comparison of both models transcribing the same phone call (S.1, Ep.5, 1:41) can be seen in Table ~\ref{tab:transcription_comparison}. However, the transcription issues observed in \emph{Whisper-large-v3} are not always the result of audio quality alone, nor are they fully systematic. In some cases, the model appears to halt transcription altogether before resuming after a significant delay. This inconsistent behaviour results in large gaps in the output, even when the audio source is relatively clear and continuous. An example of this is shown in Table ~\ref{tab:magnusarchive}, which compares transcripts of \textit{The Magnus Archives} (S1, Ep.5, 2:34), where part of a coherent and uninterrupted speech segment is missing from the transcript produced by \emph{Whisper-large-v3}, whereas the same passage is captured fully by the smaller \emph{Distil-large-v3} model. This suggests that the larger model also struggles with reliably maintaining output across certain segments, independent of audio clarity or speaker variation.
 
-The nature of the ground truth used in this evaluation also complicates the model evaluation. Podcast audio is not static, as dynamic ad insertion allows advertisements to be updated, added, or deleted after publication without the need to re-edit the underlying audio file. An example of this can be found in Table \ref{tab:ads}. Second, the published transcript does not \textit{have} to be an exact representation of what is said in the episode. Presenters can deviate from the transcript, resulting in the transcription no longer being an exact representation of what is being said. An example of this can be found in Table \ref{tab:bearbrook}.  These dynamics complicate model evaluation considerably. While a 11.54 word error rate may initially appear problematic, comparisons between models prove more informative than assessing each model against an idealized 100\% accuracy benchmark. 
-
-
+The nature of the ground truth used in this evaluation also complicates the model evaluation. Podcast audio is not static, as dynamic ad insertion allows advertisements to be updated, added, or deleted after publication without the need to re-edit the underlying audio file. An example of this can be found in Table \ref{tab:ads}. Second, the published transcript does not \textit{have} to be an exact representation of what is said in the episode. Presenters can deviate from the transcript, resulting in the transcription no longer being an exact representation of what is being said. An example of this can be found in Table \ref{tab:bearbrook}.  These dynamics complicate model evaluation considerably. While a 11.54 word error rate may initially appear problematic, comparisons between models prove more informative than assessing each model against an idealized 100\% accuracy benchmark.
 
 \begin{table}[htbp]
 \centering
@@ -185,19 +154,15 @@ The nature of the ground truth used in this evaluation also complicates the mode
 \toprule
 \textbf{Whisper-large-v3} & \textbf{Distil-large-v3} & \textbf{Ground truth} \\
 \midrule
-Then you have to get out of the school parking lot, but the parking lot is encircled by the school bus loop, so you can't get your car out until the buses fill up and leave, which Adnan wrote took about 10 to 15 minutes. \textbf{[???]} That's Adnan elaborating on's letter. \textbf{[???]} He wrote that in addition, \ldots & 
-Then you have to get out of the school parking lot, but the parking lot is encircled by the school bus loop, so you can't get your car out until the buses fill up and leave, which Anon wrote took about 10 to 15 minutes. \textbf{I'm telling you, I wish like, maybe I'll try to draw a picture of it, but if you could just see how Woodlawn High School left out at 2.15}. That's Anon, elaborating on his letter. \textbf{You can't just go to your car and leave. It's going to take a few minutes. So it's just a really tight, really window of time, I mean, for this day taking place, right? And I've always, like, in my heart, man, I've always kind of like, I've been on TV before, like, you know, on these eight line or nightline, where someone tries to reenact the crime. And there's a moment where, like, there's someone like, you know what, this crime could not have been committed according to the set of facts. It's like always this moment, right? It's like I visualize because the route, it's just, I don't know. Oh, hey, we're getting ready to go, right? Sorry. Hey, I got to go. All right. Okay, bye. That happens sometimes. The guards come by and you're just done mid-sentence. Anyway, I can pick up from Adon's letter.} \textbf{He wrote that in addition, \ldots} & 
+Then you have to get out of the school parking lot, but the parking lot is encircled by the school bus loop, so you can't get your car out until the buses fill up and leave, which Adnan wrote took about 10 to 15 minutes. \textbf{[???]} That's Adnan elaborating on's letter. \textbf{[???]} He wrote that in addition, \ldots &
+Then you have to get out of the school parking lot, but the parking lot is encircled by the school bus loop, so you can't get your car out until the buses fill up and leave, which Anon wrote took about 10 to 15 minutes. \textbf{I'm telling you, I wish like, maybe I'll try to draw a picture of it, but if you could just see how Woodlawn High School left out at 2.15}. That's Anon, elaborating on his letter. \textbf{You can't just go to your car and leave. It's going to take a few minutes. So it's just a really tight, really window of time, I mean, for this day taking place, right? And I've always, like, in my heart, man, I've always kind of like, I've been on TV before, like, you know, on these eight line or nightline, where someone tries to reenact the crime. And there's a moment where, like, there's someone like, you know what, this crime could not have been committed according to the set of facts. It's like always this moment, right? It's like I visualize because the route, it's just, I don't know. Oh, hey, we're getting ready to go, right? Sorry. Hey, I got to go. All right. Okay, bye. That happens sometimes. The guards come by and you're just done mid-sentence. Anyway, I can pick up from Adon's letter.} \textbf{He wrote that in addition, \ldots} &
 Then you have to get out of the school parking lot, but the parking lot is encircled by the school bus loop, so you can't get your car out until the buses fill up and leave. Which, Adnan wrote, ``took about ten to fifteen minutes.'' I wish-- maybe I'll try to draw a picture of it, but if you could just see how Woodlawn High School lets out at 2:15. That's Adnan elaborating on his letter. You can't just go to your car and leave. It's going to take a few minutes. So it's just a really tight-- window of time for this to have taken place. I've always-- in my heart-- I've always like-- I've seen it on TV before like on Dateline or Nightline where someone tries to reenact the crime. There's a moment where there's someone like ``you know what? This crime could not have been committed according to this set of facts.'' There's always this moment where I visualize the route, it's just-- Oh hey, were getting ready to go, right. Sorry. Hey, I gotta go. Alright bye. Okay bye! That happens sometimes. The guards come by and you're just done, mid-sentence. Anyway, I can pick up from Adnan's letter. He wrote that in addition, \ldots \\
 \bottomrule
 \end{tabular}
 \caption{Transcription Comparison: Whisper Models vs Ground Truth when transcribing a phone call (\emph{Serial}, S.1, Ep.5, 1:41)}
-  \label{tab:magnusarchive}
+\label{tab:transcription_comparison}
 \end{table}
 
-
-% Please add the following required packages to your document preamble:
-% \usepackage{booktabs}
-% \usepackage{graphicx}
 \begin{table}[htbp]
 \centering
 \footnotesize
@@ -211,11 +176,8 @@ Statement begins. I work as a bin man for Waltham Forest Council. It's not a bad
 \bottomrule
 \end{tabular}
 \caption{Transcription Comparison: Whisper Models vs Ground Truth (\emph{The Magnus Archives}, S.1, Ep.5, 2:35)}
-  \label{tab:ads}
+\label{tab:magnusarchive}
 \end{table}
-
-
-
 
 \begin{table}[htbp]
 \centering
@@ -229,7 +191,7 @@ to my in laws ethan shire and janet leveen for putting me up in Baltimore so man
 \bottomrule
 \end{tabular}
 \caption{Transcription Comparison: Generated transcriptions vs ground truth transcribing audio that contains advertisement (\emph{Serial}, S.1 Ep.1, 53:38)}
-  \label{tab:bearbrook}
+\label{tab:ads}
 \end{table}
 
 \begin{table}[htbp]
@@ -244,35 +206,26 @@ when i opened the bag the decomposed face was looking right at me \textbf{I coul
 \bottomrule
 \end{tabular}
 \caption{Transcription Comparison: generated transcriptions vs ground truth transcribing audio that deviates from script (\emph{Bear Brook}, S.1 Ep.1, 13:18)}
-  \label{tab:genreclassification}
+\label{tab:bearbrook}
 \end{table}
 
 \section{Genre Analysis}
 
-
 To illustrate the analytical potential of the compiled dataset, I present a preliminary computational examination of genre classification across podcasts. A fundamental question in podcast studies concerns “the different genres that make up podcasting, what characterizes those genres.” \cite{mcgregor2022podcast} A question that, despite extensive study of genre characteristics in novels (e.g., \cite{hettinger2015genre}, \cite{piper2016fictionality}, \cite{underwood2016life}), remains largely unexplored in podcast studies. As a demonstration of possible applications for the dataset, this analysis investigates whether computational methods can identify distinctive lexical features associated with different podcast genres. In literary studies, genres are increasingly treated not as fixed categories with essential definitions, but as dynamic social and textual constructs. As Underwood argues, rather than seeking a definitive definition of what makes a genre, genres are better understood not through definitive definitions but through empirical analysis of textual patterns, understanding them as “mutable set[s] of relations between works that are linked in different ways, and resemble each other to different degrees” \cite{underwood2016life}. This family resemblance approach is particularly well-suited to computational investigation through predictive modeling, where textual similarities and differences can be measured systematically across large corpora. As a demonstration of possible applications for the dataset, this analysis investigates whether computational methods can identify distinctive lexical features associated with different podcast genres. Given the broader research agenda of this dataset, investigating fictionality in true crime podcasts, this preliminary analysis focuses particularly on how computational methods can illuminate the tension between True Crime and Fiction categories.
 
-
-First, all podcast transcripts are processed into TF-IDF representations, retaining all words that occur in at least two different podcast shows to filter out show-specific vocabulary. Next, dimensionality reduction through PCA and t-SNE was applied to the training set, resulting in two-dimensional projections that provide a preliminary overview of genre organization and an initial assessment of intra-genre cohesion and inter-genre separation. The t-SNE visualization reveals preliminary indications of genre separability, with Religion \& Spirituality (gray) and Sports (orange) standing out in particular, forming relatively distinct clusters (Fig. \ref{fig:t-SNE}). Next, a linear Support Vector Machine (LinearSVC) classifier was trained on the training set to predict genre labels based on the TF-IDF feature vectors. LinearSVC was selected because it returns interpretable feature coefficients, providing insight into which lexical features are most predictive of each genre, enabling deeper qualitative insight into genre characteristics. The model was evaluated on a held-out test set compiled through an 80/20 train-test split stratified by genre, with entire podcast shows assigned to either the training or test set to prevent data leakage. 
+First, all podcast transcripts are processed into TF-IDF representations, retaining all words that occur in at least two different podcast shows to filter out show-specific vocabulary. Next, dimensionality reduction through PCA and t-SNE was applied to the training set, resulting in two-dimensional projections that provide a preliminary overview of genre organization and an initial assessment of intra-genre cohesion and inter-genre separation. The t-SNE visualization reveals preliminary indications of genre separability, with Religion \& Spirituality (gray) and Sports (orange) standing out in particular, forming relatively distinct clusters (Fig. \ref{fig:t-SNE}). Next, a linear Support Vector Machine (LinearSVC) classifier was trained on the training set to predict genre labels based on the TF-IDF feature vectors. LinearSVC was selected because it returns interpretable feature coefficients, providing insight into which lexical features are most predictive of each genre, enabling deeper qualitative insight into genre characteristics. The model was evaluated on a held-out test set compiled through an 80/20 train-test split stratified by genre, with entire podcast shows assigned to either the training or test set to prevent data leakage.
 
 When trained on all 19 genres simultaneously, the classifier achieves a macro-average F1-score of 0.48. More detailed metrics for all genres are provided in Table \ref{tab:genreclassification}. Performance varies substantially across genres. Genres such as Music (F1: 0.71), Sports (F1: 0.73), and Religion \& Spirituality (F1: 0.73) display strong lexical coherence, while News (F1: 0.34), Arts (F1: 0.29), and Society \& Culture (F1: 0.22) achieve much lower F1-scores. The confusion matrix reveals systematic misclassification patterns for these lower-performing genres: News is frequently confused with Government or Sports; Arts with TV \& Film or History; Education is distributed across multiple categories. This pattern suggests that these genres are lexically more diffuse or contain overlapping vocabulary with adjacent genres, making them difficult to distinguish based on lexical information alone. However, the consistent clustering of misclassifications suggests that the classification challenges result from semantic overlap between genres rather than systematic model limitations. The 20 most predictive lexical features for each of the 19 genres are presented in Appendix \ref{app:genre_features}.
 
-
-Given the broader research context of this dataset, I examined True Crime (F1: 0.57) and Fiction (F1: 0.58) more closely. The confusion matrix shows that when True Crime episodes are misclassified, they are frequently misclassified as Fiction (32 out of 60 misclassifications). At the same time, Fiction episodes are most often misclassified as True Crime (28 out of 61 misclassifications). This overlap indicates substantial shared vocabulary between the genres. Taking a closer look at their vocabulary, True Crime is characterized by words like "crime," "prison," "murder," "evidence," and "investigators," while Fiction features words like "armor", "paranormal", and "nightmares", as well as mutliple proper nouns. Yet the high rate of bidirectional confusion suggests that the fiction/non-fiction distinction does not manifest through abandonment of shared narrative vocabulary, but rather through strategic deployment of specific lexical markers, particularly those signaling reality claims and institutional authority. Both genres may draw on similar storytelling techniques, but True Crime seems to leverage crime-specific vocabulary tied to real institutions and investigative processes to establish factual grounding, while Fiction employs more imaginative worldbuilding terminology. The genres are thus distinguished not by fundamentally different content, but by how they lexically construct and authenticate their narratives. Of course, lexical features alone cannot fully explain the fuzzy boundaries between these genres, neither can they settle the deeper questions about the relationship between true crime narratives and fictionality. This preliminary analysis merely suggests promising avenues for further investigation such as examining narrative structure and rhetorical strategies. The dataset's strength lies not in resolving these questions but in enabling researchers to pursue them at scale. 
-
-
+Given the broader research context of this dataset, I examined True Crime (F1: 0.57) and Fiction (F1: 0.58) more closely. The confusion matrix shows that when True Crime episodes are misclassified, they are frequently misclassified as Fiction (32 out of 60 misclassifications). At the same time, Fiction episodes are most often misclassified as True Crime (28 out of 61 misclassifications). This overlap indicates substantial shared vocabulary between the genres. Taking a closer look at their vocabulary, True Crime is characterized by words like "crime," "prison," "murder," "evidence," and "investigators," while Fiction features words like "armor", "paranormal", and "nightmares", as well as mutliple proper nouns. Yet the high rate of bidirectional confusion suggests that the fiction/non-fiction distinction does not manifest through abandonment of shared narrative vocabulary, but rather through strategic deployment of specific lexical markers, particularly those signaling reality claims and institutional authority. Both genres may draw on similar storytelling techniques, but True Crime seems to leverage crime-specific vocabulary tied to real institutions and investigative processes to establish factual grounding, while Fiction employs more imaginative worldbuilding terminology. The genres are thus distinguished not by fundamentally different content, but by how they lexically construct and authenticate their narratives. Of course, lexical features alone cannot fully explain the fuzzy boundaries between these genres, neither can they settle the deeper questions about the relationship between true crime narratives and fictionality. This preliminary analysis merely suggests promising avenues for further investigation such as examining narrative structure and rhetorical strategies. The dataset's strength lies not in resolving these questions but in enabling researchers to pursue them at scale.
 
 In sum, this genre classification analysis offers an initial glimpse into the broader analytical potential of the podcast dataset. While the current approach only provides a first perspective on lexical genre markers, it also opens up several avenues for future research. For instance, given that podcast platforms encourage genre hybridity to cater to highly specific audiences, further work could explore how this hybridity complicates or reshapes conventional genre boundaries. Moreover, understanding genre as a transmedial constructs invites comparative studies across media. For instance, previous research has looked into the lexical features of science fiction in the context of novels \cite{underwood2016life}. The presence of this genre within the podcasting ecosystem enables cross-media comparisons, making it possible to investigate how genre-specific features persist, transform, or diverge across different media formats, contributing to a richer understanding of genre as a transmedial and dynamic phenomenon.
-
-
-
-
 
 \begin{table}[htbp]
 \centering
 \begin{tabular}{lllll}
 \hline
- & \textbf{precision} & \textbf{recall} & \textbf{f1-score} & \textbf{support} \\ \hline
+& \textbf{precision} & \textbf{recall} & \textbf{f1-score} & \textbf{support} \\ \hline
 Arts & 0.31 & 0.28 & 0.29 & 156 \\
 Business & 0.52 & 0.61 & 0.56 & 174 \\
 Comedy & 0.37 & 0.61 & 0.46 & 161 \\
@@ -298,25 +251,21 @@ weighted avg & 0.48 & 0.50 & 0.48 & 3141 \\
 \hline
 \end{tabular}
 \caption{Evaluation Genre Classification}
-  \label{fig:t-SNE}
+\label{tab:genreclassification}
 \end{table}
 
-
-
 \begin{figure}[]
-  \centering
-  \includegraphics[width=1\linewidth]{figures/tsnedataset.png}
-  \caption{t-SNE genres}
-  \label{fig:confusion}
+\centering
+\includegraphics[width=1\linewidth]{figures/tsnedataset.png}
+\caption{t-SNE genres}
+\label{fig:t-SNE}
 \end{figure}
 
-
-
 \begin{figure}[]
-  \centering
-  \includegraphics[width=1\linewidth]{figures/confusionmatrix.png}
-  \caption{Confusion matrix SVM genre classification}
-  
+\centering
+\includegraphics[width=1\linewidth]{figures/confusionmatrix.png}
+\caption{Confusion matrix SVM genre classification}
+\label{fig:confusion}
 \end{figure}
 
 \section{Discussion}
@@ -325,25 +274,16 @@ The presented dataset is limited in a number of ways. First, the dataset is limi
 
 \section{Conclusion}
 
-
 This paper has introduced a large-scale, open-source dataset of podcast transcripts comprising over 15,000 episodes across 1,900 shows, spanning all 19 podcast genres recognized by Apple Podcasts. By converting 412 days of audio content into textual data and distributing it as bag-of-words frequency tables, the dataset makes podcast content accessible for scalable textual analysis while respecting copyright constraints. In doing so, it addresses a significant gap in the Digital Humanities, where computational research has remained overwhelmingly text-centric despite growing scholarly interest in multimodal storytelling.
 
 Throughout this work, I have examined existing podcast datasets and identified several key challenges inherent in collecting podcast data at scale. Using the Podcast Index as an intermediary source, I compiled a comprehensive dataset containing metadata for all English-language podcasts available on Apple Podcasts, before selecting a stratified subset for transcription. The comparative evaluation of transcription models revealed that Hugging Face's lighter \emph{Distil-large-v3} outperformed its larger, proprietary alternative in both accuracy and efficiency. The preliminary genre classification experiment further demonstrates the dataset's potential for exploring linguistic patterns and genre hybridity in podcasting, revealing distinct lexical signatures for certain genres while highlighting the complexity of genre boundaries in this medium.
 
 By making this dataset publicly available, I aim to encourage new lines of inquiry into the cultural, linguistic, and formal dimensions of podcasts. Future work may expand upon this resource by incorporating audio-specific features, extending temporal coverage, and enabling comparative studies across media. Ultimately, I hope this project contributes to the ongoing multimodal turn in the Digital Humanities and helps establish podcasts as a vital and analyzable form of contemporary cultural expression.
 
+\paragraph{Copyright.} Although most podcasts can be freely downloaded online, they are protected by international copyright and, under most legal systems, they cannot be freely be redistributed. In order to comply with international copyright law, I have decided to share the resulting transcriptions as bag-of-words frequency table: because this ``Derived Data Format'' (DDF) does not allow to reconstruct the original transcription \cite{kugler2023invbert}, this does not violate the copyright of the original podcasts, but still enables researchers to carry out valid lexical analysis. Importantly, many contemporary corpora are available in a similar format (such as the CONLIT dataset, \cite{piper2022conlit}), so that the aural modality of podcasts, for example, could be compared to more formally published books in print. I share the data under liberal Creative Commons license that should stimulate their re-use in the scientific community.
 
-
-
-\noindent
-\textbf{Copyright.} Although most podcasts can be freely downloaded online, they are protected by international copyright and, under most legal systems, they cannot be freely be redistributed. In order to comply with international copyright law, I have decided to share the resulting transcriptions as bag-of-words frequency table: because this ``Derived Data Format'' (DDF) does not allow to reconstruct the original transcription \cite{kugler2023invbert}, this does not violate the copyright of the original podcasts, but still enables researchers to carry out valid lexical analysis. Importantly, many contemporary corpora are available in a similar format (such as the CONLIT dataset, \cite{piper2022conlit}), so that the aural modality of podcasts, for example, could be compared to more formally published books in print. I share the data under liberal Creative Commons license that should stimulate their re-use in the scientific community.
-
-
-
-% Bibliography
 \printbibliography
 
-% Appendix
 \appendix
 \appendix \label{appdx:first}
 
@@ -408,7 +348,5 @@ crime (4.51), prison (2.99), murder (2.88), case (2.56), shadow (2.28), police (
 
 \subsection{TV \& Film}
 film (3.83), movie (3.54), scene (3.03), trek (2.60), barney (2.53), horror (2.41), episode (2.40), hollywood (2.27), um (1.95), character (1.83), actor (1.66), films (1.63), show (1.53), issa (1.51), survivor (1.49), production (1.49), anyways (1.49), odo (1.45), minute (1.43), walt (1.41)
-
-
 
 \end{document}

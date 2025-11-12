@@ -1,11 +1,5 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-%\documentclass{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{placeins}
@@ -13,79 +7,55 @@
 \usepackage{tabularx}
 \usepackage{multirow}
 \usepackage{orcidlink}
-% ADD your own packages using \usepackage{}
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 
 \title{Robust Modelling of Ordinal Survey Data Using Probabilistic Programming}
- 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
+
 \author[1]{Aleksi Lahtinen}[
-    orcid=0009-0009-9640-5187
+orcid=0009-0009-9640-5187
 ]
 \author[2,3]{James Rhys Edwards}[
-    orcid=0000-0002-0806-6595
+orcid=0000-0002-0806-6595
 ]
 \author[2]{Marc Calmbach}[
-    orcid=0000-0001-8976-6317
+orcid=0000-0001-8976-6317
 ]
 \author[2]{Isabella Tautscher}[
-    orcid=0009-0002-8459-0740
+orcid=0009-0002-8459-0740
 ]
 \author[1]{Leo Lahti}[
-    orcid=0000-0001-5537-637X
+orcid=0000-0001-5537-637X
 ]
 
-% While we encourage including ORCID-IDs for all authors, you can
-% include authors that do not have one by definining an empty ID.
-
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 \affiliation{1}{Department of Computing, University of Turku, Turku, Finland}
 \affiliation{2}{SINUS-Institute, Berlin, Germany}
 \affiliation{3}{Institute for Information Law, University of Amsterdam, Amsterdam, Netherlands}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{probabilistic programming, ordinal data, survey data, ordinal logistic regression}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
-\pagestart{591}
-\pageend{608}
+\pagestart{592}
+\pageend{609}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/eCwMjQ976nWf}  
+\doi{10.63744/eCwMjQ976nWf}
 \paperorder{36}
 
 \addbibresource{bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
-%TC:ignore
 Surveys play a central role in much of the research conducted in the humanities and social sciences. A common data type encountered in surveys is the ordinal variable, which differs from nominal categorical variables. Several regression methods are available for analysing ordinal data, with the cumulative logistic model being one of the most widely used. However, ordinal survey data often present challenges, particularly in studies with small sample sizes, where some response categories and levels of explanatory variables can have low response rates. In such cases, classical statistical methods can produce unreliable or incomplete estimates. Here, we investigate the use of probabilistic programming, grounded in Bayesian analysis, as a more robust alternative for estimating category probabilities of ordinal variables and other model parameters. These models are better equipped to handle uncertainty and provide more reliable estimates, even in the presence of sparse data. We validate the approach with simulated data where the ground truth is known, and demonstrate the advantages of this approach by comparing it to its classical frequentist counterpart in the context of cultural participation and access survey.
-%TC:endignore
 \end{abstract}
 
+\section{Introduction}
 
-\section{Introduction} 
+Surveys are a common method for collecting information across various fields in the humanities and social sciences, including music studies \cite{cloonan_tuukkanen_2024,Behr2020,edwards2019}, as well as in disciplines like psychology \cite{pines2020} and public health \cite{carroll2020}. They are typically used to understand opinions, beliefs, or behaviours within a specific target population, such as the voting population of a country or attendees at a particular event. Surveys use probability sampling (or alternative sampling methods, such as quota sampling) to obtain estimates for the whole population while only surveying part of the population.
 
-Surveys are a common method for collecting information across various fields in the humanities and social sciences, including music studies \cite{cloonan_tuukkanen_2024,Behr2020,edwards2019}, as well as in disciplines like psychology \cite{pines2020} and public health \cite{carroll2020}. They are typically used to understand opinions, beliefs, or behaviours within a specific target population, such as the voting population of a country or attendees at a particular event. Surveys use probability sampling (or alternative sampling methods, such as quota sampling) to obtain estimates for the whole population while only surveying part of the population. 
-
-Survey data frequently include ordinal variables. Unlike continuous numerical data, they consist of ranked categories without assuming equal spacing between them \cite{agresti}. Several statistical methods have been developed to analyse ordinal data, with classical frequentist approaches remaining the most commonly used \cite{Colvin2021,Fodeman2020,Hrusa2020,Fenta2020}. Many of these methods can also be implemented within a probabilistic programming framework \cite{bürkner2019}. In our previous work, we have demonstrated the application of the probabilistic framework in computational analyses of cultural production \cite{lahti2020,tiihonen2021,tiihonen2024}. However, despite recommendations in the literature \cite{liddell2018,bürkner2019}, probabilistic approaches to analysing ordinal survey data remain relatively underused. This may be due, in part, to the limited familiarity with probabilistic models among application specialists and uncertainty about whether probabilistic models can bring gains. Here, we demonstrate the validity of the probabilistic approach in a simulation study where the ground truth is known, and demonstrate its potential benefits by comparisons with the more conventional approaches in the context of original real-world survey data on cultural participation and access. 
+Survey data frequently include ordinal variables. Unlike continuous numerical data, they consist of ranked categories without assuming equal spacing between them \cite{agresti}. Several statistical methods have been developed to analyse ordinal data, with classical frequentist approaches remaining the most commonly used \cite{Colvin2021,Fodeman2020,Hrusa2020,Fenta2020}. Many of these methods can also be implemented within a probabilistic programming framework \cite{bürkner2019}. In our previous work, we have demonstrated the application of the probabilistic framework in computational analyses of cultural production \cite{lahti2020,tiihonen2021,tiihonen2024}. However, despite recommendations in the literature \cite{liddell2018,bürkner2019}, probabilistic approaches to analysing ordinal survey data remain relatively underused. This may be due, in part, to the limited familiarity with probabilistic models among application specialists and uncertainty about whether probabilistic models can bring gains. Here, we demonstrate the validity of the probabilistic approach in a simulation study where the ground truth is known, and demonstrate its potential benefits by comparisons with the more conventional approaches in the context of original real-world survey data on cultural participation and access.
 
 Robust methods for real survey data are needed because these data sets are often incomplete. Surveys often suffer from missing data and low response rates. Collecting large numbers of responses can be expensive and resource-intensive. Subsequently, the sample sizes often remain relatively small limiting the reliability of statistical analyses. This problem can be even more emphasized for more refined subgroups within the overall sample collection. We explore the possibilities of probabilistic models in providing more robust estimates of the response rates and their uncertainty in such cases.
 
@@ -106,75 +76,75 @@ The survey was administered across five European countries: Germany, Poland, Spa
 Before analysing the data, we divided the sample into three subgroups (Table~\ref{tab:demo2}). The first group, music audience, includes respondents who attended three to five or more live music events in the past twelve months. The second, music professionals, comprises individuals who earned income from music-related activities during the same period. The third, musicians, includes those who played an instrument or sang within the last year. These subgroups were defined to examine differences among groups with distinct levels of engagement with music and to demonstrate the methods across samples of varying sizes. The music professionals group is considerably smaller than the other two. Respondents identifying with another gender identity or choosing not to disclose their gender are also few, as are those aged 70 and over, particularly within the music professionals subgroup. In addition to comparing the two modelling approaches, we assess potential differences across the three groups and the overall sample.
 
 \begin{table}[!h]
-    \centering
-    \small
-    \begin{tabular}{c c c c c c}
-    \toprule \\
-    Variable   &   Category   &   \makecell{Total\\responses} & \makecell{Music\\audience\\responses} & 
-    \makecell{Music\\professionals\\responses} &
-    \makecell{Musician\\responses}  \\
-    \midrule
-    Gender    & Female   & 1934 & 585 & 224 & 579 \\
-              & Male     & 1719 & 601 & 234 & 485 \\
-              & Another gender identity & 6 & 4 & 1 & 2 \\
-              & Don't want to say & 3 & 1 & 0 & 2 \\
-    \midrule
-    Age group (years) & 16-29 & 801 & 400 & 215 & 369 \\
-                      & 30-39 & 471 & 194 & 90 & 170 \\
-                      & 40-49 & 586 & 190 & 67 & 164 \\
-                      & 50-59 & 732 & 203 & 60 & 172 \\
-                      & 60-69 & 717 & 135 & 20 & 115 \\
-                      & 70 and over & 355 & 69 & 7 & 51\\
-    \midrule
-    Country           & Germany     & 754 & 225 & 107 & 205 \\
-                      & Poland      & 565 & 118 & 53 & 155 \\
-                      & Italy       & 894 & 344 & 120 & 304 \\
-                      & Spain       & 654 & 221 & 101 & 182 \\
-                      & France      & 795 & 213 & 78 & 222 \\
-    \bottomrule
-    \end{tabular}
-    \caption{Demographic breakdown of the cultural access and participation survey data. “Music audience responses” refers to respondents who attended live music events at least 3–5 times in the past twelve months. “Musicians responses” includes those who played a musical instrument or sang during that period. “Music professionals responses” comprises respondents who earned income from any music-related activity in the same time frame.}
-    \label{tab:demo2}
+\centering
+\small
+\begin{tabular}{c c c c c c}
+\toprule \\
+Variable   &   Category   &   \makecell{Total\\responses} & \makecell{Music\\audience\\responses} &
+\makecell{Music\\professionals\\responses} &
+\makecell{Musician\\responses}  \\
+\midrule
+Gender    & Female   & 1934 & 585 & 224 & 579 \\
+& Male     & 1719 & 601 & 234 & 485 \\
+& Another gender identity & 6 & 4 & 1 & 2 \\
+& Don't want to say & 3 & 1 & 0 & 2 \\
+\midrule
+Age group (years) & 16-29 & 801 & 400 & 215 & 369 \\
+& 30-39 & 471 & 194 & 90 & 170 \\
+& 40-49 & 586 & 190 & 67 & 164 \\
+& 50-59 & 732 & 203 & 60 & 172 \\
+& 60-69 & 717 & 135 & 20 & 115 \\
+& 70 and over & 355 & 69 & 7 & 51\\
+\midrule
+Country           & Germany     & 754 & 225 & 107 & 205 \\
+& Poland      & 565 & 118 & 53 & 155 \\
+& Italy       & 894 & 344 & 120 & 304 \\
+& Spain       & 654 & 221 & 101 & 182 \\
+& France      & 795 & 213 & 78 & 222 \\
+\bottomrule
+\end{tabular}
+\caption{Demographic breakdown of the cultural access and participation survey data. “Music audience responses” refers to respondents who attended live music events at least 3–5 times in the past twelve months. “Musicians responses” includes those who played a musical instrument or sang during that period. “Music professionals responses” comprises respondents who earned income from any music-related activity in the same time frame.}
+\label{tab:demo2}
 \end{table}
 
 \vspace{1em}
-\noindent\textbf{Ordinal variables analysed} 
+\noindent\textbf{Ordinal variables analysed}
 \vspace{0.5em}
 
 \noindent As previously noted, the survey includes several ordinal variables suitable for our demonstrations. To keep the scope of this paper manageable, we selected two such variables that explore respondents’ agreement with statements about music’s role in both personal and broader social, cultural, and political contexts. The specific statements analysed are:
 \begin{itemize}
-    \item “Music is/was an important part of life in my family.”
-    \item “Music connects me with people from different cultural backgrounds.”
+\item “Music is/was an important part of life in my family.”
+\item “Music connects me with people from different cultural backgrounds.”
 \end{itemize}
 Both statements were answered using the same five-point Likert scale (Table~\ref{tab:resp_rates}). We chose these variables for our analysis because they share a common response scale that is widely used in surveys. Additionally, these questions let us explore whether subgroups differ in how they answered these statements.
 
-Some demographic categories, such as respondents aged 70 and over in the music professionals subgroup, have a low number of observations (Table~\ref{tab:demo2}). This sparsity can pose challenges for classical modelling approaches, particularly when combined with item nonresponse in the ordinal variables (Table~\ref{tab:resp_rates}). Additionally, because the survey data were collected across five different countries, it may exhibit systematic variation that should be accounted for during the analysis. This could be done based on hierarchical models, which aim to distinguish between the shared and dataset-specific variation in order to obtain more robust estimates of the entire data collection. Classical models often struggle with such hierarchical data, especially when the number of clusters (e.g., countries) is small. We will investigate the potential benefits of the probabilistic modelling approach in these situations, but also in general modelling of ordinal variables. 
+Some demographic categories, such as respondents aged 70 and over in the music professionals subgroup, have a low number of observations (Table~\ref{tab:demo2}). This sparsity can pose challenges for classical modelling approaches, particularly when combined with item nonresponse in the ordinal variables (Table~\ref{tab:resp_rates}). Additionally, because the survey data were collected across five different countries, it may exhibit systematic variation that should be accounted for during the analysis. This could be done based on hierarchical models, which aim to distinguish between the shared and dataset-specific variation in order to obtain more robust estimates of the entire data collection. Classical models often struggle with such hierarchical data, especially when the number of clusters (e.g., countries) is small. We will investigate the potential benefits of the probabilistic modelling approach in these situations, but also in general modelling of ordinal variables.
 
-The cultural access and participation survey includes numerous other ordinal variables, many using a five-point Likert scale, while others employ different response formats. The analysis of these other variables is not included here in order to keep the scope of the paper manageable. 
+The cultural access and participation survey includes numerous other ordinal variables, many using a five-point Likert scale, while others employ different response formats. The analysis of these other variables is not included here in order to keep the scope of the paper manageable.
 
 \begin{table}[!h]
-    \centering
-    \footnotesize
-    \begin{tabularx}{\textwidth}{c c c c c c c c}
-        \toprule
-        Statement & Subgroup & \multicolumn{5}{c}{Answer options} & No response\\
-        \midrule
-           & & \makecell{Strongly\\disagree} & \makecell{Somewhat\\disagree} & Neutral & \makecell{Somewhat\\agree} & \makecell{Strongly\\agree}\\
-        \midrule
-        \multirow{4}{*}{\makecell{Music \&\\family life}}
-        & Total & 132 & 173 & 473 & 568 & 425 & 1891 \\
-        & \makecell{Music\\audience} & 21 & 47 & 119 & 180 & 199 & 625 \\
-        & \makecell{Music\\professionals} & 10 & 31 & 43 & 63 & 70 & 242 \\
-        & Musicians & 22 & 44 & 118 & 174 & 170 & 540 \\
-        \multirow{4}{*}{\makecell{Music connects\\cultures}}
-        & Total & 137 & 143 & 523 & 611 & 357 & 1891\\
-        & \makecell{Music\\audience} & 17 & 46 & 138 & 201 & 164 & 625 \\
-        & \makecell{Music\\professionals} & 12 & 15 & 44 & 75 & 71 & 242 \\
-        & Musicians & 20 & 44 & 141 & 194 & 129 & 540 \\
-        \bottomrule
-    \end{tabularx}
-    \caption{Response counts for the different categories of the ordinal variables analysed in the total sample and the different subgroups. There is noticeable amount of item nonresponse to both statements.}
-    \label{tab:resp_rates}
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{c c c c c c c c}
+\toprule
+Statement & Subgroup & \multicolumn{5}{c}{Answer options} & No response\\
+\midrule
+& & \makecell{Strongly\\disagree} & \makecell{Somewhat\\disagree} & Neutral & \makecell{Somewhat\\agree} & \makecell{Strongly\\agree}\\
+\midrule
+\multirow{4}{*}{\makecell{Music \&\\family life}}
+& Total & 132 & 173 & 473 & 568 & 425 & 1891 \\
+& \makecell{Music\\audience} & 21 & 47 & 119 & 180 & 199 & 625 \\
+& \makecell{Music\\professionals} & 10 & 31 & 43 & 63 & 70 & 242 \\
+& Musicians & 22 & 44 & 118 & 174 & 170 & 540 \\
+\multirow{4}{*}{\makecell{Music connects\\cultures}}
+& Total & 137 & 143 & 523 & 611 & 357 & 1891\\
+& \makecell{Music\\audience} & 17 & 46 & 138 & 201 & 164 & 625 \\
+& \makecell{Music\\professionals} & 12 & 15 & 44 & 75 & 71 & 242 \\
+& Musicians & 20 & 44 & 141 & 194 & 129 & 540 \\
+\bottomrule
+\end{tabularx}
+\caption{Response counts for the different categories of the ordinal variables analysed in the total sample and the different subgroups. There is noticeable amount of item nonresponse to both statements.}
+\label{tab:resp_rates}
 \end{table}
 
 \FloatBarrier
@@ -185,29 +155,25 @@ As we mentioned earlier, surveys commonly include ordinal variables, which often
 
 When using regression modelling to analyse ordinal variables, it is essential to account for the ordinal structure of the data. Applying models designed for metric (continuous) outcomes can lead to inflated false positive rates, biased effect sizes, and other issues \cite{liddell2018}. Such shortcomings can be particularly problematic if the results are intended to inform data-driven policy-making. One widely used approach for ordinal data is the cumulative logistic regression model (also known as the proportional odds model) \cite{bürkner2019}. This model does not predict the ordinal outcome directly. Instead, it introduces an unobserved continuous latent variable. This variable is modelled through the cumulative probabilities associated with the observed categories:
 \begin{align*}
-    P(Y\le j) = P(\tilde{Y} \le \alpha_j \mid X) = F \biggl(\alpha_j-\sum_{i=1}^p \beta_i x_i \biggr), \quad j = 1,\dots,J-1,
-    %\label{eqn:cumu_prob}
+P(Y\le j) = P(\tilde{Y} \le \alpha_j \mid X) = F \biggl(\alpha_j-\sum_{i=1}^p \beta_i x_i \biggr), \quad j = 1,\dots,J-1,
 \end{align*}
 where $F$ is the cumulative distribution function (CDF) of the error term \cite{bürkner2019,agresti}. An observation falls into category $j$ or below if the latent variable does not exceed the threshold $\alpha_j$. When $j = J$, the cumulative probability is $P(Y \le J) = 1$. A common choice for $F$ is the logistic distribution, which leads to the use of the logit link function. This gives the linear predictor the following form:
 \begin{align}
-    F^{-1}(P(Y\le j)) &= \text{logit}(P(Y\le \alpha_j) ) = \alpha_j-\sum_{i=1}^p \beta_i x_i, \quad j=1\dots,J-1.
-    \label{eqn:lin_pred}
-       % &=\log \Biggl( \frac{P(Y\le j)}{1-P(Y\le j)}\Biggr) \nonumber \\
+F^{-1}(P(Y\le j)) &= \text{logit}(P(Y\le \alpha_j) ) = \alpha_j-\sum_{i=1}^p \beta_i x_i, \quad j=1\dots,J-1.
+\label{eqn:lin_pred}
 \end{align}
 Unlike in standard linear regression, the cumulative model includes $J-1$ intercept terms, or threshold parameters. Often, the focus is on category-specific probabilities, which are obtained as differences between cumulative probabilities:
 \begin{align*}
-    P(Y=j) = P(Y\le j) - P(Y\le j-1), \quad j=1,\dots J.
+P(Y=j) = P(Y\le j) - P(Y\le j-1), \quad j=1,\dots J.
 \end{align*}
 
 In our models, we include two categorical explanatory variables: gender (with male as the reference group) and age group (with 16–29 as the reference group). These variables were chosen because their differences are often of interest in the humanities (and tend to impact cultural participation: see, for instance, Eurobarometer 79.2). The ordinal response variables are measured on a five-point Likert scale ($J=5$), yielding four threshold parameters. The regression coefficients $\beta_i$ are interpreted as log-odds, representing the effect of each explanatory variable on the cumulative probabilities.
 
 For the threshold parameters, we specified distinct normal priors to allow flexibility and avoid constraining threshold spacing: $\alpha_1 \sim N(-1.4,1)$, $\alpha_2 \sim N(-0.4,1)$, $\alpha_3 \sim N(0.4,1)$, and $\alpha_4 \sim N(1.4,1)$. These priors imply equal likelihoods for all outcome categories when explanatory variables are zero. Regression coefficients were assigned $\beta_i \sim N(0,1)$ priors, assuming small but plausible effects.
 
-% We can assign a common prior for the threshold parameters, but in our analysis, we chose to specify distinct priors for each parameter to allow for greater flexibility in their estimation and to avoid imposing unnecessary constraints on the spacing between thresholds. Specifically, we used the following priors: $\alpha_1 \sim N(-1.4,1)$, $\alpha_2 \sim N(-0.4,1)$, $\alpha_3 \sim N(0.4,1)$ and $\alpha_4 \sim N(1.4,1)$. These priors reflect a scenario in which all outcome categories are equally likely when the values of the explanatory variables are zero. This choice avoids making assumptions about the relative likelihood of different categories. For the regression coefficients, we used the prior $\beta_i \sim N(0,1)$, reflecting a conservative assumption that the explanatory variables have small effects, while still allowing for a reasonable range of values.
-
 The cumulative logistic model relies on the proportional odds assumption, which states that the effect of the explanatory variables remains constant across all categories $j$. Violating this assumption can lead to model misspecification. Several classical methods exist for testing the assumption, including the Brant, Score, and Wald tests \cite{liu2023}. Within the probabilistic framework, one can evaluate the assumption using leave-one-out cross-validation (LOO-CV) \cite{vehtari2017}. This approach involves comparing the cumulative model to a more flexible alternative that allows category-specific effects. If the alternative model yields a better fit, it indicates that the proportional odds assumption may not hold \cite{bürkner2019}.
 
-The cumulative logistic model appropriately accounts for the ordered nature of ordinal survey data by introducing a latent continuous variable and estimating cumulative probabilities. 
+The cumulative logistic model appropriately accounts for the ordered nature of ordinal survey data by introducing a latent continuous variable and estimating cumulative probabilities.
 
 \subsection{Hierarchical cumulative logistic model}
 
@@ -219,9 +185,9 @@ We focus here on two-level hierarchical models, although hierarchical survey dat
 
 The cumulative logistic model can be easily adapted into the hierarchical framework. This is done by adding a cluster-specific intercept or slope term in to the model Equation~\ref{eqn:lin_pred}. We will be using the varying-intercept model, which means that every cluster in the data, country in the case of the data used here, has its own intercept term. Now the linear predictor of the model is
 \begin{align}
-    \text{logit}(P(Y_c \le \alpha_j))
-    = \alpha_j+u_c-\sum_{i=1}^p \beta_i x_i, \quad j=1\dots,J-1, c=1,\dots,C,
-    \label{eqn:lin_pred_hier}
+\text{logit}(P(Y_c \le \alpha_j))
+= \alpha_j+u_c-\sum_{i=1}^p \beta_i x_i, \quad j=1\dots,J-1, c=1,\dots,C,
+\label{eqn:lin_pred_hier}
 \end{align}
 where $u_c$ is the cluster-specific intercept term. The intercept term has its own prior distribution, which is $u_c \sim N(0,\sigma)$, and the hyperparameter $\sigma$ has its own hyperprior $\sigma \sim \text{half-normal}(0,1)$. The half-normal distribution is a normal distribution constrained to be non-negative. We selected this hyperprior to impose greater regularization, which is important given the small number of clusters in the data.
 
@@ -229,7 +195,7 @@ To summarise, hierarchical modelling accounts for the multilevel structure of su
 
 \subsection{Probabilistic programming}
 
-As we previously discussed, the frequentist approach to modelling ordinal survey data can encounter several difficulties, particularly in studies with small sample sizes. For instance, when certain response categories receive no observations, the frequentist method may fail to properly estimate all threshold parameters (Equation~\ref{eqn:lin_pred}) and corresponding category probabilities. Similarly, it can struggle to estimate the effects of categorical explanatory variables with few observations, as well as their associated category probabilities. Moreover, the frequentist approach often performs poorly when fitting hierarchical models (Equation~\ref{eqn:lin_pred_hier}) with only a few clusters. 
+As we previously discussed, the frequentist approach to modelling ordinal survey data can encounter several difficulties, particularly in studies with small sample sizes. For instance, when certain response categories receive no observations, the frequentist method may fail to properly estimate all threshold parameters (Equation~\ref{eqn:lin_pred}) and corresponding category probabilities. Similarly, it can struggle to estimate the effects of categorical explanatory variables with few observations, as well as their associated category probabilities. Moreover, the frequentist approach often performs poorly when fitting hierarchical models (Equation~\ref{eqn:lin_pred_hier}) with only a few clusters.
 
 Probabilistic programming provides a more robust and flexible alternative that addresses many of these challenges faced by the frequentist approach. One key benefit is the ability to incorporate prior knowledge into the model through the use of priors. This prior information is combined with observed data to form a posterior distribution, which enables more informative inference \cite{mcelreath2020}. It also allows for a more comprehensive quantification of uncertainty regarding the model and its parameters. Additionally, the probabilistic framework facilitates the construction of more flexible and complex models. In scenarios where frequentist methods may fail to converge or yield unstable estimates, probabilistic models can often be fit successfully. However, probabilistic modelling is generally more computationally intensive and time-consuming than frequentist approaches. Additionally, fully utilizing probabilistic models typically requires a higher level of statistical expertise.
 
@@ -250,10 +216,10 @@ We adapted the code used to generate the simulated datasets from the implementat
 Our results show that the probabilistic approach consistently outperforms the classical model in estimating the real category probabilities, particularly at smaller sample sizes (Figure~\ref{fig:sim}). When $N = 20$, the probabilistic model’s category probability estimates are more tightly concentrated around the real values. As the sample size increases, the performance of both models converges, and from $N = 200$ onward, their estimates are largely similar. Nevertheless, even at larger sample sizes, the probabilistic model produces slightly narrower uncertainty intervals, indicating more precise estimates. It is important to note, however, that the MSE values for both models are quite small, especially at higher $N$, and the resulting inferences are practically very similar. While these differences may be modest in magnitude, the probabilistic model appears more robust overall.
 
 \begin{figure}[h]
-    \centering
-    \includegraphics[scale=0.55]{figures/sim.png}
-    \caption{Performance of the two models across different sample sizes. (A) Category probability estimates from 100 simulated datasets with $N = 20$, shown at the different levels of the explanatory variable, for both models. The top plot displays the estimated category probabilities for observations where the explanatory variable $x = 0$, while the bottom plot shows estimates for $x = 1$. The probabilistic model’s estimates are more tightly concentrated around the true values (indicated by both plots). (B) Mean squared error (MSE) values and their 95\% intervals across different sample sizes ($N$).} 
-    \label{fig:sim}
+\centering
+\includegraphics[scale=0.55]{figures/sim.png}
+\caption{Performance of the two models across different sample sizes. (A) Category probability estimates from 100 simulated datasets with $N = 20$, shown at the different levels of the explanatory variable, for both models. The top plot displays the estimated category probabilities for observations where the explanatory variable $x = 0$, while the bottom plot shows estimates for $x = 1$. The probabilistic model’s estimates are more tightly concentrated around the true values (indicated by both plots). (B) Mean squared error (MSE) values and their 95\% intervals across different sample sizes ($N$).}
+\label{fig:sim}
 \end{figure}
 
 \section{Analysis of cultural access and participation survey}
@@ -265,10 +231,10 @@ For this evaluation, we used data from Germany as the hold-out test set and trai
 We tested the proportional odds assumption for all the cumulative logistic models using the LOO-CV approach described earlier in the paper. All models satisfied the proportional odds assumption. Additionally, for some of the probabilistic models, the target acceptance probability had to be increased from 0.95 to 0.99 to ensure stable sampling. Aside from this adjustment, model fitting proceeded without any issues.
 
 \subsection{Comparison of the modelling approaches}
- 
-We used the LOO-CV to select the models that were fitted to the data. This method is implemented in Stan and \texttt{brms} and it allows for efficient way to compare probabilistic models to each other. While traditional LOO-CV is computationally expensive, requiring the model to be refit $n$ times, Stan implements a Pareto-smoothed importance sampling LOO-CV, which offers a fast approximation by reweighting posterior draws using importance sampling \cite{vehtari2017}. 
 
-As we noted in the methods section, the explanatory variables of interest in this analysis are gender and age group. We used LOO-CV to compare models fitted to the full test set that included either one of these variables, both variables, or a hierarchical version. The hierarchical model that included both gender and age group provided the best fit for both statements. Classical frequentist versions of the models were also fitted and the results are compared to the probabilistic models.  
+We used the LOO-CV to select the models that were fitted to the data. This method is implemented in Stan and \texttt{brms} and it allows for efficient way to compare probabilistic models to each other. While traditional LOO-CV is computationally expensive, requiring the model to be refit $n$ times, Stan implements a Pareto-smoothed importance sampling LOO-CV, which offers a fast approximation by reweighting posterior draws using importance sampling \cite{vehtari2017}.
+
+As we noted in the methods section, the explanatory variables of interest in this analysis are gender and age group. We used LOO-CV to compare models fitted to the full test set that included either one of these variables, both variables, or a hierarchical version. The hierarchical model that included both gender and age group provided the best fit for both statements. Classical frequentist versions of the models were also fitted and the results are compared to the probabilistic models.
 
 We encountered convergence issues in some of the classical models during the fitting process. For the statement “Music is/was an important part of life in my family”, we had to exclude certain observations due to sparse category counts. Specifically, for the “music audience” subgroup, observations with the gender identity another were removed; for “musicians”, those selecting don’t want to say were excluded; and for “music professionals”, observations from the age group 70 and over were removed. In the model fitted to the whole population, both another and don’t want to say gender categories had to be excluded. These problems arose because these categories contained only one or two observations, making it impossible for the classical models to estimate the corresponding parameters reliably.
 
@@ -279,104 +245,103 @@ For the statement “Music connects me with people from different cultural backg
 We begin the model comparison by examining the estimated category probabilities and their associated intervals produced by the two approaches. First, we assess the overall estimates across the different subgroups to evaluate and compare the performance of each method. We also discuss any notable differences between the subgroups and the full population. Following this, we examine category probability estimates at different levels of the explanatory variables within specific subgroups.
 
 \vspace{1em}
-\noindent\textbf{Overall probability estimates} 
+\noindent\textbf{Overall probability estimates}
 \vspace{0.5em}
 
 \noindent Although the classical model generally produces narrower intervals, the probabilistic model in general achieves better coverage of both the training and test sets across the subgroups and the whole population for both statements (Figures~\ref{fig:important_cate} and \ref{fig:connect_cate}). The intervals from the classical model often appear overly confident, whereas the probabilistic model more effectively captures uncertainty in the estimates.
 
 \begin{figure}[h]
-    \centering
-    \includegraphics[scale=0.49]{figures/cate_important_all.png}
-    \caption{Comparing the fit between new data and model predictions for the statement “Music is/was an important part of life in my family”. Estimated category probabilities from the probabilistic and classical models across the subgroups and the whole data. The intervals correspond to 50\% and 95\% credible and confidence intervals from the probabilistic and classical models. The red dots indicate the category probability values from the training set, and the blue dots represent the category probability values from the test set (Germany).}
-    \label{fig:important_cate}
+\centering
+\includegraphics[scale=0.49]{figures/cate_important_all.png}
+\caption{Comparing the fit between new data and model predictions for the statement “Music is/was an important part of life in my family”. Estimated category probabilities from the probabilistic and classical models across the subgroups and the whole data. The intervals correspond to 50\% and 95\% credible and confidence intervals from the probabilistic and classical models. The red dots indicate the category probability values from the training set, and the blue dots represent the category probability values from the test set (Germany).}
+\label{fig:important_cate}
 \end{figure}
 
 The MSE values are also lower for the probabilistic model across both statements and all subgroups, except for the full population in the statement “Music connects me with people from different cultural backgrounds,” where the classical model performs slightly better (Table~\ref{tab:mse}). For many subgroups, the MSE from the probabilistic model is clearly smaller compared to the classical model.
 
 \begin{table}[!h]
-    \centering
-    \begin{tabularx}{\textwidth}{c c c c}
-    \toprule \\
-    Statement   & Subgroup &  Probabilistic MSE   &   Classical MSE \\
-    \midrule
-    \multirow{4}{*}{\makecell{Music is/was an\\important part of\\life in my family}}
-    & Music audience & 0.0011 & 0.0020 \\
-    & Music professionals & 0.0011 & 0.0014 \\
-    & Musicians & 0.0036 & 0.0043 \\
-    & Whole data & 0.0015 & 0.0016 \\
-    \midrule
-    \multirow{4}{*}{\makecell{Music connects me\\with people from\\different cultural backgrounds}}
-    & Music audience & 0.0021  & 0.0031 \\
-    & Music professionals & 0.0069& 0.0092 \\
-    & Musicians & 0.00097 & 0.0026 \\
-    & Whole data & 0.00079 & 0.00078 \\
-    \bottomrule
-    \end{tabularx}
-    \caption{MSE values for both statements across all subgroups and the full dataset, comparing the probabilistic and frequentist models. The probabilistic model yields MSE for all subgroups and statements, except for the full dataset on the statement “Music connects me with people from different cultural backgrounds,” where the classical model performs slightly better. This indicates that the probabilistic model does better at estimating the category probabilities. MSE was calculated by comparing the estimated category probabilities to the observed proportions in the test set.}
-    \label{tab:mse}
+\centering
+\begin{tabularx}{\textwidth}{c c c c}
+\toprule \\
+Statement   & Subgroup &  Probabilistic MSE   &   Classical MSE \\
+\midrule
+\multirow{4}{*}{\makecell{Music is/was an\\important part of\\life in my family}}
+& Music audience & 0.0011 & 0.0020 \\
+& Music professionals & 0.0011 & 0.0014 \\
+& Musicians & 0.0036 & 0.0043 \\
+& Whole data & 0.0015 & 0.0016 \\
+\midrule
+\multirow{4}{*}{\makecell{Music connects me\\with people from\\different cultural backgrounds}}
+& Music audience & 0.0021  & 0.0031 \\
+& Music professionals & 0.0069& 0.0092 \\
+& Musicians & 0.00097 & 0.0026 \\
+& Whole data & 0.00079 & 0.00078 \\
+\bottomrule
+\end{tabularx}
+\caption{MSE values for both statements across all subgroups and the full dataset, comparing the probabilistic and frequentist models. The probabilistic model yields MSE for all subgroups and statements, except for the full dataset on the statement “Music connects me with people from different cultural backgrounds,” where the classical model performs slightly better. This indicates that the probabilistic model does better at estimating the category probabilities. MSE was calculated by comparing the estimated category probabilities to the observed proportions in the test set.}
+\label{tab:mse}
 \end{table}
 
 We observe notable differences in category probabilities between the subgroups and the whole population. For the statement “Music is/was an important part of life in my family” all subgroups show a higher proportion of responses in the fifth category, “Strongly agree” (Figure~\ref{fig:important_cate}). In the “music professionals” and “music audience” subgroups, this category is has the highest estimated probability, while in the “musicians” subgroup, the fourth and fifth categories have similar probabilities. In contrast, responses from the whole population have higher probabilities in the third and fourth categories.
 
 For the statement “Music connects me with people from different cultural backgrounds” differences between subgroups and the full population are also evident (Figure~\ref{fig:connect_cate}). The “music audience” and “music professionals” subgroups have a higher probability foor selecting category five. In contrast, the category probabilities for the “musicians” subgroup closely resemble those of the whole population.
 
-
 \begin{figure}[h]
-    \centering
-    \includegraphics[scale=0.49]{figures/cate_connect_all.png}
-    \caption{Comparing the fit between new data and model predictions for the statement “Music connects me with people from different cultural backgrounds”. Estimated category probabilities from the probabilistic and classical models across the subgroups and the whole data. The intervals correspond to 50\% and 95\% credible and confidence intervals from the probabilistic and classical models. The red dots indicate the category probability values from the training set, and the blue dots represent the category probability values from the test set (Germany).}
-    \label{fig:connect_cate}
+\centering
+\includegraphics[scale=0.49]{figures/cate_connect_all.png}
+\caption{Comparing the fit between new data and model predictions for the statement “Music connects me with people from different cultural backgrounds”. Estimated category probabilities from the probabilistic and classical models across the subgroups and the whole data. The intervals correspond to 50\% and 95\% credible and confidence intervals from the probabilistic and classical models. The red dots indicate the category probability values from the training set, and the blue dots represent the category probability values from the test set (Germany).}
+\label{fig:connect_cate}
 \end{figure}
 
 \FloatBarrier
 
 \vspace{1em}
-\noindent\textbf{Probability estimates at different levels of a categorical variable} 
+\noindent\textbf{Probability estimates at different levels of a categorical variable}
 \vspace{0.5em}
 
 \noindent We previously observed that the probabilistic model performs better in estimating overall category probabilities. We now turn to examining category probabilities across different levels of the explanatory variable age group. This variable includes six levels (Table~\ref{tab:demo2}), with the “70 and over” group having relatively few responses, particularly within the “music professionals” subgroup. The combination of a small sample size and item nonresponse results in only a single observation for this age group in that subgroup for both statements. As noted earlier, such sparsity causes estimation issues for the classical model.
 
-Overall, both approaches perform similarly in estimating the category probabilities, with the probabilistic model yielding slightly wider intervals (Figure~\ref{fig:age_cate}). More importantly, only the probabilistic model is able to produce estimates for the “70 and over” age group, which also align well with the observed values in the test set. This is the case with both of the statements. 
+Overall, both approaches perform similarly in estimating the category probabilities, with the probabilistic model yielding slightly wider intervals (Figure~\ref{fig:age_cate}). More importantly, only the probabilistic model is able to produce estimates for the “70 and over” age group, which also align well with the observed values in the test set. This is the case with both of the statements.
 
 \begin{figure}[h]
-    \centering
-    \includegraphics[scale=0.418]{figures/age_cate_all.png}
-    \caption{Comparing the fit between new data and model predictions at different levels of the explanatory variable age group. Estimated category probabilities from the probabilistic and classical models for both statements within the “music professionals” subgroup. The red dots indicate the category probability values from the training set, and the blue dots represent the category probability values from the test set (Germany). The 70 and over age group includes only a few observations, resulting in some categories lacking probability values.}
-    \label{fig:age_cate}
+\centering
+\includegraphics[scale=0.418]{figures/age_cate_all.png}
+\caption{Comparing the fit between new data and model predictions at different levels of the explanatory variable age group. Estimated category probabilities from the probabilistic and classical models for both statements within the “music professionals” subgroup. The red dots indicate the category probability values from the training set, and the blue dots represent the category probability values from the test set (Germany). The 70 and over age group includes only a few observations, resulting in some categories lacking probability values.}
+\label{fig:age_cate}
 \end{figure}
 
 An additional important point is that the confidence intervals from the classical model occasionally extend below zero at certain levels of the explanatory variable age group, rendering them invalid for probability estimates. For instance, this occurs for categories one and two within the 40–49 age group for the statement “Music connects me with people from different cultural backgrounds” (Figure~\ref{fig:age_cate}). This issue arises because the classical model relies on approximate methods for interval estimation, which can sometimes produce improper intervals. In contrast, the probabilistic model avoids this problem, as its intervals are derived from posterior predictive distribution samples, ensuring valid probability bounds.
 
 \FloatBarrier
 
-\subsection{Parameter estimates} 
+\subsection{Parameter estimates}
 
 The coefficient estimates from the probabilistic models are slightly more precise, with narrower intervals compared to those from the classical model (Figure~\ref{fig:mup_coefs}). This modest gain in precision results from the use of prior distributions, which introduce mild regularization by shrinking the estimates toward zero. Additionally, the probabilistic model provides estimates for the “70 and over” age group coefficient for both statements within the “music professionals” subgroup, something the classical model fails to do due to data sparsity.
 
 Although the estimates from the probabilistic models are slightly narrower, the overall conclusions regarding the parameter effects are consistent across both modelling approaches. A key advantage of the probabilistic approach is its ability to produce estimates for groups with sparse observations, where classical models can often fail. Furthermore, in probabilistic modelling, the significance of a coefficient is typically assessed using the highest density interval (HDI) and the region of practical equivalence (ROPE) \cite{kruschke2018}. These methods make fuller use of the posterior distribution, allowing for more nuanced and informative inferences about the effects of the parameters.
 
 \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.9\linewidth]{figures/mup_coefs.png}
-    \caption{Coefficient (log-odds) estimates from the probabilistic and classical models for both statements within the “music professionals” subgroup. The intervals correspond to 50\% and 95\% credible and confidence intervals from the probabilistic and classical models. The reference categories are male for gender and 16-29 for age group.}
-    \label{fig:mup_coefs}
+\centering
+\includegraphics[width=0.9\linewidth]{figures/mup_coefs.png}
+\caption{Coefficient (log-odds) estimates from the probabilistic and classical models for both statements within the “music professionals” subgroup. The intervals correspond to 50\% and 95\% credible and confidence intervals from the probabilistic and classical models. The reference categories are male for gender and 16-29 for age group.}
+\label{fig:mup_coefs}
 \end{figure}
 
 \FloatBarrier
 
-\subsection{Country-specific estimates} 
+\subsection{Country-specific estimates}
 
 Because we fitted hierarchical probabilistic models, we are able to examine differences across the countries. In these models, country-specific intercepts influence the estimated category probabilities and their corresponding intervals. For the “music professionals” subgroup responding to the statement “Music is/was an important part of life in my family,” there is little variation between the countries (Figure~\ref{fig:country_est}). However, for the same subgroup responding to the statement “Music connects me with people from different cultural backgrounds” some variation is evident. In particular, respondents from Italy and France appear less likely to select the fifth category compared to those in other countries.
 
-Additionally, we can generate estimates for the Germany test set, which was not included in model training. To do this, we set the varying-intercept term, specific to each country cluster, to zero. This effectively treats Germany as having an mean profile across all countries, making the estimate a pooled average of the other country-specific estimates and their associated uncertainty intervals. 
+Additionally, we can generate estimates for the Germany test set, which was not included in model training. To do this, we set the varying-intercept term, specific to each country cluster, to zero. This effectively treats Germany as having an mean profile across all countries, making the estimate a pooled average of the other country-specific estimates and their associated uncertainty intervals.
 
 Country-specific estimates in the classical model can be obtained by including a country-specific random effect in the model formula and then calculating the corresponding estimates. However, deriving uncertainty intervals for these estimates is more challenging than in the probabilistic approach. Within the probabilistic framework, we obtained country-level estimates and intervals by grouping posterior draws by country, which allowed for a clearer and more coherent quantification of uncertainty.
 
 \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.9\linewidth]{figures/hier_mup.png}
-    \caption{Country-level differences in estimated category probabilities for both statements within the “music professionals” subgroup, based on the probabilistic hierarchical model. Country-specific estimates exhibit variation across countries, particularly for the statement “Music connects me with people from different cultural backgrounds.” Estimates are shown with 50\% and 95\% credible intervals for both statements.}
-    \label{fig:country_est}
+\centering
+\includegraphics[width=0.9\linewidth]{figures/hier_mup.png}
+\caption{Country-level differences in estimated category probabilities for both statements within the “music professionals” subgroup, based on the probabilistic hierarchical model. Country-specific estimates exhibit variation across countries, particularly for the statement “Music connects me with people from different cultural backgrounds.” Estimates are shown with 50\% and 95\% credible intervals for both statements.}
+\label{fig:country_est}
 \end{figure}
 
 \FloatBarrier
@@ -390,16 +355,11 @@ Our simulation study demonstrated the advantages of using the probabilistic appr
 Despite the demonstrated strengths of the probabilistic approach, several limitations should be acknowledged. The comparison with classical methods was based on a limited set of ordinal variables and a single dataset, which may constrain the generalizability of the findings. The probabilistic models employed a single weakly informative prior specification chosen for simplicity; however, a preliminary sensitivity analysis was conducted by varying the prior variances while keeping the expected values fixed. Although this analysis indicated that the results were robust to these changes, a more comprehensive investigation of prior influence would be a good direction for future research.
 
 Although all ordinal response categories in our dataset contained observations, small-sample scenarios may include empty categories, as seen in the Live Music Census data \cite{cloonan_tuukkanen_2024} also from the OpenMusE project. Such cases cause then classical methods to fail to estimate the threshold parameters, whereas probabilistic approaches can provide more stable inference. Future work could extend our analysis by exploring different link functions (e.g., probit or log-log) \cite{agresti} and other ordinal regression frameworks, such as adjacent-category or sequential models \cite{bürkner2019}. These extensions would help benchmark the strengths and limitations of probabilistic modelling across diverse settings, supporting its broader adoption for surveys with small samples, missing responses, or data aggregated from multiple sources.
- 
+
 \section*{Acknowledgements}
 
 This work received funding from the European Union funded under Grant No. 101095295 (OpenMusE) and Strategic Council of Finland Grant No. 352604 (Out of Despair).
 
-
-% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
 \printbibliography
-
-% You can include an appendix using the following command
-%\appendix
 
 \end{document}

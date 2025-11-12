@@ -135,10 +135,10 @@ def create_rss_feed(
     channel = SubElement(rss, "channel")
 
     # Channel metadata
-    SubElement(channel, "title").text = "Anthology for Computers and the Humanities"
+    SubElement(channel, "title").text = "Anthology of Computers and the Humanities"
     SubElement(channel, "link").text = base_url
     SubElement(channel, "description").text = (
-        "Anthology for Computers and the Humanities (ACH) is an open-access journal "
+        "Anthology of Computers and the Humanities (ACH) is an open-access journal "
         "publishing technical papers, software documentation, and research in digital humanities."
     )
     SubElement(channel, "language").text = "en"

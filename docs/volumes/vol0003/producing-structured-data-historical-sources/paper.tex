@@ -1,4 +1,4 @@
-\documentclass[final]{anthology-ch} 
+\documentclass[final]{anthology-ch}
 
 \usepackage{booktabs}
 \usepackage{graphicx}
@@ -11,27 +11,24 @@
 \usepackage[inkscapelatex=false]{svg}
 \usepackage{cleveref}
 \usepackage{paralist}
-\usepackage{dsfont} 
-
+\usepackage{dsfont}
 
 \newcommand{\joseph}[1]{\textcolor{blue}{Joseph:~#1}}
 \newcommand{\marie}[1]{\textcolor{red}{Marie:~#1}}
 \newcommand{\joel}[1]{\textcolor{purple}{Jo{\"e}l:~#1}}
 
-
 \title{Producing Structured Data from Historical Sources: A Preliminary Application to French Senate \textit{Tables}}
 
-
 \author[1]{Jo{\"e}l F{\'e}ral}[
-  orcid=0009-0005-6646-0733
+orcid=0009-0005-6646-0733
 ]
 
 \author[2]{Joseph Chazalon}[
-  orcid=0000-0002-3757-074X
+orcid=0000-0002-3757-074X
 ]
 
 \author[2]{Marie Puren}[
-  orcid=0000-0001-5452-3913
+orcid=0000-0001-5452-3913
 ]
 
 \affiliation{1}{{\'E}cole Nationale des Chartes, Paris, France}
@@ -41,11 +38,11 @@
 
 \pubyear{2025}
 \pubvolume{3}
-\pagestart{885}
-\pageend{901}
+\pagestart{889}
+\pageend{905}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/oXn2aMxza3iJ}  
+\doi{10.63744/oXn2aMxza3iJ}
 \paperorder{52}
 
 \addbibresource{bibliography.bib}
@@ -57,22 +54,13 @@
 \begin{abstract}
 We address the extraction of structured data from noisy historical documents (namely, the 1931 \textit{Tables nominatives} of the French Senate) using a LLM guided by lightly constrained generation rather than strict post-hoc validation. Our contribution is threefold: (1) a minimal, application-driven target schema (speaker name + list of page references) expressed so it can be injected into the prompt to steer generation; (2) a hybrid pipeline that decouples OCR from schema-oriented generation, leveraging the LLM's tolerance to OCR noise while limiting hallucinations via an expected JSON format; (3) an evaluation protocol for structured outputs using optimal record matching and a continuous Integrated Matching Quality metric that overcomes precision/recall brittleness.
 Code and data are publicly available at \url{https://github.com/EPITAResearchLab/feral.25.chr}.
-%
- \end{abstract}
-
-
+\end{abstract}
 
 \section{Introduction}
 \label{sec:intro}
-The growing use of artificial intelligence by historians \cite{clavert2024histoire} is multiplying the possibilities for producing historical datasets. The advent of large language models (LLMs) is further changing the landscape, especially for processing textual data corpora, with a proliferation of uses and experiments in the humanities and social sciences.\footnote{The "DH@LLM: Grands modèles de langage et humanités numériques" conference program, held in Paris in July 2025, is a good illustration of this: \href{https://www.crihn.org/nouvelles/2025/01/16/colloque-dhllm-grands-modeles-de-langage-et-humanites-numeriques-sorbonne-universite/}{https://www.crihn.org/nouvelles/2025/01/16/colloque-dhllm-grands-modeles-de-langage-et-humanites-numeriques-sorbonne-universite/}} Zero-shot LLMs are capable of performing a wide range of tasks without the need for task-specific examples or fine-tuning \cite{kojima2022large,wei2022emergent,zhao2023survey} and have demonstrated their ability to carry out many time-consuming tasks in historical research, such as transcription \cite{humphries2024unlocking}, information extraction \cite{knutsen2024alimenter}, or annotation \cite{yuan2025leveraging}. 
-
-
+The growing use of artificial intelligence by historians \cite{clavert2024histoire} is multiplying the possibilities for producing historical datasets. The advent of large language models (LLMs) is further changing the landscape, especially for processing textual data corpora, with a proliferation of uses and experiments in the humanities and social sciences.\footnote{The "DH@LLM: Grands modèles de langage et humanités numériques" conference program, held in Paris in July 2025, is a good illustration of this: \href{https://www.crihn.org/nouvelles/2025/01/16/colloque-dhllm-grands-modeles-de-langage-et-humanites-numeriques-sorbonne-universite/}{https://www.crihn.org/nouvelles/2025/01/16/colloque-dhllm-grands-modeles-de-langage-et-humanites-numeriques-sorbonne-universite/}} Zero-shot LLMs are capable of performing a wide range of tasks without the need for task-specific examples or fine-tuning \cite{kojima2022large,wei2022emergent,zhao2023survey} and have demonstrated their ability to carry out many time-consuming tasks in historical research, such as transcription \cite{humphries2024unlocking}, information extraction \cite{knutsen2024alimenter}, or annotation \cite{yuan2025leveraging}.
 
 The use of large language models (LLMs) opens new perspectives for extracting structured data \cite{liu2024structured} from historical documents. In the context of historical data extraction, a central challenge lies in obtaining structured outputs. One approach is structured generation, which constrains an LLM to directly produce information in a predefined format such as JSON. Alternatively, structure can be imposed through post-processing of free-form text outputs. Regardless of the approach, producing structured data enables traceability back to the original document and facilitates source verification. It also supports downstream uses, such as integration into a database or further computational analysis.
-
-
-
-
 
 Two fundamental issues still remain: (1) how to move from raw text to an exploitable structured representation, such as a table or CSV file; and (2) how to assess the quality and reliability of the extracted data. This article addresses both aspects through a concrete case study: the extraction of structured information from the 1931 \textit{Tables nominatives} or \textit{Tables des noms} of the French Senate (index of senatorial activity ordered by name). We explore a lightly constrained generation approach using an LLM and propose a method to represent target data, guide the extraction process, and evaluate system performance. Beyond this specific case, the study contributes reflections on the feasibility and limitations of generative models for structuring historical data.
 
@@ -85,40 +73,25 @@ Systematically extracting data from them would make it possible to track parliam
 Our objective is to extract structured data from these \textit{Tables}; for our initial experiments, we focus on a single \textit{Table nominative}, namely that of 1931.
 The early 1930s marked the beginning of the decline of French parliamentarism, culminating in the fall of the Third Republic in 1940 \cite{morel2024parlement}. Analyzing the 1931 \textit{Table} allows us to lay the groundwork for a broader study that will extend across the entire decade, with the aim of capturing the parliamentary activity of the Senate and, subsequently, of the Chamber of Deputies.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 After reviewing existing approaches to structured data extraction and evaluation (Section~\ref{sec:related-work}), we present three main contributions.
-\begin{inparaenum}[(1)] 
-    \item We design and implement a schema-guided data processing pipeline for extracting structured information from the \textit{Tables nominatives} of the French Senate, combining OCR transcription and prompt-based generation with a large language model (Section~\ref{sec:documents-approach}); 
-    \item We introduce a dedicated evaluation protocol tailored to this task, including a matching-based alignment method and a continuous quality metric that accounts for partial and noisy outputs (Section~\ref{sec:experiments}); and 
-    \item  We provide an empirical assessment of LLM-based extraction in this historical setting, showing that model performance is significantly shaped by the design of the prompt and data schema---elements we propose to treat as critical parameters of the overall modeling process (Section~\ref{sec:results}).
+\begin{inparaenum}[(1)]
+\item We design and implement a schema-guided data processing pipeline for extracting structured information from the \textit{Tables nominatives} of the French Senate, combining OCR transcription and prompt-based generation with a large language model (Section~\ref{sec:documents-approach});
+\item We introduce a dedicated evaluation protocol tailored to this task, including a matching-based alignment method and a continuous quality metric that accounts for partial and noisy outputs (Section~\ref{sec:experiments}); and
+\item  We provide an empirical assessment of LLM-based extraction in this historical setting, showing that model performance is significantly shaped by the design of the prompt and data schema---elements we propose to treat as critical parameters of the overall modeling process (Section~\ref{sec:results}).
 \end{inparaenum} \section{Related Work}
 \label{sec:related-work}
 
-Building upon our initial argument, we structure our review around three key questions: 
+Building upon our initial argument, we structure our review around three key questions:
 \begin{inparaenum}[(1)]
-    \item How can structured data be effectively modeled? 
-    \item How can the quality of structured data produced by such approaches be evaluated? 
-    \item How can structured data be generated from text?
+\item How can structured data be effectively modeled?
+\item How can the quality of structured data produced by such approaches be evaluated?
+\item How can structured data be generated from text?
 \end{inparaenum}
 
 \subsection{Modeling Structured Data}
 \label{sec:modeling-structured-data}
 
-Structured data can take various forms, including: 
+Structured data can take various forms, including:
 
 \textbf{Record Sets:} These are unordered sets of tuples, similar to database tables where columns represent attributes of objects. This structure is commonly employed in Information Extraction tasks, such as named entity recognition~\cite{nadeau_survey_2007} or relation extraction~\cite{mintz_distant_2009}.
 
@@ -135,11 +108,11 @@ In this paper, we focus on record sets and sequences, as they are the most relev
 
 The evaluation of structured data quality can be broadly categorized into two types of metrics: edit distance metrics and matching metrics, as defined in~\cite{chen_unified_2023}.
 
-\textbf{Edit Distance Metrics:}  
+\textbf{Edit Distance Metrics:}
 These metrics involve complex optimization processes and are often computationally intensive. Additionally, their interpretability is limited, as they do not provide a direct comparison between the produced and expected data. Examples include the classical Levenshtein distance for character-level comparisons and Tree-Edit Distance~\cite{zhang_simple_1989} for tree structures. While general graph edit distance metrics exist, their complexity often renders them impractical for real-world applications.
 
-\textbf{Matching Metrics:}  
-Matching metrics are more interpretable, as they explicitly identify the elements that match between the produced and expected data. Most approaches rely on bipartite matching between the predicted and reference data sets, computing scores based on the number of matched elements~\cite{chen_unified_2023}. Common metrics include the F1 score, which combines precision and recall, and the Jaccard index, which measures set similarity. However, fewer studies address structured data or partial matching, where the produced data may not perfectly align with the expected data. 
+\textbf{Matching Metrics:}
+Matching metrics are more interpretable, as they explicitly identify the elements that match between the produced and expected data. Most approaches rely on bipartite matching between the predicted and reference data sets, computing scores based on the number of matched elements~\cite{chen_unified_2023}. Common metrics include the F1 score, which combines precision and recall, and the Jaccard index, which measures set similarity. However, fewer studies address structured data or partial matching, where the produced data may not perfectly align with the expected data.
 It is interesting to note that the computer vision community share the exact same problem, and a similar framework is proposed in the context of the COCO Panoptic Segmentation Challenge~\cite{kirillov_panoptic_2019}. The evaluation protocol relies on an optimal matching between the surfaces of the predicted and ground truth segmentations to jointly evaluate detection, segmentation and classification of regions---which is similar to the approach of Chen et al.~\cite{chen_unified_2023}.
 
 In our work, we adopt a matching metric based on optimal matching between structured data sets, which generalizes the bipartite matching approach while accommodating partial matches. This approach not only provides a quantitative evaluation of data quality but also identifies missed or hallucinated elements, offering actionable insights.
@@ -149,50 +122,43 @@ In our work, we adopt a matching metric based on optimal matching between struct
 
 Approaches for generating structured data from text can be broadly divided into two categories: detection-based (extractive) and generation-based (generative or abstractive).
 
-\textbf{Detection-Based Approaches:}  
+\textbf{Detection-Based Approaches:}
 These methods focus on identifying text fragments corresponding to specific fields or elements of the structured data. Traditional approaches relied on rule-based methods, such as regular expressions or heuristics. More recently, machine learning models, such as sequence labeling models (e.g., CRF-based methods~\cite{finkel_incorporating_2005}) or transformer-based encoder-only models (e.g., BERT~\cite{devlin-etal-2019-bert}), have become prevalent. Transformer-based models are particularly effective due to their intrinsic capabilities and their ability to be fine-tuned on specific tasks with relatively small datasets. Additionally, their design enforces strict alignment between input text and output labels, reducing the risk of hallucinations (i.e., generating data not present in the input). However, these approaches require task-specific training, which demands data, computational resources, expertise, and time.
 
-\textbf{Generation-Based Approaches:}  
+\textbf{Generation-Based Approaches:}
 These methods leverage autoregressive models to generate structured data by ``translating'' the input text into the desired format. The advent of LLMs has spurred interest in this approach due to their  generalization capabilities across diverse tasks without requiring task-specific training~\cite{radford_improving_2018,radford_language_2019,brown_language_2020}. Outputs can be constrained to specific formats, such as JSON, or more complex structures, as long as the set of valid tokens can be dynamically computed~\cite{willard2023efficient}. These models can produce complex, nested structures by generating elements sequentially and can infer implicit elements not explicitly present in the input text. However, their main drawback is their susceptibility to hallucinations, which are challenging to detect.
 
 In this paper, we explore the effectiveness of generation-based approaches for handling repetitive structures in parliamentary indexes or \textit{Tables}. We leverage the zero-shot capabilities of LLMs and evaluate the viability of this approach for generating structured data in this specific context.
 
- \section{Schema-Guided Extraction of Parliamentary Interventions} \label{sec:documents-approach}
+\section{Schema-Guided Extraction of Parliamentary Interventions} \label{sec:documents-approach}
 
 \subsection{The 1931 \textit{Tables nominatives} of the French Senate}
 There is an edition of the \textit{Tables du Journal Officiel} for each year, typically comprising around 450 pages in the 1930s. The section entitled \textit{Tables des noms}---which includes both the Senate and the Chamber of Deputies---spans approximately forty pages, with the Senate portion generally covering around fifteen. For the year 1931, the Senate's \textit{Tables des noms} consists of 14 pages and roughly 300 entries, each corresponding to an intervention in the assembly.
 Each entry is associated with a speaker and details various types of actions (requests for interpellation, bill discussions, reading of committee reports, submission of amendments, etc.), along with a page reference directing the reader to the full transcription of the intervention. These transcriptions are published in the Senate's \textit{Débats parlementaires}. The \textit{Tables} are therefore functionally linked to the transcriptions through page numbers. Moreover, as pagination is continuous throughout the year, each page reference makes it possible to accurately determine the date of the corresponding intervention.
 
-
-
-
-
 \subsection{Pipeline for Schema-Guided Structured Data Extraction}
 
-Despite recent advances in Large Vision-Language Models (LVLMs), their end-to-end, zero-shot performance remains insufficient for high-accuracy OCR tasks~\cite{lv_kosmos-25_2024}. 
+Despite recent advances in Large Vision-Language Models (LVLMs), their end-to-end, zero-shot performance remains insufficient for high-accuracy OCR tasks~\cite{lv_kosmos-25_2024}.
 To address this, we adopt a straightforward pipeline that leverages the strengths of specialized components to maximize overall extraction accuracy.
 
 First, each page image is processed independently using the PERO OCR engine~\cite{kodym2021layout,kis2021atst,kohut2021tsnet} to detect and transcribe text. Given the persistent challenges in general page layout segmentation, we generate three transcription variants per page to capture the variability inherent in such pipelines. Such variants will be described in more detail in \Cref{sec:xp-dataset}.
 
-Once the text for each page is obtained, we concatenate the transcriptions from all relevant pages to form a single text stream. This aggregated text is then provided as input to a Large Language Model (LLM), which is instructed to produce the target structured data. 
+Once the text for each page is obtained, we concatenate the transcriptions from all relevant pages to form a single text stream. This aggregated text is then provided as input to a Large Language Model (LLM), which is instructed to produce the target structured data.
 To simplify the evaluation process, we limit our current study to single-page extraction.
 
-
 \begin{figure}[tb!]
-  \centering
-\includegraphics[width=0.95\textwidth]{pipeline.pdf}
-  \caption{Document processing pipeline. The input to the LLM consists of the concatenated OCR-extracted raw text, a natural language prompt, and a predefined schema describing the target structure. The LLM generates a structured JSON object as output.
+\centering
+\includegraphics[width=0.95\textwidth]{figures/pipeline.pdf}
+\caption{Document processing pipeline. The input to the LLM consists of the concatenated OCR-extracted raw text, a natural language prompt, and a predefined schema describing the target structure. The LLM generates a structured JSON object as output.
 }
-  \label{fig:schema_pipeline}
+\label{fig:schema_pipeline}
 \end{figure}
 
 While LLMs can be prompted to generate structured outputs, it is essential to constrain their generations to match the expected format. Several methods exist for enforcing such constraints; the most effective to date involves filtering valid tokens during inference using an external validator, such as a finite state automaton~\cite{willard2023efficient}, and is commonly available in commercial LLM APIs.
 
-
 Our information extraction process thus relies on submitting OCR-processed text to the LLM and obtaining output that conforms to a predefined JSON schema. This setup requires three key components: \textbf{a data schema}, \textbf{a prompt}, and \textbf{an API supporting constrained output}.
 
 For this study, we selected the Mistral API,\footnote{The Mistral API Documentation is available at \url{https://docs.mistral.ai/api/}.} using the Ministral 8B Instruct v2410 model~\cite{MistralAI2024Ministral8B}. This choice is motivated by the model's strong zero-shot performance, cost-effectiveness, and the public availability of its weights for research purposes.\footnote{Ministral 8B weights are available at \url{https://huggingface.co/mistralai/Ministral-8B-Instruct-2410}.}
-
 
 \subsection{Data Modeling and Schema Definition}
 \label{sec:approach-datamodel}
@@ -208,24 +174,24 @@ The core extraction task centers on identifying individual entries in the \texti
 \small
 \begin{verbatim}
 {
-  "list_of_speakers": [
-    {
-      "name": "Dentu",
-      "page_references": [
-        1024,
-        1031,
-        1560,
-        1563,
-        1564
-      ]
-    },
-    {
-      "name": "Desjardins (Charles)",
-      "page_references": [
-        563
-      ]
-    }
-  ]
+"list_of_speakers": [
+{
+"name": "Dentu",
+"page_references": [
+1024,
+1031,
+1560,
+1563,
+1564
+]
+},
+{
+"name": "Desjardins (Charles)",
+"page_references": [
+563
+]
+}
+]
 }
 \end{verbatim}
 \caption{Example JSON output representing structured data extracted from the \textit{Tables nominatives}. Each entry corresponds to a participant (e.g., a senator) and a list of page numbers where they are mentioned. These references act as temporal markers due to the continuous pagination of the source. For simplicity, intervention categories are omitted in this study. }
@@ -234,21 +200,18 @@ The core extraction task centers on identifying individual entries in the \texti
 
 The data schema guiding LLM inference is defined at the granularity of speaker names and their corresponding page references, which suffices for constructing the intended timeline. We use Pydantic,\footnote{Pydantic documentation is available at \url{https://docs.pydantic.dev}.} a Python library for data modeling, to specify the schema in a JSON-compatible format with strict type validation and embedded descriptions. These description fields serve as semantic tags, enhancing both prompt clarity and LLM guidance. Figure~\ref{fig:pydantic_schema} (see \Cref{appdx:schema}) presents the simplified schema used in this work.
 
-
-
 \subsection{Prompting the LLM for Structured Data Extraction}
 
 The prompt provided to the LLM (see \Cref{appdx:full-prompt}) is designed to guide the extraction of political participants---primarily senators and ministers---and their associated page references from the input text. Its structure is as follows:
 
 \begin{itemize}
-  \item \textbf{Task Definition:} The prompt clearly states that the input consists of entries, each corresponding to an individual involved in Senate activities (e.g., senators, ministers), and that the goal is to extract their names and the page numbers referencing their interventions.
-  \item \textbf{Key Term Clarification:} Definitions are provided for essential terms such as ``entries'' and ``actions'' to ensure unambiguous interpretation.
-  \item \textbf{Handling Special Cases:} The prompt specifies procedures for cases such as index cross-references (where no page numbers are given, only a reference to another entry) and split entries spanning multiple pages (which are to be ignored in this preliminary study to maintain extraction simplicity).
-  \item \textbf{Formatting Instructions:} Explicit guidelines are given for representing names (e.g., first names in brackets after last names) and formatting page references.
+\item \textbf{Task Definition:} The prompt clearly states that the input consists of entries, each corresponding to an individual involved in Senate activities (e.g., senators, ministers), and that the goal is to extract their names and the page numbers referencing their interventions.
+\item \textbf{Key Term Clarification:} Definitions are provided for essential terms such as ``entries'' and ``actions'' to ensure unambiguous interpretation.
+\item \textbf{Handling Special Cases:} The prompt specifies procedures for cases such as index cross-references (where no page numbers are given, only a reference to another entry) and split entries spanning multiple pages (which are to be ignored in this preliminary study to maintain extraction simplicity).
+\item \textbf{Formatting Instructions:} Explicit guidelines are given for representing names (e.g., first names in brackets after last names) and formatting page references.
 \end{itemize}
 
 Optionally, the prompt could be further improved by incorporating additional historical context or representative examples (few-shot prompting).
-
 
 \subsection{Iterative Refinement of the Data Model and Prompt}
 Both the data schema and the extraction prompt underwent iterative refinement during this study. This process was motivated by the observation that the LLM occasionally proposed alternative, and sometimes more effective, ways of structuring the extracted information than initially anticipated. For instance, the model would naturally deduplicate repeated page references for a given speaker, streamlining the output beyond the original schema specification. Consequently, the construction of the ground truth required a balance between adhering to formal schema constraints and accommodating the LLM's practical structuring tendencies.
@@ -256,21 +219,20 @@ Both the data schema and the extraction prompt underwent iterative refinement du
 To ensure unbiased evaluation, all schema and prompt adjustments were based exclusively on performance observed on a single development page (referred to as \textbf{``page 02''} in experiments), with the remaining pages reserved for final testing. This approach aligns with standard machine learning practice, maintaining a clear separation between development and evaluation data.
 
 Future work could automate this refinement loop or incorporate more systematic prompt engineering strategies.
- \section{Experiments}
+\section{Experiments}
 \label{sec:experiments}
 The evaluation setup was established through an initial development phase, during which the data model, prompt instructions, and reference structured data for a selected development page were iteratively refined. After finalizing this phase, we applied the baseline model to a broader set of pages and manually corrected the outputs to construct an unbiased ground truth for evaluation.
 
 This section details the resulting dataset, the variants generated for analysis, and the evaluation protocol employed to rigorously assess prediction quality.
 
-
 \subsection{Dataset}
 \label{sec:xp-dataset}
 
 Ground truth data were constructed to rigorously evaluate extraction quality across varying levels of OCR text fidelity. For each selected page, three distinct OCR variants were generated using the PERO OCR engine~\cite{kis2021atst,kodym2021layout,kohut2021tsnet}:
-\begin{inparaenum}[(1)] 
-    \item a manually corrected version serving as the gold standard, 
-    \item a version with manual layout segmentation, and 
-    \item a raw, uncorrected OCR output.
+\begin{inparaenum}[(1)]
+\item a manually corrected version serving as the gold standard,
+\item a version with manual layout segmentation, and
+\item a raw, uncorrected OCR output.
 \end{inparaenum}
 This design enables systematic assessment of the extraction pipeline's robustness to noise and layout artifacts.
 
@@ -281,9 +243,6 @@ Each page was processed independently to avoid optimistic bias from sequential c
 Structured outputs were generated using the Ministral 8B model, with a fixed prompt and a Pydantic schema to enforce output consistency. A temperature of zero was used to ensure deterministic results. For each page and OCR variant, the model produced structured JSON outputs, which were then compared to manually curated ground truth representations.
 
 The evaluation covers 109 entries across five pages, with each entry assessed for all three OCR conditions.
-
-
-
 
 \subsection{Structured Output Evaluation Protocol}
 The evaluation aims to rigorously assess the structured outputs generated by the LLM (denoted as $P$) against a manually curated ground truth ($G$). As described in \Cref{sec:approach-datamodel}, each data instance consists of a \textbf{list of speaker entries}, where each entry comprises a \textbf{speaker name} and a \textbf{list of pages} referencing their speeches.
@@ -307,7 +266,6 @@ $$
 
 To establish a one-to-one correspondence between predicted and ground truth entries, we employ optimal transport~\cite{peyré2020computationaloptimaltransport}. This approach finds the assignment that minimizes the total distance across all pairs, accommodating order invariance and structural discrepancies. The resulting alignment provides a principled basis for evaluating extraction quality at the entry level.
 
-
 \subsubsection{Limitations of Standard Metrics: Precision, Recall, and F1-Score}
 
 Conventional metrics such as \textbf{precision}, \textbf{recall}, and \textbf{F1-score} are widely used to evaluate extraction tasks. Precision quantifies the proportion of correctly generated entries among all model outputs, while recall measures the fraction of ground truth entries successfully retrieved. The F1-score, as their harmonic mean, is intended to provide a balanced summary of performance.
@@ -328,16 +286,15 @@ $$
 
 IMQ provides a comprehensive summary of extraction quality, rewarding both the number and the closeness of matches. A score of 1 indicates perfect alignment, while lower values reflect increasing divergence. This continuous, threshold-free metric is particularly well-suited to evaluating LLM outputs, where minor deviations are common even under strong structural constraints. IMQ thus enables a principled, fine-grained assessment of structured extraction performance.
 
- \section{Results and Analysis}
+\section{Results and Analysis}
 \label{sec:results}
-
 
 We applied our matching method to five different pages (109 entries), each processed independently and exhibiting varying OCR qualities. \Cref{tab:summary_results_ocr_raw} presents the results for each OCR-scanned page---processed without manual segmentation or correction---along with the corresponding sizes of the ground truth and predicted sets, and the number of matches ultimately selected by optimal transport.
 
 \begin{table}[tb]
 \centering
 \begin{adjustbox}{width=\textwidth, center}
-  \begin{tabular}{lrrrrrr}
+\begin{tabular}{lrrrrrr}
 \toprule
 Source & Precision (Biased) & Recall (Biased) & IMQ & Ground Truth Entries & Predicted Entries & Matches \\
 \midrule
@@ -348,7 +305,7 @@ page 05 & 1.0000 & 1.0000 & 0.8636 & 19 & 19 & 19 \\
 page 10 & 1.0000 & 1.0000 & 0.8193 & 23 & 23 & 23 \\
 \bottomrule
 \end{tabular}
- \end{adjustbox}
+\end{adjustbox}
 \caption{Summary of results for each OCR-scanned page (without any correction).}
 \label{tab:summary_results_ocr_raw}
 \end{table}
@@ -365,11 +322,10 @@ Conversely, page 2 shows a high IMQ (0.9059), despite an imperfect recall. This 
 
 The 95.65\% recall on page 2 stems from a specific edge case in the source document, where an individual is listed twice (once as a senator and once as a minister). This leads to two distinct entries in the ground truth, while the LLM output consolidates them into a single prediction. We chose to preserve this functional distinction in the ground truth, while the model opted to factorize the information. This weakness is therefore linked to the design of the ground truth.
 
-
 \begin{table}[tb]
 \centering
 \begin{adjustbox}{width=\textwidth, center}
-  \begin{tabular}{lrrrrrr}
+\begin{tabular}{lrrrrrr}
 \toprule
 Source & Precision (Biased) & Recall (Biased) & IMQ & Ground Truth Entries & Predicted Entries & Matches \\
 \midrule
@@ -380,7 +336,7 @@ page 05 & 1.0000 & 1.0000 & 0.8778 & 19 & 19 & 19 \\
 page 10 & 1.0000 & 1.0000 & 0.8966 & 23 & 23 & 23 \\
 \bottomrule
 \end{tabular}
- \end{adjustbox}
+\end{adjustbox}
 \caption{Summary of results for the deemed-perfect OCR.}
 \label{tab:summary_results_ocr_perfect}
 \end{table}
@@ -389,27 +345,13 @@ Comparison with the deemed-perfect OCR is presented in \Cref{tab:summary_results
 Performance is better overall, i.e., IMQ metric values are all greater. The potentially superior performance of the noisy OCR might stem from its capture of running headers at the top of pages, providing better context in situations where entries at the beginning of a page are truncated. In the case of page 2, the LLM reproduced the repetition and thus the distinction between a senator holding two functions. This drop in results is less linked to the LLM's superior performance in a noisy context than to a better alignment of its behavior with the ground truth's expectations.
 
 Consequently, there would also be a need to evaluate the prompt subsequently, as it is a crucial parameter for avoiding these errors. It's worth noting, however, that bypassing these exceptions in a massive extraction scenario would imply perfect knowledge of specific cases, which can be typographical or related to highly situational institutional choices. A schema with a reasonable degree of granularity and generic prompting allows for obtaining results that can be reasonably trusted, without requiring atomic knowledge of the documents' form. The calculation of statistics per page also offers bundles of clues about internal exceptions within the document structure, which can be significant.
-%
- \section{Conclusion}
+
+\section{Conclusion}
 This work explored using large language models for structured data generation from historical sources, focusing on a specific case study, namely the 1931 \textit{Tables nominatives} of the French Senate. The approach---combining OCR, schema-guided structuring, and constrained generation via LLM---produced results evaluated with a more appropriate metric for an optimal alignment protocol, linking reference data with predicted data. The introduction of the IMQ metric was particularly crucial, allowing us to assess structuring quality beyond the traditional precision/recall scores, which are inadequate in this context.
 
 Several avenues emerge for strengthening the approach's robustness and generalization. A central challenge, already noticeable in this work, lies in better connecting response hypotheses to research questions with automatically produced intermediate data. This will allow for evaluating their long-term robustness concerning the production process. Conversely, evaluating the prompt itself remains to be done to achieve a truly complete evaluation protocol. In any case, data structuring cannot be considered a simple, neutral pre-processing step: it dictates the form of possible historical analyses.
 
 From this perspective, the prompt and the data model must be considered as ``meta-parameters'' of the entire historical data production system. It becomes essential to conceptualize their generation and adjustment as an integral part of the historical data processing chain. A promising path would involve systematizing and automating this meta-optimization process to make these approaches reproducible, transparent, and accessible to non-expert users.
-
-
-
-
-
-
-
-
-
-
-
-%
- 
-
 
 \clearpage
 \printbibliography
@@ -418,12 +360,12 @@ From this perspective, the prompt and the data model must be considered as ``met
 \appendix
 \section{An example of ``Tables du Journal Officiel''}
 \begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.8\textwidth]{jo_entire.jpeg}
-    \caption{A page from the 1931 Senate \textit{Table des Noms}}
-    \label{fig:jo}
+\centering
+\includegraphics[width=0.8\textwidth]{figures/jo_entire.jpeg}
+\caption{A page from the 1931 Senate \textit{Table des Noms}}
+\label{fig:jo}
 \end{figure}
- \clearpage
+\clearpage
 \section{Full prompt} \label{appdx:full-prompt}
 This appendix features an English translation of the complete prompt used in our experiment, visible in \Cref{fig:full_prompt}.
 \begin{figure}[!h]
@@ -468,32 +410,32 @@ SO HERE IS THE TEXT from which you need to extract the information:
 \caption{Submitting a request to an LLM via the Mistral API, including entity extraction instructions, the raw text, and the expected data schema.}
 \label{fig:full_prompt}
 \end{figure}
- \clearpage
+\clearpage
 \section{Full data schema}
 \label{appdx:schema}
 \begin{figure}[H]
 \small
 \begin{verbatim}
 class Speaker(BaseModel):
-    name: str = Field(..., description="Name (and first name if applicable)")
-    page_references: List[int] = Field(..., 
-        description="List of page numbers where the speaker is referenced, 
-        else <index cross-reference>")
+name: str = Field(..., description="Name (and first name if applicable)")
+page_references: List[int] = Field(...,
+description="List of page numbers where the speaker is referenced,
+else <index cross-reference>")
 
 class SenatorsInterventions(BaseModel):
-    list_of_speakers: List[Speaker] = Field(..., 
-        description="List of all speakers")
+list_of_speakers: List[Speaker] = Field(...,
+description="List of all speakers")
 \end{verbatim}
 \caption{Simplified data schema defined using Pydantic. Each participant is described by a name and a list of page numbers, which serve as indirect temporal markers. Description fields embedded in the schema act as semantic tags, guiding the language model in entity extraction.}
 \label{fig:pydantic_schema}
 \end{figure}
- \clearpage
+\clearpage
 \section{Full experimental results}\label{appdx:full-results}
 The following three tables present the complete experimental results discussed in \Cref{sec:results} of the main paper:
 \begin{itemize}
-    \item \Cref{tab:summary-ocr-perfect} reproduces the results for the deemed-perfect OCR condition (copy of \Cref{tab:summary_results_ocr_perfect} in main paper). The text used as input to the LLM has been manually corrected to ensure high fidelity.
-    \item \Cref{tab:summary-ocr-manualseg} presents the results for the OCR condition based on manual segmentation. The text used as input to the LLM has been processed with manual layout segmentation but without further correction.
-    \item \Cref{tab:summary-ocr-raw} reproduces the results for the raw OCR condition (copy of \Cref{tab:summary_results_ocr_raw} in main paper). The text used as input to the LLM is the raw output of the OCR engine, without any manual correction or segmentation. It represents the most realistic scenario for large-scale extraction, and can contain errors due to both layout detection and character recognition.
+\item \Cref{tab:summary-ocr-perfect} reproduces the results for the deemed-perfect OCR condition (copy of \Cref{tab:summary_results_ocr_perfect} in main paper). The text used as input to the LLM has been manually corrected to ensure high fidelity.
+\item \Cref{tab:summary-ocr-manualseg} presents the results for the OCR condition based on manual segmentation. The text used as input to the LLM has been processed with manual layout segmentation but without further correction.
+\item \Cref{tab:summary-ocr-raw} reproduces the results for the raw OCR condition (copy of \Cref{tab:summary_results_ocr_raw} in main paper). The text used as input to the LLM is the raw output of the OCR engine, without any manual correction or segmentation. It represents the most realistic scenario for large-scale extraction, and can contain errors due to both layout detection and character recognition.
 \end{itemize}
 
 \begin{table}[htbp]
@@ -510,11 +452,10 @@ page 05 & 1.0000 & 1.0000 & 0.8778 & 19 & 19 & 19 \\
 page 10 & 1.0000 & 1.0000 & 0.8966 & 23 & 23 & 23 \\
 \bottomrule
 \end{tabular}
- \end{adjustbox}
+\end{adjustbox}
 \caption{Results for deemed-perfect OCR (copy of \Cref{tab:summary_results_ocr_perfect} in main paper).}
 \label{tab:summary-ocr-perfect}
 \end{table}
-
 
 \begin{table}[htbp]
 \centering
@@ -530,7 +471,7 @@ page 05 & 1.0000 & 1.0000 & 0.8793 & 19 & 19 & 19 \\
 page 10 & 1.0000 & 1.0000 & 0.8873 & 23 & 23 & 23 \\
 \bottomrule
 \end{tabular}
- \end{adjustbox}
+\end{adjustbox}
 \caption{Results for OCR based on manual segmentation}
 \label{tab:summary-ocr-manualseg}
 \end{table}
@@ -549,11 +490,9 @@ page 05 & 1.0000 & 1.0000 & 0.8636 & 19 & 19 & 19 \\
 page 10 & 1.0000 & 1.0000 & 0.8193 & 23 & 23 & 23 \\
 \bottomrule
 \end{tabular}
- \end{adjustbox}
+\end{adjustbox}
 \caption{Results for raw OCR, without segmentation or correction (copy of \Cref{tab:summary_results_ocr_raw} in main paper).}
 \label{tab:summary-ocr-raw}
 \end{table}
-
-
 
 \end{document}

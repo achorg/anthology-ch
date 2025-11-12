@@ -1,100 +1,75 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
-% ADD your own packages using \usepackage{}
 
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{Towards a \textit{NAvigator} Tool for Dutch \textit{Verbaal}-Archives: Leveraging Nineteenth-Century Archival Logic for Keyword Search }
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1]{Sebastiaan Peeters}[
-  orcid=0009-0006-0797-829X
+orcid=0009-0006-0797-829X
 ]
 
 \author[1,2,3]{C. Annemieke Romein}[
-  orcid=0000-0003-3682-0126
+orcid=0000-0003-3682-0126
 ]
 
-% While we encourage including ORCID-IDs for all authors, you can
-% include authors that do not have one by defining an empty ID.
 \author[1]{Andreas Weber}[
-  orcid=0000-0002-9106-9438
+orcid=0000-0002-9106-9438
 ]
 
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 \affiliation{1}{University of Twente, Enschede, The Netherlands}
 \affiliation{2}{Walter-Benjamin Kolleg, University of Bern, Bern, Switzerland}
 \affiliation{3}{READ-COOP SCE, Innsbruck, Austria}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{historical archives; digital history; document structure; archival structure; information retrieval; Dutch Ministry of Colonies.}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
-\pagestart{1149}
-\pageend{1159}
+\pagestart{1153}
+\pageend{1163}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/ByKY4LADHCBb}  
+\doi{10.63744/ByKY4LADHCBb}
 \paperorder{68}
 
 \addbibresource{bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
-Recent advances in machine learning and Automated Text Recognition (ATR) have encouraged efforts to digitize historical archives. However, processing text with an ATR-engine is not (necessarily) making archives accessible to researchers and the broader public; additional datafication steps are needed. This paper adds to this conversation by introducing and evaluating a simple navigation tool, the Dutch National Archives navigator, or in short NAvigator, that capitalizes on the structure of a specific historical archival management method, the verbaalstelsel-1823 (‘verbal system’), which was common in Dutch government archives between the early nineteenth century and 1950. The NAvigator provides structured access to the information within such archives by recreating the historical workflow of search using the archives of the Dutch Ministry of Colonies (1850-1900) as a case study. The paper outlines the steps towards the development of the NAvigator and the challenges posed along the way, reports the results in terms of information retention throughout the search process, and discusses the potential for future research based on the intermediate output of the tool. As an early result, it finds that 84.7 percent of glossary entries are successfully connected to their corresponding documents. 
+Recent advances in machine learning and Automated Text Recognition (ATR) have encouraged efforts to digitize historical archives. However, processing text with an ATR-engine is not (necessarily) making archives accessible to researchers and the broader public; additional datafication steps are needed. This paper adds to this conversation by introducing and evaluating a simple navigation tool, the Dutch National Archives navigator, or in short NAvigator, that capitalizes on the structure of a specific historical archival management method, the verbaalstelsel-1823 (‘verbal system’), which was common in Dutch government archives between the early nineteenth century and 1950. The NAvigator provides structured access to the information within such archives by recreating the historical workflow of search using the archives of the Dutch Ministry of Colonies (1850-1900) as a case study. The paper outlines the steps towards the development of the NAvigator and the challenges posed along the way, reports the results in terms of information retention throughout the search process, and discusses the potential for future research based on the intermediate output of the tool. As an early result, it finds that 84.7 percent of glossary entries are successfully connected to their corresponding documents.
 \end{abstract}
 
-\section{Introduction} 
+\section{Introduction}
 
-Over the last decades, the Dutch National Archives (Nationaal Archief, NA) in The Hague, as well as other archives around the world, have begun digitizing their collections to democratize access to the information they contain \cite{nockels_implications_2024}. In the case of handwritten archives, this mainly involves scanning and possibly transcribing the documents, with minimal post-processing or enrichment, which limits the accessibility of these digitized collections \cite{nockels2025making}. To improve their 
-%[pp. 168-169], hoe citeren?
+Over the last decades, the Dutch National Archives (Nationaal Archief, NA) in The Hague, as well as other archives around the world, have begun digitizing their collections to democratize access to the information they contain \cite{nockels_implications_2024}. In the case of handwritten archives, this mainly involves scanning and possibly transcribing the documents, with minimal post-processing or enrichment, which limits the accessibility of these digitized collections \cite{nockels2025making}. To improve their
+
 accessibility and make them available to researchers and broader audiences, further datafication and enrichment steps \cite{romein_entangled_2020} are necessary. For instance, recent research has employed named entity recognition as a foundation for creating linked datasets \cite{hawkins_archives_2022,ngo_semantic_2021,linhares_pontes_melhissa_2022} and developing domain-specific ontologies \cite{candela_ontological_2023} that capture the complex relationships between historical actors, institutions, and places. While these approaches have advantages, they require a substantial commitment of time and resources, and often necessitate the involvement of citizen volunteers for labor-intensive tagging tasks \cite{guralnick_humans_2024,van_oort_citizen_2025}. Using the digitized archives of the Dutch Ministry of Colonies (Ministerie van Koloniën) as a case study, this paper describes and evaluates a lightweight and inexpensive method of unlocking an archive by leveraging its textual structure, in an approach that takes inspiration from earlier work by Koolen et al. \cite{koolen_value_2023,koolen_detecting_2022} and Colavizza et al. \cite{colavizza_index-driven_2019}. The goal here is to improve accessibility with a tool that opens new avenues for further research, building on this navigation.
 
-Many Dutch government archives, including those of the Ministry of Colonies, utilize the \textit{verbaalstelsel-1823} \cite{ketelaar_veranderingen_2020}, which, by government decree, became the prescribed system for organizing archives in 1823 and remained in use until the middle of the twentieth century \cite{otten_gids_2004}. Following the rules of the verbaalstelsel-1823, archivists and administrators bundled completed dossiers and stored them by date. This means that if the Minister of Colonies or any other leading civil servant within the ministry had decided on a specific matter, all relevant documents (e.g., letters, reports, and earlier decisions) were compiled into a dossier and archived in a folder labeled with the date of the final decision.  These dossiers are known as \textit{verbalen}. The \textit{verbalen} were later grouped by half-year and summarized in indices, which, besides a summary of the \textit{verbaal}, also list dates, dossier numbers, and related persons or institutions. As these indices themselves are extensive, archivists also created \textit{klappers} (glossaries), which provide access to the indices (see fig.~\ref{fig:klapper_index_page}). At the national level alone, there exists an estimated 9.25 km of this kind of archive out of a total of 12.4 km of archives. Although there are no comparable estimates for lower levels of government, available research mentions that a similar proportion of 19th and 20th centuries' Dutch archival materials is organized in the same way \cite{jeurgens_schetsboek_2016}.  
+Many Dutch government archives, including those of the Ministry of Colonies, utilize the \textit{verbaalstelsel-1823} \cite{ketelaar_veranderingen_2020}, which, by government decree, became the prescribed system for organizing archives in 1823 and remained in use until the middle of the twentieth century \cite{otten_gids_2004}. Following the rules of the verbaalstelsel-1823, archivists and administrators bundled completed dossiers and stored them by date. This means that if the Minister of Colonies or any other leading civil servant within the ministry had decided on a specific matter, all relevant documents (e.g., letters, reports, and earlier decisions) were compiled into a dossier and archived in a folder labeled with the date of the final decision.  These dossiers are known as \textit{verbalen}. The \textit{verbalen} were later grouped by half-year and summarized in indices, which, besides a summary of the \textit{verbaal}, also list dates, dossier numbers, and related persons or institutions. As these indices themselves are extensive, archivists also created \textit{klappers} (glossaries), which provide access to the indices (see fig.~\ref{fig:klapper_index_page}). At the national level alone, there exists an estimated 9.25 km of this kind of archive out of a total of 12.4 km of archives. Although there are no comparable estimates for lower levels of government, available research mentions that a similar proportion of 19th and 20th centuries' Dutch archival materials is organized in the same way \cite{jeurgens_schetsboek_2016}.
 
 \begin{figure}[t]
-  \centering
-  \includegraphics[width=0.45\linewidth]{figures/klapper example NL-HaNA\_2.10.02\_5654\_0016.jpg}
-  \includegraphics[width=0.45\linewidth]{figures/Index example NL-HaNA\_2.10.02\_5654\_0220.jpg}
-  \includegraphics[height=0.3\linewidth]{figures/klapper_detail.png}
-  \includegraphics[height=0.3\linewidth]{figures/index_detail_v3.png}
-  \caption{Examples of a klapper (left) and index (right) page and a close up of each. 
-  Source: NL-HaNA\_2.10.02\_5654\_0016.jpg and NL-HaNA\_2.10.02\_5654\_0220.jpg}
-  \label{fig:klapper_index_page}
+\centering
+\includegraphics[width=0.45\linewidth]{figures/klapper example NL-HaNA\_2.10.02\_5654\_0016.jpg}
+\includegraphics[width=0.45\linewidth]{figures/Index example NL-HaNA\_2.10.02\_5654\_0220.jpg}
+\includegraphics[height=0.3\linewidth]{figures/klapper_detail.png}
+\includegraphics[height=0.3\linewidth]{figures/index_detail_v3.png}
+\caption{Examples of a klapper (left) and index (right) page and a close up of each.
+Source: NL-HaNA\_2.10.02\_5654\_0016.jpg and NL-HaNA\_2.10.02\_5654\_0220.jpg}
+\label{fig:klapper_index_page}
 \end{figure}
 
-The approach to searching verbaalstelsel-1823 archives, as intended by their original creators, is to locate the relevant keyword, most commonly a name or location, in the \textit{klappers} and then navigate to the corresponding index entry, which provides information on where to find the right \textit{verbaal}. Right now, this is the only feasible search strategy for the physical archives. Mimicking this analog approach is also the primary way to navigate digitized images of the same archive. While functional, this method requires users to have a good understanding of the underlying archival structure and historical ordering principles. Additionally, such navigation is rather time-consuming due to the disjointed nature of the image galleries, the absence of hyperlinks between individual pages, and the lack of keyword search for users accessing the archive through a web interface. 
+The approach to searching verbaalstelsel-1823 archives, as intended by their original creators, is to locate the relevant keyword, most commonly a name or location, in the \textit{klappers} and then navigate to the corresponding index entry, which provides information on where to find the right \textit{verbaal}. Right now, this is the only feasible search strategy for the physical archives. Mimicking this analog approach is also the primary way to navigate digitized images of the same archive. While functional, this method requires users to have a good understanding of the underlying archival structure and historical ordering principles. Additionally, such navigation is rather time-consuming due to the disjointed nature of the image galleries, the absence of hyperlinks between individual pages, and the lack of keyword search for users accessing the archive through a web interface.
 
-The NAvigator (an acronym for Nationaal Archief Navigator) addresses these issues by making the \textit{klappers} searchable and interlinking them to associated indices, and linking the index to its \textit{verbaal}. This improves accessibility by providing paths of navigation through the archive while respecting the original principles of archival arrangement and management. The latter makes it easier to contextualize the search results, as opposed to a simple keyword search across the entire archive. This additional context derived from the archival structure also helps in disambiguating common names, as the linked \textit{klappers}, indices, and \textit{verbalen} will all refer to the same person. 
+The NAvigator (an acronym for Nationaal Archief Navigator) addresses these issues by making the \textit{klappers} searchable and interlinking them to associated indices, and linking the index to its \textit{verbaal}. This improves accessibility by providing paths of navigation through the archive while respecting the original principles of archival arrangement and management. The latter makes it easier to contextualize the search results, as opposed to a simple keyword search across the entire archive. This additional context derived from the archival structure also helps in disambiguating common names, as the linked \textit{klappers}, indices, and \textit{verbalen} will all refer to the same person.
 
 The following sections first introduce the dataset, then provide more details on the necessary steps to build the navigator, highlighting the challenges and reporting the loss of information due to errors along the way. Finally, the paper concludes by indicating avenues for future research and opportunities opened by the NAvigator.
 
 \section{Dataset}
 
-The verbaalstelsel-1823 archive used in this study covers the affairs of the Ministry of Colonies from 1850 to 1900 and is stored at the Nationaal Archief in The Hague. The full scans of the archive, comprising over five million images, are accessible as a collection of image galleries on the Nationaal Archief's website.\footnote{https://www.nationaalarchief.nl/onderzoeken/archief/2.10.02} They were transcribed using Loghi \cite{van_koert_loghi_2024} in 2024, with layout detection using Laypa \cite{klut_laypa_2023}, and both scans and transcriptions, in PAGE XML format, were made available to researchers of work package 2 \cite{van_schuijlenburg_haicu_2025} of the HAICu project.\footnote{www.haicu.science} 
+The verbaalstelsel-1823 archive used in this study covers the affairs of the Ministry of Colonies from 1850 to 1900 and is stored at the Nationaal Archief in The Hague. The full scans of the archive, comprising over five million images, are accessible as a collection of image galleries on the Nationaal Archief's website.\footnote{https://www.nationaalarchief.nl/onderzoeken/archief/2.10.02} They were transcribed using Loghi \cite{van_koert_loghi_2024} in 2024, with layout detection using Laypa \cite{klut_laypa_2023}, and both scans and transcriptions, in PAGE XML format, were made available to researchers of work package 2 \cite{van_schuijlenburg_haicu_2025} of the HAICu project.\footnote{www.haicu.science}
 The character error rate, without applying any text pre-processing, for a random sample of 63 files was 17.8\%, which is well above the state-of-the-art \cite{romein_assessing_2025}. This combination of high CER and historical language complicates the implementation of many NLP techniques \cite{manjavacas_arevalo_non-parametric_2022}, which is why the method in this paper relies mainly on language-agnostic techniques.
 
 This paper uses only the main series of \textit{verbalen} and associated indices, as well as \textit{klappers}. It excludes the so-called agendas,\footnote{Agendas are registers of received documents. In \textit{verbaal} archives, these documents are not sorted by entry date into the agenda, but by date of the decision concerning the associated dossier. This makes the agendas less relevant in the search process.} as they are not part of the primary search process, and the secret \textit{verbalen}, whose layout and structure deviate significantly from the rest of the archives. Together, these excluded pages make up around 820,000 pages or 15.2\% of the total Ministry of Colonies archive. While future work may attempt to include these pages in the NAvigator, they are beyond the scope of this prototype.
@@ -103,33 +78,33 @@ As this research concerns a colonial archive, it is important to acknowledge the
 
 \section{Methodology}
 
-The NAvigator uses PAGE XML transcriptions and line pixel coordinates as points of departure, and, except for cropping image snippets for visual support, it does not utilize the original images. This means that, besides the initial ATR by Loghi, the NAvigator requires no computer vision techniques; instead, it relies on computationally lightweight, rules-based algorithms and classical machine learning techniques, which were executed in Jupyter Notebooks on a consumer-grade laptop. 
+The NAvigator uses PAGE XML transcriptions and line pixel coordinates as points of departure, and, except for cropping image snippets for visual support, it does not utilize the original images. This means that, besides the initial ATR by Loghi, the NAvigator requires no computer vision techniques; instead, it relies on computationally lightweight, rules-based algorithms and classical machine learning techniques, which were executed in Jupyter Notebooks on a consumer-grade laptop.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=1.0\linewidth]{figures/flowchart search.jpg}
-  \caption{Schematic representation of the NAvigator workflow, showing the preparatory data processing (top) and the search process (bottom).}
-  \label{fig:flowchart}
+\centering
+\includegraphics[width=1.0\linewidth]{figures/flowchart search.jpg}
+\caption{Schematic representation of the NAvigator workflow, showing the preparatory data processing (top) and the search process (bottom).}
+\label{fig:flowchart}
 \end{figure}
 
 Figure~\ref{fig:flowchart} offers an overview of the entire NAvigator construction process and the search process. First, the \textit{klapper} and index pages are extracted using a classifier. The \textit{klapper} pages are segmented into individual entries, which in turn are split into transcription text and folio numbers using a regular expression. In the process, a visual excerpt (see figure~\ref{fig:clipping}) is extracted from the source image to provide visual support during the search. From the index pages, folio numbers are extracted to create a mapping of scan numbers to folio numbers. The search process starts with a fuzzy keyword search through the extracted \textit{klapper} entries. After selecting an entry from the results, the user will be prompted to correct the folio number based on the visual excerpt, allowing navigation to the associated index page. Finally, the user enters the relevant date on the index page into the NAvigator, which opens the corresponding image gallery.
 
 Two separate random forest classifiers were built for the extraction of the \textit{klappers} and indices. Indices were easily detectable as they were written on pages with pre-printed table structures, featuring fully capitalized headers. Simply detecting these headers in the transcription proved sufficient to classify the indices with 100\% accuracy. The classifier for \textit{klappers} leveraged the unique properties of these pages. Each scan (i.e., two pages) contains up to four text columns, each with margins starting at predictable positions. Text outside of these columns is very sparse. The available textual content within the column structure also provides additional information: as it is structured in the form of an alphabetic list, most text lines start with the same letter, which is highly unusual in running text, and most text lines end with a numeral (the folio number). Although using these features did not yield a perfect result, primarily due to near-empty \textit{klapper} pages that were more difficult to detect, it classified the pages with an accuracy of 99.1 percent.
 
-The segmentation of the \textit{klapper} pages into a searchable list of individual entries using a textual approach posed several challenges, including ATR-noise, extraneous textual elements, incorrect text line detection, and multi-line entries, which complicate boundary detection. It was accomplished by first grouping the text lines by column, sorting them based on their y-coordinates, and finally segmenting them based on the line endings, where lines ending on a number were assumed to be the end of an entry. 
+The segmentation of the \textit{klapper} pages into a searchable list of individual entries using a textual approach posed several challenges, including ATR-noise, extraneous textual elements, incorrect text line detection, and multi-line entries, which complicate boundary detection. It was accomplished by first grouping the text lines by column, sorting them based on their y-coordinates, and finally segmenting them based on the line endings, where lines ending on a number were assumed to be the end of an entry.
 
-The further separation of textual content and the folio number of individual entries necessary for linking to the index pages was performed using a regular expression. While the presence of a folio character (ƒ) theoretically simplifies this, the ATR model struggled to identify the character correctly. Instead, the transcriptions showed a great deal of variation, complicating the regular expression. The text and number were stored as key-value pairs alongside the positional information of the entry. For each entry, a visual excerpt from the original image was made based on its coordinates, functioning as a visual verification mechanism. 
+The further separation of textual content and the folio number of individual entries necessary for linking to the index pages was performed using a regular expression. While the presence of a folio character (ƒ) theoretically simplifies this, the ATR model struggled to identify the character correctly. Instead, the transcriptions showed a great deal of variation, complicating the regular expression. The text and number were stored as key-value pairs alongside the positional information of the entry. For each entry, a visual excerpt from the original image was made based on its coordinates, functioning as a visual verification mechanism.
 
 \begin{figure}[ht]
-  \centering
-  \includegraphics[width=0.8\linewidth]{figures/clipping_5654_0013.jpg}
-  \caption{Example of an excerpt. Source: NL-HaNA\_2.10.02\_5654\_0013.jpg}
-  \label{fig:clipping}
+\centering
+\includegraphics[width=0.8\linewidth]{figures/clipping_5654_0013.jpg}
+\caption{Example of an excerpt. Source: NL-HaNA\_2.10.02\_5654\_0013.jpg}
+\label{fig:clipping}
 \end{figure}
 
-To navigate to the index, it was first necessary to map the folio number used in the physical materials to the scan numbers assigned during the digitization process. Although the folio numbers are sequential, this is challenging, as numerous anomalies complicate the numbering system. Firstly, the ATR failed to detect some numbers correctly. Other numbers have lettered suffixes, which means that several consecutive pages have the same folio number with a different suffix. Some pages are empty and not numbered at all, while others were accidentally duplicated during the scanning process. Finally, sometimes clerks made a mistake and used the same page number twice. 
+To navigate to the index, it was first necessary to map the folio number used in the physical materials to the scan numbers assigned during the digitization process. Although the folio numbers are sequential, this is challenging, as numerous anomalies complicate the numbering system. Firstly, the ATR failed to detect some numbers correctly. Other numbers have lettered suffixes, which means that several consecutive pages have the same folio number with a different suffix. Some pages are empty and not numbered at all, while others were accidentally duplicated during the scanning process. Finally, sometimes clerks made a mistake and used the same page number twice.
 
-The algorithm for mapping scan numbers to folio numbers starts with the ATR as a basis and attempts to infer the missing values. It uses a rolling average to detect suspiciously high or low values, erasing them before searching for sequences of consecutive or identical numbers, and then attempts to extend these patterns with the missing values. For instance, if a missing value separates the numbers three and five, the system will assume the value is four. 
+The algorithm for mapping scan numbers to folio numbers starts with the ATR as a basis and attempts to infer the missing values. It uses a rolling average to detect suspiciously high or low values, erasing them before searching for sequences of consecutive or identical numbers, and then attempts to extend these patterns with the missing values. For instance, if a missing value separates the numbers three and five, the system will assume the value is four.
 
 The algorithm deliberately excludes morphological suffixes from its predictive processes, recognizing that these display structural inconsistencies. To compensate for this limitation, the search protocol incorporates a disambiguation procedure employing fuzzy matching to locate the original search term within the selected pages. Thus, it identifies the entry with the highest degree of lexical correspondence. Furthermore, the system enhances user navigation by automatically highlighting the textual passage within the original manuscript scan, thereby facilitating an immediate visual reference to the source material.
 
@@ -141,10 +116,10 @@ The efficacy of the linking operation depends upon the successful completion of 
 The first key metric is the recall of detecting \textit{klapper} and index pages. While precision is also important, for search, the ability to find as many pages as possible is essential. For \textit{klappers}, the classifier showed a recall of .98 and a precision of 1.0. However, the recall of information in terms of individual entries is likely higher, as a paucity of textual content appears to be the primary contributor to misclassifications. For indices, both precision and recall are perfect, due to the pre-printed column headers.
 
 \begin{figure}[ht]
-  \centering
-  \includegraphics[width=0.8\linewidth]{figures/confusion matrix klappers.jpg}
-  \caption{Confusion matrix for the \textit{klapper} classification.}
-  \label{fig:confusion_matrix}
+\centering
+\includegraphics[width=0.8\linewidth]{figures/confusion matrix klappers.jpg}
+\caption{Confusion matrix for the \textit{klapper} classification.}
+\label{fig:confusion_matrix}
 \end{figure}
 
 The second metric concerns the extraction of \textit{klapper} entries. This is more challenging to measure, as one of five things can happen: the entry can be a) correctly extracted, b) extracted with the wrong folio number, c) merged with another entry during segmentation, d) composed of noise, or e) missing altogether. A sample of a dozen randomly selected pages containing 564 entries was manually corrected as a test. 384 entries (68\%) were correctly transcribed, and a further 159 (28\%) were extracted with an incorrect folio number. As the latter can be manually corrected during search thanks to the visual support of the clippings, this means that 96\% of all entries are usable in the search. Of the remaining entries, eleven were merged into another, eight contained noise, and two entries were not picked up during extraction.
@@ -155,7 +130,7 @@ Extracting page numbers from the index pages presents a technical challenge due 
 \centering
 \begin{tabular}{lcccc}
 \toprule
- & \textbf{Page Recognition} & \textbf{Klapper Entry Extraction} & \textbf{Index Linking} & \textbf{Total} \\
+& \textbf{Page Recognition} & \textbf{Klapper Entry Extraction} & \textbf{Index Linking} & \textbf{Total} \\
 \midrule
 \textbf{
 Retention (\%)} & 98.0 & 96.3 & 90.0 & 84.7 \\
@@ -166,61 +141,48 @@ Retention (\%)} & 98.0 & 96.3 & 90.0 & 84.7 \\
 
 \end{table}
 
-
-
 To calculate the total percentage of linkage operations to be successful, calculate the propagation of errors considering the success rates of these three consecutive steps. By multiplying the ratios of correct entries at each step, we can expect around 84.7\% of the \textit{klapper} entries to be fully linked to their \textit{index} (see table~\ref{tab:performance}). This number likely represents a conservative estimate, as the misidentified \textit{klapper} pages likely contain substantially fewer entries than the average \textit{klapper} page.
 
 \section{Discussion and Future Research}
 Although the NAvigator is in a prototype stage, preliminary findings for the Ministry of Colonies archive already demonstrate considerable potential in establishing paths of navigation through the \textit{verbaalstelsel-1823} structure. This establishes an important precondition for successful keyword search, which takes the digitized \textit{klappers} as a starting point. It achieves this without relying on computationally expensive methods or labor-intensive human annotator tasks. While the NAvigator is still far removed from being fully automated, it nonetheless achieves substantial acceleration of the search process compared to manual methods as described in section 1. Our paper, therefore, demonstrates the potential of utilizing the archive's structure for unlocking its contents.
 
-One avenue of future research involves further automating the NAvigator, as well as improving information retention throughout the process. The scan-to-page number mapping is the biggest bottleneck in the current process, with only 90\% of searches arriving at the correct page, even when ignoring lettered suffixes. Given the complex nature of the page numbering system and the numerous irregularities, further tweaks to the algorithm are unlikely to yield substantial improvements. There is a clear correlation between the number of folio numbers successfully extracted from the XML and the final number of predicted pages (see fig.~\ref{fig:inference}). Hence, the solution is likely to be found in the extraction part of the process. Future research will need to determine the most effective approach to address this problem. 
+One avenue of future research involves further automating the NAvigator, as well as improving information retention throughout the process. The scan-to-page number mapping is the biggest bottleneck in the current process, with only 90\% of searches arriving at the correct page, even when ignoring lettered suffixes. Given the complex nature of the page numbering system and the numerous irregularities, further tweaks to the algorithm are unlikely to yield substantial improvements. There is a clear correlation between the number of folio numbers successfully extracted from the XML and the final number of predicted pages (see fig.~\ref{fig:inference}). Hence, the solution is likely to be found in the extraction part of the process. Future research will need to determine the most effective approach to address this problem.
 
 \begin{figure}[ht]
-  \centering
-  \includegraphics[width=0.8\linewidth]{figures/pagenumber detection initial vs inference.jpg}
-  \caption{Relationship between the initial percentage of page numbers extracted and the percentage of numbers after inference. Points (volumes) above the dotted line benefited from inference.}
-  \label{fig:inference}
+\centering
+\includegraphics[width=0.8\linewidth]{figures/pagenumber detection initial vs inference.jpg}
+\caption{Relationship between the initial percentage of page numbers extracted and the percentage of numbers after inference. Points (volumes) above the dotted line benefited from inference.}
+\label{fig:inference}
 \end{figure}
 
 Both the page detection and segmentation steps leave little room for improvement, and any additional gains will likely require improvements in the ATR process, as most errors result from problems in the layout detection and ATR noise. Likewise, the extraction of folio numbers is hampered by the ATR quality. Although 95\% of the entries had recognizable folio numbers when combined with the visual verification through the image clippings, the identification rate of the folio numbers does not allow full automation. Resolving the above issues is likely impossible without either repeating the ATR with an improved model or manually correcting the transcriptions, both of which would negate the main advantage of the methodology described in this paper.
 
-Although initial attempts have been made to segment individual indices beyond the page level and link them with their respective \textit{verbaal}, as of the time of writing, the NAvigator is not yet capable of this. It can only link to the correct image gallery based on the date the user manually enters on the index page. The segmentation task for indices is much more complicated than for \textit{klappers} due to the complex and inconsistent tabular structure of the indices, and automatic date extraction is hindered by the frequent use of quotation marks or ‘idem’ to denote repeated dates. Furthermore, additional text-based matching between indices and \textit{verbalen} requires access to transcriptions of the full archive. While these are available for the archive used in this study, this might drastically increase the costs for any project trying to replicate this method, as the number of \textit{verbaal} pages far exceeds the number of \textit{klappers} and indices \cite{vriend_archive_2025}. In the future, particular attention will be directed towards addressing this issue, as it will form the basis for further research into how multiple instances of the same named entity can be identified and linked together using linked open data. 
+Although initial attempts have been made to segment individual indices beyond the page level and link them with their respective \textit{verbaal}, as of the time of writing, the NAvigator is not yet capable of this. It can only link to the correct image gallery based on the date the user manually enters on the index page. The segmentation task for indices is much more complicated than for \textit{klappers} due to the complex and inconsistent tabular structure of the indices, and automatic date extraction is hindered by the frequent use of quotation marks or ‘idem’ to denote repeated dates. Furthermore, additional text-based matching between indices and \textit{verbalen} requires access to transcriptions of the full archive. While these are available for the archive used in this study, this might drastically increase the costs for any project trying to replicate this method, as the number of \textit{verbaal} pages far exceeds the number of \textit{klappers} and indices \cite{vriend_archive_2025}. In the future, particular attention will be directed towards addressing this issue, as it will form the basis for further research into how multiple instances of the same named entity can be identified and linked together using linked open data.
 
-As of the time of writing, it is unclear how well the NAvigator generalizes to other \textit{verbaalstelsel-1823} archives. While the overall workflow can likely be repeated, the implementation may need to be adjusted to accommodate differences in the specific layout of various archives. The particularities of specific archives might also cause unexpected problems. However, the NAvigator is modular by design, allowing flexibility in implementation, which broadens its applicability. With some adjustments to the computationally light-weight workflow, the tool could be repurposed for unlocking verbal archives other than those using the 1823 system, as they have a similar navigational flow. This would significantly increase the temporal range of archives where the NAvigator is applicable. In general, the tool shows the potential to make the verbaalstelsel-1823 archives accessible to researchers and broader audiences by capitalizing on their historical ordering and management principles. 
-
-%At present, this is restricted to semi-automated navigation with manual verification, with planned future research aiming at full automation and further datafication steps.
-
+As of the time of writing, it is unclear how well the NAvigator generalizes to other \textit{verbaalstelsel-1823} archives. While the overall workflow can likely be repeated, the implementation may need to be adjusted to accommodate differences in the specific layout of various archives. The particularities of specific archives might also cause unexpected problems. However, the NAvigator is modular by design, allowing flexibility in implementation, which broadens its applicability. With some adjustments to the computationally light-weight workflow, the tool could be repurposed for unlocking verbal archives other than those using the 1823 system, as they have a similar navigational flow. This would significantly increase the temporal range of archives where the NAvigator is applicable. In general, the tool shows the potential to make the verbaalstelsel-1823 archives accessible to researchers and broader audiences by capitalizing on their historical ordering and management principles.
 
 \section*{Acknowledgements}
 
 We want to express our gratitude to Rutger van Koert for his work on digitizing the archives. We would also like to thank Liesbeth Keijser of the Dutch National Archives for providing additional materials and information about the archives.
 
 \section*{Funding}
-This research is part of the digital Humanities - Artificial Intelligence - Cultural heritage ( \href{https://haicu.science} {HAICu}) research project. The HAICu project is funded by the Dutch Research Council/Nederlandse Organisatie voor Wetenschappelijk Onderzoek (NWO)/Nationale Wetenschapsagenda (NWA), project number: NWA.1518.22.105. 
+This research is part of the digital Humanities - Artificial Intelligence - Cultural heritage ( \href{https://haicu.science} {HAICu}) research project. The HAICu project is funded by the Dutch Research Council/Nederlandse Organisatie voor Wetenschappelijk Onderzoek (NWO)/Nationale Wetenschapsagenda (NWA), project number: NWA.1518.22.105.
 
 \section*{CRediT}
 \begin{itemize}
-    \item S. Peeters: Conceptualization; Data Curation; Formal Analysis; Investigation; Methodology; Software; Visualization; Writing - original draft; Writing: review and editing.\
-    \item C.A. Romein: Supervision; Writing - review and editing.\
-    \item A. Weber: Funding acquisition; Supervision; Writing - review and editing.\
+\item S. Peeters: Conceptualization; Data Curation; Formal Analysis; Investigation; Methodology; Software; Visualization; Writing - original draft; Writing: review and editing.\
+\item C.A. Romein: Supervision; Writing - review and editing.\
+\item A. Weber: Funding acquisition; Supervision; Writing - review and editing.\
 \end{itemize}
 
 \section*{Code and Data}
 \begin{itemize}
-    \item The NAvigator code is available at \href{https://github.com/sebastiaanpeeters/NAvigator} {https://github.com/sebastiaanpeeters/NAvigator}
-    \item The intermediate data, needed to run the NAvigator, is available on Zenodo:\\ \href{https://doi.org/10.5281/zenodo.17453406} {https://doi.org/10.5281/zenodo.17453406}
- 
-    \item For access to the transcription files, please get in touch with the Nationaal Archief.
+\item The NAvigator code is available at \href{https://github.com/sebastiaanpeeters/NAvigator} {https://github.com/sebastiaanpeeters/NAvigator}
+\item The intermediate data, needed to run the NAvigator, is available on Zenodo:\\ \href{https://doi.org/10.5281/zenodo.17453406} {https://doi.org/10.5281/zenodo.17453406}
+
+\item For access to the transcription files, please get in touch with the Nationaal Archief.
 \end{itemize}
 
-% Print the bibliography at the end. Keep this line after the main text of your paper, and before an appendix. 
 \printbibliography
-
-% You can include an appendix using the following command
-%\appendix
-
-%\section{First Appendix Section} \label{appdx:first}
-
-%Appendix sections should be ordered by letters rather than numbers, and their contents do not count %towards the paper's length limit. Appendix sections may also contain additional tables and figures.  
 
 \end{document}

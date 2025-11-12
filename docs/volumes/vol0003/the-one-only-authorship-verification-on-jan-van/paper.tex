@@ -1,71 +1,44 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-%\documentclass{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{makecell}
 \usepackage{rotating}
 \usepackage[table]{xcolor}
 
-% ADD your own packages using \usepackage{}
-
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{The One and Only? Authorship Verification on Jan van Boendale and the Middle Dutch Antwerp School}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1,2]{Caroline Vandyck}[
-  orcid=0009-0006-9995-1325
+orcid=0009-0006-9995-1325
 ]
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
+
 \affiliation{1}{Department of Literature (ACDC), University of Antwerp, Antwerp, Belgium}
 \affiliation{2}{Research Foundation Flanders (FWO), Brussels, Belgium}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{authorship verification, stylometry, Middle Dutch}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
 \pagestart{149}
 \pageend{171}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/hhieMxHypx67}  
+\doi{10.63744/hhieMxHypx67}
 \paperorder{12}
-
 
 \addbibresource{bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
 
 \maketitle
 
-%%TC:ignore
 \begin{abstract}
 This study investigates the authorship of the so-called Antwerp School, a cluster of eleven interrelated historiographic and didactic Middle Dutch texts produced in early fourteenth-century Antwerp. Although traditionally attributed at least in part to Jan van Boendale, the extent of his contribution remains contested. To assess whether these texts (or a subselection of them) could have been written by a single author, computational authorship verification methods are applied. To this end, lemmatised rhyme-word bigrams are represented as TF-IDF vectors, and their stylistic similarity is measured using cosine distance. The analysis combines four complementary approaches: threshold-based authorship verification, dimensionality reduction, authorship ranking in the form of a bootstrapped nearest neighbour evaluation, and intertextual similarity detection. Across all approaches, consistent stylistic patterns emerged within the Antwerp School — especially between \textit{Brabantsche yeesten} and \textit{Van den derden Eduwaert}, as well as between \textit{Melibeus} and \textit{Dietsche doctrinale} — supporting the maximalist hypothesis of single authorship.
 \end{abstract}
-%%TC:endignore
 
-\section{Introduction} 
+\section{Introduction}
 
-In the early fourteenth century, no surrounding area or city in the Duchy of Brabant came close to Antwerp in terms of literary production in Middle Dutch. Although the city was gradually growing, it was still considerably smaller — demographically, as well as politically and economically — than Brussels and Louvain, the leading cities in Brabant \cite{Heymans_1989}. Yet, in less than half a century, eleven remarkably similar and interrelated works were produced there. The works in question are: \textit{Brabantsche yeesten}, \textit{Sidrac}, \textit{Korte Kroniek van Brabant}, \textit{Lekenspiegel}, \textit{Jans teesteye}, \textit{Van den derden Eduwaert}, \textit{Melibeus}, \textit{Boec Exemplaer}, \textit{Dietsche doctrinale}, \textit{Boec van der wraken} and \textit{Hoemen ene stat regeren sal}. Together, these works make up the so-called Antwerp School. The name for this corpus, first introduced by Van Mierlo in 1940 \cite{Mierlo_1940} and later used by Heymans in 1989 \cite{Heymans_1989}, therefore does not refer to a literal “school” consisting of unified authors with similar ideals, but to a corpus of texts that are strikingly similar. 
+In the early fourteenth century, no surrounding area or city in the Duchy of Brabant came close to Antwerp in terms of literary production in Middle Dutch. Although the city was gradually growing, it was still considerably smaller — demographically, as well as politically and economically — than Brussels and Louvain, the leading cities in Brabant \cite{Heymans_1989}. Yet, in less than half a century, eleven remarkably similar and interrelated works were produced there. The works in question are: \textit{Brabantsche yeesten}, \textit{Sidrac}, \textit{Korte Kroniek van Brabant}, \textit{Lekenspiegel}, \textit{Jans teesteye}, \textit{Van den derden Eduwaert}, \textit{Melibeus}, \textit{Boec Exemplaer}, \textit{Dietsche doctrinale}, \textit{Boec van der wraken} and \textit{Hoemen ene stat regeren sal}. Together, these works make up the so-called Antwerp School. The name for this corpus, first introduced by Van Mierlo in 1940 \cite{Mierlo_1940} and later used by Heymans in 1989 \cite{Heymans_1989}, therefore does not refer to a literal “school” consisting of unified authors with similar ideals, but to a corpus of texts that are strikingly similar.
 
 The texts are similar in various ways, the most important factor being their genesis: Antwerp in the early fourteenth century. Almost all texts of the Antwerp School mention both the year and the place of their composition. These references are often accompanied by a note that the author himself lived and worked in Antwerp. Accordingly, all works in the School testify of a remarkable urban consciousness \cite{Heymans_1989}. \textit{Brabantsche yeesten} is even generally regarded as the first Middle Dutch historical work to originate in a distinctly urban environment \cite{Anrooij_2002}. Furthermore, the works also show similarities in terms of content, as they are all historiographical, moralistic and didactic in nature. History often functions as a means of educating a lay audience in morality and ethics in this corpus. Additionally, the texts also show strong similarities in norms and values. Furthermore, almost all of the works appeal to the oeuvre of Jacob van Maerlant and show admiration for his work — in \textit{Lekenspiegel} he is even named \textit{vader der dietsche dichteren algader} [father of all Middle Dutch authors] \autocite[vs.~119--120, p.~163]{Vries_1844}. Last, the corpus shows stylistic similarities, with certain verses and words recurring, indicating a tight intertextual network (see e.g. \cite{Vries_1844, Reynaert_2002, Snellaert_1869, Heymans_1989, Uytven_2002}).
 
@@ -85,29 +58,25 @@ The existence of the Antwerp School naturally raises questions about the authors
 \end{quote}
 In this prologue, Boendale states that he was born in the town of Tervuren near Brussels, where he is called Boendale after his hometown – but that he now lives in Antwerp, where they call him Jan de Clerc [Jan the Clerk], after his profession. This profession is confirmed by two fourteenth-century city accounts of Antwerp, where he appears alongside his occupations \cite{Gordeau_2020}. Accordingly, Boendale can be followed through the years as he makes his rise as a high-ranking secretary in the city of Antwerp. He is one of the first Middle Dutch authors with substantial biographical data, making him an incredibly interesting figure (see Figure~\ref{fig:boendale}).
 
-%%TC:ignore
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.99\linewidth]{figures/boendale.png}
-  \caption{The first folium (f. 1r) of \textit{Dietsche doctrinale} in codex The Hague, KB, 76 E 5. The miniature portrays the author of the text, though it remains uncertain whether the figure represents the original author Albertan of Brescia, or Jan van Boendale, who possibly adapted the work to Middle Dutch. Image made by the Royal Library of the Netherlands, available in the public domain via \href{https://nl.wikipedia.org/wiki/Bestand:KB_76_E_5_-_Die_Dietsche_Doctrinale,_folium_001r.jpg}{Wikimedia Commons}.}
-  \label{fig:boendale}
+\centering
+\includegraphics[width=0.99\linewidth]{figures/boendale.png}
+\caption{The first folium (f. 1r) of \textit{Dietsche doctrinale} in codex The Hague, KB, 76 E 5. The miniature portrays the author of the text, though it remains uncertain whether the figure represents the original author Albertan of Brescia, or Jan van Boendale, who possibly adapted the work to Middle Dutch. Image made by the Royal Library of the Netherlands, available in the public domain via \href{https://nl.wikipedia.org/wiki/Bestand:KB_76_E_5_-_Die_Dietsche_Doctrinale,_folium_001r.jpg}{Wikimedia Commons}.}
+\label{fig:boendale}
 \end{figure}
-%%TC:endignore
-
 
 \textit{Jans teesteye} is not the only work that refers to a clerc named Jan. The author of \textit{Lekenspiegel} refers to himself as \textit{Jan, u arme clerc} [Jan, your poor clerk] \autocite[vs.~24, p.~137]{Snellaert_1869}, and a rubric in manuscript \textsc{Brussels, KBR, IV 865}  (p. 28) of \textit{Brabantsche yeesten} reads \textit{Dit dichte meester Jan van Andwerpen} [This was composed by master Jan of Antwerp] \cite{Kestemont_2011}.\footnote{It is not sure whether this rubric was written by the author or added by a scribe \cite{Kestemont_2011}.} Accordingly, Jan van Boendale is the most common candidate author for the Antwerp School, though his precise contribution remains debated. In this discussion, two schools of thought have emerged: the “minimalist” and the “maximalist” school \cite{Appelmans_2002}. Minimalists, e.g. De Vries and Appelmans, attribute the Antwerp School only partially to Boendale, most often \textit{Lekenspiegel}, \textit{Jans teesteye}, \textit{Brabantsche yeesten} and \textit{Van den derden Eduwaert} \cite{Vries_1844, Appelmans_2002}. However, the number of works and which works exactly are attributed to him, can differ across studies. Maximalists, e.g. Van Anrooij and Reynaert, ascribe nearly the entire Antwerp School to Boendale, adding \textit{Korte Kroniek van Brabant}, \textit{Sidrac}, \textit{Melibeus}, \textit{Dietsche doctrinale}, \textit{Boec van der wraken}, \textit{Boec Exemplaer}, and \textit{Hoemen ene stat regeren sal} \cite{Reynaert_2002, Anrooij_2002}.\footnote{Reynaert and Van Anrooij do not include \textit{Boec Exemplaer}, Van Oostrom does not rule it out \cite{Reynaert_2002, Anrooij_2002, Oostrom_2013}.} In short, between the minimalist and maximalist poles lies a spectrum of intermediate positions, e.g. Van Oostrom \cite{Oostrom_2013}. Table~\ref{tab:school} offers a brief, non-exhaustive selection of existing hypotheses. Altogether, the Antwerp School encompasses roughly 60,000 verses, which makes the question of authorship complex.
 
-%%TC:ignore
 \begin{table}[h]
 \small
 \centering
 \begin{tabular}{lccccc}
 \toprule
-\makecell[l]{\textbf{Title} \\ (estimated date)} & 
-\makecell{\textbf{De Vries} \\ \cite{Vries_1844}} & 
-\makecell{\textbf{Van Anrooij} \\ \cite{Anrooij_2000}} & 
-\makecell{\textbf{Appelmans} \\ \cite{Appelmans_2002}} & 
-\makecell{\textbf{Reynaert} \\ \cite{Reynaert_2002}} & 
+\makecell[l]{\textbf{Title} \\ (estimated date)} &
+\makecell{\textbf{De Vries} \\ \cite{Vries_1844}} &
+\makecell{\textbf{Van Anrooij} \\ \cite{Anrooij_2000}} &
+\makecell{\textbf{Appelmans} \\ \cite{Appelmans_2002}} &
+\makecell{\textbf{Reynaert} \\ \cite{Reynaert_2002}} &
 \makecell{\textbf{Van Oostrom} \\ \cite{Oostrom_2013}} \\
 \midrule
 \textbf{\textit{Brabantsche yeesten}} \\ (1316--1351) & \cellcolor{gray!70}YES & \cellcolor{gray!70}YES & \cellcolor{gray!70}YES & \cellcolor{gray!70}YES & \cellcolor{gray!70}YES \\
@@ -136,13 +105,12 @@ In this prologue, Boendale states that he was born in the town of Tervuren near 
 \caption{An overview of the Antwerp School, (estimated) dates and attributions across a sample of studies. The columns indicate different scholars' hypotheses and the presence of a work in their analyses. Cells marked ``YES'' indicate that the scholar attributes a work to Boendale, ``NO'' means they do not. ``/'' indicates that the work is not mentioned or discussed by the scholar.  Titles in bold are generally considered part of the minimalist school.}
 \label{tab:school}
 \end{table}
-%%TC:endignore
 
 Furthermore, the authorial question is complicated by an additional feature that links the works of the Antwerp School: many of the texts were revised, updated and continued at different times, and consequently consist of different versions.\footnote{It was not unheard of for medieval authors to revise or expand their works over time; Jean Froissart, for instance, is a well-documented example of this practice \cite{Croenen_2018}.} The role of the author in this dynamic process is the subject of much debate; it is unclear whether the interventions were made by the author himself, or by scribes or later editors \cite{Schoenaers_2009, Stein_1990, Anrooij_1995}. The situation is further complicated by the fact that the texts often reuse parts of other works. For example, the first three books of \textit{Brabantsche yeesten} are largely borrowed from Jacob van Maerlant's \textit{Spiegel historiael} \cite{Kestemont_2011, Stein_1990}, and \textit{Korte Kroniek van Brabant} is possibly a kind of trailer for the \textit{Brabantsche yeesten} \cite{Kestemont_2011, Stein_1990}. This is further evidence of the large degree of intertextuality present within the Antwerp School.
 
 The authorship of the Antwerp School poses a difficult question, which is why I aim to approach it using computational methods. Using methods from the field of computational authorship verification, this paper investigates whether the texts of the Antwerp School (or a subselection of them) could have been written by the same author. After preprocessing the data, four different analyses will be conducted. First, the cosine distances between the works of the Antwerp School and a control corpus will be calculated; second, dimensionality reduction will produce a scatterplot representing stylistic similarity; third, nearest neighbour verses will be identified and compared between text pairs; and fourth, parallel verses will be extracted.\footnote{Code available on GitHub via https://github.com/Caroline-Vandyck/authorship-boendale.}
- 
-\section{Materials} 
+
+\section{Materials}
 
 \subsection{Corpus}
 
@@ -162,19 +130,16 @@ From the preprocessed texts, bigrams of rhyme words were extracted. A rhyme word
 
 \subsection{Authorship Verification}
 
-
 The first step in the analysis was to apply authorship verification by comparing the stylistic similarity between the works of the Antwerp School to the stylistic similarity between established works of Boendale’s contemporaries. To this end, all segments of the works of Boendale’s contemporaries Jacob van Maerlant and Lodewijk van Vethem were compared to each other exhaustively (the first control corpus). This resulted in two types of text segment combinations: combinations of segments from different texts written by the same author (SA) (Maerlant--Maerlant or Velthem--Velthem) and combinations of segments written by different authors (DA) (Maerlant--Velthem or Velthem--Maerlant). \textit{Jans teesteye}, the only work that can be attributed to Boendale with certainty and is therefore certainly not written by Maerlant or Velthem, was also included in this comparison. For each combination, the cosine distance between the two text segment pairs was calculated. The idea behind this is that SA pairs will consistently show more stylistic similarity than DA pairs. Based on the similarity distribution of the DA and SA pairs, an optimal threshold can then be calculated to differentiate between the two sorts of pairs. Values above the threshold would indicate different authorship, whereas values below the threshold indicate shared authorship. After this calibration, the same procedure is applied to the works of the Antwerp School to assess whether the similarity distribution within the Antwerp School is more similar to the SA or DA pairs.
 
 At first glance, the distribution of distance of the Antwerp School seems to be even lower than that of the SA pairs, which hints in the direction of shared authorship (see Figure~\ref{fig:verificatie}). Furthermore, all text combinations are situated below the optimal threshold. However, some works seem to be more similar to each other than others. For instance, the combinations \textit{Melibeus--Dietsche doctrinale}, as well as \textit{Brabantsche yeesten--Van den derden Eduwaert} are located far below the lowest DA whisker of the boxplot. Accordingly, their stylistic similarity is remarkably high and could point at shared authorship. Slightly higher in the boxplot, \textit{Jans teesteye}, \textit{Boec van der wraken} and \textit{Lekenspiegel} also show great similarities to the combination \textit{Melibeus--Dietsche doctrinale}. \textit{Van den derden Eduwaert} and \textit{Brabantsche yeesten} only get linked to the other works higher up in the plot, but still below the optimal threshold and in a range that is more similar to SA pairs than DA pairs. This finding seems to favour the maximalist approach, but more analyses are desired.
 
-%%TC:ignore
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.55\linewidth]{figures/verificatie.png}
-  \caption{Boxplot showing the distributions of the stylistic difference (cosine distance) based on rhyme bigrams. “D” represents different-author pairs, “S” represents same-author pairs, and “X” refers to combinations within the Antwerp School. The label of each text combination represents the mean cosine distance between its segments. The green dashed line marks the optimal threshold to differentiate between different and same author pairs. The Antwerp School combinations fall below the threshold, with a distribution more closely resembling the “S” boxplot than the “D” boxplot, suggesting strong internal stylistic consistency.}
-  \label{fig:verificatie}
+\centering
+\includegraphics[width=0.55\linewidth]{figures/verificatie.png}
+\caption{Boxplot showing the distributions of the stylistic difference (cosine distance) based on rhyme bigrams. “D” represents different-author pairs, “S” represents same-author pairs, and “X” refers to combinations within the Antwerp School. The label of each text combination represents the mean cosine distance between its segments. The green dashed line marks the optimal threshold to differentiate between different and same author pairs. The Antwerp School combinations fall below the threshold, with a distribution more closely resembling the “S” boxplot than the “D” boxplot, suggesting strong internal stylistic consistency.}
+\label{fig:verificatie}
 \end{figure}
-%%TC:endignore
 
 \subsection{Dimensionality Reduction}
 
@@ -184,24 +149,21 @@ To obtain more insight into the works and how they relate to each other, a combi
 
 \textit{Der ystorien bloeme} is the first Middle Dutch translation and adaptation of the \textit{Legenda aurea} (1275--1300) by Jacobus de Voragine, the most popular medieval collection of hagiographies. Although less biographical than historiographical texts, \textit{Der ystorien bloeme} remains a historical and narrative work. Claassens suspects that this translation dates from the late thirteenth or early fourteenth century. Interestingly, the translator of the work seemed to be relatively self-aware for his time. He provides a title to his work and presents himself as a clerc \cite{Claassens_1996}. It is uncertain where the text was written, but the language is a mix of Eastern Flemish and West Brabantian \cite{Hogenbirk_Kestemont_2014}. In their computational research, Hogenbirk and Kestemont also noted similarities between works of the Antwerp School and \textit{Der ystorien bloeme}, but concluded that the work was written by Boendale's contemporary Lodewijk van Velthem \cite{Hogenbirk_Kestemont_2014}.\footnote{I repeated the authorship verification analysis with \textit{Grimbergse oorlog} and \textit{Der ystorien bloeme} included in the target corpus and present it in Appendix \ref{app_a}. I also repeated the analysis with only Lodewijk van Velthem and \textit{Der ystorien bloeme} in the target corpus, for comparison.}
 
-%%TC:ignore
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.72\linewidth]{figures/scatterplot.png}
-  \caption{Scatterplot based on a combination of PCA and UMAP, illustrating the stylistic differences between the Antwerp School and all other historiographic and didactic works in the \textit{Corpus Middle Dutch}. Each dot represents a segment of 1,800 verses from a text and the ``middle'' dot of each text is labeled. The larger the distance between dots, the more stylistic difference there is. The shorter the distance, the more similar the texts are. The Antwerp cluster (with grey labels) is located in the middle of the plot, suggesting a distinct but cohesive stylistic profile.}
-  \label{fig:scatterplot}
+\centering
+\includegraphics[width=0.72\linewidth]{figures/scatterplot.png}
+\caption{Scatterplot based on a combination of PCA and UMAP, illustrating the stylistic differences between the Antwerp School and all other historiographic and didactic works in the \textit{Corpus Middle Dutch}. Each dot represents a segment of 1,800 verses from a text and the ``middle'' dot of each text is labeled. The larger the distance between dots, the more stylistic difference there is. The shorter the distance, the more similar the texts are. The Antwerp cluster (with grey labels) is located in the middle of the plot, suggesting a distinct but cohesive stylistic profile.}
+\label{fig:scatterplot}
 \end{figure}
-%%TC:endignore
 
 \subsection{Authorship Ranking}
 
-In the two previous analyses, the results are dependent on the control corpora, to a certain extent. To counter this, I applied a bootstrapped analysis that searches for the nearest neighbour of a text segment in the entire \textit{Corpus Middle Dutch}. Once again, the same vectors are used; however, instead of using them as is, a bootstrapped procedure is applied. For each segment of the texts (``focus segment''), 250 searches for the nearest neighbour are performed, but with two variations per iteration: (1) half of the 500 rhyme bigrams will be randomly selected; (2) the focus segment will be compared to only one segment per text in the control corpus. This reduces the influence of longer texts, but also reduces the influence of coincidence \cite{Vandyck_Kestemont_2024}. For each iteration, the similarity between the focus segment and the randomly selected segments from other texts is measured, identifying which text contains the most similar segment. After all iterations, the proportion of times each text was identified as containing the most similar segment to the focus segment is calculated, providing a percentage-based representation of these relationships. 
+In the two previous analyses, the results are dependent on the control corpora, to a certain extent. To counter this, I applied a bootstrapped analysis that searches for the nearest neighbour of a text segment in the entire \textit{Corpus Middle Dutch}. Once again, the same vectors are used; however, instead of using them as is, a bootstrapped procedure is applied. For each segment of the texts (``focus segment''), 250 searches for the nearest neighbour are performed, but with two variations per iteration: (1) half of the 500 rhyme bigrams will be randomly selected; (2) the focus segment will be compared to only one segment per text in the control corpus. This reduces the influence of longer texts, but also reduces the influence of coincidence \cite{Vandyck_Kestemont_2024}. For each iteration, the similarity between the focus segment and the randomly selected segments from other texts is measured, identifying which text contains the most similar segment. After all iterations, the proportion of times each text was identified as containing the most similar segment to the focus segment is calculated, providing a percentage-based representation of these relationships.
 
-The results are compelling: all of the texts of the Antwerp School have another text from the Antwerp School as nearest neighbour (see Table~\ref{tab:ranking}). Especially \textit{Brabantsche yeesten}, \textit{Van den derden Eduwaert}, \textit{Melibeus}, and \textit{Dietsche doctrinale} have a very clear Antwerp neighbour in the first rank. \textit{Lekenspiegel}, \textit{Boec van der wraken}, and \textit{Jans teesteye} have a less clear favourite, yet the neighbours are spread evenly throughout works of the Antwerp School. \textit{Lekenspiegel} and \textit{Boec van der wraken} seem to be the most stereotypical texts of the corpus, as its nearest neighbours are relatively evenly spread throughout the Antwerp School. 
+The results are compelling: all of the texts of the Antwerp School have another text from the Antwerp School as nearest neighbour (see Table~\ref{tab:ranking}). Especially \textit{Brabantsche yeesten}, \textit{Van den derden Eduwaert}, \textit{Melibeus}, and \textit{Dietsche doctrinale} have a very clear Antwerp neighbour in the first rank. \textit{Lekenspiegel}, \textit{Boec van der wraken}, and \textit{Jans teesteye} have a less clear favourite, yet the neighbours are spread evenly throughout works of the Antwerp School. \textit{Lekenspiegel} and \textit{Boec van der wraken} seem to be the most stereotypical texts of the corpus, as its nearest neighbours are relatively evenly spread throughout the Antwerp School.
 
 For completeness, \textit{Der ystorien bloeme} and \textit{Grimbergse oorlog} were also included in the table. \textit{Der ystorien bloeme} is most similar to \textit{Boec van der wraken}, and \textit{Van den derden Eduwaert} and \textit{Brabantsche yeesten} (B5) can also be found in the top five. However, the percentages of the Antwerp School account for approximately 40\% of the nearest neighbours in the top five, whereas this is 90\% or more for the works traditionally associated with the Antwerp School. The percentages are also more scattered and lower in general, indicating that there is no clear favourite text or group of texts for \textit{Der ystorien bloeme}. \textit{Grimbergse oorlog} also has two works of the Antwerp School in its top five, with \textit{Brabantsche yeesten} (B5) in the lead, but the ranking seems to be more genre-based. After all, the work seems to gravitate more toward the other historiographic works in the scatterplot. Thus, the two latter works display a different nearest neighbour distribution compared to the other texts traditionally associated with the Antwerp School.
 
-%%TC:ignore
 \begin{table*}[h]
 \footnotesize
 \centering
@@ -276,23 +238,20 @@ For completeness, \textit{Der ystorien bloeme} and \textit{Grimbergse oorlog} we
 \caption{The Antwerp School, \textit{Der ystorien bloeme} and \textit{Grimbergse oorlog} along with their top five highest-ranking texts, based on the bootstrapped analysis. Titles in bold belong to the Antwerp School.}
 \label{tab:ranking}
 \end{table*}
-%%TC:endignore
-
 
 \subsection{Intertextuality}
 
-The final step of the analysis focuses on examining stylistic similarities in greater detail. Here, distant reading serves as a guide for close reading. Based on a method laid out by Kestemont, it is possible to identify and retrieve parallel verses between two texts \cite{Kestemont_2025}. Identifying corresponding verses has often been a way of linking various texts to each other, or even ascribing them to the same author \cite{Kestemont_2025}. Many traditional philologists have relied on their reading memory to identify parallel verses, also for the Antwerp School, e.g. Reynaert \cite{Reynaert_2002}. Kestemont laid out a method to perform this task computationally, for which the observations of traditional philologists formed the calibration corpus \cite{Kestemont_2025}. 
+The final step of the analysis focuses on examining stylistic similarities in greater detail. Here, distant reading serves as a guide for close reading. Based on a method laid out by Kestemont, it is possible to identify and retrieve parallel verses between two texts \cite{Kestemont_2025}. Identifying corresponding verses has often been a way of linking various texts to each other, or even ascribing them to the same author \cite{Kestemont_2025}. Many traditional philologists have relied on their reading memory to identify parallel verses, also for the Antwerp School, e.g. Reynaert \cite{Reynaert_2002}. Kestemont laid out a method to perform this task computationally, for which the observations of traditional philologists formed the calibration corpus \cite{Kestemont_2025}.
 
-%%TC:ignore
 \begin{table*}[h]
 \footnotesize
 \centering
 \begin{tabular}{lllll}
 \hline
-\makecell{\textbf{Tokens}\\\textbf{\textit{Melibeus}}} & 
-\makecell{\textbf{Tokens}\\\textbf{\textit{Dietsche doctrinale}}} & 
-\makecell{\textbf{Lemmas}\\\textbf{\textit{Melibeus}}} & 
-\makecell{\textbf{Lemmas}\\\textbf{\textit{Dietsche doctrinale}}} & 
+\makecell{\textbf{Tokens}\\\textbf{\textit{Melibeus}}} &
+\makecell{\textbf{Tokens}\\\textbf{\textit{Dietsche doctrinale}}} &
+\makecell{\textbf{Lemmas}\\\textbf{\textit{Melibeus}}} &
+\makecell{\textbf{Lemmas}\\\textbf{\textit{Dietsche doctrinale}}} &
 \makecell{\textbf{Cosine}\\\textbf{Distance}} \\
 \hline
 \makecell[l]{Seneca seghet\\noch dit woert /\\Dat niemand bat\\toe en hoort} &
@@ -347,34 +306,31 @@ The final step of the analysis focuses on examining stylistic similarities in gr
 \caption{Parallel verse pairs between \textit{Melibeus} and \textit{Dietsche doctrinale}, retrieved by calculating the cosine distances based on lemmatised verses, giving more weight to verse-final (rhyme) words.}
 \label{tab:intertexts}
 \end{table*}
-%%TC:endignore
 
 In order to find parallel verses computationally, the nearest neighbour of every verse pair gets identified. The verse pair then gets retrieved if the similarity is higher than a previously defined similarity threshold. This threshold is the optimal boundary of separating identical from different verses, but it is impossible to exclude all mismatches. Kestemont calibrated this threshold based on aforementioned calibration corpus, containing the observations of traditional philologists \cite{Kestemont_2025}. The verses are compared based on their lemma’s, but with a bit more weight given to the rhyme words. Table~\ref{tab:intertexts} shows the top eight parallel verses retrieved from the combination \textit{Melibeus--Dietsche doctrinale}. The verses are highly similar and there are many more except for the ones included. This is a striking example; yet other text combinations are also highly similar. For instance, \textit{Brabantsche yeesten} and \textit{Van den derden Eduwaert}, but also \textit{Lekenspiegel} and \textit{Jans teesteye} show many parallel verses.\footnote{More tables are included in the code.} Overall, a remarkably large number of verses is shared between works of the Antwerp School.
 
 The same method can also serve as a basis for identifying \textit{where} similar verses occur in two texts, and accordingly for detecting longer intertextual passages. To compare two texts, the cosine distance between each verse and its nearest neighbour is calculated again. A rolling window of 100 verse pairs then moves through the texts, comparing these distances (see Figure~\ref{fig:intertexts_macro}, left). The lower the value, the smaller the distance between a verse and its nearest neighbour — and the more similar they are. A steep drop thus indicates multiple highly similar verses after one another, and could indicate an intertextual passage, as observed between the \textit{Brabantsche yeesten} and \textit{Van den derden Eduwaert}.\footnote{More text combinations are included in the code. All texts of the Antwerp School were exhaustively compared and the important ones were enclosed.}
 
-To gain more insight into this, the parallel verses were visualised in an additional way. Every dot in Figure~\ref{fig:intertexts_macro} (right) represents a nearest neighbour verse pair with a cosine similarity above the defined similarity threshold.\footnote{The code repository contains html files which are interactive and show the parallel verses when hovering over the dots.} The larger the dot, the more similar the verses are, and the greater the chance they represent an actual match instead of an accidental mismatch. The scattered dots indicate isolated similar verse pairs — occasional instances of comparable lines. The ``trains'' of dots show longer sequences of similar verses, and where they occur in their source texts. For instance, approximately verses 4000--4500 of \textit{Brabantsche yeesten} (B5) correspond with verses 250--1250 of \textit{Van den derden Eduwaert}. After its completion in 1316, \textit{Brabantsche yeesten} was expanded five times over the following decades to include more recent historical events. Stein demonstrated that verses 3910 up until the end were added in the fourth version ca. 1348 \cite{Stein_1990}. He also remarked that a substantial part of this addition to \textit{Brabantsche yeesten} was based verbatim on \textit{Van den derden Eduwaert}. It is reassuring that the algorithm is able to identify this intertextual passage. 
+To gain more insight into this, the parallel verses were visualised in an additional way. Every dot in Figure~\ref{fig:intertexts_macro} (right) represents a nearest neighbour verse pair with a cosine similarity above the defined similarity threshold.\footnote{The code repository contains html files which are interactive and show the parallel verses when hovering over the dots.} The larger the dot, the more similar the verses are, and the greater the chance they represent an actual match instead of an accidental mismatch. The scattered dots indicate isolated similar verse pairs — occasional instances of comparable lines. The ``trains'' of dots show longer sequences of similar verses, and where they occur in their source texts. For instance, approximately verses 4000--4500 of \textit{Brabantsche yeesten} (B5) correspond with verses 250--1250 of \textit{Van den derden Eduwaert}. After its completion in 1316, \textit{Brabantsche yeesten} was expanded five times over the following decades to include more recent historical events. Stein demonstrated that verses 3910 up until the end were added in the fourth version ca. 1348 \cite{Stein_1990}. He also remarked that a substantial part of this addition to \textit{Brabantsche yeesten} was based verbatim on \textit{Van den derden Eduwaert}. It is reassuring that the algorithm is able to identify this intertextual passage.
 
 This passage was initially not encoded in the XML file, but could potentially influence the high similarity between \textit{Brabantsche yeesten} and \textit{Van den derden Eduwaert}. For this reason, it was excluded from \textit{Brabantsche yeesten} (B5) in all of the described analyses. As shown, however, this did not influence their clustering. The analysis also confirmed an intertextual passage between the endings of \textit{Jans teesteye} and \textit{Boec van der wraken} \cite{Schoenaers_2023}. Similarly, the passage from \textit{Boec van der wraken} was excluded.
 
-%%TC:ignore
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=1\linewidth]{figures/intertexts_macro.png}
-  \caption{Rolling cosine distance between the nearest neighbour verses of \textit{Brabantsche yeesten} (B5) and \textit{Van den derden Eduwaert} (left); and possible parallel verses and passages between aforementioned works (right).}
-  \label{fig:intertexts_macro}
+\centering
+\includegraphics[width=1\linewidth]{figures/intertexts_macro.png}
+\caption{Rolling cosine distance between the nearest neighbour verses of \textit{Brabantsche yeesten} (B5) and \textit{Van den derden Eduwaert} (left); and possible parallel verses and passages between aforementioned works (right).}
+\label{fig:intertexts_macro}
 \end{figure}
-%%TC:endignore
 
 \section{Discussion}
 
 In all analyses, \textit{Van den derden Eduwaert} and \textit{Brabantsche yeesten} (B5) consistently search for each others company, even with their shared passage removed. Their persistent proximity strongly suggests shared authorship, particularly in light of the numerous intertextual verses connecting the two works. In addition to the longer shared passages, numerous scattered verses in the works also coincide. This is not the way in which Middle Dutch compilers or authors would typically reuse source material. Instead, they would straightforwardly borrow large chunks of text more or less verbatim, rather than selectively or purposefully reuse isolated verses or verse pairs \cite{Reynaert_2002}. In this case, however, the author seems to consciously or unconsciously revert to the same formulations across different works. Accordingly, the intertexts between the two works seem to suggest not borrowing, but shared authorship. As Table~\ref{tab:school} shows, this hypothesis has frequently and relatively consistently been put forward in previous research. In \textit{Brabantsche yeesten} (B5), the author refers the reader to another of his own works on the life of King Edward III (\textit{Eduwaert den derden}): \textit{Diet al wille weten, vore ende na / Ic rade hem dat hi ten boeke ga / Daer ic dhistorie al te male / In hebbe gheset, redenlic wale} [Whoever wants to know all, before and after / I advise him that he go to the book / Where I have the story entirely / Set down orderly] \autocite[p. 299, own translation]{Willems_1840}. It is therefore generally assumed that the author of \textit{Brabantsche yeesten} (B5) refers here to his earlier work, most likely \textit{Van den derden Eduwaert}, both of which are commonly attributed to Jan van Boendale. The computational analysis appears to corroborate this conclusion.
 
-There is more controversy regarding the authorship of \textit{Melibeus} and \textit{Dietsche doctrinale} (Table~\ref{tab:school}). However, in a relatively recent study, Reynaert argues that both works should be attributed to Boendale \cite{Reynaert_2002}. The findings seem to confirm this, as the two texts form the most closely related pair across all of the analyses. Both are Middle Dutch translations of Albertan of Brescia’s \textit{Liber Consolationis et Consilii} and \textit{De amore et dilectione Dei}, respectively (Figure~\ref{fig:boendale}). Partially, their high degree of similarity can be explained by the works having the same source author. Yet, the intertexts – both on micro and macro level – again seem to also point in the direction of shared authorship in Middle Dutch. Additionally, Reynaert noted that both of these works often succeed each other in manuscripts, which leads him, amongst other reasons, to believe that the same person translated both texts \cite{Reynaert_2002}. 
+There is more controversy regarding the authorship of \textit{Melibeus} and \textit{Dietsche doctrinale} (Table~\ref{tab:school}). However, in a relatively recent study, Reynaert argues that both works should be attributed to Boendale \cite{Reynaert_2002}. The findings seem to confirm this, as the two texts form the most closely related pair across all of the analyses. Both are Middle Dutch translations of Albertan of Brescia’s \textit{Liber Consolationis et Consilii} and \textit{De amore et dilectione Dei}, respectively (Figure~\ref{fig:boendale}). Partially, their high degree of similarity can be explained by the works having the same source author. Yet, the intertexts – both on micro and macro level – again seem to also point in the direction of shared authorship in Middle Dutch. Additionally, Reynaert noted that both of these works often succeed each other in manuscripts, which leads him, amongst other reasons, to believe that the same person translated both texts \cite{Reynaert_2002}.
 
 \textit{Melibeus} and \textit{Dietsche doctrinale} additionally show close resemblance to \textit{Jans teesteye}, \textit{Boec van der wraken} and \textit{Lekenspiegel} in the analysis. While \textit{Van den derden Eduwaert} and \textit{Brabantsche yeesten} form a somewhat distinct pair within the larger cluster, they nevertheless still remain remarkably close to the other Antwerp School texts — especially when compared to the control corpora. This pattern suggests that, at the very least, all Antwerp School texts were produced within a comparable context, likely by authors of similar intellectual and ideological backgrounds, and that they functioned within the same climate.\footnote{All Antwerp School texts included in the analysis, so except from \textit{Boec Exemplaer}, \textit{Hoemen ene stat regeren sal}, \textit{Korte kroniek van Brabant} and \textit{Sidrac}.}  Yet, in light of both previous scholarship and the present findings, the evidence seems to strengthen the case for a single authorial hand behind the corpus, most plausibly that of Jan van Boendale. The recurrence of parallel verses across the corpus is particularly striking and offers compelling support for this interpretation.
 
-Two texts showed up in the proximity of the Antwerp School that have not been linked to the corpus before: \textit{Grimbergse oorlog} and \textit{Der ystorien bloeme}. However, due to the dating of the texts and previous research, it is unlikely that Boendale wrote any of them. \textit{Grimbergse oorlog} is dated ca. 1266-1268, which is too early to be authored by Boendale. The affinity to the Antwerp School can be explained by its similarity in genre, content, time and space to \textit{Brabantsche yeesten} and \textit{Van den derden Eduwaert}. It has been thought that Boendale read \textit{Grimbergse oorlog}, but a further connection has not been explored \cite{Serrure_Blommaert_1852}. It seems likely that the author of \textit{Grimbergse oorlog} had a profile similar to that of Boendale. However, given the ranking of the other texts in Table~\ref{tab:ranking}, it seems that genre and content play an important role in the similarity of the text to the Antwerp School, so it is too speculative to assume shared authorship. 
+Two texts showed up in the proximity of the Antwerp School that have not been linked to the corpus before: \textit{Grimbergse oorlog} and \textit{Der ystorien bloeme}. However, due to the dating of the texts and previous research, it is unlikely that Boendale wrote any of them. \textit{Grimbergse oorlog} is dated ca. 1266-1268, which is too early to be authored by Boendale. The affinity to the Antwerp School can be explained by its similarity in genre, content, time and space to \textit{Brabantsche yeesten} and \textit{Van den derden Eduwaert}. It has been thought that Boendale read \textit{Grimbergse oorlog}, but a further connection has not been explored \cite{Serrure_Blommaert_1852}. It seems likely that the author of \textit{Grimbergse oorlog} had a profile similar to that of Boendale. However, given the ranking of the other texts in Table~\ref{tab:ranking}, it seems that genre and content play an important role in the similarity of the text to the Antwerp School, so it is too speculative to assume shared authorship.
 
 Although research by Hogenbirk and Kestemont concluded that \textit{Der ystorien bloeme} was not authored by Boendale, previous studies had noticed the stylistic similarities with the Antwerp School. Like many Antwerp School works, \textit{Der ystorien bloeme} appears to be aimed at a secular, listening audience. Possibly related to the aural context, the author of \textit{Der ystorien bloeme} frequently applies formulaic or filler verses — verses that contribute little to the story content wise, but include emphasis formulas, source references, truth claims, or references to the act of speaking, often applied to maintain rhyme \cite{Hogenbirk_Kestemont_2014}. These occur so frequenctly — about one in every seven or eight verses — that Claassens labels the text a “literary failure” and its author a “bad poet” \cite{Claassens_1996}. Claassens’ critique parallels Van Driel’s assessment of Boendale’s work, who also relied on filler verses, likely to make his writing more accessible to a lay audience \cite{Claassens_1996, Driel_2012}. Claassens further observes that parts of \textit{Der ystorien bloeme} were reused in \textit{Lekenspiegel}, though he believes the latter demonstrates greater poetic skill. Van Driel, by contrast, highlights \textit{Lekenspiegel} and \textit{Brabantsche yeesten} as examples of extensive formulaic writing, citing an excerpt where nearly half the verses are formulaic \cite{Driel_2012}. Hogenbirk and Kestemont however investigated these stylistic parallels computationally and concluded that the author was likely Lodewijk van Velthem, Boendale's contemporary \cite{Hogenbirk_Kestemont_2014}. \textit{Der ystorien bloeme} tends to cluster with texts that also contain many formulaic verses, without this necessarily implying shared authorship. Further study of these formulas could clarify the relationships between the texts.
 
@@ -382,17 +338,12 @@ Although research by Hogenbirk and Kestemont concluded that \textit{Der ystorien
 
 The results of this study support the so-called maximalist position: the stylistic similarities across the Antwerp School suggest a shared authorship. In particular, \textit{Van den derden Eduwaert} and \textit{Brabantsche yeesten} consistently cluster together across all analyses, even in the absence of their shared passage. The presence of numerous parallel verses throughout both texts strongly suggests shared authorship, rather than mere intertextual borrowing. A similar pattern is observable in \textit{Melibeus} and \textit{Dietsche doctrinale}, which, despite their similar Latin source texts, exhibit a degree of internal textual overlap that strongly suggests shared authorship. More broadly however, all works – included in the analysis – traditionally associated with the Antwerp School also share a very similar style and share similar rhyme words, implying that they were likely produced by the same author, presumably Jan van Boendale. The extent and distribution of parallel verses across the corpus further underscore this hypothesis. In further research, I intend to quantify these parallel verses and compare whether there are more of them within the Antwerp School than in the rest of the texts in the \textit{Corpus Middle Dutch}. This way, I am also able to include the shorter works (\textit{Boec Exemplaer}, \textit{Korte Kroniek van Brabant}, \textit{Hoemen ene stat regeren sal} and \textit{Sidrac}) in the research. Finally, although it is unlikely that Boendale authored \textit{Grimbergse oorlog} or \textit{Der ystorien bloeme}, their notable proximity to the Antwerp School warrants consideration in further research. A close reading of their parallel verses could yield more insights as to why they cluster together closely with the Antwerp School.
 
-%%TC:ignore
 \section*{Acknowledgements}
 
 I would like to express my gratitude towards the anonymous reviewers of the CHR Program Committee, investing their time and sharing their expertise. Furthermore, I would like to thank Dr. Dirk Schoenaers for sharing his insights on the draft of the paper, as well as my supervisors Prof. Dr. Mike Kestemont and Prof. Dr. Remco Sleiderink for their constructive comments and helpful suggestions. This research is part of the research project ``Boendale’s Many Faces: Modeling Historical Positionality in Jan van Boendale’s (c. 1280-1351?) Oeuvre'', funded by the Research Foundation Flanders (FWO), project number (1133925N).
-%%TC:endignore
 
-%%TC:ignore
-% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
 \printbibliography
 
-% You can include an appendix using the following command
 \appendix
 
 \section{Appendix: Authorship Verification including \textit{Grimbergse oorlog} and \textit{Der ystorien bloeme}}
@@ -403,17 +354,17 @@ The exact same experiment as described in Section 3.1 was repeated, but with \te
 \textit{Der ystorien bloeme} seems to behave more as the SA text pairs and all text combinations fall below the threshold. However, when the experiment was repeated with the works of Lodewijk van Velthem in the target corpus, the combinations behave in the same way (see Figure~\ref{fig:boxplot_velthem}). This confirms the suspicion that \textit{Der ystorien bloeme} clusters with works with many filler verses.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.60\linewidth]{figures/verificatie_YB_GO.png}
-  \caption{Boxplot showing the distributions of the stylistic difference, this time including \textit{Grimbergse oorlog} and \textit{Der ystorien bloeme} in the “X” boxplot. The former seems to fit in more with the DA pairs, whereas the latter seems to fit in more with the SA pairs.}
-  \label{fig:verificatie_YB_GO}
+\centering
+\includegraphics[width=0.60\linewidth]{figures/verificatie_YB_GO.png}
+\caption{Boxplot showing the distributions of the stylistic difference, this time including \textit{Grimbergse oorlog} and \textit{Der ystorien bloeme} in the “X” boxplot. The former seems to fit in more with the DA pairs, whereas the latter seems to fit in more with the SA pairs.}
+\label{fig:verificatie_YB_GO}
 \end{figure}
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.60\linewidth]{figures/boxplot_velthem.png}
-  \caption{Boxplot showing the distributions of the stylistic difference, this time with the works of Lodewijk van Velthem and \textit{Der ystorien bloeme} in the “X” boxplot. \textit{Der ystorien bloeme} seems to be relatively similar to the other works by Velthem.}
-  \label{fig:boxplot_velthem}
+\centering
+\includegraphics[width=0.60\linewidth]{figures/boxplot_velthem.png}
+\caption{Boxplot showing the distributions of the stylistic difference, this time with the works of Lodewijk van Velthem and \textit{Der ystorien bloeme} in the “X” boxplot. \textit{Der ystorien bloeme} seems to be relatively similar to the other works by Velthem.}
+\label{fig:boxplot_velthem}
 \end{figure}
 
 \section{Appendix: \textit{Sidrac}} \label{app_B}
@@ -421,38 +372,29 @@ The exact same experiment as described in Section 3.1 was repeated, but with \te
 \textit{Sidrac} is a text often included in the Antwerp School, but hard to compare to the rest of the works since it is the only one written in prose. Only the pro- and epilogue are rhymed. The results were not included in the main text since they were indecisive; accordingly, I will also keep this discussion brief. It is hard to determine whether differences observed between \textit{Sidrac} and the other works should be attributed to an authorial difference, or the difference in form (prose vs. rhyme). The code contains a notebook with the option to analyse the text in several ways compared to the rest of the Antwerp School; it includes:
 (1) the option to remove the prose part of \textit{Sidrac} and only load in the (rhymed) pro- and epilogue;
 (2) the option to remove the rhyme words in all of the other works;
-(3) the option to limit the amount of segments per title in the scatterplot (otherwise e.g. \textit{Spiegel Historiael} would dominate the plot). 
+(3) the option to limit the amount of segments per title in the scatterplot (otherwise e.g. \textit{Spiegel Historiael} would dominate the plot).
 
 Since the pro- and epilogue contain only 222 verses in total, it is hard to draw conclusions when applying option (1). There is too little data for the analyses, which is why it is not reported on. Option (2) did not have much influence and was thus not included, but can be tried out when running the code. The idea behind removing all rhyme words, was that this might be more fair towards \textit{Sidrac}, since the factor of the rhyme constraint is then partially taken away. Option (3) was consistently applied.
 
-
-
-\noindent
-\textbf{Authorship verification} First, I applied authorship verification to the Antwerp School including \textit{Sidrac}. Yet, since \textit{Sidrac} has no rhyming words, I had to revert to different features. First, I segmented the texts into segments of 5000 tokens each. Then, vectors were created based on the 100 most frequent words to decrease the influence of content.\footnote{This is also the reason why option (2) did not have a lot of influence. The chance of rhyme words being in the top 100 most frequent words, is small.} Again, I applied TF-IDF weighting to this. The resulting similarity distribution of \textit{Sidrac} seems to behave as a DA text pair (see Figure~\ref{fig:sidrac_verificatie}). Only three combinations including \textit{Sidrac} are located below the threshold. However, it is hard to estimate whether \textit{Sidrac} differs from the Antwerp School because of a different authorship, or because the writing style in prose differs from rhyme.
+\paragraph{Authorship verification} First, I applied authorship verification to the Antwerp School including \textit{Sidrac}. Yet, since \textit{Sidrac} has no rhyming words, I had to revert to different features. First, I segmented the texts into segments of 5000 tokens each. Then, vectors were created based on the 100 most frequent words to decrease the influence of content.\footnote{This is also the reason why option (2) did not have a lot of influence. The chance of rhyme words being in the top 100 most frequent words, is small.} Again, I applied TF-IDF weighting to this. The resulting similarity distribution of \textit{Sidrac} seems to behave as a DA text pair (see Figure~\ref{fig:sidrac_verificatie}). Only three combinations including \textit{Sidrac} are located below the threshold. However, it is hard to estimate whether \textit{Sidrac} differs from the Antwerp School because of a different authorship, or because the writing style in prose differs from rhyme.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.61\linewidth]{figures/sidrac_verificatie.png}
-  \caption{Boxplot showing the distributions of the stylistic difference, this time including \textit{Sidrac}. It seems to behave more as though it is from a different author than the other works in the Antwerp School.}
-  \label{fig:sidrac_verificatie}
+\centering
+\includegraphics[width=0.61\linewidth]{figures/sidrac_verificatie.png}
+\caption{Boxplot showing the distributions of the stylistic difference, this time including \textit{Sidrac}. It seems to behave more as though it is from a different author than the other works in the Antwerp School.}
+\label{fig:sidrac_verificatie}
 \end{figure}
 
-
-
-\noindent
-\textbf{Dimensionality reduction} I also recreated the scatterplot based on aforementioned vectors (see Figure~\ref{fig:sidrac_all}). As can be seen, it is more difficult to produce clear clusters based on the most frequent words than based on solely the rhyme bigrams. This coincides with the hypothesis that rhyme words are important features when looking for the author of a Middle Dutch text. The Antwerp cluster is still somewhat visible on the left side of the plot. \textit{Sidrac} is located above the Antwerp School. It somewhat moves away from the rest of the works and forms a cluster of its own, but perhaps less so than expected given its different nature. It is hard to conclude anything regarding the authorship based on this plot.
+\paragraph{Dimensionality reduction} I also recreated the scatterplot based on aforementioned vectors (see Figure~\ref{fig:sidrac_all}). As can be seen, it is more difficult to produce clear clusters based on the most frequent words than based on solely the rhyme bigrams. This coincides with the hypothesis that rhyme words are important features when looking for the author of a Middle Dutch text. The Antwerp cluster is still somewhat visible on the left side of the plot. \textit{Sidrac} is located above the Antwerp School. It somewhat moves away from the rest of the works and forms a cluster of its own, but perhaps less so than expected given its different nature. It is hard to conclude anything regarding the authorship based on this plot.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.85\linewidth]{figures/scatterplot_sidrac_all.png}
-  \caption{Scatterplot based on a combination of PCA and UMAP, now based on the 100 most frequent words and including \textit{Sidrac}. Each dot represents a segment of 5000 tokens from a text.}
-  \label{fig:sidrac_all}
+\centering
+\includegraphics[width=0.85\linewidth]{figures/scatterplot_sidrac_all.png}
+\caption{Scatterplot based on a combination of PCA and UMAP, now based on the 100 most frequent words and including \textit{Sidrac}. Each dot represents a segment of 5000 tokens from a text.}
+\label{fig:sidrac_all}
 \end{figure}
 
-
-
-\noindent
-\textbf{Authorship ranking} I also carried out the bootstrapped authorship ranking with \textit{Sidrac} included (see Table~\ref{tab:sidrac-ranking}). Overall, the rankings based on the new feature vectors appear relatively stable compared to the main analysis (Table~\ref{tab:ranking}), which is positive.\footnote{The full table can be viewed in the code. It is not included to limit the length of this appendix.} Two Antwerp School texts appear in the top five of \textit{Sidrac}, namely \textit{Boec van der wraken }and \textit{Lekenspiegel}.
+\paragraph{Authorship ranking} I also carried out the bootstrapped authorship ranking with \textit{Sidrac} included (see Table~\ref{tab:sidrac-ranking}). Overall, the rankings based on the new feature vectors appear relatively stable compared to the main analysis (Table~\ref{tab:ranking}), which is positive.\footnote{The full table can be viewed in the code. It is not included to limit the length of this appendix.} Two Antwerp School texts appear in the top five of \textit{Sidrac}, namely \textit{Boec van der wraken }and \textit{Lekenspiegel}.
 
 \begin{table*}[h]
 \footnotesize
@@ -474,10 +416,7 @@ five highest-ranking texts, based on the bootstrapped analysis. Titles in bold b
 \label{tab:sidrac-ranking}
 \end{table*}
 
-
-
-\noindent
-\textbf{Intertexts} Last, I looked into the intertexts. Intertextual passages were not retrieved, which is to be expected given the prose nature of \textit{Sidrac}. Yet, when comparing \textit{Sidrac} to \textit{Lekenspiegel}, as well as \textit{Dietsche doctrinale} and \textit{Jans teesteye}, the prologue (up to verse 191) of \textit{Sidrac} can be observed in the graph, as it shows a smaller distance. However, this similarity is also there when for instance comparing it to \textit{Die rose}, another rhymed work, but not written by Boendale \cite{Vandyck_Kestemont_2024}. This shows that the form demonstrably matters when comparing works. 
+\paragraph{Intertexts} Last, I looked into the intertexts. Intertextual passages were not retrieved, which is to be expected given the prose nature of \textit{Sidrac}. Yet, when comparing \textit{Sidrac} to \textit{Lekenspiegel}, as well as \textit{Dietsche doctrinale} and \textit{Jans teesteye}, the prologue (up to verse 191) of \textit{Sidrac} can be observed in the graph, as it shows a smaller distance. However, this similarity is also there when for instance comparing it to \textit{Die rose}, another rhymed work, but not written by Boendale \cite{Vandyck_Kestemont_2024}. This shows that the form demonstrably matters when comparing works.
 
 I also compared the rhymed pro- and epilogue to the other texts in the Antwerp School in order to retrieve parallel verses. This yielded some surprising parallels, for instance between \textit{Sidrac} and \textit{Boec van der wraken} (see Table~\ref{tab:boec-vs-sidrac}). For such a short rhyming part in \textit{Sidrac}, there seem to be many parallel verses. Especially the last included parallel verse catches the eye, as it seemed less conventional than the other ones. Accordingly, I searched for other verse pairs containing the lemmas “goud”, “menigvout” and “gesteente” (see Table~\ref{tab:rhyme-variants}). Four out of five texts these verses appear in belong to the Antwerp School. Note however, that although \textit{Brabantsche yeesten} (B6) is a continuation of \textit{Brabantsche yeesten}, it was continued by Wein van Cotthem, not Boendale \cite{Sleiderink_2003}. It is interesting that this is the only verse of the five that does not contain “zilver”, forming a weaker match.
 
@@ -486,10 +425,10 @@ I also compared the rhymed pro- and epilogue to the other texts in the Antwerp S
 \centering
 \begin{tabular}{lllll}
 \hline
-\makecell{\textbf{Tokens}\\\textbf{\textit{Boec van der wraken}}} & 
-\makecell{\textbf{Tokens}\\\textbf{\textit{Sidrac}}} & 
-\makecell{\textbf{Lemmas}\\\textbf{\textit{Boec van der wraken}}} & 
-\makecell{\textbf{Lemmas}\\\textbf{\textit{Sidrac}}} & 
+\makecell{\textbf{Tokens}\\\textbf{\textit{Boec van der wraken}}} &
+\makecell{\textbf{Tokens}\\\textbf{\textit{Sidrac}}} &
+\makecell{\textbf{Lemmas}\\\textbf{\textit{Boec van der wraken}}} &
+\makecell{\textbf{Lemmas}\\\textbf{\textit{Sidrac}}} &
 \makecell{\textbf{Cosine}\\\textbf{Distance}} \\
 \hline
 \makecell[l]{Nu seght allegader\\Amen / Amen} &
@@ -569,7 +508,5 @@ I also compared the rhymed pro- and epilogue to the other texts in the Antwerp S
 \caption{Verse variants featuring the rhyme pair \textit{goud – menigvout} and containing the lemma \textit{gesteente} across multiple Middle Dutch texts.}
 \label{tab:rhyme-variants}
 \end{table*}
-%%TC:endignore
-
 
 \end{document}

@@ -1,52 +1,35 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-%\documentclass[final]{anthology-ch} % for the final version
-\documentclass[final]{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{url}
 \usepackage{multirow}
 \usepackage{float}
 
-% ADD your own packages using \usepackage{}
-
-% TITLE OF THE SUBMISSION
 \title{From Raw Text to Meaningful Information: Named Entity Recognition, Disambiguation, and Semantic Enrichment of a Large Corpus of Historical Police Records (Antwerp, 1876–1945)}
 
-
-% AUTHOR AND AFFILIATION INFORMATION
 \author[1]{Lith Lefranc}[
-  orcid=0000-0002-6860-552X
+orcid=0000-0002-6860-552X
 ]
 
-% AFFILIATIONS
 \affiliation{1}{Center for Urban History, University of Antwerp, Belgium}
 
-% KEYWORDS
 \keywords{Named Entity Recognition, Historical Entity Disambiguation, Geocoding, Name-to-Gender Inference, Toponym Resolution, Night Studies, Urban History}
 
-% METADATA FOR THE PUBLICATION
 \pubyear{2025}
 \pubvolume{3}
-\pagestart{918}
-\pageend{932}
+\pagestart{922}
+\pageend{936}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/Aym1S8P80hvy}  
+\doi{10.63744/Aym1S8P80hvy}
 \paperorder{54}
 
 \addbibresource{./bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
 
 \maketitle
-
 
 \begin{abstract}
 This paper presents a pipeline for transforming noisy, machine-readable historical records into structured, meaningful information. Unlike prior methods that often rely on contemporary natural language processing tools, this framework adapts language models and ontologies to the historical and regional specificity of the data. Using 271 incident books from Antwerp's local police (1876-1945), we developed an integrated approach combining historical named entity recognition, disambiguation, and further semantic enrichment. We trained domain-adapted transformer models on manually annotated data to extract dates, times, locations, and demographic information about individuals involved in the incidents (names, birthplaces, birthyears, and occupations). Post-processing methods address historical spelling variations, handwritten text recognition errors, and inconsistent administrative practices through normalization and disambiguation. The pipeline enriches extracted data through geocoding of historical street names using custom gazetteers, automated name-to-gender inference, and systematic conversion of occupational descriptions to social class categories via HISCO/HISCLASS standards. The system achieves F1-scores ranging from 0.82 to 0.99 across entity types, demonstrating how computational methods can unlock noisy historical records for data-driven urban history research.
@@ -60,7 +43,7 @@ These police records present multiple challenges typical of historical sources: 
 
 \section{The Antwerp incident books (1876-1945)}
 
-The raw data consists of 271 so-called incident books (Dutch: “\textit{gebeurtenisboeken}”, French: “\textit{régistre d’événements}”) maintained by the Antwerp local police between 1876 and 1945. These, originally handwritten, records offer rich, structured descriptions of everyday urban events, including minor offenses, disturbances, and citizen-police interactions. They document not only the nature of incidents but also detailed demographic information of the individuals involved, such as name, occupations, place and date of birth, and residential address (example on Figure~\ref{fig:incident_example} and Table~\ref{tab:incident_example}). Originally compiled to assist deputy commissioners in deciding whether formal charges (“\textit{proces-verbaal}”) should be filed, these records provide a unique window into the social dynamics of a rapidly expanding city. They capture a wide array of urban experiences, from violations and domestic disputes to lost children, stray animals, and individuals found injured in public spaces, offering granular insight into the evolving relationship between citizens and municipal authorities. Although shaped by the surveillance priorities of the time, the incident books offer rare, systematic documentation of individuals from lower social strata - social groups that often left little written trace of their own \cite{lefranc2025a}. 
+The raw data consists of 271 so-called incident books (Dutch: “\textit{gebeurtenisboeken}”, French: “\textit{régistre d’événements}”) maintained by the Antwerp local police between 1876 and 1945. These, originally handwritten, records offer rich, structured descriptions of everyday urban events, including minor offenses, disturbances, and citizen-police interactions. They document not only the nature of incidents but also detailed demographic information of the individuals involved, such as name, occupations, place and date of birth, and residential address (example on Figure~\ref{fig:incident_example} and Table~\ref{tab:incident_example}). Originally compiled to assist deputy commissioners in deciding whether formal charges (“\textit{proces-verbaal}”) should be filed, these records provide a unique window into the social dynamics of a rapidly expanding city. They capture a wide array of urban experiences, from violations and domestic disputes to lost children, stray animals, and individuals found injured in public spaces, offering granular insight into the evolving relationship between citizens and municipal authorities. Although shaped by the surveillance priorities of the time, the incident books offer rare, systematic documentation of individuals from lower social strata - social groups that often left little written trace of their own \cite{lefranc2025a}.
 
 \begin{figure}[h]
 \centering
@@ -81,7 +64,7 @@ The machine-readable corpus of the incident books comprises approximately 90,000
 15-12-91 [signature-mark] [signature-mark] Kennis gegeven aan Mr. Lortidis. P.V. fait. & 15-12-91 [signature-mark] [signature-mark] Notification given to Mr. Lortidis. Official report was made. \\
 \midrule
 Heden avond om 9 1/4 uren in dienst zynde Schipperskwartier met myne colega De Bie Victor hebben wy gezien en gestatigd dat de genaamde Lombaert Emerencia (Wwe Seroen Willem) geboren te Leuven in 1853 en wonende T/S Schippersstraat N° 31 herbergierster, met de deur hare herberg open te dansen gaf aan het publiek, er was een kopel aan den dans op het geluid van een armonica  & This evening around 09:30 while on duty in Schipperskwartier with my colleague De Bie Victor, we saw and confirmed that the named Lombaert Emerencia (widow of Seroen Willem), born in Leuven in 1863 and residing in this city, Schippersstraat 31, innkeeper, let the public dance in her inn with the door open. A couple was dancing to the sound of a harmonica.
- \\
+\\
 \bottomrule
 \end{tabular}
 \caption{Diplomatic transcription of incident on Figure~\ref{fig:incident_example} (left) and non-diplomatic English translation (right) (FelixArchief, 450\#58, p. 267).}
@@ -116,23 +99,23 @@ To extract structured data from the semi-structured police reports, we developed
 
 \begin{itemize}
 \item \texttt{<EVENT>}: Each individual incident was tagged, containing nested contextual entities:
-  \begin{itemize}
-  \item \texttt{<E\_DATE>}: 510 dates
-  \item \texttt{<E\_TIME>}: 1,315 times (split into numeric times and textual phrases)
-  \item \texttt{<E\_LOC>}: 931 street-level location tags
-  \end{itemize}
+\begin{itemize}
+\item \texttt{<E\_DATE>}: 510 dates
+\item \texttt{<E\_TIME>}: 1,315 times (split into numeric times and textual phrases)
+\item \texttt{<E\_LOC>}: 931 street-level location tags
+\end{itemize}
 \item \texttt{<PERSON>}: All civilians were tagged with rich internal structure (1,144 total), including:
-  \begin{itemize}
-  \item \texttt{<P\_TITLE>}: 484 titles
-  \item \texttt{<P\_FIRSTNAME>}: 1,333 firstnames
-  \item \texttt{<P\_LASTNAME>}: 2,340 lastnames
-  \item \texttt{<P\_PROF>}: 542 occupations
-  \item \texttt{<P\_BIRTHPLACE>}: 522 birthplaces
-  \item \texttt{<P\_BIRTHDATE>}: 471 birthdates
-  \item \texttt{<P\_AGE>}: 146 ages
-  \item \texttt{<P\_RES>}: 788 places of residence
-  \item \texttt{<P\_MARITALSTATUS>}: 77 marital statuses (including kinship terms like daughter or sister)
-  \end{itemize}
+\begin{itemize}
+\item \texttt{<P\_TITLE>}: 484 titles
+\item \texttt{<P\_FIRSTNAME>}: 1,333 firstnames
+\item \texttt{<P\_LASTNAME>}: 2,340 lastnames
+\item \texttt{<P\_PROF>}: 542 occupations
+\item \texttt{<P\_BIRTHPLACE>}: 522 birthplaces
+\item \texttt{<P\_BIRTHDATE>}: 471 birthdates
+\item \texttt{<P\_AGE>}: 146 ages
+\item \texttt{<P\_RES>}: 788 places of residence
+\item \texttt{<P\_MARITALSTATUS>}: 77 marital statuses (including kinship terms like daughter or sister)
+\end{itemize}
 \item \texttt{<P\_OFFICER>}: To avoid confusion between civilians and police officers, each police officer was annotated separately (1,203 total), including their firstname, lastname and title.
 \end{itemize}
 
@@ -162,26 +145,26 @@ On the fine-grained task, RobBERT achieved F1: 0.819, while GysBERT scored F1: 0
 \footnotesize
 \begin{verbatim}
 <incident number="2">
-  <marg number="2.1">
-    <E_DATE>15 - 12 - 91</E_DATE> Klaet 
-    Dr Bu Keynis gegeven M aan ed Jortidis
-  </marg>
-  <p number="2.2">
-    Heden <E_TIME>avond</E_TIME> om <E_TIME>9 1 / 4 uren</E_TIME> 
-    in dienst zynde <E_LOC>schippers kwartier</E_LOC> 
-    met myne colega <P_OFFICER><P_LASTNAME>De Bie</P_LASTNAME> 
-    <P_FIRSTNAME>Victor</P_FIRSTNAME></P_OFFICER> 
-    hebben wy gezien en bestatigd dat de genaamde 
-    <PERSON><P_LASTNAME>Lombaert</P_LASTNAME> 
-    <P_FIRSTNAME>Imerencia</P_FIRSTNAME> 
-    (<P_MARITALSTATUS>Wwe Seroen</P_MARITALSTATUS> Willem) 
-    geboren te <P_BIRTHPLACE>Leuven</P_BIRTHPLACE> in 
-    <P_BIRTHDATE>1853</P_BIRTHDATE> en wonende 
-    <P_RES>t / s Schippers straat N 31</P_RES> 
-    <P_PROF>herbergierster</P_PROF></PERSON>, 
-    met de deur hare herberg open te dansen gaf aan het publiek, 
-    er was een kopel aan den dans op het geluid van een armonica
-  </p>
+<marg number="2.1">
+<E_DATE>15 - 12 - 91</E_DATE> Klaet
+Dr Bu Keynis gegeven M aan ed Jortidis
+</marg>
+<p number="2.2">
+Heden <E_TIME>avond</E_TIME> om <E_TIME>9 1 / 4 uren</E_TIME>
+in dienst zynde <E_LOC>schippers kwartier</E_LOC>
+met myne colega <P_OFFICER><P_LASTNAME>De Bie</P_LASTNAME>
+<P_FIRSTNAME>Victor</P_FIRSTNAME></P_OFFICER>
+hebben wy gezien en bestatigd dat de genaamde
+<PERSON><P_LASTNAME>Lombaert</P_LASTNAME>
+<P_FIRSTNAME>Imerencia</P_FIRSTNAME>
+(<P_MARITALSTATUS>Wwe Seroen</P_MARITALSTATUS> Willem)
+geboren te <P_BIRTHPLACE>Leuven</P_BIRTHPLACE> in
+<P_BIRTHDATE>1853</P_BIRTHDATE> en wonende
+<P_RES>t / s Schippers straat N 31</P_RES>
+<P_PROF>herbergierster</P_PROF></PERSON>,
+met de deur hare herberg open te dansen gaf aan het publiek,
+er was een kopel aan den dans op het geluid van een armonica
+</p>
 </incident>
 \end{verbatim}
 \caption{Example of an automatically transcribed and annotated incident with NER models robbert-coarse and robbert-fine (450\#58, p. 267).}
@@ -198,15 +181,15 @@ On the fine-grained task, RobBERT achieved F1: 0.819, while GysBERT scored F1: 0
 
 \section{Entity Normalization, Disambiguation and Semantic Enrichment}
 
-The raw output of the NER is not yet suitable for analysis. Variability in spelling, writing style, and HTR errors, as well as a wide range of possible values for each entity type, require further normalization, disambiguation, and semantic enrichment. In the following sections, we describe the intermediate steps taken to standardize key entity types and prepare them for structured analysis: 
-date~(\ref{subsec:date}), 
-time~(\ref{subsec:time}), 
-street name~(\ref{subsec:streetname}), 
-gender~(\ref{subsec:gender}), 
-occupation~(\ref{subsec:occupation}), 
-birthplace~(\ref{subsec:birthplace}), 
+The raw output of the NER is not yet suitable for analysis. Variability in spelling, writing style, and HTR errors, as well as a wide range of possible values for each entity type, require further normalization, disambiguation, and semantic enrichment. In the following sections, we describe the intermediate steps taken to standardize key entity types and prepare them for structured analysis:
+date~(\ref{subsec:date}),
+time~(\ref{subsec:time}),
+street name~(\ref{subsec:streetname}),
+gender~(\ref{subsec:gender}),
+occupation~(\ref{subsec:occupation}),
+birthplace~(\ref{subsec:birthplace}),
 and age~(\ref{subsec:age}).
-We used an annotated sample of 200 randomly selected incidents throughout the entire corpus as ground truth to assess the accuracy of our post-processing tools. 
+We used an annotated sample of 200 randomly selected incidents throughout the entire corpus as ground truth to assess the accuracy of our post-processing tools.
 
 While standardization is necessary for computational analysis, it also involves categorization - a process that reduces linguistic richness to predefined, limited classes. These classifications are not neutral but shaped by historical and contemporary power structures that determine what and who is considered relevant \cite{posner2015}. This is especially true for sources produced by authorities, such as police officers. We aim to be transparent about the methodological choices behind our categories and transformations, recognizing their analytical utility as well as their limitations.
 
@@ -281,7 +264,7 @@ The historical-Antwerp-gender-predictor outperformed gender-guesser with an F1-s
 \subsection{Occupation to Social Class}
 \label{subsec:occupation}
 
-As with gender, the incident books do not explicitly record socio-economic status (SES), but occupations (\texttt{<P\_PROF>}) offer an indirect indication. Using occupation as a proxy for SES presents however some challenges. It is a less precise measure than income or property, it underrepresents women (due to lower labor participation and occupational variety), and it excludes children and the elderly. In addition, the meaning and social prestige of occupations change over time, and many historical occupations no longer exist today. Nevertheless, occupation is one of the few systematically recorded attributes in the incident books that offer insight into social position, making it a valuable, yet imperfect, indicator of social class. 
+As with gender, the incident books do not explicitly record socio-economic status (SES), but occupations (\texttt{<P\_PROF>}) offer an indirect indication. Using occupation as a proxy for SES presents however some challenges. It is a less precise measure than income or property, it underrepresents women (due to lower labor participation and occupational variety), and it excludes children and the elderly. In addition, the meaning and social prestige of occupations change over time, and many historical occupations no longer exist today. Nevertheless, occupation is one of the few systematically recorded attributes in the incident books that offer insight into social position, making it a valuable, yet imperfect, indicator of social class.
 
 To enable diachronic and transnational comparison, the Historical International Classification of Occupations (HISCO) system was used \cite{vanleeuwen2002}. HISCO groups historical occupations into a hierarchical structure of 1,675 detailed codes, modeled on ISCO-68, and based on the tasks involved in each job. To measure social stratification, HISCO was linked to HISCLASS \cite{vanleeuwen2004}, which classifies HISCO occupations into social classes based on skill level, manual or non-manual labor, supervision, and economic sector \cite{vanleeuwen2004}.
 
@@ -330,7 +313,6 @@ The resulting structured dataset covers over 400,000 incidents with detailed tem
 
 I would like to thank Ilja Van Damme and Mike Kestemont for supervising this PhD project, Enrique Manjavacas and Pieter Fivez (TEXTUA) for their help with the NER model training, and Folgert Karsdorp, Melvin Wevers, and the reviewers of this paper for their thoughtful comments and suggestions.
 
-% Print the bibliography at the end
 \printbibliography
 
 \end{document}

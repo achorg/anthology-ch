@@ -1,16 +1,7 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-%\documentclass{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
-% ADD your own packages using \usepackage{}
-
-%\usepackage[greek]{babel}
 
 \usepackage{booktabs}
 \usepackage{tabularx}
@@ -22,81 +13,56 @@
 \usepackage{adjustbox}
 \usepackage{multirow}
 
-% Monospace font with Greek support
+\newcommand{\gr}[1]{{\selectlanguage{greek}\greekfont #1}}
 
-\newcommand{\gr}[1]{{\selectlanguage{greek}\greekfont #1}} % Greek text command
-
-\newcommand{\detailtexcount}[1]{%
-  \immediate\write18{texcount -merge -sum -q #1.tex output.bbl > #1.wcdetail }%
-  \verbatiminput{#1.wcdetail}%
+\newcommand{\detailtexcount}[1]{
+\immediate\write18{texcount -merge -sum -q #1.tex output.bbl > #1.wcdetail }
+\verbatiminput{#1.wcdetail}
 }
 
-\newcommand{\quickwordcount}[1]{%
-  \immediate\write18{texcount -1 -sum -merge -q #1.tex output.bbl > #1-words.sum }%
-  \input{#1-words.sum} words%
+\newcommand{\quickwordcount}[1]{
+\immediate\write18{texcount -1 -sum -merge -q #1.tex output.bbl > #1-words.sum }
+\input{#1-words.sum} words
 }
 
-\newcommand{\quickcharcount}[1]{%
-  \immediate\write18{texcount -1 -sum -merge -char -q #1.tex output.bbl > #1-chars.sum }%
-  \input{#1-chars.sum} characters (not including spaces)%
-  }
+\newcommand{\quickcharcount}[1]{
+\immediate\write18{texcount -1 -sum -merge -char -q #1.tex output.bbl > #1-chars.sum }
+\input{#1-chars.sum} characters (not including spaces)
+}
 
 \lstset{
-  inputencoding=utf8,
-  showstringspaces=true,
-  extendedchars=true,
-  basicstyle=\ttfamily,
-  breaklines=true,
-  escapechar=\%
-% Wraps long lines
+inputencoding=utf8,
+showstringspaces=true,
+extendedchars=true,
+basicstyle=\ttfamily,
+breaklines=true,
 }
 
-
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{Echoes of Antiquity: Towards Understanding History through Human and LLM-Based Classical Text Translations}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1]{Phillip Benjamin Ströbel}[
-  orcid=0000-0003-2063-5495
+orcid=0000-0003-2063-5495
 ]
 
 \author[1]{Felix Klaus Maier}[
-  orcid=0000-0002-5578-723X
+orcid=0000-0002-5578-723X
 ]
 
-% While we encourage including ORCID-IDs for all authors, you can
-% include authors that do not have one by definining an empty ID.
-
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 \affiliation{1}{Department of History, University of Zurich, Zurich, Switzerland}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{translation studies, Ancient Greek, large language models, digital humanities, digital history}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
 \pagestart{32}
 \pageend{32}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/XcjZ0MxpjIPj}  
-\paperorder{3} 
+\doi{10.63744/XcjZ0MxpjIPj}
+\paperorder{3}
 
 \addbibresource{bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
 
 \maketitle
@@ -106,6 +72,11 @@ This paper presents a systematic, data-driven comparison of human and large lang
 \end{abstract}
 
 \end{document}
+
+
+
+
+
 
 \section{Introduction}
 Modern historian Włodzimierz Lengauer controversially concludes his essay by advocating \emph{not} translating ancient texts at all. He contends that ``translation gives no idea of the original'' because it is impossible to reconstruct the meaning of texts written in languages and cultures that are now ``dead'' \parencite[pp.~26--27]{lengauer_traduttore_2013}. While this claim has sparked debate among scholars, it is rooted in the genuine complexities involved in rendering Ancient Greek into modern languages.\footnote{While Lengauer's examples focus on Polish, similar obstacles arise in translations from Ancient Greek to any modern language. This study focuses on Greek-to-English translation.}
@@ -120,27 +91,6 @@ Despite these challenges, new translations continue to appear. Homer's \textit{O
 
 Large Language Models (LLMs) are increasingly used for translation. Their outputs, shaped by training data and non-determinism, differ widely; e.g., Claude's output matches Cawley's, while GPT-4o and Gemini blend features from various translations (see Table~\ref{tab:example-translations-llms}). This research examines such variants across historiography and epic, probing how LLMs might replicate, recombine, or reinterpret ancient texts. At the end of this research (not this article), we aim to answer the question: What translation best captures the ancient mind?
 
-%Modern historian Włodzimierz Lengauer controversially concludes his essay by advocating \emph{not} translating ancient texts at all. He contends that ``translation gives no idea of the original'' because it is impossible to reconstruct the meaning of texts written in languages and cultures that are now ``dead'' \parencite[pp.~26--27]{lengauer_traduttore_2013}. While this claim has sparked considerable debate among translators and scholars, it is rooted in the genuine complexities involved in rendering Ancient Greek into modern languages.\footnote{While Lengauer's examples focus on Polish, similar obstacles arise in translations from Ancient Greek to any modern language. This study focuses on Greek-to-English translation.}
-
-%These challenges translators face include:
-
-
-%\begin{itemize}
-%    \item \textbf{Poetic Language}: Ancient Greek poetry, especially in Homer's epics, is characterised by intricate metrical patterns, formulaic expressions, and elaborate metaphors. E.g., consider the recurring epithet \gr{ῥοδοδάκτυλος Ἠώς} (EN \textit{rosy-fingered dawn}) used to describe the sunrise in the Odyssey. Translators must find ways to convey the poetic qualities of such expressions while maintaining accuracy and readability in the target language.
-%    \item \textbf{Cultural Context}: Ancient Greek culture had distinct social norms, beliefs, and values that differed significantly from those of modern societies. Translators must bridge this cultural gap by providing clear explanations and accurate interpretations of culturally specific concepts, customs, and beliefs. E.g., the concept of \gr{ἀρετή} encompasses a range of meanings including \textit{excellence}, \textit{virtue}, and \textit{valour}, making it difficult to find a single English equivalent that fully captures its essence and thus requires careful consideration to ensure its meaning is accurately conveyed to a modern audience.
-%    \item \textbf{Historical References}: Ancient Greek texts are filled with historical allusions and references to events, figures, and places that may be unfamiliar to modern readers (and even translators?). Translators must ensure that these references are accurately rendered and adequately explained. E.g., understanding the significance of the Peloponnesian War in Thucydides' work requires knowledge of the historical context and the key players involved.
-%    \item \textbf{Ambiguity and Wordplay}: The Ancient Greek language often exhibits ambiguity and wordplay, which can be challenging to capture in translation. Translators must carefully consider the various possible interpretations and select the one that best aligns with the context and the author's intended meaning.
-%\end{itemize}
-
-%While Lengauer hints at the many challenges the translation processes pose, his proposed ``solution'', i.e., ``non-translation'' stands out for its originality: he contends that engagement with ancient texts should be reserved exclusively for those with exceptional linguistic mastery. While this bold stance carries a certain intellectual rigour, it is, in practice, unworkable, as it demands a level of expertise that is no longer attainable for many.
-
-%We illustrate the persistent challenges of translation using a seemingly straightforward sentence from Thucydides' \textit{Historiae} (Table~\ref{tab:example-translations}). Notably, Cawley’s translation almost entirely omits the authorial first person, distancing the author's voice from the text, whereas Hammond, Mynott, and Warner each reference ``I'' or ``me'' at least three times. Further, the renditions differ in their portrayal of temporal distance, favouring phrases such as ``lapse of time,'' ``gap of time,'' ``length of time that has elapsed,'' and ``remoteness in time'' for the original phrase \gr{διὰ χρόνου πλήθος}. Thus, although each is based on the same Greek expression, none of the translations is identical to the others. This demonstrates that every translation involves choice and interpretation, even with uncontroversial source material.
-
-%This diversity of outcomes is central to debates in translation theory. Walter Benjamin \cite{benjamin1972aufgabe} argues that the true aim of the translator is not merely to transmit information, but to let the original resound or ``echo'' in the target language by following its wording and structure as closely as possible. Yet, Benjamin concedes that fully capturing the original's meaning in a translation is unattainable; each translation inevitably falls short of the ``pure language'' of the source. Jacques Derrida \cite{derrida1987tours} extends this position: translation both preserves and transforms the original, endowing it with new meanings and ``afterlives.'' According to Derrida, translators are \emph{creative agents} shaped by their own linguistic and cultural milieu, whose activity always produces a difference, not transparency, between original and translation. This resonates with Roman Jakobson's influential model \cite{jakobson1959linguistic}, which views translation as a process of recoding, necessarily involving interpretation and restructuring rather than mere substitution.
-
-%The example from Thucydides demonstrates how competing theories and practical realities converge: even the most literal segments of text give rise to a spectrum of valid translations, each embodying different translational philosophies and highlighting the creative, interpretive nature of the translator's task.
-
-%TC:ignore
 \begin{table}[]
 \tiny
 \begin{tabularx}{\textwidth}{X*{5}{>{\centering\arraybackslash}X}}
@@ -151,16 +101,7 @@ Large Language Models (LLMs) are increasingly used for translation. Their output
 \caption{Original and four translations of Thuc.~Hist.~I, 1,3.}
 \label{tab:example-translations}
 \end{table}
-%TC:endignore
 
-%in poetry: hexameter versus prose versus translation into an iambic metre \parencite{homer_odyssey_2018_wilson}
-
-%Despite the difficulty of the translation task, a growing body of translations is being published. As of 2018, Homer's Odyssey alone counts over 70 published translations into English \cite{durantine_odyssey_translation_2018}. The constant publication of new translations demonstrates a high level of engagement with classical texts. We must assume that none of the 70 English translations of the Odyssey is 100\% identical, which shows that every translator contributes new interpretations of the source text. These interpretations depend on factors such as educational background, language proficiency and the ``shifting target-culture norms'' \cite{armstrong2005translating}. In this sense, the process of translating, or rather transposing from one language into another, is influenced by the translator's world views, which might resonate in the translation \cite{armstrong2005translating}. We further hypothesise that exposure to existing translations leads to a certain bias in each of the translators' work. As such, translating is also a form of re-composition and, as Richard Hamilton Armstrong puts it, ``re-telling'' \cite{armstrong2005translating}.
-
-
-%Moreover, Large Language Models (LLMs) are increasingly being utilised in the translation process. Depending on the model used, the underlying training data and due to their non-deterministic nature, the results when prompted to provide a translation differ significantly. We provide examples for the same sentence already presented in Table \ref{tab:example-translations} from GPT-4o, Gemini 1.5 pro and Claude Sonnet 3.5 (see Section \ref{sec:methodology} for the model specificiations) in Table \ref{tab:example-translations-llms}. We see that Claude's translation is 1:1 copy from Cawley's, while the other two LLMs are ``mixtures'' of the other translations and exhibit some form of ``creativity.''  
-
-%TC:ignore
 \begin{table}[]
 \tiny
 \begin{tabularx}{\textwidth}{X*{4}{>{\centering\arraybackslash}X}}
@@ -171,16 +112,13 @@ Original  & GPT-4o & Gemini 1.5 Pro  & Claude 3.5 Sonnet                        
 \caption{Translations of Thuc. Hist. I, 1,3 by GPT-4o, Gemini 1.5 Pro and Claude 3.5 Sonnet. }
 \label{tab:example-translations-llms}
 \end{table}
-%TC:endignore
-
-%But what exactly are the differences in the translations? This article aims to examine translations of classical literature. We focus on two genres, namely historiography and epic poetry. By incorporating LLM-based translation, we gain deeper insights into what might be in the training data of these LLMs. Moreover, a deeper analysis of such results will show us how we can employ LLMs in the translation of ancient texts and how (and if) they allow for re-interpretations of the ancient sources. At the end of this research (not this article), we aim to answer the question: What translation captures the ancient mind best?
 
 \subsection{Our contribution}
 This article presents work-in-progress for systematically comparing and aligning multiple translations of Ancient Greek, combining human editions with outputs from state-of-the-art LLMs. Our aim is (1) to assemble a parallel corpus that enables like-for-like analysis across genres (historiography and epic) and translator traditions, and (2) to develop a measurement toolkit (see Section \ref{sec:textprocandstat}) to quantify where renderings converge or diverge.
 
 Conceptually, we treat translation as a measurable act of historical interpretation. Differences between renderings are not noise but signals, i.e., operational traces of reception that reveal how ancient conceptual categories are preserved, shifted, or re-weighted in modern language. Hence, we approximate what we call the ``echo'' of the ancient mind by the set of semantic and stylistic constraints that persist across translators and systems. The quantitative results, therefore, do not replace close reading; they prioritise it by flagging loci of interpretive pressure where qualitative analysis is most informative.
 
-This paper contributes three elements toward that broader programme: \textbf{(i)} a reproducible corpus and processing pipeline; \textbf{(ii)} a comparative battery of metrics sensitive to genre and style; and \textbf{(iii)} preliminary evidence that LLM translations cluster around specific human exemplars, suggesting training data imprint or stylistic convergence. 
+This paper contributes three elements toward that broader programme: \textbf{(i)} a reproducible corpus and processing pipeline; \textbf{(ii)} a comparative battery of metrics sensitive to genre and style; and \textbf{(iii)} preliminary evidence that LLM translations cluster around specific human exemplars, suggesting training data imprint or stylistic convergence.
 
 Looking ahead, we will extend the corpus (languages, genres), test memorisation versus generalisation, and formalise an ``interpretive distance'' index that integrates semantic similarity with controlled concept inventories (e.g., ritual, polity, kinship). The goal is not to declare a single best translation, but to characterise how interpretive space is shaped. Following Martindale’s reception-oriented view, we treat translation as a historically situated act of interpretation \cite{martindale1993redeeming}.
 
@@ -195,7 +133,6 @@ Sun and Li~\cite{sun2020dhtotranslation} review the significant impact that digi
 Recent work has established LLMs as the state of the art for translating ancient languages, surpassing earlier neural and rule-based approaches in both quality and flexibility. Wannaz and Miyagawa~\parencite{wannaz-miyagawa-2024-assessing} demonstrate that top LLMs such as GPT-4o, Claude Opus, and custom domain-specific models (notably the Coptic Translator) are now able to produce English translations of Ancient Greek and Coptic ostraca that approach the reliability and accuracy of expert human translators for certain text genres. Their systematic benchmarking using six NLP metrics reveals that current models perform particularly well on Ancient Greek owing to larger and higher quality training corpora, while results for Coptic remain more uneven, highlighting the persistent challenge posed by low-resource languages. Importantly, the study emphasises that LLM translation quality is not uniform: hallucination rates, translation consistency, and sensitivity to source corpus size and genre must be critically evaluated in each context.
 
 Chamali \cite{chamali2025greek} investigates the persistent challenges that even state-of-the-art LLMs and neural translation models face in dealing with informal and culturally embedded language, specifically Greek slang and idioms. By constructing novel parallel datasets for both phenomena and evaluating three leading LLMs (Gemma, Llama, Mistral) as well as a specialist NMT model, she demonstrates that translation quality remains consistently poor, regardless of model type. Notably, her error analysis reveals substantial difficulties in informativeness and a wide variety of failure types, underscoring that culturally specific and colloquial expressions remain a major obstacle for automatic translation—especially for under-resourced and morphologically rich languages such as Greek.
-
 
 Tekgürler~\cite{tekgurler2025llmstranslationhistoricallowresourced} expands this perspective by demonstrating how state-of-the-art LLMs like Google Gemini can tackle the translation of 18th-century Ottoman Turkish manuscripts, but also highlights the new challenge posed by AI content moderation. Her results show that automatic safety measures may redact or alter essential passages, specially those concerning violence and sensitive historical events, thus raising critical issues about the completeness and fidelity of AI-assisted historical translation.
 
@@ -261,7 +198,7 @@ In what follows, we introduce the translations\footnote{The year next to the tra
 \paragraph{Historiae} We used the edition \textcite{thucydides}
 
 \paragraph{Charles Forster Smith, 1919} The oldest translation in our experimental setup is by Charles Forster Smith \parencite{thuc_historiae_1919_smith}
-    
+
 \paragraph{Rex Warner, 1954} In contrast to X and Z, Rex Warner opted for ... in his translation \parencite{thuc_historiae_1954_warner}.
 
 \paragraph{Martin Hammond, 2009} In his translation \parencite{thuc_historiae_2009_hammond}, Martin Hammond took great care to ....
@@ -273,10 +210,8 @@ In what follows, we introduce the translations\footnote{The year next to the tra
 
 We introduce the edition of the source texts and the translations\footnote{The year next to the translator's name indicates when the translation was first published.} used in this study, which are analysed with the help of LLMs (see Section~\ref{sec:methodology}). Rather than detailing each translation individually,\footnote{Key characteristics can be drawn from translators' prefaces and notes.} we provide an overview in tabular form, summarising the major editions of Homer’s \textit{Odyssey} and Thucydides’ \textit{Historiae} across different periods and approaches.
 
-%The selection of the translation was mainly at random, with the exception of Wilson's \cite{wilson_odyssey_2018}, which i 
 The selected translations span a broad range of publication dates, stylistic approaches, and translational philosophies. Differences arise in the translators' degree of literalness, their handling of narrative voice, and their strategies for rendering cultural concepts: some editions emphasise fidelity to metrical structure or archaic diction (e.g., Wilson's \cite{wilson_odyssey_2018}, which provides a conversion from the dactylic hexameter to the iambic pentameter, which is more ``natural'' to English), while others favour accessibility and contemporary language. Such choices lead to variation in the treatment of poetic epithets, authorial interventions, and culturally embedded terms, yielding distinct interpretive outcomes from the same Greek source material.
 
-%TC:ignore
 \begin{table}[ht]
 \centering
 \begin{tabularx}{\textwidth}{X X}
@@ -294,7 +229,6 @@ Peter Green (2018) \parencite{homer_odyssey_1998_green} & \\
 \caption{Summary of selected English translations analysed for Homer's \textit{Odyssey} and Thucydides' \textit{Historiae}. Publication years correspond to first editions.}
 \label{tab:translations}
 \end{table}
-%TC:endignore
 
 \section{Methodology}
 \label{sec:methodology}
@@ -303,8 +237,8 @@ Our methodology encompasses a comparative analysis of English translations of An
 
 \subsection{Source Texts and Translations}
 \begin{itemize}
-  \item \textbf{Ancient Greek Sources:} We conducted linguistic analyses of Greek source texts (sentence splitting, tokenisation, POS tagging, lemmatisation) using \texttt{odyCy} \cite{kostkan_odycy_2023} and saved the output in the CoNLL format. 
-  \item \textbf{English Translations:} Both human- and LLM-generated translations (see below) underwent the same preprocessing steps as the Ancient Greek sources, albeit using a different spaCy model. We used the English model \texttt{en\_core\_web\_md} and saved the result in CoNLL format.
+\item \textbf{Ancient Greek Sources:} We conducted linguistic analyses of Greek source texts (sentence splitting, tokenisation, POS tagging, lemmatisation) using \texttt{odyCy} \cite{kostkan_odycy_2023} and saved the output in the CoNLL format.
+\item \textbf{English Translations:} Both human- and LLM-generated translations (see below) underwent the same preprocessing steps as the Ancient Greek sources, albeit using a different spaCy model. We used the English model \texttt{en\_core\_web\_md} and saved the result in CoNLL format.
 \end{itemize}
 
 \subsection{Large Language Models}
@@ -313,16 +247,14 @@ For translation, we employed three state-of-the-art models: (1) OpenAI's \textbf
 
 Next, we used Anthropic's Claude 3.5 Sonnet (\texttt{claude-3-5-sonnet-20241022}) to align the source and target texts, including the three additional automatic translations.\footnote{See Appendix \ref{appdx:first}.\ref{lst:prompt-to-align} for the prompt.} We used the alignment to compute the cosine similarities between source and target and target and target sentences (see below).
 
-%This resulted in 9 alignments for the \textit{Odyssey} and 7 alignments for the \textit{Historiae}. We plan to extend the alignments also to GPT-4o and Gemini 1.5 Pro in future work. In general, an evaluation of the alignment quality will indicate how easily LLMs can establish a connection between the source and the target. We hypothesise that the alignments are worse for ``removed,'' i.e., non-literal translations, which would indicate more interpretative efforts from the translator. However, to have a comparison candidate, we employed \textit{Bertalign} \cite{liu2022bertalign}. Bertalign embeds source and target sentences using sentence Transformers (in this case, the LaBSE\footnote{See \url{https://huggingface.co/sentence-transformers/LaBSE}.} \cite{feng2022languageagnosticbertsentenceembedding} model), followed by a dynamic programming algorithm to first identify 1:1 alignments as anchor points to use them to infer the 1-to-many and many-to-1 alignments in a second step.\footnote{At this point in time, we cannot provide an evaluation of the alignment yet. However, we used it to compute the cosine similarities between source and target segments. Please note that the results are subject to change.}
-
 \subsection{Text Processing and Statistical Analysis}
 \label{sec:textprocandstat}
 
 \subsubsection{Collocation Analysis}
 \begin{itemize}
-  \item \textbf{Tooling:} We used the NLTK\footnote{See \url{https://www.nltk.org}.} library to identify and rank frequent bigrams and trigrams.
-  \item \textbf{Statistical Association:} We applied pointwise mutual information (PMI), chi-squared, student-t, log-likelihood and frequency counts (with frequency thresholds) to determine salient collocations for each translation.
-  \item \textbf{Comparison:} We compared rankings and collocate lists (among the first 1000 collocations each) across LLM and human outputs to assess overlap, divergence, and distinctive phraseological patterns. We used Spearman's $\rho$ and Kendall's $\tau$ to assess differences in the translations. 
+\item \textbf{Tooling:} We used the NLTK\footnote{See \url{https://www.nltk.org}.} library to identify and rank frequent bigrams and trigrams.
+\item \textbf{Statistical Association:} We applied pointwise mutual information (PMI), chi-squared, student-t, log-likelihood and frequency counts (with frequency thresholds) to determine salient collocations for each translation.
+\item \textbf{Comparison:} We compared rankings and collocate lists (among the first 1000 collocations each) across LLM and human outputs to assess overlap, divergence, and distinctive phraseological patterns. We used Spearman's $\rho$ and Kendall's $\tau$ to assess differences in the translations.
 \end{itemize}
 
 \subsubsection{Translation Comparison Measures}
@@ -346,16 +278,6 @@ chrF++ \cite{popovic-2017-chrf} & A character \textit{n}-gram based metric combi
 \label{tab:translation-metrics}
 \end{table}
 
-
-%These complementary metrics allow for robust cross-evaluation of lexical, syntactic, and semantic aspects of translation output, providing a nuanced profile of LLM translations' fidelity and fluency relative to expert human benchmarks.
-
-%\subsection{Workflow and Reproducibility}
-%\begin{itemize}
-%  \item All preprocessing scripts, statistical analyses, and comparison routines were documented in Jupyter notebooks (see supplementary material), ensuring transparency and reproducibility.
-%  \item The workflow supports both corpus-level and passage-level analyses, allowing granular evaluation of translation strategies, stylistic tendencies, and linguistic profiles for Ancient Greek and English translations.
-%\end{itemize}
-
-
 \section{Preliminary Results and Analyses}
 \label{sec:experiments}
 
@@ -365,7 +287,7 @@ chrF++ \cite{popovic-2017-chrf} & A character \textit{n}-gram based metric combi
 \subsubsection{Lexical Analysis}
 \label{sec:lexicon}
 
-\begin{figure}%
+\begin{figure}
 \centering
 \subfloat[Lexical diversity scores of Homer's \textit{Odyssey} and its translations.]{\includesvg[width=0.46\textwidth]{images/homer-lexdiv-2.svg}}\qquad
 \subfloat[Lexical diversity scores of Thucydides' \textit{Historiae} and its translations.]{\includesvg[width=0.46\textwidth]{images/thuc-lexdiv-2.svg}}\qquad
@@ -377,9 +299,9 @@ Figure \ref{fig:lexdiv-profiles} shows the Type-Token Ratio (TTR) of the two sou
 
 \subsubsection{Part-of-Speech Tag Patterns}
 \label{sec:pos}
-The POS tag profiles in Figure \ref{fig:pos-profiles} again show a difference between the two genres, especially in the usage of nouns and verbs. Homer's language is distinctively more ``noun-heavy'' than Thucydides', while the latter's usage of verbs is much higher. 
+The POS tag profiles in Figure \ref{fig:pos-profiles} again show a difference between the two genres, especially in the usage of nouns and verbs. Homer's language is distinctively more ``noun-heavy'' than Thucydides', while the latter's usage of verbs is much higher.
 
-\begin{figure}%
+\begin{figure}
 \centering
 \subfloat[POS profile of Homer's \textit{Odyssey} and its translations.]{\includesvg[width=0.46\textwidth]{images/pos-homer-2.svg}}\qquad
 \subfloat[POS profile of Thucydides' \textit{Historiae} and its translations.]{\includesvg[width=0.46\textwidth]{images/pos-thyc-2.svg}}\qquad
@@ -387,97 +309,77 @@ The POS tag profiles in Figure \ref{fig:pos-profiles} again show a difference be
 \label{fig:pos-profiles}
 \end{figure}
 
-%Manual steps: the outputs provided by Claude Sonnet needed some manual post-processing since the XML it returned was not always correct. There were 101 instances of tag mismatches
-
-%Lattimore 8.516 is missing
-
-
 \subsection{Collocations}
 \label{sec:collocations}
 
 \subsubsection{Automatic alignment}
 \label{sec:automaticalignment}
 
-For the preliminary collocation analysis, we refer to Appendix \ref{app:second}. Collocation profiles suggest that human translations, despite interpretive variation, often show higher intercorrelation in their phraseological patterns, particularly for established translators of the same era and literary orientation. The p-values of Kendall's $\tau$ analysis can indicate which LLM translations are closely related to specific reference translations. E.g., the trigrams identified in Thucydides with the help of the chi-square measure between GPT-4o and Cawley show a p-value of 0.007, suggesting that the commonality among the first 1000 trigrams in both translations does not occur by chance.  As such, some LLMs align more closely with their likely training exemplars, while others exhibit patterns distinct from those of any individual human translator. 
+For the preliminary collocation analysis, we refer to Appendix \ref{app:second}. Collocation profiles suggest that human translations, despite interpretive variation, often show higher intercorrelation in their phraseological patterns, particularly for established translators of the same era and literary orientation. The p-values of Kendall's $\tau$ analysis can indicate which LLM translations are closely related to specific reference translations. E.g., the trigrams identified in Thucydides with the help of the chi-square measure between GPT-4o and Cawley show a p-value of 0.007, suggesting that the commonality among the first 1000 trigrams in both translations does not occur by chance.  As such, some LLMs align more closely with their likely training exemplars, while others exhibit patterns distinct from those of any individual human translator.
 
 Concretely, in Table \ref{tab:example-translations-llms} (Thuc. I.1.3), Claude's rendering tracks Cawley's clause structure and connective choices unusually closely; GPT-4o and Gemini combine elements characteristic of Hammond and Mynott (e.g., treatment of ``remote antiquity'' vs. ``preceding period''). This pattern is consistent with our broader collocation–rank correlations, suggesting that LLMs preferentially reproduce entrenched translation routines. While this does not prove direct memorisation, it supports the hypothesis of stylistic imprint from widely circulated public-domain or widely quoted translations.
-
-%Guided by spikes in our collocation divergences, we performed a brief close reading on Odyssey Book 7 and Thucydides I.1.3. We annotated instances of expansion (added explanatory phrasing), omission (compressed or dropped qualifiers), and domestication vs.~foreignisation (handling of culturally marked terms). Human translators exhibited both shared conventions and idiosyncratic solutions (e.g., variation in rendering epithets and temporal qualifiers), whereas LLM outputs tended to select high-frequency conventional solutions with fewer expansions and fewer culturally foreignising choices. This supports our quantitative finding that machine renderings converge on dominant patterns and preserve semantic adequacy, but show reduced interpretive breadth relative to human translations.
-
-
-
-%Overall, the collocation statistics support the conclusion that while LLMs can reproduce the frequent phraseology typical of human-generated translations, the greatest interpretive variety (and, by extension, the richest translation choices) continues to originate from the human tradition. 
-
-%\paragraph{Human Evaluation of Alignment on 100 Randomly Sampled Alignments}
-
 
 \subsubsection{Evaluation of Translation}
 \label{sec:automatictranslation}
 
-\begin{figure}%
+\begin{figure}
 \centering
 \subfloat[Distribution of translation fidelities of Homer's \textit{Odyssey}.]
-{\includegraphics[scale=0.65]{images/fidelityHomer-Odyssey(Greek).pdf}}\qquad
-\subfloat[Distribution of translation fidelities of Thucydides' \textit{Historiae}.]{\includegraphics[scale=0.65]{images/fidelityThucydides-History(Greek).pdf}}\qquad
+{\includegraphics[scale=0.65]{figures/fidelityHomer-Odyssey(Greek).png}}\qquad
+\subfloat[Distribution of translation fidelities of Thucydides' \textit{Historiae}.]{\includegraphics[scale=0.65]{figures/fidelityThucydides-History(Greek).png}}\qquad
 \caption{Distribution of translation fidelities of the translations. On the x-axis, we see the range of the cosine similarities, while the y-axis shows the respective translations (not the difference in scale (x-axis)).}
 \label{fig:trans-fidelity}
 \end{figure}
 
 Figure \ref{fig:trans-fidelity} shows the box plots of cosine similarity scores between each sentence of the source and target texts in the embedding space created by LaBSE. As with the TTR and POS tag profiles, we observe differences between Homer and Thucydides. Plots (a) and (b) also show that the similarities between the source and automatically generated translations are greater. Since LaBSE was trained on the Common Crawl corpus and Wikipedia, it is possible that the Ancient Greek source texts and translations in the public domain were in the training data.
 
-
-% Please add the following required packages to your document preamble:
-% \usepackage{multirow}
 \begin{table}[]
-\resizebox{\textwidth}{!}{%
+\resizebox{\textwidth}{!}{
 \begin{tabular}{llrrrrr}
 \hline
 \textbf{Machine Translation}   & \textbf{Human Reference} & \multicolumn{1}{l}{\textbf{Semantic Similarity}} & \multicolumn{1}{l}{\textbf{BLEU}} & \multicolumn{1}{l}{\textbf{ROUGE}} & \multicolumn{1}{l}{\textbf{METEOR}} & \multicolumn{1}{l}{\textbf{chrF++}} \\ \hline
 \multirow{6}{*}{Claude Sonnet} & Fagles                   & 0.576                                            & 0.060                             & 0.300                              & 0.279                               & 24.981                              \\
-                               & Fitzgerald               & 0.511                                            & 0.055                             & 0.250                              & 0.250                               & 21.824                              \\
-                               & Green                    & 0.685                                            & 0.099                             & 0.392                              & 0.383                               & 29.435                              \\
-                               & Kline                    & 0.576                                            & 0.060                             & 0.300                              & 0.279                               & 24.981                              \\
-                               & Lattimore                & 0.744                                            & 0.140                             & 0.445                              & 0.424                               & 35.963                              \\
-                               & Wilson                   & 0.554                                            & 0.066                             & 0.296                              & 0.304                               & 24.884                              \\ \hline
+& Fitzgerald               & 0.511                                            & 0.055                             & 0.250                              & 0.250                               & 21.824                              \\
+& Green                    & 0.685                                            & 0.099                             & 0.392                              & 0.383                               & 29.435                              \\
+& Kline                    & 0.576                                            & 0.060                             & 0.300                              & 0.279                               & 24.981                              \\
+& Lattimore                & 0.744                                            & 0.140                             & 0.445                              & 0.424                               & 35.963                              \\
+& Wilson                   & 0.554                                            & 0.066                             & 0.296                              & 0.304                               & 24.884                              \\ \hline
 \multirow{6}{*}{GPT-4o}        & Fagles                   & 0.562                                            & 0.052                             & 0.286                              & 0.265                               & 23.759                              \\
-                               & Fitzgerald               & 0.500                                            & 0.045                             & 0.240                              & 0.239                               & 20.761                              \\
-                               & Green                    & 0.666                                            & 0.083                             & 0.367                              & 0.355                               & 27.398                              \\
-                               & Kline                    & 0.562                                            & 0.052                             & 0.286                              & 0.265                               & 23.759                              \\
-                               & Lattimore                & 0.729                                            & 0.123                             & 0.426                              & 0.401                               & 34.000                              \\
-                               & Wilson                   & 0.546                                            & 0.060                             & 0.289                              & 0.297                               & 24.127                              \\ \hline
+& Fitzgerald               & 0.500                                            & 0.045                             & 0.240                              & 0.239                               & 20.761                              \\
+& Green                    & 0.666                                            & 0.083                             & 0.367                              & 0.355                               & 27.398                              \\
+& Kline                    & 0.562                                            & 0.052                             & 0.286                              & 0.265                               & 23.759                              \\
+& Lattimore                & 0.729                                            & 0.123                             & 0.426                              & 0.401                               & 34.000                              \\
+& Wilson                   & 0.546                                            & 0.060                             & 0.289                              & 0.297                               & 24.127                              \\ \hline
 \multirow{6}{*}{Gemini}        & Fagles                   & 0.567                                            & 0.054                             & 0.287                              & 0.268                               & 24.180                              \\
-                               & Fitzgerald               & 0.504                                            & 0.049                             & 0.244                              & 0.243                               & 21.261                              \\
-                               & Green                    & 0.674                                            & 0.089                             & 0.375                              & 0.366                               & 28.270                              \\
-                               & Kline                    & 0.567                                            & 0.054                             & 0.287                              & 0.268                               & 24.180                              \\
-                               & Lattimore                & 0.736                                            & 0.131                             & 0.430                              & 0.411                               & 34.911                              \\
-                               & Wilson                   & 0.546                                            & 0.058                             & 0.285                              & 0.293                               & 24.091                              \\ \hline
-\end{tabular}%
+& Fitzgerald               & 0.504                                            & 0.049                             & 0.244                              & 0.243                               & 21.261                              \\
+& Green                    & 0.674                                            & 0.089                             & 0.375                              & 0.366                               & 28.270                              \\
+& Kline                    & 0.567                                            & 0.054                             & 0.287                              & 0.268                               & 24.180                              \\
+& Lattimore                & 0.736                                            & 0.131                             & 0.430                              & 0.411                               & 34.911                              \\
+& Wilson                   & 0.546                                            & 0.058                             & 0.285                              & 0.293                               & 24.091                              \\ \hline
+\end{tabular}
 }
 \caption{Translation measures of Homer's \textit{Odyssey}.}
 \label{tab:trans-measures-odyssey}
 \end{table}
 
-% Please add the following required packages to your document preamble:
-% \usepackage{booktabs}
-% \usepackage{multirow}
 \begin{table}[]
-\resizebox{\textwidth}{!}{%
+\resizebox{\textwidth}{!}{
 \begin{tabular}{@{}llrrrrr@{}}
 \toprule
 \textbf{Machine Translation}   & \textbf{Human Reference} & \multicolumn{1}{l}{\textbf{Semantic Similarity}} & \multicolumn{1}{l}{\textbf{BLEU}} & \multicolumn{1}{l}{\textbf{ROUGE}} & \multicolumn{1}{l}{\textbf{METEOR}} & \multicolumn{1}{l}{\textbf{chrF++}} \\ \midrule
 \multirow{4}{*}{Claude Sonnet} & Cawley                   & 0.668                                            & 0.144                             & 0.374                              & 0.379                               & 35.73                               \\
-                               & Hammond                  & 0.752                                            & 0.155                             & 0.416                              & 0.426                               & 40.14                               \\
-                               & Mynott                   & 0.777                                            & 0.176                             & 0.456                              & 0.457                               & 42.198                              \\
-                               & Warner                   & 0.755                                            & 0.152                             & 0.412                              & 0.408                               & 40.152                              \\ \midrule
+& Hammond                  & 0.752                                            & 0.155                             & 0.416                              & 0.426                               & 40.14                               \\
+& Mynott                   & 0.777                                            & 0.176                             & 0.456                              & 0.457                               & 42.198                              \\
+& Warner                   & 0.755                                            & 0.152                             & 0.412                              & 0.408                               & 40.152                              \\ \midrule
 \multirow{4}{*}{GPT-4o}        & Cawley                   & 0.646                                            & 0.092                             & 0.323                              & 0.322                               & 31.111                              \\
-                               & Hammond                  & 0.729                                            & 0.118                             & 0.374                              & 0.373                               & 36.138                              \\
-                               & Mynott                   & 0.756                                            & 0.129                             & 0.411                              & 0.398                               & 37.598                              \\
-                               & Warner                   & 0.729                                            & 0.108                             & 0.363                              & 0.351                               & 35.34                               \\ \midrule
+& Hammond                  & 0.729                                            & 0.118                             & 0.374                              & 0.373                               & 36.138                              \\
+& Mynott                   & 0.756                                            & 0.129                             & 0.411                              & 0.398                               & 37.598                              \\
+& Warner                   & 0.729                                            & 0.108                             & 0.363                              & 0.351                               & 35.34                               \\ \midrule
 \multirow{4}{*}{Gemini}        & Cawley                   & 0.661                                            & 0.125                             & 0.349                              & 0.363                               & 34.598                              \\
-                               & Hammond                  & 0.737                                            & 0.138                             & 0.387                              & 0.401                               & 38.653                              \\
-                               & Mynott                   & 0.764                                            & 0.154                             & 0.423                              & 0.429                               & 40.297                              \\
-                               & Warner                   & 0.74                                             & 0.136                             & 0.382                              & 0.385                               & 38.592                              \\ \bottomrule
-\end{tabular}%
+& Hammond                  & 0.737                                            & 0.138                             & 0.387                              & 0.401                               & 38.653                              \\
+& Mynott                   & 0.764                                            & 0.154                             & 0.423                              & 0.429                               & 40.297                              \\
+& Warner                   & 0.74                                             & 0.136                             & 0.382                              & 0.385                               & 38.592                              \\ \bottomrule
+\end{tabular}
 }
 \caption{Translation measures for Thucydides' \textit{Historiae}.}
 \label{tab:trans-measures-thuc}
@@ -487,47 +389,27 @@ Tables \ref{tab:trans-measures-odyssey} and \ref{tab:trans-measures-thuc} show t
 
 As concerns further interpretation, we note that BLEU/ROUGE (\textit{n}-gram overlap) emphasise surface correspondence. In contrast, METEOR and chrF++ better tolerate paraphrase and morphological variation, and the sentence-embedding similarity foregrounds semantic proximity. The consistent proximity of LLM outputs to Lattimore (Homer) and to Hammond/Mynott/Warner (Thucydides) indicates convergence on dominant rendering patterns rather than uniformly higher ``quality.'' In other words, alignment seems stylistic-semantic: models mirror phrasing conventions that likely occur in pre-existing translations, while maintaining adequate semantic coverage. This explains why poetry (Odyssey) shows relatively lower overlap scores than prose (Historiae): meter and figurative density invite broader paraphrastic space, where models track conventional solutions but rarely expand the interpretive palette beyond them.
 
-
-
-%\subsubsection{Word Translation Differences}
-%\label{sec:wordchoice}
-
-%\subsubsection{Semantic Similarities}
-
-%\section{Results and Discussion}
-
 \section{Conclusion}
 
-%Nonetheless, while the importance of language proficiency cannot be overstated, the essence of revitalising classical studies lies in ensuring accessible pathways to antiquity. Only by lowering barriers can the fascination of the ancient world be shared with a broader audience, securing its relevance and appeal in a modern context.
-
-%After all, texts like Thucydides' \textit{Historiae} or \textit{The Peloponnesian War} \parencite{thucydides} offer a window into past events, societies and cultures, albeit in a very different style than we are used to. And while historical sciences have long moved away from taking accounts in ancient texts at face value, they allow us to imagine the past in a way that can culminate in \textit{imitatio}, a theme that was all too present in the Renaissance \parencite[p.~8]{schiffman2011birth}.
 Our findings demonstrate that both human experts and state-of-the-art LLMs produce translations of Ancient Greek that are systematically distinct in measurable ways, particularly in style, lexicon, and fidelity to the source. Lexical diversity analyses confirm significant differences between poetry and historiography, with Homer’s original demonstrating a vastly richer vocabulary than Thucydides, and these patterns are reliably reflected in both human and machine translations. POS distributions further reveal genre-specific syntactic tendencies and highlight the degree to which translators (and LLMs) reproduce or diverge from the source structure.
 
 Automatic evaluation metrics indicate that LLM outputs are often closest to specific human translations (notably Lattimore for Homer), suggesting that the training data overlap or algorithmic convergence occurs on a dominant translation style. Yet, the lower scores for poetry versus prose also confirm that genre affects translation diversity and model performance. Our results suggest that while LLMs can approximate established translation choices, they may reinforce conventional renderings rather than innovate or meaningfully expand interpretive space. Finally, the combined analyses point to both the promise and clear constraints of LLM-based translation for complex, literary source material: machine outputs are consistent and sometimes convergent, but accurate interpretative diversity still emerges more strongly among human translators.
 
 We therefore understand fidelity not merely as textual correctness but as the preservation and transformation of ancient conceptual categories. By quantifying where renderings converge (stylistic imprint, genre constraints) and where they diverge (interpretive breadth, cultural framing), we approximate an ``echo'' of the ancient mind, i.e., those durable constraints that persist across modern horizons. The next step is integrative: combine these quantitative maps with targeted close readings and controlled concept inventories to model interpretive distance explicitly. Rather than seeking a single correct translation, we reconstruct how antiquity is being understood: which parts resonate stably and which are reshaped in reception.
 
-%TC:ignore
-%\quickwordcount{paper}
-%\quickcharcount{paper}
-%\detailtexcount{paper}
-
 \section*{Limitations}
 This research is limited by the selection of a small number of source texts and translations, which focus solely on Ancient Greek historiography and epic. Evaluation is restricted to English outputs, and the LLMs tested are limited to the leading available models at the time of writing. The alignment assessment was only partially automated and used a subset of translation pairs; broader validation will be required for generalisable conclusions. Finally, automatic evaluation metrics may not fully capture literary subtlety or deep interpretive fidelity.
-
 
 \section*{Ethical Considerations}
 We adhere to the ethical guidelines of both our institution and the conference. All primary texts are in the public domain. Translations used are either public domain or used in limited scope under academic fair use/fair dealing exceptions. No copyrighted material was shared beyond permissible bounds with external systems. No sensitive personal data is present. Automated analyses were transparently documented for reproducibility, and all generated LLM outputs were critically evaluated to avoid propagation of misleading or culturally insensitive material. We further acknowledge the potential for LLM tools to introduce historical or cultural biases and flag this as an ongoing area of concern and scrutiny.
 
-% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
 \printbibliography
 
-% You can include an appendix using the following command
 \appendix
 
 \section{Prompts} \label{appdx:first}
 
-\begin{lstlisting}[caption={Prompt generated by Claude to align the Ancient Greek text segments to the translations. The placeholders \texttt{\{xml\_content\}} and \texttt{\{chapter\}} have been replaced with the respective XML parts during batch processing.},label={lst:prompt-to-align}] 
+\begin{lstlisting}[caption={Prompt generated by Claude to align the Ancient Greek text segments to the translations. The placeholders \texttt{\{xml\_content\}} and \texttt{\{chapter\}} have been replaced with the respective XML parts during batch processing.},label={lst:prompt-to-align}]
 You will be given two inputs: an XML file containing an ancient Greek text split into sentences, and a text file containing an English translation of the same text. Your task is to align the sentences from the ancient Greek text to the corresponding parts of the English translation.
 Here is the Greek XML input:
 
@@ -539,26 +421,26 @@ Here is the English translation:
 
 The alignment can be 1-to-many, i.e., one Greek sentence can correspond to several English sentences. Follow these steps to complete the task:
 1. Preprocess the inputs:
-  a. Parse the Greek XML to extract individual sentences and their IDs.
-  b. Split the English translation into sentences.
+a. Parse the Greek XML to extract individual sentences and their IDs.
+b. Split the English translation into sentences.
 2. For each Greek sentence:
-  a. Identify the corresponding sentences in the English translation.
-  b. Use a combination of the following techniques to find the best matching English sentence(s):
-    - Length-based matching (compare the number of words)
-    - Key term matching (look for proper nouns, numbers, or other distinctive words)
-    - Semantic similarity (use context to determine if the content matches)
-  c. If a single Greek sentence aligns with multiple English sentences, group them together.
-  d. If multiple Greek sentences align with a single English sentence, keep them grouped with that English sentence.
+a. Identify the corresponding sentences in the English translation.
+b. Use a combination of the following techniques to find the best matching English sentence(s):
+- Length-based matching (compare the number of words)
+- Key term matching (look for proper nouns, numbers, or other distinctive words)
+- Semantic similarity (use context to determine if the content matches)
+c. If a single Greek sentence aligns with multiple English sentences, group them together.
+d. If multiple Greek sentences align with a single English sentence, keep them grouped with that English sentence.
 3. Record the alignments in the following format
-   <alignment confidence="1.0">
-   <greek_sentence id="[ID from XML]">[Greek sentence]</greek_sentence>
-   <english_translation>[Corresponding English sentence(s)]</english_translation>
-   </alignment>
+<alignment confidence="1.0">
+<greek_sentence id="[ID from XML]">[Greek sentence]</greek_sentence>
+<english_translation>[Corresponding English sentence(s)]</english_translation>
+</alignment>
 4. Here are examples of good and bad alignments:
-  Good alignment:
-  <alignment confidence="1.0">  <greek_sentence id="1.1"> %\gr{Ἄνδρα μοι  ἔννεπε, Μοῦσα, πολύτροπον, ὃς μάλα πολλὰ}%</greek_sentence> <english_translation>Tell me, O Muse, of the man of many devices, who wandered full many ways</english_translation></alignment>
-  Bad alignment:
-  <alignment confidence="0.1">  <greek_sentence id="1.2"> %\gr{πλάγχθη, ἐπεὶ Τροίης ἱερὸν πτολίεθρον ἔπερσε}%</greek_sentence>  <english_translation>Tell me, O Muse, of the man of many devices, who wandered full many ways</english_translation></alignment>
+Good alignment:
+<alignment confidence="1.0">  <greek_sentence id="1.1">
+Bad alignment:
+<alignment confidence="0.1">  <greek_sentence id="1.2">
 
 Handle these edge cases as follows:
 1. If a Greek sentence is split across multiple XML elements, combine them before aligning.
@@ -577,53 +459,47 @@ You are tasked with translating an XML document containing Ancient Greek text in
 Follow these steps to complete the translation:
 1. Process each <sentence> element within the XML structure.
 2. For each <sentence> element:
-  a. Extract the Ancient Greek text.
-  b. Translate the text into English to the best of your ability.
-  c. Replace the original Greek text with your English translation.
+a. Extract the Ancient Greek text.
+b. Translate the text into English to the best of your ability.
+c. Replace the original Greek text with your English translation.
 3. Maintain the exact XML structure, including all div elements, their IDs, and nested sentence elements.
 4. Preserve any whitespace or formatting present in the original XML.
 5. Do not alter, add, or remove any XML tags or attributes.
 6. After processing all sentences, output the entire translated XML document, maintaining its original structure.
 
 Begin your response with <translated_xml> and end it with </translated_xml>. Ensure that the content between these tags is a valid XML document with the same structure as the input, but with English translations replacing the Greek text in each <sentence> element.
-\end{lstlisting}  
+\end{lstlisting}
 
 \section{Collocation analysis}
 \label{app:second}
 These heatmaps show the collocation comparison between translations ( \texttt{PMI} $=$ pointwise mutual information, \texttt{chi\_sq} $=$ chi square).
 
 \begin{figure}[ht!]
-    \centering
-    \includesvg[width=\linewidth]{images/homer-bigrams.svg}
-    \caption{Statistics of bigrams of the Homer translations (Spearman's $\rho$ left, Kendall's $\tau$ right).}
-    \label{fig:homer-bigram}
-\end{figure}
-
-
-\begin{figure}[ht!]
-    \centering
-    \includesvg[width=\linewidth]{images/homger-trigram.svg}
-    \caption{Statistics of trigrams of the Homer translations (Spearman's $\rho$ left, Kendall's $\tau$ right).}
-    \label{fig:homer-trigram}
-\end{figure}
-
-
-\begin{figure}[ht!]
-    \centering
-    \includesvg[width=\linewidth]{images/thuc-bigram.svg}
-    \caption{Statistics of bigrams of the Thucydides translations (Spearman's $\rho$ left, Kendall's $\tau$ right).}
-    \label{fig:thuc-bigram}
+\centering
+\includesvg[width=\linewidth]{images/homer-bigrams.svg}
+\caption{Statistics of bigrams of the Homer translations (Spearman's $\rho$ left, Kendall's $\tau$ right).}
+\label{fig:homer-bigram}
 \end{figure}
 
 \begin{figure}[ht!]
-    \centering
-    \includesvg[width=\linewidth]{images/thuc-trigram.svg}
-    \caption{Statistics of trigrams of the Thucydides translations (Spearman's $\rho$ left, Kendall's $\tau$ right).}
-    \label{fig:thuc-trigram}
+\centering
+\includesvg[width=\linewidth]{images/homger-trigram.svg}
+\caption{Statistics of trigrams of the Homer translations (Spearman's $\rho$ left, Kendall's $\tau$ right).}
+\label{fig:homer-trigram}
 \end{figure}
 
+\begin{figure}[ht!]
+\centering
+\includesvg[width=\linewidth]{images/thuc-bigram.svg}
+\caption{Statistics of bigrams of the Thucydides translations (Spearman's $\rho$ left, Kendall's $\tau$ right).}
+\label{fig:thuc-bigram}
+\end{figure}
 
-%TC:endignore
-
+\begin{figure}[ht!]
+\centering
+\includesvg[width=\linewidth]{images/thuc-trigram.svg}
+\caption{Statistics of trigrams of the Thucydides translations (Spearman's $\rho$ left, Kendall's $\tau$ right).}
+\label{fig:thuc-trigram}
+\end{figure}
 
 \end{document}

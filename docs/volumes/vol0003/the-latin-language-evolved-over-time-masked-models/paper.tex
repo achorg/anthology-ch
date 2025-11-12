@@ -1,75 +1,55 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-% \documentclass{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
-% ADD your own packages using \usepackage{}
-\usepackage{adjustbox} % multiple tables on a line
+
+\usepackage{adjustbox}
 \usepackage{tablefootnote}
 \usepackage{amsmath}
 
-%\newcommand{\todo}[0]{\textbf{TODO:}\ }
-
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{The Latin Language Evolved Over Time, Masked Models Disregard That}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1]{Miriam Cuscito}[
-  orcid=0009-0003-9585-2803
+orcid=0009-0003-9585-2803
 ]
 \author[2]{Alfio Ferrara}[
-  orcid=0000-0002-4991-4984
+orcid=0000-0002-4991-4984
 ]
 \author[3]{Martin Ruskov}[
-  orcid=0000-0001-5337-0636
+orcid=0000-0001-5337-0636
 ]
 
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 \affiliation{1}{Department of Languages, Literatures, Cultures and Mediations, University of Milan, Milan, Italy}
 \affiliation{2}{Department of Informatics, University of Milan, Milan, Italy}
 \affiliation{3}{Department of Languages and Modern Cultures, University of Genoa, Genoa, Italy}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{historical adequacy, algorithmic bias, masked language models, Latin language, model evaluation}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
-\pagestart{1317}
-\pageend{1328}
+\pagestart{1321}
+\pageend{1332}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/sLAHYnQdA8fu}  
+\doi{10.63744/sLAHYnQdA8fu}
 \paperorder{81}
 
 \addbibresource{bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
+
 Training of Latin language models is rarely done with consideration of important historical watersheds.
+
 Here we demonstrate how this leads to a poor performance when specific socio-temporal contextualisation is sought, something common to humanities research. We perform an evaluation that compares the historical adequacy of Latin language models, i.e. their ability to generate tokens, representative for a historical period.
+
 We adopt a previously established method and refine it to overcome limitations due to Latin being an under-resourced language and one with intense tradition of intertextuality. To do this we extract word lists and concordances from the LatinISE corpus and use them to compare seven masked language models trained for Latin. We further perform statistical analysis of the results in order to identify the best and worst performing models in each of the historical contexts of interest.
+
 We show that BERT medieval multilingual best captures the Classical linguistic context. Four models are indistinguishably good in our evaluation of the the Neo-Latin linguistic context.
+
 These findings have broad implications for wider historical language research and beyond. Among these, we emphasise the need to train historical language models with due attention on consistent historical periods and we discuss the possible usefulness of noisy predictions.
 Historical research of language models provides a neat demonstration of how model biases could impact their performance in specific domains.
 \end{abstract}
@@ -84,7 +64,7 @@ The work of Riemenschneider and Frank~\cite{riemenschneider_exploring_2023} is a
 
 In this contribution we study the \emph{historical adequacy} of different MLMs for Latin.
 We do this by applying a technique that was previously used to measure such \emph{adequacy} of models to Early Modern English, by capturing the \emph{historical bias} of models and interpreting it as a representation of the socio-temporal context of the model training corpus~\cite{cuscito_shakespeare_2025}.
-Key here is an important assumption in computational humanities research, that often remains implicit: this socio-temporal context should be close to the one being studied using these models. Due to the nature of MLMs and the abundance of lexical resources in computational linguistics, this approach is inherently lexical, but evidence shows that it is also able to capture particularities in orthography, grammar, semantics and culture~\cite{cuscito_how_2024,cuscito_shakespeare_2025}. 
+Key here is an important assumption in computational humanities research, that often remains implicit: this socio-temporal context should be close to the one being studied using these models. Due to the nature of MLMs and the abundance of lexical resources in computational linguistics, this approach is inherently lexical, but evidence shows that it is also able to capture particularities in orthography, grammar, semantics and culture~\cite{cuscito_how_2024,cuscito_shakespeare_2025}.
 
 \section{Background}
 
@@ -95,20 +75,20 @@ To contextualise our work, this section provides an overview of available and re
 We present a number of corpora that are relevant to the experiments conducted here due to their impact in model training and broader computational linguistics. On a general note, a huge challenge in the context of historical research is the scarcity of corpora, due to a number of factors, including loss of manuscripts and limited digitisation. This, together with the inherent high intertextuality, leads to a noteworthy probability that the same text emerges across multiple corpora.
 
 \begin{table}[ht]
-  \centering 
-  \begin{tabular}{llrrr}
-    \toprule
+\centering
+\begin{tabular}{llrrr}
+\toprule
 Name & Timespan & Words & Share\\
-    \midrule
+\midrule
 Nova                & XV-XXI cent. 	  & 1.7M & 15.1\%  \\
 Mediaevalis         & V II-XIV cent.  & 2.4M & 21.4\%  \\
 Romana Postclassica & I-VI cent. 	  & 4.6M & 41.6\%  \\
 Romana Classica     & I cent. BC  	  & 1.8M & 16.1\%  \\
 Romana Antiqua      & VII-II cent. BC & 0.4M &	3.2\%  \\
-    \bottomrule
-  \end{tabular}
-  \caption{Subcorpora in the evaluation corpus \emph{LatinISE}.}
-  \label{tab:corpora}
+\bottomrule
+\end{tabular}
+\caption{Subcorpora in the evaluation corpus \emph{LatinISE}.}
+\label{tab:corpora}
 \end{table}
 
 As the name suggests, \textbf{LatinISE} is a Latin text corpus collected from three historical sources: LacusCurtius, Intratext and Musisque Deoque~\cite{mcgillivray_tools_2013}. This corpus was developed to be used with SketchEngine\footnote{\url{https://sketchengine.eu}} and thus was collected with semantic annotations in mind.
@@ -123,17 +103,14 @@ By construction it is a contemporary corpus, containing sources such as Wikipedi
 
 There is a number of other established smaller corpora, such as \textbf{The Latin Library}, \textbf{Wikipedia in Latin} and the syntactically annotated treebanks \textbf{Perseus Digital Library} and \textbf{PROIEL} project. These are typically included in other aggregation efforts and is part of the reason why the previously mentioned corpora have consequential overlaps in content.
 
-
-
 \subsection{Models}
 
-%\input{025-tab-models}
 \begin{table}[ht]
-  \centering 
-  \begin{tabular}{lllll}
-    \toprule
-    Model & Corpus & Tokens & Timespan\\
-    \midrule
+\centering
+\begin{tabular}{lllll}
+\toprule
+Model & Corpus & Tokens & Timespan\\
+\midrule
 LaBerta~\cite{riemenschneider_exploring_2023} & Corpus Corporum & 168M & 700BC-2004\tablefootnote{taken from current version of corpus, which is probably broader than the version at time of retrieval}\\
 RoBERTa Latin cased3  & Corpus Corporum & 232M & 700BC-2004\footnotemark[2]\\
 Cicero Similis~\cite{cook_what_2021} & 4 small corpora & 1.2M & N/A\tablefootnote{from the model card: ``model training data excludes modern and 19th century texts''}\\
@@ -141,10 +118,10 @@ BERT adapter pfeiffer~\cite{pfeiffer_mad-x_2020} & Wikipedia in Latin & N/A & 20
 RoBERTa medieval & N/A & N/A & N/A\\
 BERT medieval multilingual & CC100,...\tablefootnote{includes CC100, Corpus Corporum and other corpora that cumulatively represent less than 10\%} & 650M & 500BC - 1600\tablefootnote{The model card contains controversial information about the end date of CC100, its biggest subcorpus - XVIII cent. is indicated in one instance.}\\
 LatinBERT~\cite{bamman_latin_2020} & Internet Archive,...\tablefootnote{also Patrologia Latina, the Latin Library, Wikipedia in Latin, Corpus Thomisticum, Perseus} & 643M & 200BC-1922\tablefootnote{Since the Internet Archive is the source of >85\% of the data, we consider it to determine the overall period. This is obviously an approximation, e.g. due to the presence of Wikipedia in Latin}\\
-    \bottomrule
-  \end{tabular}
-  \caption{Models and their corresponding training corpora.}
-  \label{tab:models}
+\bottomrule
+\end{tabular}
+\caption{Models and their corresponding training corpora.}
+\label{tab:models}
 \end{table}
 
 We present the models we included in our evaluation. Most of these were selected due to the documented research that accompanied to their training, but some less documented were also included due to their performance.
@@ -162,23 +139,20 @@ Several other models that we have identified and not included in the evaluation 
 
 We would also like to explicate the fact that when foundation models such as BERT or RoBERTa are fine-tuned, even if this fine-tuning is attentive to the socio-temporal context, contamination from the pre-training is probable.
 
-%\input{030-method}
 \section{Method}
 
-%\input{032-fig-process}
 \begin{figure*}[htbp]
-  \centering
- \includegraphics[width=\textwidth]{figures/032-fig-process.png}
-  \caption{The process introduced by Cuscito et al.~\cite{cuscito_shakespeare_2025} and employed here. Note that ``historical'' and ``contemporary'' refer to \emph{Classica} and \emph{Nova} respectively in the context here. The dotted box indicates the perimeter of steps performed with SketchEngine.}
-  \label{fig:process}
+\centering
+\includegraphics[width=\textwidth]{figures/032-fig-process.png}
+\caption{The process introduced by Cuscito et al.~\cite{cuscito_shakespeare_2025} and employed here. Note that ``historical'' and ``contemporary'' refer to \emph{Classica} and \emph{Nova} respectively in the context here. The dotted box indicates the perimeter of steps performed with SketchEngine.}
+\label{fig:process}
 \end{figure*}
-
 
 Following the evaluation process of Cuscito et al.~\cite{cuscito_shakespeare_2025} illustrated in Fig.~\ref{fig:process}, we perform a masked-word prediction task to assess the historical adequacy of models trained on Latin to the variant of the language used in the Classical period it on one hand, and on the other -- Neo-Latin (see respectively \emph{Romana Classica} and \emph{Nova} in Table~\ref{tab:corpora}).
 We deviate from the procedure originally defined in Cuscito et al.~\cite{cuscito_shakespeare_2025} only for the calculation of bias $\beta$, as shown in equation~(\ref{eq:beta}). The entire process is explained in detail below.
 
 For the weighted word lists in the start of the process in Fig.~\ref{fig:process}, we define word frequency functions $f_{nova}$ and $f_{classica}$, which given a word return its normalised relative frequency in the corresponding corpus. Thus, we can employ the equations~(\ref{eq:dist}) and~(\ref{eq:sigma}) defined below, which are just a reformulation of equation (1) in Cuscito et al.~\cite{cuscito_shakespeare_2025}. This reformulation splits the calculation of \emph{historical specificity} ($\sigma$) in two steps to make it more explicit. More specifically, we define an intermediate \emph{distance function} ($d$) in equation~(\ref{eq:dist}), which is later used in equation~(\ref{eq:sigma}).
-The constant four in the fourth root functions in equation~(\ref{eq:dist}) is adopted from Cuscito et al.~\cite{cuscito_shakespeare_2025}. It controls how words present in only one corpus mix with ones that are present in both. Values smaller than 4 leave a gap between $\sigma$ scores for words that are present in both corpora, and those that are present in one only (i.e. one of the $f$ functions is null). On the other hand, values greater than 4 lead to words that are exclusive to one of the corpora not getting a greater weight. 
+The constant four in the fourth root functions in equation~(\ref{eq:dist}) is adopted from Cuscito et al.~\cite{cuscito_shakespeare_2025}. It controls how words present in only one corpus mix with ones that are present in both. Values smaller than 4 leave a gap between $\sigma$ scores for words that are present in both corpora, and those that are present in one only (i.e. one of the $f$ functions is null). On the other hand, values greater than 4 lead to words that are exclusive to one of the corpora not getting a greater weight.
 
 \begin{equation}
 \begin{array}{r l}
@@ -194,26 +168,13 @@ d(f_a,f_b,w) = \sqrt[4]{\sqrt[4]{f_a(w)} -\sqrt[4]{f_b(w)}} & \text{given that}~
 \frac{-d(f_{classica},f_{nova},w)}{max_w{d(f_{classica},f_{nova},w)}} & \text{otherwise.}
 \end{array}
 \right.
-% \text{where}~\lambda_{roman}={1\over{max_{w \in \C}(d(f_{roman},f_{new},w))}}
 \label{eq:sigma}
 \end{equation}
-
-% \begin{equation}
-% \sigma(w) = \left\{
-% \begin{array}{r l}
-% \lambda_0\sqrt[4]{\sqrt[4]{f_0(w)} -\sqrt[4]{f_1(w)}} & \text{if}~f_0(w) \geq f_1(w) \\
-% -\lambda_1\sqrt[4]{\sqrt[4]{f_1(w)} -\sqrt[4]{f_0(w)}} & \text{otherwise.}
-% \end{array}
-% \right.
-% \label{eq:sigma}
-% \end{equation}
 
 With the \emph{historical specificity} function, we can measure \emph{sentence valence} ($\rho$) as the trimmed sum of the \emph{specificity} of words contained in it.
 Notice that for this \emph{valence} to arrive at an extreme for a sentence, at least two words need to have non-zero \emph{specificity}.
 In this way, even when one of these words is masked, the others would still carry some non-zeros valence, rendering the masked sentence indicative of its socio-temporal context.
 Only such sentences are selected for evaluation, as reported in the next section.
-
-%From \emph{word specificity} $\sigma$ and tokenisation of the sentences, the equation for \emph{sentence temporal valence} $\rho$ is:
 
 \begin{equation}
 \rho(s) = min(1, max(-1, \sum_{w_i \in s \cap\mathcal{C}}\sigma(w_i)))
@@ -221,7 +182,7 @@ Only such sentences are selected for evaluation, as reported in the next section
 \end{equation}
 
 Weighting the \emph{historic specificity} of word tokens predicted by models ($w_m$), with the corresponding prediction probabilities ($\mathbf{p}_m$), allows us to subsequently define model \emph{historical bias} ($\beta$). As a way to reduce the bias introduced by the very high probability of texts being present both in model training corpora and in our evaluation corpus (i.e. data leakage), during the computation of \emph{historical bias} we exclude the originally encountered word from the assessment by considering \emph{specificity} $\sigma(w)=0$ for it. As a consequence, this also reduces the overall \emph{historical bias} scores of models.
- 
+
 \begin{equation}
 \beta(m, s) = \sum_{w_m~\text{for}~s}\left\{
 \begin{array}{r l}
@@ -235,38 +196,33 @@ Weighting the \emph{historic specificity} of word tokens predicted by models ($w
 From the above, also \emph{historical adequacy} ($\delta$) is derived. It provides a normalised measure of \emph{historical bias} regardless of direction:
 
 \begin{equation}
-\delta(m, s)=1-\frac{\mid\rho(s)-\beta(m, s)\mid}{2} 
+\delta(m, s)=1-\frac{\mid\rho(s)-\beta(m, s)\mid}{2}
 \label{eq:delta}
 \end{equation}
 
 To elucidate the results of this method, at the end we perform statistical significance testing on \emph{historical adequacy} to see if any models could be claimed better than others in any of the two historical contexts represented by our word lists. First, we compare all models using repeated measures ANOVA. In the case of this indicating possible significance, we proceed to perform a combination of one-tailed paired t-tests to compare models against each other and calculate Cohen's d to measure the corresponding effect sizes.
-We do this separately for results on \emph{Classica} and \emph{Nova} sentences, as we expect that different models behave differently in the two contexts. 
+We do this separately for results on \emph{Classica} and \emph{Nova} sentences, as we expect that different models behave differently in the two contexts.
 
-%\input{070-results}
 \section{Evaluation}
 \label{sec:evaluation}
 
-%\input{073-tab-sigma}
 \begin{table*}[htbp]
 
-\begin{adjustbox}{width=\textwidth}
-
+\adjustbox{width=\textwidth}{
 
 \begin{tabular}{llllllllllll}
 \toprule
- & senatus & uterque & fortuna & lex & populus & et & terrae & rex & vitae & christo & dei \\
+& senatus & uterque & fortuna & lex & populus & et & terrae & rex & vitae & christo & dei \\
 \midrule
 \textbf{$f_{classica}$} & 0.027 & 0.005 & 0.016 & 0.005  & 0.009 & 1.000 & 0.007 & 0.012 & 0.009 & 0.000 & 0.000 \\
 \textbf{$f_{nova}$} & 0.000 & 0.000 & 0.007 & 0.004 &  0.008 & 1.000 & 0.008 & 0.018 & 0.022 & 0.011 & 0.041 \\
 \textbf{$\sigma$} & 0.981 & 0.877 & 0.623 & 0.439 & 0.386 & 0.000 & -0.361 & -0.505 & -0.603 & -0.873 & -0.947 \\
 \bottomrule
 \end{tabular}
-
-\end{adjustbox}
+}
 \caption{An illustrative sample with some values of relative word frequencies and \emph{specificity} ($\sigma$) between the two corpora.}
 \label{tab:wordlist}
 \end{table*}
-
 
 We use the LatinISE corpus as a diachronic reference, because we consider it both representative for the evolution of Latin, and -- in combination with SketchEngine -- it affords easily accessible word frequency lists and their corresponding concordances.
 To ensure representativeness, we consider the 1000 most frequent words.
@@ -277,27 +233,17 @@ A sample of this scoring is shown in Table~\ref{tab:wordlist}.
 T1/Tinos(0)/m/n' undefined
 For our analysis, we collect 5000 sentences (concordances from SketchEngine) from each of the \emph{Romana Classica} and the \emph{Nova} subcorpora of LatinISE with \emph{sentence valence} of $\rho=1$ and $\rho=-1$ respectively (which we call \emph{threshold valence}), as samples from these corpora have highest probability to bear distinct socio-temporal connotations. Then we perform the comparison detailed in the previous section. A visual overview of the results could be seen in Fig~\ref{fig:beta-delta}.
 
-%\input{078-fig-beta-delta}
 \begin{figure*}[!h]
-  \centering
-% left bottom right top
+\centering
+
 \includegraphics[width=\linewidth,trim={12 500 30 45},clip]{figures/076-fig-beta-stats.png}
 \includegraphics[width=\linewidth,trim={-8 5 0 5},clip]{figures/077-fig-beta-boxplot.png}
 
-% \caption{Comparison overview of results for $\beta$.}
-  
-% \label{fig:beta}
-% \end{figure*}
-
-% \begin{figure*}
-%   \centering
-
-% \includegraphics[width=\linewidth,trim={-9 780 -8 10},clip]{077-fig-delta-stats.pdf}
 \includegraphics[width=\linewidth,trim={0 4 0 23},clip]{figures/077-fig-delta-boxplot.png}
 \includegraphics[width=\linewidth,trim={12 500 30 45},clip]{figures/076-fig-delta-stats.png}
 
 \caption{Comparison overview of results for bias $\beta$ (above) and historical adequacy $\delta$ (below). It could be seen that for \emph{Classica} sentences $\delta$ is just rescaling of $\delta$, whereas for \emph{Nova} the values are also mirrored vertically. Thus $\delta$ brings together the two scales of $\beta$.}
-  
+
 \label{fig:beta-delta}
 \end{figure*}
 
@@ -309,31 +255,23 @@ The tokenisers of some models (as seen in Table~\ref{tab:examples} for \emph{BER
 
 For statistical significance testing, we fist perform repeated measures ANOVA on the results of the different models, with \emph{historical adequacy} ($\delta$) as a dependent variable and the evaluation corpus groupings as an independent variable (also referred to as within-subject factor) and this gave us a reference probability of $p=0.0001$ and F-statistic $F=121.2929$. This probability is below the 1\textperthousand~confidence threshold and thus very strong indication of statistical evidence that the models do not perform equally.
 
-%\input{079-fig-significance}
 \begin{figure*}[htbp]
-  \centering
+\centering
 
-% \begin{adjustbox}{width=.8\textwidth}
+\includegraphics[width=.9\textwidth]{figures/079-fig-significance-delta-heatmap-postprocessed.png}
 
- \includegraphics[width=.9\textwidth]{figures/079-fig-significance-delta-heatmap-postprocessed.png}
-
-% left bottom right top
-% \quad 
- % \includegraphics[width=.5\textwidth,trim={20 0 0 0},clip]{079-fig-significance-new-heatmap.pdf}
-% 
-% \end{adjustbox}
-  \caption{The pairwise statistical  analysis results, probabilities of t-tests and Cohen's \emph{d}.}
-  \label{fig:significance}
+\caption{The pairwise statistical  analysis results, probabilities of t-tests and Cohen's \emph{d}.}
+\label{fig:significance}
 \end{figure*}
 
 An overview of the pairwise t-tests on \emph{historical adequacy} ($\delta$) scores could be seen in Fig~\ref{fig:significance}. In it only pairwise significant differences are shown, with reported direction of significance (color), t-test probability and effect size (Cohen's d).
+
 The heatmap for \emph{Classica} sentences shows that \emph{BERT medieval multilingual} consistently outperforms other models, followed by \emph{RoBERTa medieval} and \emph{BERT adapter pfeiffer}. Then with less consistent significance, yet in this order, follow \emph{Cicero Similis} and \emph{LaBerta}, even if the former does not perform significantly better than the model that ranks last, i.e. \emph{Roberta Latin cased3}.
 The result for \emph{Nova} sentences shows that \emph{BERT adapter pfeiffer} is worse than the other models, followed by \emph{BERT medieval multilingual}. This pair is the only one that has statistical significance that is above the 1\textperthousand~confidence threshold, yet it is still below the 5\% threshold which is commonly accepted in the social sciences and humanities.
 As for the other models, they are statistically indistinguishable in the \emph{Nova} context.
 However, as seen in Fig~\ref{fig:significance}, the measured effect sizes turn out to be rather small.
 This is a particularly important sign, because of the large number of sampled sentences (n=5000 for each of the periods).
 
-%\input{080-discussion}
 \section{Discussion}
 
 In the adopted approach we consider the most frequent word tokens from the evaluation corpora, regardless of their content or grammatical function. As illustrated by the example sentences provided in the previous section, this has the effect of capturing not barely lexical differences, but more complex phenomena like geographic relationships or historical circumstances. These two are just examples of the context contributing to the evaluation of the choice of words.
@@ -349,18 +287,16 @@ Our main hypthesised reason is plainly that models were trained on corpora indis
 
 Considering the models, \emph{BERT medieval multilingual} appears to perform best for the historical context of interest (the Classical period, represented by the \emph{Classica} corpus), which is also observable by the 75\% threshold line for \emph{bias} in Fig.~\ref{fig:beta-delta}.
 It is a surprise that \emph{BERT adapter pfeiffer} performs relatively well on the \emph{Classica} corpus, because it is supposedly the only model that is trained only on contemporarily written Latin texts (i.e. Wikipedia in Latin, as indicated in Table~\ref{tab:models}).
-When it comes to the evaluations in the \emph{Nova} context, a reason why four models -- namely \emph{Cicero Similis}, \emph{LaBerta}, \emph{RoBERTa mesdieval} and \emph{Roberta Latin cased3} -- appear indistinguishable could 
+When it comes to the evaluations in the \emph{Nova} context, a reason why four models -- namely \emph{Cicero Similis}, \emph{LaBerta}, \emph{RoBERTa mesdieval} and \emph{Roberta Latin cased3} -- appear indistinguishable could
 be due to the high number of more recent Latin corpora being used for training.
 
 Arguably, the results of \emph{Latin BERT} -- and \emph{the Internet Archive} respectively -- show that unlike the case of printed documents where optical character recognition (OCR) might have caused a breakthrough in terms of mass availability of training corpora, this is yet to happen with historical documents and, respectively, handwritten text recognition (HTR).
 Yet, despite a failure to generate exact meaningful words that could be captured by the method employed here, such models are still valuable for the approximations they are able to produce in under-resourced contexts where there is nothing better available.
 
-
-% \input{090-conclusion}
 \section{Conclusion}
 
 The proposed evaluation approach builds on the central role of words in both MLMs and Corpus Linguistics, particularly expressed in the affordances of tools like SketchEngine.
-Whereas the method is computationally robust, the effect size measures in the statistical analysis limit conclusions to little beyond what is visible from Fig.~\ref{fig:beta-delta}. 
+Whereas the method is computationally robust, the effect size measures in the statistical analysis limit conclusions to little beyond what is visible from Fig.~\ref{fig:beta-delta}.
 
 An open question remains whether narrowing down the choice of word tokens considered in the evaluation could result in a more clear distinction between model performance.
 An example of doing this could be making a distinction between word types, even if this means simply content vs functional words.
@@ -370,51 +306,38 @@ The particular case of \emph{Latin BERT} raises the question whether in future r
 Further experiments need to compare other periods, particularly involving the content-rich preiods that correspond to the \emph{Romana Postclassica} and \emph{Medievalis} periods in the \emph{LatinISE} corpus. Particularly interesting are comparisons involving the linguistic variation in Medieval Latin.
 
 As previously suggested, the widely adopted ``don't stop pre-training'' principle~\cite{gururangan_dont_2020} carries risks of historical bias (e.g. through anachronisms)~\cite{underwood_can_2025,riemenschneider_exploring_2023,cuscito_shakespeare_2025}.
-One way to train models that are historically-aware is through the pre-training of dedicated models to historical periods. 
+One way to train models that are historically-aware is through the pre-training of dedicated models to historical periods.
 This is due to another principle -- ``what is done is done'' -- reminding that historical memory can develop only in the direction of time~\cite{periti_what_2022}. That is, models trained on medieval texts are expected to have some historical memory of previous periods, but not of subsequent periods.
 This is why models with a medieval cut-off date for their corpus are also of interest.
 Yet, \emph{BERT medieval multilingual}, assumingly from its name, gets closer to such idea and this might be a possible explanation for its better performance on \emph{Classica} sentences than on \emph{Nova} ones.
-In our analysis, despite naming, we found no conclusive evidence that such historically-aware models exist, as summarised in Table~\ref{tab:models}. 
-%Training multilingual models might be further complicated in the historical context where there is even further orthographic variation, and alphabets in particular.
+In our analysis, despite naming, we found no conclusive evidence that such historically-aware models exist, as summarised in Table~\ref{tab:models}.
 
 Finally, even though in recent years attention has shifted away from MLM autoencoders towards next token autoregression models, the reemergence of the fill-in-the-middle paradigm~\cite{bavarian_efficient_2022,nguyen_meet_2023} reaffirms that some form of mask-filling approaches will continue to have their relevance also in future.
 
-
-
-
-%\section*{Acknowledgements}
-
-%This unnumbered section should be blank when submitting your paper. After review, you may include lists of people and organizations who supported the work.
-
-% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
 \printbibliography
 
-% You can include an appendix using the following command
 \appendix
 
-%Appendix sections should be ordered by letters rather than numbers, and their contents do not count towards the paper's length limit. Appendix sections may also contain additional tables and figures.  
-
-%\input{099-appendix}
 \section{Further Models}
 \label{apx:models}
 
 The following models for Latin have been identified on HuggingFace:
 
 \begin{itemize}
-    \item \url{http://hf.co/AdapterHub/bert-base-multilingual-cased\_la\_wiki\_pfeiffer}
-    \item \url{http://hf.co/bowphs/LaBerta}~\cite{riemenschneider_exploring_2023}
-    \item \url{http://hf.co/bowphs/PhilBerta}~\cite{riemenschneider_exploring_2023}
-    \item \url{http://hf.co/Cicciokr/XLM-Roberta-Base-Latin-Uncased}
-    \item \url{http://hf.co/ClassCat/roberta-base-latin-v2}
-    \item \url{http://hf.co/cook/cicero-similis}
-    \item \url{http://hf.co/HPLT/hplt\_bert\_base\_la}~\cite{de_gibert_new_2024}
-    \item \url{http://hf.co/LuisAVasquez/simple-latin-bert-uncased}
-    \item \url{http://hf.co/magistermilitum/BERT\_medieval\_multilingual}
-    \item \url{http://hf.co/magistermilitum/RoBERTa\_medieval}
-    \item \url{http://hf.co/pnadel/LatinBERT}~\cite{bamman_latin_2020}
-    \item \url{http://hf.co/pstroe/roberta-base-latin-cased}
-    \item \url{http://hf.co/pstroe/roberta-base-latin-cased2}
-    \item \url{http://hf.co/pstroe/roberta-base-latin-cased3}
+\item \url{http://hf.co/AdapterHub/bert-base-multilingual-cased\_la\_wiki\_pfeiffer}
+\item \url{http://hf.co/bowphs/LaBerta}~\cite{riemenschneider_exploring_2023}
+\item \url{http://hf.co/bowphs/PhilBerta}~\cite{riemenschneider_exploring_2023}
+\item \url{http://hf.co/Cicciokr/XLM-Roberta-Base-Latin-Uncased}
+\item \url{http://hf.co/ClassCat/roberta-base-latin-v2}
+\item \url{http://hf.co/cook/cicero-similis}
+\item \url{http://hf.co/HPLT/hplt\_bert\_base\_la}~\cite{de_gibert_new_2024}
+\item \url{http://hf.co/LuisAVasquez/simple-latin-bert-uncased}
+\item \url{http://hf.co/magistermilitum/BERT\_medieval\_multilingual}
+\item \url{http://hf.co/magistermilitum/RoBERTa\_medieval}
+\item \url{http://hf.co/pnadel/LatinBERT}~\cite{bamman_latin_2020}
+\item \url{http://hf.co/pstroe/roberta-base-latin-cased}
+\item \url{http://hf.co/pstroe/roberta-base-latin-cased2}
+\item \url{http://hf.co/pstroe/roberta-base-latin-cased3}
 \end{itemize}
 
 \end{document}

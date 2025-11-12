@@ -1,78 +1,53 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-%\documentclass{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage[utf8]{inputenc}
-% ADD your own packages using \usepackage{}
 
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{Cluster Ambiguity in Networks as Substantive Knowledge}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1]{Mathieu Jacomy}[
-  orcid=0000-0002-6417-6895
+orcid=0000-0002-6417-6895
 ]
 \author[2]{Tommaso Elli}[
-  orcid=0000-0002-9818-1991
+orcid=0000-0002-9818-1991
 ]
 \author[3]{Andrea Benedetti}[
-  orcid=0000-0001-7121-459X
+orcid=0000-0001-7121-459X
 ]
 \author[4]{Guillaume Plique}[
-  orcid=0000-0003-4916-8472
+orcid=0000-0003-4916-8472
 ]
 \author[4]{Benjamin Ooghe-Tabanou}[
-  orcid=0000-0001-7698-3507
+orcid=0000-0001-7698-3507
 ]
 \author[5]{Paul Girard}[
-  orcid=0000-0001-9332-3308
+orcid=0000-0001-9332-3308
 ]
 \author[5]{Alexis Jacomy}[
-  orcid=0009-0008-3797-2985
+orcid=0009-0008-3797-2985
 ]
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
+
 \affiliation{1}{Tantlab \& MASSHINE, Aalborg University, Copenhagen, Denmark}
 \affiliation{2}{Dipartimento di Design, Politecnico di Milano, Italy}
 \affiliation{3}{Università degli Studi di Milano, Italy}
 \affiliation{4}{médialab, Sciences Po, Paris, France}
 \affiliation{5}{OuestWare, Nantes, France}
 
-
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{visual network analysis, ambiguity, community detection, hermeneutics
 }
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
 \pagestart{102}
 \pageend{113}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/f3L9hsFcGqVc}  
+\doi{10.63744/f3L9hsFcGqVc}
 \paperorder{8}
-
 
 \addbibresource{bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
 
 \maketitle
@@ -81,7 +56,7 @@
 Visual network analysis has become increasingly used by scholars in the social sciences and humanities (SSH). While ambiguity is an inherent characteristic of this methodology, most currently available tools lack strategies to make such ambiguity transparent, particularly in relation to non-deterministic algorithmic results. The Louvain modularity algorithm, commonly used to detect communities within networks, is a good example of the issue: repeated executions can result in different community assignments for the same nodes. This paper introduces a novel technique for the visual inspection of results produced by the Louvain modularity algorithm. The proposed method involves an edge-centric analysis that evaluates how consistently pairs of connected nodes are assigned to the same community. This consistency metric is then visualised through a dedicated technique that uses colour-coding to highlight both stable and ambiguous relationships between nodes and clusters. The paper demonstrates the effectiveness of this approach with a proof-of-concept applied to benchmark datasets frequently used in the evaluation of network analysis tools. Finally, the contribution reflects on how this visual technique can support and enhance the heuristic practices of SSH scholars.
 \end{abstract}
 
-\section{Introduction} 
+\section{Introduction}
 
 Network analysis has become a valuable tool for humanities scholars
 seeking to understand complex relationships within cultural, historical,
@@ -186,7 +161,7 @@ has been documented by network analysis researchers. We know that the
 landscape of modularity clustering solutions is ``degenerate''
 \cite{Good_De_Montjoye_Clauset_2010}, meaning that many equally
 valid\footnote{``Valid'' meaning, in this context, maximizing a network
-  partition metric known as ``modularity'' \cite{Newman_2006}.} yet distinct
+partition metric known as ``modularity'' \cite{Newman_2006}.} yet distinct
 solutions exist for the same network. These solutions typically cannot
 be unified into a single compromise because they are too heterogeneous
 \cite{Peixoto_2021}, and any single solution may miss relevant structural
@@ -211,20 +186,14 @@ detection solution landscape; (2) compute the ``edge co-membership
 score'' for each edge; (3) compute the ``ambiguity score'' for each
 edge; (4) aggregate it into the ``ambiguity score'' for each node.
 
-
-
-\noindent
-\textbf{Sampling the solution landscape.} Set sample size \(n\)
+\paragraph{Sampling the solution landscape.} Set sample size \(n\)
 (default 50) and run \(n\) instances of the Louvain method in its
 non-deterministic variant \cite{Lambiotte_Delvenne_Barahona_2014}, which
 is the implementation featured in the popular network analysis tool
 \emph{Gephi} \cite{Bastian_Heymann_Jacomy_2009}. This presents unexpected
 challenges (cf. section~\ref{discussion}).
 
-
-
-\noindent
-\textbf{Compute edge co-membership score.} This score  \(c_{ij}\) in
+\paragraph{Compute edge co-membership score.} This score  \(c_{ij}\) in
 the {[}0, 1{]} range measures the probability that the two nodes of an
 edge get placed in the same cluster across the sampled partitions. It
 could be computed on any node pair, but we only compute it for connected
@@ -238,10 +207,7 @@ Where \(i\) and \(j\) are connected nodes; \(k\) is a sample partition;
 \(\delta_{ij}(k)\) is 1 if \(i\) and \(j\) are in the same cluster in partition \(k\), and 0
 else.
 
-
-
-\noindent
-\textbf{Compute edge-level ambiguity.} We use a straightforward
+\paragraph{Compute edge-level ambiguity.} We use a straightforward
 heterogeneity metric that can be seen as the Gini coefficient for two
 populations. The underlying idea is that ambiguity is null at the two
 ends of the spectrum: whether the two nodes are \emph{always} in the
@@ -255,10 +221,7 @@ a_{ij} = c_{ij} * (1-c_{ij}) * 4
 
 Where \(i\) and \(j\) are connected nodes.
 
-
-
-\noindent
-\textbf{Compute node-level ambiguity.} We simply aggregate the
+\paragraph{Compute node-level ambiguity.} We simply aggregate the
 edge-level score at the node level by averaging it. It therefore also
 ranges in {[}0,1{]}.
 
@@ -275,8 +238,7 @@ Our solution aims to communicate at the same time which clusters are consistent 
 
 \begin{table}[]
 \caption{visual variables}
-  \label{fig:figure1}
-\centering 
+\centering
 \begin{tabular}{lllll}
 \toprule
 \textbf{Visual variable} & \textbf{Represented quantity or quality}                                                                                               &  &  &  \\
@@ -290,33 +252,29 @@ Edge drawing order       & Ambiguity \(a_{ij}\) (high score on top)             
 \end{tabular}
 \end{table}
 
-
 In addition, the background is set to gray and all nodes set to white.
 
 Remarks:
 
 \begin{itemize}
 \item
-  We need to commit to a given partition to determine the edge hue, and
-  for that we use one of the samples chosen arbitrarily. Remark that
-  this choice is most problematic for edges with a low co-membership or
-  a high ambiguity, but the former are visualized in black and the
-  latter in white, which circumvents the problem (black and white have
-  no hue, and therefore do not visualize any cluster).\\
+We need to commit to a given partition to determine the edge hue, and
+for that we use one of the samples chosen arbitrarily. Remark that
+this choice is most problematic for edges with a low co-membership or
+a high ambiguity, but the former are visualized in black and the
+latter in white, which circumvents the problem (black and white have
+no hue, and therefore do not visualize any cluster).\\
 \item
-  The edge drawing order is not technically a visual variable, but it is
-  key to the success of the demonstrated technique.\\
+The edge drawing order is not technically a visual variable, but it is
+key to the success of the demonstrated technique.\\
 \item
-  Conversely, node placement (spatial proximity) does not appear in this
-  table even though it is a prominent visual variable, because the
-  layout is technically independent of our design. However, it interacts
-  strongly with it (cf. section~\ref{discussion}).
+Conversely, node placement (spatial proximity) does not appear in this
+table even though it is a prominent visual variable, because the
+layout is technically independent of our design. However, it interacts
+strongly with it (cf. section~\ref{discussion}).
 \end{itemize}
 
-
-
-\noindent
-\textbf{Perceptive rationale.} For simplicity, let us assume a sharp
+\paragraph{Perceptive rationale.} For simplicity, let us assume a sharp
 distinction between bridging edges, in-cluster edges, and ambiguous
 edges (fig.~\ref{fig:figure1}). In reality, the distinction is continuous and determined
 by \(c_{ij}\) and \(a_{ij}\). First, the bridging edges can be
@@ -331,13 +289,11 @@ they indicate where community detection produces inconsistent results.
 We do not display non-ambiguous nodes (size set to zero).
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=1\linewidth]{figures/image1.png}
-  \caption{Principle of the visualization. Black edges are consistently bridging over different clusters. Colored nodes and edges are consistently within the same cluster. White nodes and edges are sometimes bridging, sometimes within the same cluster, depending on random factors in the community detection algorithm.}
-  \label{fig:figure2}
+\centering
+\includegraphics[width=1\linewidth]{figures/image1.png}
+\caption{Principle of the visualization. Black edges are consistently bridging over different clusters. Colored nodes and edges are consistently within the same cluster. White nodes and edges are sometimes bridging, sometimes within the same cluster, depending on random factors in the community detection algorithm.}
+\label{fig:figure1}
 \end{figure}
-
-
 
 \section{Results}
 
@@ -357,10 +313,10 @@ There is nevertheless value in identifying those nodes for further
 investigation.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=1\linewidth]{figures/image4.png}
-  \caption{Visualization of the ambiguity of modularity clustering on the network from Divided they Blog \cite{Adamic_Glance_2005}, representing the US political blogosphere in 2024, structured in two clusters. Layout Force Atlas 2 \cite{Jacomy_et_al_2014}.}
-  \label{fig:figure3}
+\centering
+\includegraphics[width=1\linewidth]{figures/image4.png}
+\caption{Visualization of the ambiguity of modularity clustering on the network from Divided they Blog \cite{Adamic_Glance_2005}, representing the US political blogosphere in 2024, structured in two clusters. Layout Force Atlas 2 \cite{Jacomy_et_al_2014}.}
+\label{fig:figure2}
 \end{figure}
 
 When the network does not have well-defined clusters (fig.~\ref{fig:figure3}), ambiguous
@@ -372,18 +328,16 @@ This follows the intuition that nodes in the middle are disputed by
 different clusters.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=1\linewidth]{figures/image3.png}
-  \caption{Visualization of the ambiguity of modularity clustering on the C. Elegans network, consisting of a nematode's neurons and their connections \cite{Watts_Strogatz_1998}. Layout Force Atlas 2.}
-  \label{fig:figure4}
+\centering
+\includegraphics[width=1\linewidth]{figures/image3.png}
+\caption{Visualization of the ambiguity of modularity clustering on the C. Elegans network, consisting of a nematode's neurons and their connections \cite{Watts_Strogatz_1998}. Layout Force Atlas 2.}
+\label{fig:figure3}
 \end{figure}
 
 The effect can be seen more clearly in fig.~\ref{fig:figure4}, representing a finite
 square lattice, where communities are consistently found in each corner
 (color in fig.~\ref{fig:figure4}) while the middle and sides are ambiguous (white in
 fig.~\ref{fig:figure4}).
-
-
 
 Our visualization's most immediate impact is revealing how clustering
 results are far more ambiguous than users typically recognize. Rather
@@ -402,10 +356,10 @@ opportunities for a more hermeneutic dialogue with the data and the
 computational processes mediating them.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.6\linewidth]{figures/image2.png}
-  \caption{Visualization of the ambiguity of modularity clustering on a square lattice (a simple mathematical grid). Layout Force Atlas 2.}
-  
+\centering
+\includegraphics[width=0.6\linewidth]{figures/image2.png}
+\caption{Visualization of the ambiguity of modularity clustering on a square lattice (a simple mathematical grid). Layout Force Atlas 2.}
+\label{fig:figure4}
 \end{figure}
 
 We implemented our method in an open access interactive network visualization web application whose code source is licensed under the GPL-3.\footnote{https://lite.gephi.org/}
@@ -478,21 +432,21 @@ make three interventions:
 \def\labelenumi{\arabic{enumi}.}
 
 \item
-  Optimizations that tie-break neighboring communities when they yield
-  an equivalent modularity delta in a deterministic way had to be made
-  random.\\
+Optimizations that tie-break neighboring communities when they yield
+an equivalent modularity delta in a deterministic way had to be made
+random.\\
 \item
-  We had to make the graph traversal truly random, i.e.~over a
-  permutation of the node list. Multiple implementations (notably in
-  Gephi) only select the starting node at random and then iterate over
-  the node list in source data order, which is far from random.\\
+We had to make the graph traversal truly random, i.e.~over a
+permutation of the node list. Multiple implementations (notably in
+Gephi) only select the starting node at random and then iterate over
+the node list in source data order, which is far from random.\\
 \item
-  As introduced in \cite{Traag_Waltman_Van_Eck_2019}, some
-  implementations maintain a queue of neighbors that are relevant to
-  visit later, in order to avoid needless delta computations when
-  performing multiple traversals of the graph at each iteration of the
-  algorithm. This optimization has to be dropped to correctly sample the
-  landscape of solutions.
+As introduced in \cite{Traag_Waltman_Van_Eck_2019}, some
+implementations maintain a queue of neighbors that are relevant to
+visit later, in order to avoid needless delta computations when
+performing multiple traversals of the graph at each iteration of the
+algorithm. This optimization has to be dropped to correctly sample the
+landscape of solutions.
 \end{enumerate}
 
 The necessity of such intervention yields a valuable lesson. Visualizing
@@ -548,6 +502,6 @@ conduct empirical studies to refine our design, and explore how
 ambiguity visualization can be integrated into the hermeneutic practices
 that define humanistic scholarship.
 
-\printbibliography %Prints bibliography
+\printbibliography
 
 \end{document}

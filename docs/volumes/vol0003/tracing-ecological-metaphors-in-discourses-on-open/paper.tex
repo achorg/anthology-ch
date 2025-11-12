@@ -1,9 +1,5 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-% \documentclass{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
+
 \usepackage{fontspec}
 \setmainfont{Tinos}
 
@@ -22,55 +18,33 @@
 
 \usepackage{pdflscape}
 
-% ADD your own packages using \usepackage{}
-
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{Tracing Ecological Metaphors in Discourses on Open Science using LLMs and Knowledge Graphs}
-
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 
 \author[1,2]{Nil Yagmur Ilba}[orcid=0009-0001-6901-7105]
 \author[1,2]{Simon Dumas Primbault}[orcid=0000-0002-0012-0550]
 
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 \affiliation{1}{OpenEdition Lab, 22 rue John Maynard Keynes, 13013 Marseille, France}
 \affiliation{2}{Laboratory for the History of Science and Technology (LHST), Swiss Federal Institute of Technology (EPFL), CH-1015 Lausanne, Switzerland}
 
-
-
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{Open Science, Knowledge Graphs, Large Language Models, Boundary Objects, Co-occurrence Networks, Prompt Engineering}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
-\pagestart{1352}
-\pageend{1369}
+\pagestart{1356}
+\pageend{1373}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/ImYNsefqcE1n}  
+\doi{10.63744/ImYNsefqcE1n}
 \paperorder{84}
 
 \addbibresource{bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
+
 \maketitle
 \begin{abstract}
 The term "ecosystem" is frequently used to describe various concepts, not only in open science but also in broader discussions of research and innovation. Despite its widespread use, it is rarely explicitly defined, often functioning as a boundary object that facilitates communication across diverse communities. Systematically documenting its varied, context-dependent meanings presents a significant challenge. This work in progress explores the term "ecosystem" within the discourse on open science, offering a systematic approach to mapping its varied meanings and uses. We pose a twofold research question: from a social scientific perspective, how can the diverse uses of "ecosystem" be systematically documented? And from a methodological standpoint, how can computational techniques be leveraged to trace such a boundary object? Drawing on a curated corpus of 211 scholarly articles and exploratory ontological work, we use LLMs to construct a detailed knowledge graph, yielding 1,067 semantic relations. This graph is then integrated with a citation network to create a multilayer model for analyzing the term's dissemination. Our preliminary results identify seven distinct, data-driven thematic communities. Although the application of knowledge graphs is now an emerging practice, our pipeline offers a novel application for revealing the term's underlying meanings. By mapping its surrounding ontology, this ongoing work suggests how such a term allows knowledge to circulate between different scholarly communities, providing deeper insight into the conceptual landscape shaping the digital transition of research.
 \end{abstract}
-
 
 \section{Introduction}
 \label{sec:intro}
@@ -79,26 +53,22 @@ For some years now, a number of researchers have used the term `ecosystem' to re
 
 To achieve this, we employ a multi-stage methodology that combines natural language processing (NLP) with advanced network analysis. We begin by constructing co-occurrence networks to identify the primary thematic clusters associated with “ecosystem.” Building on this, we use a Large Language Model (LLM) to extract entities and relations, forming a detailed knowledge graph that formalizes the term's semantic roles. Finally, we integrate this semantic data with the corpus's citation network to create a multilayer model. This approach allows us to offer novel insights into the evolving semantic landscape of “ecosystem,” tracing its interdisciplinary adoption and conceptual crystallization over time.
 
-
 \section{Literature Review and Research Question}
 
 A central theoretical lens for this study is the concept of "boundary object", first introduced in the context of museum studies to describe artifacts that connect different stakeholder communities. According to Star and Griesemer \cite{star1989institutional}, boundary objects are items or concepts that are robust enough to maintain a common identity across different social worlds but are flexible enough to be adapted to the local needs and work of the groups using them. They serve as points of translation and coordination, enabling collaboration and knowledge sharing even when participants have different perspectives or goals.
-
 
 We propose that the term “ecosystem” itself functions as a boundary object within the discourse on open science. Its malleability allows diverse actors—including researchers, policymakers, publishers, and technologists—to discuss the complex scholarly landscape from their unique viewpoints. For example, a software developer might refer to a "software ecosystem" as a set of interdependent and modular software components linked through APIs, while a publisher might discuss the "book ecosystem" as the entire assemblage of actors and processes involved in publication, from editorial staff to distribution norms like DOIs.
 
 This flexibility also reveals a deep polarization in its use: for some, the metaphor implies a world of competition for scarce resources and the `survival of the fittest', while for others, it is a way to promote diversity, collaboration, and mutual assistance. Analyzing how the term is defined and used can therefore reveal these underlying dynamics and alignments within the field \cite{dumasprimbault_forthcoming}.
 
-
 Ecological metaphors first emerged to describe research environments in the 1970s-1980s at the intersection of cybernetics and symbolic interactionism, and later in the 1990s-2000s within the sociology of digital infrastructures and business management. Since 2010, the concept has expanded in platform studies and political discourse, addressing issues like resilience, modular design, bibliodiversity, virality, and life cycles \cite{mounier_2023_10036402}.
 
 Large literature reviews of “ecologies" have recently been led in the fields of Human-Computer Interaction (HCI) and Computer-Supported Collaborative Work (CSCW). For example, two common traits were identified by Lyla et. al (2020): “(1) an interest in relationships” and “(2) an attempt to take a holistic perspective” (p. 4), and three scales of analysis: macro \textit{i.e.} “organisations and activity system(s)”, meso \textit{i.e.} “people and practices”, and micro \textit{i.e.} “individuals, artifacts, and tasks” (p. 7) \cite{kuehn_2022, lyleetal_2020}.
 
-More specifically, the term “ecosystem” has gained prominence in discussions about open science, emphasizing the need for not only open research outputs but also transparent research processes. This vision encourages more rigorous, collaborative approaches to research \cite{thibault2023open}. In this context, Marton (2021) traces the genealogy of digital ecosystems, revealing their deep connection to biological concepts since the 1990s, structured around Gregory Bateson’s ecological epistemology \cite{marton2022steps}. Similarly, Jaime (2021) systematically examines OA Research, proposing that the  Ecosystem consists of three components: Actors, Technology, and Regulatory Framework \cite{jaime2021mapping}. 
+More specifically, the term “ecosystem” has gained prominence in discussions about open science, emphasizing the need for not only open research outputs but also transparent research processes. This vision encourages more rigorous, collaborative approaches to research \cite{thibault2023open}. In this context, Marton (2021) traces the genealogy of digital ecosystems, revealing their deep connection to biological concepts since the 1990s, structured around Gregory Bateson’s ecological epistemology \cite{marton2022steps}. Similarly, Jaime (2021) systematically examines OA Research, proposing that the  Ecosystem consists of three components: Actors, Technology, and Regulatory Framework \cite{jaime2021mapping}.
 ~
 
 Traditional computational methods for textual analysis, such as topic modeling or frequency analysis, are valuable for tracing the usage of terms over time. However, these approaches can sometimes lack the necessary semantic depth, especially when terminologies are nuanced and difficult to differentiate through surface-level reading alone. When a term like “ecosystem” is used in subtly different but significant ways, a more powerful approach is needed to capture these distinctions accurately.
-
 
 This study therefore poses a twofold research question centered on the use of the term “ecosystem” as a boundary object to understand “open science”. From a social scientific perspective, we ask: \textit{\textbf{how can its diverse uses within this scholarly literature be systematically documented?}} From a methodological standpoint, we then ask: \textit{\textbf{how can modern computational techniques be leveraged to trace its evolution and application?}}
 
@@ -106,63 +76,56 @@ To achieve this deeper level of analysis, our work draws on state-of-the-art tec
 
 While the integration of LLMs and knowledge graphs enables a more nuanced semantic analysis, it also raises fundamental questions about reproducibility and interpretation in computational humanities. Because LLMs are inherently stochastic, producing slightly different outputs under identical conditions, their use challenges the notion of reproducibility that characterizes traditional computational paradigms. In the humanities, however, interpretation is itself an integral part of inquiry. Rather than seeking to reproduce exactly identical results, the objective is to structure an exploratory process in which interpretation can be systematically examined and made explicit. In this sense, our approach seeks to make the interpretive dimension traceable through upstream structuring by means of designed prompts, taxonomies, and evaluation processes. The outputs produced are not conceived as final results but as instruments for thought, supporting reflection and hypothesis formation on how computational methods can assist rather than determine analysis.
 
-
-
 \section{Dataset}
 \label{sec:dataset}
 
 \begin{figure}[H]
- \centering
- \includegraphics[width=0.79\linewidth]{figures/data_pipeline.png}
- \caption{An overview of the data collection and cleaning pipeline.}
- \label{fig:pipeline}
+\centering
+\includegraphics[width=0.79\linewidth]{figures/data_pipeline.png}
+\caption{An overview of the data collection and cleaning pipeline.}
+\label{fig:pipeline}
 \end{figure}
 
-
 The initial phase of this research involved the creation of a specialized corpus. The data collection and cleaning process, illustrated in Figure~\ref{fig:pipeline}, was designed to systematically identify and refine a set of relevant scholarly articles.
-
 
 \subsection{Data Retrieval and Initial Filtering}
 The primary data source was the OpenAlex database \cite{priem2022openalexfullyopenindexscholarly}. Using a detailed query composed of several related phrases (Table~\ref{tab:search_query}), we retrieved an initial set of 437 documents, of which 346 were open access. This dataset was then refined through a multi-stage automated filtering process that removed 24 duplicates, 13 non-English documents, and 142 articles with irrelevant subject areas. To validate our retrieval method, the resulting corpus was also checked against a manually assembled collection of key literature to ensure it had captured known, relevant publications.
 
 \begin{table}[H]
 \small
-    \centering
-    \caption{Search Query Components Used for Corpus Retrieval.}
-    \label{tab:search_query}
-    \begin{tabular}{l}
-        \toprule
-        \textbf{Query Component} \\
-        \midrule
-        \texttt{"open science ecosystem"} or
-        \texttt{"open access ecosystem"} or
-        \texttt{"ecosystem of open science"} \\
-        \texttt{"ecosystem of open access"} or
-        \texttt{"open science of the ecosystem"} or
-        \texttt{"open access} \\ 
-        \texttt{of the ecosystem"}  or
-        \texttt{"ecosystem in open science"} or
-        \texttt{"ecosystem in open access"} \\
-        \bottomrule
-    \end{tabular}
+\centering
+\caption{Search Query Components Used for Corpus Retrieval.}
+\label{tab:search_query}
+\begin{tabular}{l}
+\toprule
+\textbf{Query Component} \\
+\midrule
+\texttt{"open science ecosystem"} or
+\texttt{"open access ecosystem"} or
+\texttt{"ecosystem of open science"} \\
+\texttt{"ecosystem of open access"} or
+\texttt{"open science of the ecosystem"} or
+\texttt{"open access} \\
+\texttt{of the ecosystem"}  or
+\texttt{"ecosystem in open science"} or
+\texttt{"ecosystem in open access"} \\
+\bottomrule
+\end{tabular}
 \end{table}
-
 
 \subsection{Manual Cleaning}
 
 Following the automated filtering, the remaining articles underwent a rigorous manual cleaning phase to ensure the final corpus's quality and relevance. This crucial step balanced the efficiency of automation with the nuance required for semantic analysis. Each document was carefully read to assess the contextual and thematic relevance of the term `ecosystem', verify its format as a research article, and correct for any database metadata errors. This meticulous process of assessment and categorization resulted in the final, curated corpus of 211 highly relevant documents.
 
-
 \subsection{Corpus Characteristics}
 The final corpus exhibits a diverse disciplinary and temporal distribution. As shown in Figure~\ref{fig:distribution}, the number of relevant publications has seen a significant increase since approximately 2018. The distribution spans multiple fields, with notable concentrations in Computer Science, Social Sciences, and Decision Sciences, highlighting the interdisciplinary nature of the topic.
 
 \begin{figure}[H]
- \centering
- \includegraphics[width=\linewidth]{figures/corpus_disciplines_years.png}
- \caption{Distribution of publications in the final corpus by discipline and publication year.}
- \label{fig:distribution}
+\centering
+\includegraphics[width=\linewidth]{figures/corpus_disciplines_years.png}
+\caption{Distribution of publications in the final corpus by discipline and publication year.}
+\label{fig:distribution}
 \end{figure}
-
 
 \section{Methodology}
 \label{sec:methodology}
@@ -170,45 +133,42 @@ The final corpus exhibits a diverse disciplinary and temporal distribution. As s
 Our study employs a multi-stage methodology as visualized in the pipeline in Figure~\ref{fig:pipeline_method}. The process consists of three core stages: (1) a large-scale extraction of entities and relations from the corpus using a Large Language Model; (2) an entity refinement phase involving filtering and semi-automated taxonomic labeling; and (3) a final network construction phase to build both a semantic knowledge graph and an integrated multilayer network from the refined data and external citation information. The following sections detail each of these stages.
 
 \begin{figure}[H]
- \centering
- \includegraphics[width=0.9\linewidth]{figures/methodology_pipeline.png}
- \caption{Pipeline of methodological process}
- \label{fig:pipeline_method}
+\centering
+\includegraphics[width=0.9\linewidth]{figures/methodology_pipeline.png}
+\caption{Pipeline of methodological process}
+\label{fig:pipeline_method}
 \end{figure}
-
 
 \subsection{Exploratory Work: Co-occurrence Networks}
 \label{sec:prior-work}
 
 Our current methodology is informed by preliminary research that established a quantitative foundation for mapping the diverse applications of the term ‘ecosystem’. This initial work aimed to create a data-driven overview of the term's semantic field before undertaking a more profound qualitative and ontological analysis. The central finding of this exploration was that ‘ecosystem’ is frequently used to denote the new dynamics of knowledge, data, and innovation emerging from the growth of digital networks in research, standing in contrast to an earlier, more mechanical understanding centered on stable infrastructures and large, vertically integrated organizations such as publishing houses.
 
-
 The core of this preliminary study was a word co-occurrence network built from textual chunks extracted from 39 articles that explicitly used ‘ecosystem’ in their titles. Statistical analysis of the network revealed frequent co-occurring terms (e.g., “actors,” “data,” “innovation”) and significant bigrams (e.g., “innovation ecosystem”), highlighting the term's strong association with both social and technical dimensions. The Louvain clustering algorithm was then applied to this network to group related terms and uncover its underlying thematic structures.
 
 \begin{table}[H]
 \small
- \centering
- \caption{Clusters of co-occurrences identified from the preliminary analysis.}
- \label{tab:initial_clusters}
- \begin{tabular}{ll}
-  \toprule
-  \textbf{Cluster ID} & \textbf{Description} \\
-  \midrule
-  0 & Technology and Research Tools \\
-  1 & Data and Information \\
-  2 & Ecosystem Research (Broad) \\
-  3 & Publishing in Open Access (covers clusters 3 \& 8) \\
-  4 & Actors and Stakeholders \\
-  5 & Structure/Dynamics of Ecosystems \\
-  6 & Innovation and Business \\
-  7 & Software Systems (covers clusters 7, 11, \& 12) \\
-  8 & Open Science (Broad) \\
-  \bottomrule
- \end{tabular}
+\centering
+\caption{Clusters of co-occurrences identified from the preliminary analysis.}
+\label{tab:initial_clusters}
+\begin{tabular}{ll}
+\toprule
+\textbf{Cluster ID} & \textbf{Description} \\
+\midrule
+0 & Technology and Research Tools \\
+1 & Data and Information \\
+2 & Ecosystem Research (Broad) \\
+3 & Publishing in Open Access (covers clusters 3 \& 8) \\
+4 & Actors and Stakeholders \\
+5 & Structure/Dynamics of Ecosystems \\
+6 & Innovation and Business \\
+7 & Software Systems (covers clusters 7, 11, \& 12) \\
+8 & Open Science (Broad) \\
+\bottomrule
+\end{tabular}
 \end{table}
 
 The thematic clusters identified in this preliminary analysis are summarized in Table~\ref{tab:initial_clusters}. This initial quantitative grouping provided a foundational map of the discourse, which confirmed the term's association with the interdependent nature of digital research environments and directly informed the detailed ontological framework developed in this study.
-
 
 \subsection{Entities and Relations Extraction by Prompting}
 \label{sec:extraction}
@@ -226,118 +186,112 @@ Following the extraction of raw entities and relations, the next step was to ref
 
 \begin{table}[H]
 \small
-    \centering
-    \caption{Frequency of Main Categories in the Developed Taxonomy.}
-    \label{tab:main_categories}
-    \begin{tabular}{lr}
-        \toprule
-        \textbf{Main Category} & \textbf{Number of Mentions} \\
-        \midrule
-        Economy & 89 \\
-        Ecosystem & 108 \\
-        Events & 44 \\
-        Fields and Disciplines & 84 \\
-        Frameworks & 201 \\
-        Institutional Action & 89 \\
-        Open Access & 348 \\
-        Open Data & 52 \\
-        Open Government & 8 \\
-        Open Innovation & 13 \\
-        Open Science & 461 \\
-        Policies & 192 \\
-        Research Outputs / Resources & 474 \\
-        Research Processes / Practices & 879 \\
-        Research Values / Virtues & 287 \\
-        Science and Society & 56 \\
-        Sociotechnical Devices & 595 \\
-        Stakeholders/Actors & 791 \\
-        \midrule
-        \textbf{Grand Total} & \textbf{4771} \\
-        \bottomrule
-    \end{tabular}
+\centering
+\caption{Frequency of Main Categories in the Developed Taxonomy.}
+\label{tab:main_categories}
+\begin{tabular}{lr}
+\toprule
+\textbf{Main Category} & \textbf{Number of Mentions} \\
+\midrule
+Economy & 89 \\
+Ecosystem & 108 \\
+Events & 44 \\
+Fields and Disciplines & 84 \\
+Frameworks & 201 \\
+Institutional Action & 89 \\
+Open Access & 348 \\
+Open Data & 52 \\
+Open Government & 8 \\
+Open Innovation & 13 \\
+Open Science & 461 \\
+Policies & 192 \\
+Research Outputs / Resources & 474 \\
+Research Processes / Practices & 879 \\
+Research Values / Virtues & 287 \\
+Science and Society & 56 \\
+Sociotechnical Devices & 595 \\
+Stakeholders/Actors & 791 \\
+\midrule
+\textbf{Grand Total} & \textbf{4771} \\
+\bottomrule
+\end{tabular}
 \end{table}
 
 The resulting ontology, visualized as a network of distinct categories and their constituent entities in Table~\ref{tab:full_taxonomy_landscape}, provides a structured framework for categorizing the key concepts present in the `ecosystem' discourse.
 
-
 \begin{landscape}
-\renewcommand{\arraystretch}{0.92} % slightly smaller spacing
-\vspace{-1pt} % recover vertical space before float
+\renewcommand{\arraystretch}{0.92}
+\vspace{-1pt}
 
-\begin{table}[b!] % 'p' suggests placing the table on a dedicated page
-    \small % Use a slightly smaller font for better spacing
-    \centering
-    \caption{The Two-Level Taxonomy of Thematic Categories and their Constituent Sub-categories.}
-    \label{tab:full_taxonomy_landscape}
-    \resizebox{\linewidth}{!}{ % <--- Begin resize
-    \begin{tabularx}{\linewidth}{l X} % Using \linewidth adapts to the new landscape width
-        \toprule
-        \textbf{Main Category} & \textbf{Sub-categories (in lowercase)} \\
-        \midrule
-        \textbf{Economy} & apc, bpc, business, cost, growth, ip, labor, market, innovation \\
-        \addlinespace
-        \textbf{Ecosystem} & ecosystem \\
-        \addlinespace
-        \textbf{Events} & activities, community building, conference, engagement, initiatives, training \\
-        \addlinespace
-        \textbf{Fields and Disciplines} & archaeology, digital humanities, disciplines, engineering, humanities, metascience, ror, social sciences, studies, science \\
-        \addlinespace
-        \textbf{Frameworks} & fair, framework, license, metric, norms, principle, project, rights, standards, knowledge commons, decentralized science \\
-        \addlinespace
-        \textbf{Institutional Action} & evaluating, funding, monitoring, program, standardization, supporting \\
-        \addlinespace
-        \textbf{Open Access} & open access \\
-        \addlinespace
-        \textbf{Open Data} & open data \\
-        \addlinespace
-        \textbf{Open Government} & open government \\
-        \addlinespace
-        \textbf{Open Innovation} & open innovation \\
-        \addlinespace
-        \textbf{Open Science} & open science \\
-        \addlinespace
-        \textbf{Policies} & advocacy, agreements, governance, plan, policies, strategy \\
-        \addlinespace
-        \textbf{Research Outputs / Resources} & article, book, citation, data, indigenous knowledge, journal, metadata, model, ontology, preprint, publications, research output, resource, software, findings \\
-        \addlinespace
-        \textbf{Research Processes / Practices} & analyzing, assessment, citation, co-creation, collaboration, communication, control, cooperation, curation, data management, data practices, knowledge transfer, learning, licensing, machine learning, management, peer review, practice, preservation, publishing, research, research process, reuse, sharing, trials, visualizing, workflow \\
-        \addlinespace
-        \textbf{Research Values / Virtues} & accessibility, bias, data security, diversity, efficiency, equity, ethics, fair, impact, integrity, interoperability, multilingualism, quality, reproducibility, responsibility, solidarity, transparency, trust, value \\
-        \addlinespace
-        \textbf{Science and Society} & citizen science, participation, social justice, society, public goods, digital transformation \\
-        \addlinespace
-        \textbf{Sociotechnical Devices} & ai, api, cloud, infrastructure, pid, platform, publications, repository, services, software, technology, tools \\
-        \addlinespace
-        \textbf{Stakeholders/Actors} & actor, author, community, european commission, funders, incubators, indigenous people, information professionals, institutions, intermediaries, learned societies, librarians, libraries, organisations, people, policy makers, publishers, researcher, stakeholder, students, team, universities, university presses, users \\
-        \bottomrule
-    \end{tabularx}}
+\begin{table}[b!]
+\small
+\centering
+\caption{The Two-Level Taxonomy of Thematic Categories and their Constituent Sub-categories.}
+\label{tab:full_taxonomy_landscape}
+\resizebox{\linewidth}{!}{
+\begin{tabularx}{\linewidth}{l X}
+\toprule
+\textbf{Main Category} & \textbf{Sub-categories (in lowercase)} \\
+\midrule
+\textbf{Economy} & apc, bpc, business, cost, growth, ip, labor, market, innovation \\
+\addlinespace
+\textbf{Ecosystem} & ecosystem \\
+\addlinespace
+\textbf{Events} & activities, community building, conference, engagement, initiatives, training \\
+\addlinespace
+\textbf{Fields and Disciplines} & archaeology, digital humanities, disciplines, engineering, humanities, metascience, ror, social sciences, studies, science \\
+\addlinespace
+\textbf{Frameworks} & fair, framework, license, metric, norms, principle, project, rights, standards, knowledge commons, decentralized science \\
+\addlinespace
+\textbf{Institutional Action} & evaluating, funding, monitoring, program, standardization, supporting \\
+\addlinespace
+\textbf{Open Access} & open access \\
+\addlinespace
+\textbf{Open Data} & open data \\
+\addlinespace
+\textbf{Open Government} & open government \\
+\addlinespace
+\textbf{Open Innovation} & open innovation \\
+\addlinespace
+\textbf{Open Science} & open science \\
+\addlinespace
+\textbf{Policies} & advocacy, agreements, governance, plan, policies, strategy \\
+\addlinespace
+\textbf{Research Outputs / Resources} & article, book, citation, data, indigenous knowledge, journal, metadata, model, ontology, preprint, publications, research output, resource, software, findings \\
+\addlinespace
+\textbf{Research Processes / Practices} & analyzing, assessment, citation, co-creation, collaboration, communication, control, cooperation, curation, data management, data practices, knowledge transfer, learning, licensing, machine learning, management, peer review, practice, preservation, publishing, research, research process, reuse, sharing, trials, visualizing, workflow \\
+\addlinespace
+\textbf{Research Values / Virtues} & accessibility, bias, data security, diversity, efficiency, equity, ethics, fair, impact, integrity, interoperability, multilingualism, quality, reproducibility, responsibility, solidarity, transparency, trust, value \\
+\addlinespace
+\textbf{Science and Society} & citizen science, participation, social justice, society, public goods, digital transformation \\
+\addlinespace
+\textbf{Sociotechnical Devices} & ai, api, cloud, infrastructure, pid, platform, publications, repository, services, software, technology, tools \\
+\addlinespace
+\textbf{Stakeholders/Actors} & actor, author, community, european commission, funders, incubators, indigenous people, information professionals, institutions, intermediaries, learned societies, librarians, libraries, organisations, people, policy makers, publishers, researcher, stakeholder, students, team, universities, university presses, users \\
+\bottomrule
+\end{tabularx}}
 \end{table}
 \end{landscape}
-
-
 
 \subsection{Knowledge Graph}
 
 We built a directed knowledge graph from the \textbf{1,067 valid relations} identified in our corpus on second-level manually labeled data with \textbf{146} unique entities. Each relation triple was enriched with its subject’s and object’s Level 1 and Level 2 category labels. The structure of this graph was then analyzed using the \texttt{NetworkX} library to identify thematic sub-structures \cite{hagberg2008exploring}. We applied the Louvain community detection algorithm to the network, which grouped the entities into distinct communities based on their connectivity patterns.
 
-For visualization, we used the \texttt{Pyvis} library to generate an interactive HTML file \cite{perrone2020network}. In this network, node size corresponds to its in-degree, and node color represents its main category, providing an immediate visual summary of an entity's role and classification. Edges are weighted based on the frequency of relations between two nodes. The HTML output includes a custom-built user interface with a dropdown menu, allowing for the interactive filtering of the graph by the algorithmically detected communities. 
-
+For visualization, we used the \texttt{Pyvis} library to generate an interactive HTML file \cite{perrone2020network}. In this network, node size corresponds to its in-degree, and node color represents its main category, providing an immediate visual summary of an entity's role and classification. Edges are weighted based on the frequency of relations between two nodes. The HTML output includes a custom-built user interface with a dropdown menu, allowing for the interactive filtering of the graph by the algorithmically detected communities.
 
 \subsection{Multilayer Network of Citations and Semantics}
 
 Our analysis incorporates a large-scale citation network from a prior study, visualized in Figure~\ref{fig:citation_network}. This network was constructed starting from our primary corpus of 211 articles and was then extended by including their more than 5,600 referenced publications. That research used this network to map the scholarly communities discussing the “open science ecosystem,” finding that the “ecosystem” metaphor emerged independently across several distinct communities of practice, such as those focused on innovation, publishing platforms, and data management standards.
 
-Building on this foundation, our current work integrates that structural citation data with our new semantic knowledge graph. 
-
+Building on this foundation, our current work integrates that structural citation data with our new semantic knowledge graph.
 
 \begin{figure}[H]
 \small
-    \centering
-    \includegraphics[width=0.6\linewidth]{figures/citation-network.png}
-    \caption{The extended citation network of over 5,600 publications, originating from the 211-article primary corpus. Colors indicate distinct scholarly communities.}
-    \label{fig:citation_network}
+\centering
+\includegraphics[width=0.6\linewidth]{figures/citation-network.png}
+\caption{The extended citation network of over 5,600 publications, originating from the 211-article primary corpus. Colors indicate distinct scholarly communities.}
+\label{fig:citation_network}
 \end{figure}
-
 
 \section{Results}
 \label{sec:results}
@@ -348,87 +302,82 @@ Our analysis of the constructed knowledge graph and the integrated multilayer ne
 
 The complete knowledge graph of extracted concepts, shown in Figure~\ref{fig:kg_network}$\footnotemark$, illustrates the dense web of relationships centered around the core concepts of open science. The visualization highlights a core-periphery structure, where central terms like `ecosystem`, `open science`, `policies`, and `researchers` are highly interconnected. In contrast, more specific or technical concepts are situated on the periphery, often connecting to only one or two central themes. This density demonstrates the complexity and the high degree of conceptual overlap within the corpus.
 
-
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=\linewidth]{figures/kg_level2.png}
-    \caption{The full knowledge graph of extracted entities. The dense central cluster reveals the strong interconnection between core concepts, with node colors indicating their classification according to the taxonomy.}
-    \label{fig:kg_network}
+\centering
+\includegraphics[width=\linewidth]{figures/kg_level2.png}
+\caption{The full knowledge graph of extracted entities. The dense central cluster reveals the strong interconnection between core concepts, with node colors indicating their classification according to the taxonomy.}
+\label{fig:kg_network}
 \end{figure}
 
 \footnotetext{An interactive version of this graph is available at: \url{https://knowledge-graph-ecosytem-os.tiiny.site/}}
 
 Particularly noteworthy is  \texttt{ecosystem} node. While not having the highest degree, its position within the dense core and its high betweenness centrality score (Table~\ref{tab:centrality_measures}) underscore its role as a crucial conceptual bridge. It frequently connects disparate topics such as technology, policy, and research practices, acting as a key mediator in the network.
 
-%%%%  
 The knowledge graph consists of \textbf{146 unique entities} (nodes) and \textbf{706 relations} (edges), derived from 1,067 valid semantic relations. To identify the most influential concepts, we analyzed the in-degree, out-degree, and betweenness centrality of the nodes (Table~\ref{tab:centrality_measures}).
 
 As expected given the corpus, \texttt{open science} and \texttt{open access} dominate the centrality rankings, acting as both major subjects and objects of discussion. A notable distinction appears in the roles of related concepts: while the node \texttt{sharing} exhibits a high in-degree (making it a frequently referenced outcome), \texttt{researcher} shows a high out-degree, positioning it as a primary agent. This suggests a common narrative within the literature that frames researchers as the principal actors who perform the action of sharing. This dynamic is further specified by the high centrality of \texttt{data} and \texttt{repository}, indicating that the discourse places a strong emphasis on the specific practice of sharing data via repository-based infrastructures.
 
 \begin{table}[H]
 \small
-    \centering
-    \caption{Top 5 Nodes by Centrality Measures}
-    \label{tab:centrality_measures}
-    \begin{tabular}{lr l r lr}
-        \toprule
-        \multicolumn{2}{c}{\textbf{In-Degree}} & \multicolumn{2}{c}{\textbf{Out-Degree}} & \multicolumn{2}{c}{\textbf{Betweenness Centrality}} \\
-        \cmidrule(r){1-2} \cmidrule(r){3-4} \cmidrule(l){5-6}
-        \textbf{Node} & \textbf{Score} & \textbf{Node} & \textbf{Score} & \textbf{Node} & \textbf{Score} \\
-        \midrule
-        open access     & 0.2621 & open science & 0.4138 & open science & 0.1429 \\
-        sharing         & 0.2069 & open access  & 0.2000 & open access  & 0.1203 \\
-        open science    & 0.1724 & researcher   & 0.2000 & sharing      & 0.1050 \\
-        data            & 0.1724 & repository   & 0.1862 & data         & 0.0941 \\
-        repository      & 0.1448 & data         & 0.1724 & ecosystem    & 0.0671 \\
-        \bottomrule
-    \end{tabular}
+\centering
+\caption{Top 5 Nodes by Centrality Measures}
+\label{tab:centrality_measures}
+\begin{tabular}{lr l r lr}
+\toprule
+\multicolumn{2}{c}{\textbf{In-Degree}} & \multicolumn{2}{c}{\textbf{Out-Degree}} & \multicolumn{2}{c}{\textbf{Betweenness Centrality}} \\
+\cmidrule(r){1-2} \cmidrule(r){3-4} \cmidrule(l){5-6}
+\textbf{Node} & \textbf{Score} & \textbf{Node} & \textbf{Score} & \textbf{Node} & \textbf{Score} \\
+\midrule
+open access     & 0.2621 & open science & 0.4138 & open science & 0.1429 \\
+sharing         & 0.2069 & open access  & 0.2000 & open access  & 0.1203 \\
+open science    & 0.1724 & researcher   & 0.2000 & sharing      & 0.1050 \\
+data            & 0.1724 & repository   & 0.1862 & data         & 0.0941 \\
+repository      & 0.1448 & data         & 0.1724 & ecosystem    & 0.0671 \\
+\bottomrule
+\end{tabular}
 \end{table}
-
 
 To uncover the thematic substructures within the graph, the Louvain algorithm detected seven distinct communities. The most central nodes within each community reveal specialized discourses, as detailed in table ~\ref{tab:community_rankings_1}.
 
-
-
 \begin{table}[H]
 \small
-    \centering
-    \caption{Top Nodes for Communities 1, 2, and 3.}
-    \label{tab:community_rankings_1}
-    \resizebox{\textwidth}{!}{%
-    \begin{tabular}{lr l r lr}
-        \toprule
-        \multicolumn{2}{c}{\textbf{Community 1 (31 members)}} & \multicolumn{2}{c}{\textbf{Community 2 (26 members)}} & \multicolumn{2}{c}{\textbf{Community 3 (22 members)}} \\
-        \cmidrule(r){1-2} \cmidrule(r){3-4} \cmidrule(l){5-6}
-        \textbf{Node} & \textbf{Local Centrality} & \textbf{Node} & \textbf{Local Centrality} & \textbf{Node} & \textbf{Local Centrality} \\
-        \midrule
-        research output & 0.1857 & open access    & 0.1922 & data           & 0.2740 \\
-        infrastructure  & 0.1816 & peer review    & 0.1139 & standards      & 0.2131 \\
-        sharing         & 0.1791 & integrity      & 0.0467 & data practices & 0.1347 \\
-        repository      & 0.1600 & communication  & 0.0406 & quality        & 0.0903 \\
-        tools           & 0.0601 & apc            & 0.0400 & curation       & 0.0889 \\
-        \bottomrule
-    \end{tabular}}
+\centering
+\caption{Top Nodes for Communities 1, 2, and 3.}
+\label{tab:community_rankings_1}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{lr l r lr}
+\toprule
+\multicolumn{2}{c}{\textbf{Community 1 (31 members)}} & \multicolumn{2}{c}{\textbf{Community 2 (26 members)}} & \multicolumn{2}{c}{\textbf{Community 3 (22 members)}} \\
+\cmidrule(r){1-2} \cmidrule(r){3-4} \cmidrule(l){5-6}
+\textbf{Node} & \textbf{Local Centrality} & \textbf{Node} & \textbf{Local Centrality} & \textbf{Node} & \textbf{Local Centrality} \\
+\midrule
+research output & 0.1857 & open access    & 0.1922 & data           & 0.2740 \\
+infrastructure  & 0.1816 & peer review    & 0.1139 & standards      & 0.2131 \\
+sharing         & 0.1791 & integrity      & 0.0467 & data practices & 0.1347 \\
+repository      & 0.1600 & communication  & 0.0406 & quality        & 0.0903 \\
+tools           & 0.0601 & apc            & 0.0400 & curation       & 0.0889 \\
+\bottomrule
+\end{tabular}}
 \end{table}
 
 \begin{table}[H]
-    \centering
-    \caption{Top Nodes for Communities 4, 5, 6, and 7.}
-    \label{tab:community_rankings_2}
-    \resizebox{\textwidth}{!}{%
-    \begin{tabular}{lr l r l r lr}
-        \toprule
-        \multicolumn{2}{c}{\textbf{Community 4 (21)}} & \multicolumn{2}{c}{\textbf{Community 5 (18)}} & \multicolumn{2}{c}{\textbf{Community 6 (15)}} & \multicolumn{2}{c}{\textbf{Community 7 (13)}} \\
-        \cmidrule(r){1-2} \cmidrule(r){3-4} \cmidrule(r){5-6} \cmidrule(l){7-8}
-        \textbf{Node} & \textbf{Centrality} & \textbf{Node} & \textbf{Centrality} & \textbf{Node} & \textbf{Centrality} & \textbf{Node} & \textbf{Centrality} \\
-        \midrule
-        policies      & 0.0360 & ecosystem      & 0.1765 & funding         & 0.0769 & community   & 0.0833 \\
-        open science  & 0.0263 & machine learning & 0.0625 & universities    & 0.0440 & practice    & 0.0530 \\
-        institutions  & 0.0105 & digital transformation & 0.0478 & multilingualism & 0.0055 & metascience & 0.0303 \\
-        governance    & 0.0079 & technology     & 0.0221 & stakeholder     & 0.0000 & bias        & 0.0303 \\
-        trust         & 0.0075 & business       & 0.0000 & impact          & 0.0000 & trials      & 0.0152 \\
-        \bottomrule
-    \end{tabular}}
+\centering
+\caption{Top Nodes for Communities 4, 5, 6, and 7.}
+\label{tab:community_rankings_2}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{lr l r l r lr}
+\toprule
+\multicolumn{2}{c}{\textbf{Community 4 (21)}} & \multicolumn{2}{c}{\textbf{Community 5 (18)}} & \multicolumn{2}{c}{\textbf{Community 6 (15)}} & \multicolumn{2}{c}{\textbf{Community 7 (13)}} \\
+\cmidrule(r){1-2} \cmidrule(r){3-4} \cmidrule(r){5-6} \cmidrule(l){7-8}
+\textbf{Node} & \textbf{Centrality} & \textbf{Node} & \textbf{Centrality} & \textbf{Node} & \textbf{Centrality} & \textbf{Node} & \textbf{Centrality} \\
+\midrule
+policies      & 0.0360 & ecosystem      & 0.1765 & funding         & 0.0769 & community   & 0.0833 \\
+open science  & 0.0263 & machine learning & 0.0625 & universities    & 0.0440 & practice    & 0.0530 \\
+institutions  & 0.0105 & digital transformation & 0.0478 & multilingualism & 0.0055 & metascience & 0.0303 \\
+governance    & 0.0079 & technology     & 0.0221 & stakeholder     & 0.0000 & bias        & 0.0303 \\
+trust         & 0.0075 & business       & 0.0000 & impact          & 0.0000 & trials      & 0.0152 \\
+\bottomrule
+\end{tabular}}
 \end{table}
 
 Community 1 is centered on the material outputs and infrastructure of research, with top nodes like \texttt{research output}, \texttt{infrastructure}, \texttt{sharing}, and \texttt{repository}. Similarly, Community 3 focuses specifically on the practices surrounding research \texttt{data}, such as \texttt{standards}, \texttt{data practices}, and \texttt{curation}.
@@ -437,59 +386,51 @@ Community 4 highlights the intersection of policy and governance. Here, \texttt{
 
 Notably, \textbf{Community 5} is where the \texttt{ecosystem} node itself is most central. As shown in Figure~\ref{fig:community5_zoom}, it is strongly associated with concepts of \texttt{machine learning}, \texttt{digital transformation}, \texttt{technology}, and \texttt{business}. This suggests a distinct discourse where "ecosystem" is used as a techno-economic framework for innovation.
 
-
 \begin{figure}[H]
- \centering
- \includegraphics[width=0.6\linewidth]{figures/community5.png}
- \caption{A focused view of Community 5, where the `ecosystem` node has the highest community centrality.}
- \label{fig:community5_zoom}
+\centering
+\includegraphics[width=0.6\linewidth]{figures/community5.png}
+\caption{A focused view of Community 5, where the `ecosystem` node has the highest community centrality.}
+\label{fig:community5_zoom}
 \end{figure}
 
 Finally, Community 6 relates to the social and financial aspects of research, led by terms like \texttt{funding} and \texttt{stakeholders}, while Community 7 groups together terms related to research \texttt{community} and \texttt{practice} on a meta-scientific level.
 
-
-%%%%%%%%%%%%%%%%%%%
-
 \subsection{Multilayer Network of Concepts and Citations}
 
-
 To understand how these semantic themes are embedded within the scholarly conversation, we constructed a multilayer network, depicted in Figure~\ref{fig:multilayer_network}. This network integrates two distinct types of relationships: semantic mentions and citation links. In this model, the colored nodes represent the main taxonomic categories, while the grey nodes represent individual articles.
-
 
 A key insight from this integrated view comes from analyzing the bridging nodes—those with high betweenness centrality that connect different parts of the graph (Table~\ref{tab:multilayer_centrality}). The most influential bridges in the network are not individual articles, but the thematic concepts themselves. The fact that core concepts from the semantic knowledge graph, such as \texttt{open science}, \texttt{open access}, and \texttt{sharing}, remain the most central nodes even after integrating the citation layer underscores their foundational role.
 
 \begin{figure}[H]
 \small
-    \centering
-    \includegraphics[width=1\linewidth]{figures/multilayer_network.png}
-    \caption{The multilayer network integrating semantic and citation data.}
-    \label{fig:multilayer_network}
+\centering
+\includegraphics[width=1\linewidth]{figures/multilayer_network.png}
+\caption{The multilayer network integrating semantic and citation data.}
+\label{fig:multilayer_network}
 \end{figure}
-
 
 \begin{table}[H]
 \small
-    \centering
-    \caption{Top 10 Most Influential Nodes by Betweenness Centrality in the Multilayer Network}
-    \label{tab:multilayer_centrality}
-    \begin{tabular}{rlr}
-        \toprule
-        \textbf{Rank} & \textbf{Node} & \textbf{Betweenness Score} \\
-        \midrule
-        1  & open science    & 0.0674 \\
-        2  & open access     & 0.0561 \\
-        3  & sharing         & 0.0473 \\
-        4  & data            & 0.0290 \\
-        5  & repository      & 0.0250 \\
-        6  & ecosystem       & 0.0241 \\
-        7  & researcher      & 0.0224 \\
-        8  & community       & 0.0188 \\
-        9  & infrastructure  & 0.0176 \\
-        10 & practice        & 0.0144 \\
-        \bottomrule
-    \end{tabular}
+\centering
+\caption{Top 10 Most Influential Nodes by Betweenness Centrality in the Multilayer Network}
+\label{tab:multilayer_centrality}
+\begin{tabular}{rlr}
+\toprule
+\textbf{Rank} & \textbf{Node} & \textbf{Betweenness Score} \\
+\midrule
+1  & open science    & 0.0674 \\
+2  & open access     & 0.0561 \\
+3  & sharing         & 0.0473 \\
+4  & data            & 0.0290 \\
+5  & repository      & 0.0250 \\
+6  & ecosystem       & 0.0241 \\
+7  & researcher      & 0.0224 \\
+8  & community       & 0.0188 \\
+9  & infrastructure  & 0.0176 \\
+10 & practice        & 0.0144 \\
+\bottomrule
+\end{tabular}
 \end{table}
-
 
 \section{Discussion}
 
@@ -497,7 +438,7 @@ Our analysis, which combines knowledge graph construction for semantic analysis 
 
 These findings, particularly the role of the \texttt{ecosystem} node as a primary 'bridge' in the network, strongly support our central thesis that the term functions as a \textbf{boundary object}. The distinct character of the seven identified communities provides clear evidence for this: the ‘policy’ community (Community 4) and the ‘techno-economic’ community (Community 5), for example, use the same term to frame very different priorities—one of governance, the other of innovation. In this way, the term acts as a flexible tool for disseminating knowledge and coordinating actions between different actors and fields, even when their interpretations vary.
 
-Methodologically, this study provides a novel workflow for analyzing boundary objects through computational methods. Our work in progress shows the power of combining LLMs with network science to analyze complex conceptual evolution. While traditional methods can trace term frequency and map semantics based on a term's primary meaning, our approach maps the \textit{relational structure} of concepts and provides a pipeline for understanding boundary objects through computational analysis. 
+Methodologically, this study provides a novel workflow for analyzing boundary objects through computational methods. Our work in progress shows the power of combining LLMs with network science to analyze complex conceptual evolution. While traditional methods can trace term frequency and map semantics based on a term's primary meaning, our approach maps the \textit{relational structure} of concepts and provides a pipeline for understanding boundary objects through computational analysis.
 
 The workflow of using an LLM for large-scale knowledge extraction, followed by community detection and a multilayer network analysis, helps to capture both the underlying semantic meaning of terms, offering a significant advance in depth over simpler textual analyses.
 
@@ -505,31 +446,19 @@ This ongoing study directly addresses our twofold research question. From the so
 
 This study is, however, subject to certain limitations. Our corpus, while systematically compiled, is limited to a specific set of keywords and the OpenAlex database and may not capture all relevant literature. Furthermore, the LLM-based extraction, despite our validation and cleaning steps, is subject to the model's inherent biases and potential for misinterpretation, which we sought to mitigate through our semi-automated taxonomy creation.
 
-
-%%%%%%%
-
 \section{Future Work}
 
 Further research will extend this study in two main directions. First, we are extending the analysis of the multilayer network. This involves a deeper investigation into the intersection of the semantic communities and the citation network to precisely map how different conceptualizations are cited and propagated by distinct scholarly communities.
 
 Second, while the current analysis provides a static snapshot of the discourse, the created knowledge graph allows for the development of dynamic tools to engage with it. The knowledge graph and its detected communities can serve as a foundation for more advanced, domain-specific applications using a Graph RAG approach. For instance, we plan to create a system that can provide automated, query-focused summaries for each thematic community. This framework can be further extended into a sophisticated question-answering system. Such a tool would allow researchers not only to query the conceptual content of the existing corpus but also to analyze new articles, effectively allowing our static map to interpret emerging discourse.
 
-
-
-
 \newpage
-
-%\section{Acknowledgements}
-
-%This unnumbered section should be blank when submitting your paper. After review, you may include lists of people and organizations who supported the work.
 
 \printbibliography
 
-% You can include an appendix using the following command
 \appendix
 
 \newpage
-
 
 \section{LLM Prompt for Knowledge Extraction}
 \label{app:prompt_structure}
@@ -540,25 +469,25 @@ The following is the full prompt provided to the GPT-3.5 Turbo model for the ext
 You are an expert in knowledge extraction.
 Your task:
 - Focus ONLY on text where the word "ecosystem" appears.
-- From those parts, extract meaningful, well-formed entities (as nodes) 
-  and their relationships (as triples).
+- From those parts, extract meaningful, well-formed entities (as nodes)
+and their relationships (as triples).
 
 Guidelines:
-- Include any terms that directly contain the word "ecosystem" 
-  (e.g., "Open Science Ecosystem", "Blockchain Ecosystem") as part 
-  of the concept list.
-- Only include entities that are concrete or conceptual — no vague 
-  or generic entries.
+- Include any terms that directly contain the word "ecosystem"
+(e.g., "Open Science Ecosystem", "Blockchain Ecosystem") as part
+of the concept list.
+- Only include entities that are concrete or conceptual — no vague
+or generic entries.
 - Limit to a maximum of 20 concepts and maximum of 20 relations.
-- It is perfectly fine if there are fewer than 20 concepts or 
-  relations, depending on the richness of the information.
-- Do NOT invent or hallucinate content that is not explicitly or 
-  implicitly supported by the text.
+- It is perfectly fine if there are fewer than 20 concepts or
+relations, depending on the richness of the information.
+- Do NOT invent or hallucinate content that is not explicitly or
+implicitly supported by the text.
 - Prioritize clarity, importance, and relevance.
 - Avoid very long phrases (keep concept labels under 6-7 words).
-- For relations, avoid generic verbs like "is", "are", or 
-  conjugated forms like "includes". Use meaningful, specific verbs 
-  (e.g., "participate in", "enable", "comprise").
+- For relations, avoid generic verbs like "is", "are", or
+conjugated forms like "includes". Use meaningful, specific verbs
+(e.g., "participate in", "enable", "comprise").
 
 Output Format (strictly):
 Return a valid JSON object with exactly these two keys:
@@ -567,28 +496,21 @@ Return a valid JSON object with exactly these two keys:
 
 Example:
 {
-  "concepts": ["Open Science Ecosystem", "Repositories", 
-               "Researchers", "Knowledge Sharing"],
-  "relations": [
-    ["Researchers", "participate in", "Open Science Ecosystem"],
-    ["Repositories", "enable", "Knowledge Sharing"]
-  ]
+"concepts": ["Open Science Ecosystem", "Repositories",
+"Researchers", "Knowledge Sharing"],
+"relations": [
+["Researchers", "participate in", "Open Science Ecosystem"],
+["Repositories", "enable", "Knowledge Sharing"]
+]
 }
 
 Strict instructions:
-- Only return the JSON object — no explanations, commentary, or 
-  extra text.
+- Only return the JSON object — no explanations, commentary, or
+extra text.
 - Do not repeat terms unnecessarily.
-- Ensure that the JSON is valid (no missing commas, brackets, or 
-  quotation marks).
+- Ensure that the JSON is valid (no missing commas, brackets, or
+quotation marks).
 
 \end{verbatim}
-
-% \section{First Appendix Section} \label{appdx:first}
-
-% Appendix sections should be ordered by letters rather than numbers, and their contents do not count towards the paper's length limit. Appendix sections may also contain additional tables and figures.  
-
-
-
 
 \end{document}

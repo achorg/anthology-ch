@@ -1,57 +1,33 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-%\documentclass{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
-% ADD your own packages using \usepackage{}
 
-% TITLE OF THE SUBMISSION
 \title{A Visualization of Word and Document Embeddings}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1]{Joseph Chataignon}[
-  orcid=0009-0001-5996-8652
+orcid=0009-0001-5996-8652
 ]
 
 \author[1]{Tobias Hodel}[
-  orcid=0000-0002-2071-6407
+orcid=0000-0002-2071-6407
 ]
 
-
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 \affiliation{1}{Digital Humanities Department, University of Bern, Bern, Switzerland}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{Visualization, word embeddings, document embeddings}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
-\pagestart{1200}
-\pageend{1207}
+\pagestart{1204}
+\pageend{1211}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/dSuAPBjLPURS}  
+\doi{10.63744/dSuAPBjLPURS}
 \paperorder{72}
 
 \addbibresource{bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
 
 \maketitle
@@ -62,11 +38,9 @@ This paper introduces an open-source visualization tool designed to enhance the 
 Implemented using a web interface, the tool supports multiple datasets for document embeddings and utilizes pre-trained models like GloVe for word embeddings and Sentence-Transformers for document embeddings. User feedback indicates that the tool is effective in improving the understanding of embeddings. Future work includes enhancing the interface, incorporating more embedding models, and translating the interface into additional languages. This tool represents a step forward in making advanced NLP concepts accessible to a wider audience.
 \end{abstract}
 
-
-
 \section{Introduction}
 
-Word embeddings have emerged as a crucial component of text processing applications, playing a pivotal role in enabling machines to interpret the semantics of natural language. By translating words into high-dimensional numerical vectors, these embeddings encapsulate the meaning and the relationships of words, thereby forming the bedrock of the most recent advances in natural language processing (NLP). The advent of large language models (LLMs), in particular, has underscored the importance of word embeddings, as these models rely heavily on the nuanced representations of words to generate coherent and contextually relevant text. The rapid advancement and widespread adoption of LLMs in recent years mean that many areas, such as machine translation, sentiment analysis, and text generation, are dependent on the effectiveness of word embeddings. 
+Word embeddings have emerged as a crucial component of text processing applications, playing a pivotal role in enabling machines to interpret the semantics of natural language. By translating words into high-dimensional numerical vectors, these embeddings encapsulate the meaning and the relationships of words, thereby forming the bedrock of the most recent advances in natural language processing (NLP). The advent of large language models (LLMs), in particular, has underscored the importance of word embeddings, as these models rely heavily on the nuanced representations of words to generate coherent and contextually relevant text. The rapid advancement and widespread adoption of LLMs in recent years mean that many areas, such as machine translation, sentiment analysis, and text generation, are dependent on the effectiveness of word embeddings.
 
 A similar technique applied to documents produces document embeddings. Document embeddings are vectors of a high-dimensional space that encapsulate the meaning and relationships of whole documents. They too have proven useful in a number of tasks such as document retrieval and document classification.
 
@@ -76,11 +50,9 @@ This paper presents a visualization tool that aims to improve the comprehension 
 
 While word and document embeddings have taken an important place in modern NLP, there remains a gap in accessible visualization tools that bridge the technical complexity of these representations with the needs of non-technical users. This section reviews existing approaches to embedding visualization.
 
-%word
 Numerous visualization approaches for word embeddings have been developed with varying degrees of user accessibility, though relatively few are deployed as publicly accessible web interfaces.
 Existing online word embedding visualizers, such as W2V Explorer \cite{cortext2024w2vexplorer} and TensorFlow's Word2Vec Projector \cite{tensorflow2024w2vprojector}, provide intuitive interfaces but have limitations in their capacity to reconfigure the projection space based on user-selected subsets of data.
 
-%doc
 The landscape of document embedding visualization tools presents similar accessibility challenges. While several visualizations of document embeddings have been made available online, these implementations are predominantly distributed within computational notebooks \cite{motherduck2024embedding} \cite{grootendorst2022bertopic} and code repositories, creating accessibility barriers for humanities scholars without programming expertise. RAGxplorer \cite{chua2024ragxplorer} offers a simple interface but strong limitations on the type of data that can be visualized. Critically, similar to word embedding visualization tools, none of these existing solutions natively allow users to reset the dimensionality reduction projection based on a selection of items.
 
 \subsection{Objective}
@@ -100,38 +72,28 @@ The two-dimensional projection space should be fully explorable, with functional
 
 In addition, the application is:
 \begin{itemize}
-    \item \textbf{open-source.} The tool is released under an open-source license to ensure widespread access. It can be used, modified, and distributed freely by anyone, thus promoting collaborative improvement and innovation.
-    \item \textbf{multi-user.} Deployed online, the visualization tool is able to support multiple users concurrently.
-    \item \textbf{multi-lingual.} The interface is currently being translated and will be made available in multiple languages to enhance accessibility for a global audience.
+\item \textbf{open-source.} The tool is released under an open-source license to ensure widespread access. It can be used, modified, and distributed freely by anyone, thus promoting collaborative improvement and innovation.
+\item \textbf{multi-user.} Deployed online, the visualization tool is able to support multiple users concurrently.
+\item \textbf{multi-lingual.} The interface is currently being translated and will be made available in multiple languages to enhance accessibility for a global audience.
 \end{itemize}
-
 
 \subsection{Tools} \label{tools}
 
-
-
-\noindent
-\textbf{Models.} For word embeddings, we chose to use a pre-trained GloVe \cite{pennington2014glove} model. It was trained on text from the English Wikipedia and the English Gigaword 5 dataset of newswire text data. It has a vocabulary of 400,000 words, and the word vectors have 300 dimensions.
+\paragraph{Models.} For word embeddings, we chose to use a pre-trained GloVe \cite{pennington2014glove} model. It was trained on text from the English Wikipedia and the English Gigaword 5 dataset of newswire text data. It has a vocabulary of 400,000 words, and the word vectors have 300 dimensions.
 For document embeddings we used the Sentence-Transformers fine-tuned model all-MiniLM-L6-v2 available at Hugging Face \cite{miniLM}. This model maps documents to a 384-dimensional space.
-It was pre-trained with contrastive loss on a total of 1.17 billion sentence pairs from various datasets. 
+It was pre-trained with contrastive loss on a total of 1.17 billion sentence pairs from various datasets.
 
-
-
-\noindent
-\textbf{Datasets.} For document embeddings, 5 datasets are made available to the user to choose from:
+\paragraph{Datasets.} For document embeddings, 5 datasets are made available to the user to choose from:
 \begin{itemize}
-    \item Reuters-21578 \cite{lewis1987reuters21578}, a dataset of short news articles.
-    \item Dbpedia-14 \cite{dbpedia2014} \cite{zhang2015dbpedia}, a collection of encyclopedic articles.
-    \item eli5 \cite{fan2019eli5}, a dataset of pairs of questions-answers.
-    \item gooaq \cite{gooaq2021}, another dataset of pairs of questions-answers.
-    \item AGnews \cite{gulli2005agnews} \cite{zhang2015ag}, a second dataset of news articles.
+\item Reuters-21578 \cite{lewis1987reuters21578}, a dataset of short news articles.
+\item Dbpedia-14 \cite{dbpedia2014} \cite{zhang2015dbpedia}, a collection of encyclopedic articles.
+\item eli5 \cite{fan2019eli5}, a dataset of pairs of questions-answers.
+\item gooaq \cite{gooaq2021}, another dataset of pairs of questions-answers.
+\item AGnews \cite{gulli2005agnews} \cite{zhang2015ag}, a second dataset of news articles.
 \end{itemize}
 These datasets were chosen because they contain documents of a few sentences, short enough to be understood quickly in the interface.
 
-
-
-\noindent
-\textbf{Software.} 
+\paragraph{Software.}
 The visualization uses a web interface and includes the Javascript library Plotly \cite{plotly} to display vectors. The back-end is a program written in Python with Flask. The Python libraries Numpy, Gensim, Scikit-learn, Sentence-transformers and Huggingface-datasets were used.
 
 \section{Implementation}
@@ -142,16 +104,15 @@ The visualization application can be deployed either in word embedding mode or i
 
 The detail of the architecture is shown in Figure~\ref{fig:architecture}. In the user's browser, the interface is made of an HTML template that includes a Plotly canvas. The interactive elements are managed with Javascript code, including the Plotly.js module to display the embeddings.
 
-On the server side, a Flask application handles multiple endpoints to render the main page, load the embeddings, search words or documents, reset the projection, and fetch the interface translations. An EmbeddingVisualizer module handles the data processing. A session management module is used to separate the various settings of concurrent users. 
+On the server side, a Flask application handles multiple endpoints to render the main page, load the embeddings, search words or documents, reset the projection, and fetch the interface translations. An EmbeddingVisualizer module handles the data processing. A session management module is used to separate the various settings of concurrent users.
 
 Large resources such as datasets and embedding models are kept on the server for fast access.
 
-
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=\linewidth]{figures/embedding_viz_architecture.png}
-  \caption{Architecture of the application.}
-  \label{fig:architecture}
+\centering
+\includegraphics[width=\linewidth]{figures/embedding_viz_architecture.png}
+\caption{Architecture of the application.}
+\label{fig:architecture}
 \end{figure}
 
 \subsection{Interface}
@@ -162,31 +123,30 @@ In both modes, users can select their preferred interface language using a langu
 In document embedding mode, the first component of the interface is the drop-down menu to select a dataset, shown in Figure \ref{fig:screenshot_doc}.2 . This feature allows users to choose one of the five datasets mentioned in section \ref{tools}. The button labelled "Load Embeddings" (Figure \ref{fig:screenshot_doc}.3), when clicked, computes and stores the embeddings of all the documents in the selected dataset.
 These elements are not present in word embedding mode, because only the GloVe model and its vocabulary are available. It is therefore loaded by default when the application starts.
 
-To search and select specific words or documents to visualize, a search bar is available (Figure \ref{fig:screenshot_word}.2 and Figure \ref{fig:screenshot_doc}.4). By simply typing in the search bar, users can filter through the vast array of options and find the exact item, word, or document, that they wish to visualize. Once selected, an item remains displayed in the search bar for an intuitive view of the current selection. 
+To search and select specific words or documents to visualize, a search bar is available (Figure \ref{fig:screenshot_word}.2 and Figure \ref{fig:screenshot_doc}.4). By simply typing in the search bar, users can filter through the vast array of options and find the exact item, word, or document, that they wish to visualize. Once selected, an item remains displayed in the search bar for an intuitive view of the current selection.
 
-The plot area (Figure \ref{fig:screenshot_word}.3 and Figure \ref{fig:screenshot_doc}.5) follows the search and selection, and forms the heart of the visualization. Selected items are displayed as bright dots, and the 10 nearest neighbors of each selected item are displayed in a dimmer color. 
+The plot area (Figure \ref{fig:screenshot_word}.3 and Figure \ref{fig:screenshot_doc}.5) follows the search and selection, and forms the heart of the visualization. Selected items are displayed as bright dots, and the 10 nearest neighbors of each selected item are displayed in a dimmer color.
 In word embedding mode, the words are displayed next to their corresponding dot. In document embedding mode, the titles of documents are displayed instead.
-%
+
 The plot area has control buttons (Figure \ref{fig:screenshot_doc}.7) that appear when hovering the mouse over it, to move through the embedding space or download an image of the plot.
 
 The last notable feature of the interface is the button to reset the projection based on the selected items (Figure \ref{fig:screenshot_word}.4 and Figure \ref{fig:screenshot_doc}.6). As explained in section \ref{tools}, the embedding models we use produce embedding vectors of length 300 for words, and 384 for documents. The projection from the resulting 300-dimensional space or 384-dimensional space into a 2-dimensional space suitable for plotting is determined using Principal Component Analysis (PCA). PCA is a dimensionality reduction technique that preserves the most significant variations in the data. At the start, by default, we run the PCA on the whole dataset. But users can use this button to re-run the PCA only on the selected items instead of the whole dataset. When the button is clicked, the PCA is computed again on the selected words only, producing a new projection from high dimensions to 2 dimensions, which is then applied to the whole dataset. In practice, this allows users to highlight the variations that exist between selected items. The new projection sets the selected words apart from each other, and lets users see how other words compare to them.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.9\linewidth]{figures/Screenshot_20250715_185728_edited.png}
-  \caption{Screenshot of the user interface in word embedding mode. The following elements are labelled with numbers: (1) language selection (2) word search bar (3) plot area (4) button to re-set the projection}
-  \label{fig:screenshot_word}
+\centering
+\includegraphics[width=0.9\linewidth]{figures/Screenshot_20250715_185728_edited.png}
+\caption{Screenshot of the user interface in word embedding mode. The following elements are labelled with numbers: (1) language selection (2) word search bar (3) plot area (4) button to re-set the projection}
+\label{fig:screenshot_word}
 \end{figure}
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.9\linewidth]{figures/Screenshot_20250715_191049_edited.png}
-  \caption{Screenshot of the user interface in document embedding mode. The following elements are labelled with numbers: (1) language selection (2) dataset selection (3) button to load the dataset's embeddings (4) document search bar (5) plot area (6) button to re-set the projection (7) plot area controls}
-  \label{fig:screenshot_doc}
+\centering
+\includegraphics[width=0.9\linewidth]{figures/Screenshot_20250715_191049_edited.png}
+\caption{Screenshot of the user interface in document embedding mode. The following elements are labelled with numbers: (1) language selection (2) dataset selection (3) button to load the dataset's embeddings (4) document search bar (5) plot area (6) button to re-set the projection (7) plot area controls}
+\label{fig:screenshot_doc}
 \end{figure}
 
-
-In addition, the application incorporates a dedicated section at the end that provides explanations about embeddings in general and the specific features of the visualization. 
+In addition, the application incorporates a dedicated section at the end that provides explanations about embeddings in general and the specific features of the visualization.
 
 \section{Results and discussion}
 
@@ -209,20 +169,6 @@ The visualization tool has shown success in improving the comprehension of word 
 
 Looking ahead, several areas have been identified for future work to enhance the tool's functionality and accessibility. Firstly, clarifying the interface to make features more comprehensible, particularly the feature to reset the projection, is essential. This could involve providing more detailed and clearer explanations or tooltips to guide users. Secondly, incorporating a wider range of embedding models, especially more modern word embedding models, will ensure that the tool remains up-to-date with the latest advancements in the field. In addition, we consider facilitating the use of user-uploaded datasets for the document embeddings visualization, which would let users analyze the embedding structure of their own data. Lastly, we will work on translating the interface into additional languages to enhance the tool's accessibility, as it is currently available only in English and French. By addressing these areas, the visualization tool can continue to evolve and serve as a valuable resource for researchers and practitioners in the field of NLP.
 
-
-
-
-% \section*{Acknowledgements}
-
-% This unnumbered section should be blank when submitting your paper. After review, you may include lists of people and organizations who supported the work.
-
-
-% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
 \printbibliography
-
-% You can include an appendix using the following command
-% \appendix
-% \section{First Appendix Section} \label{appdx:first}
-% Appendix sections should be ordered by letters rather than numbers, and their contents do not count towards the paper's length limit. Appendix sections may also contain additional tables and figures.  
 
 \end{document}

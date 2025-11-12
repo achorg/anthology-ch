@@ -1,14 +1,7 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-%\documentclass{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
-% ADD your own packages using \usepackage{}
 
 \usepackage{tcolorbox}
 \usepackage{fancyvrb}
@@ -16,51 +9,33 @@
 \usepackage{listings}
 \lstset{commentstyle=\color{blue},morecomment=[l]{//}}
 
-% \usepackage{xeCJK}
-% \usepackage{CJKutf8}
-
 \newfontfamily\zhfont{Songti SC}
 \DeclareTextFontCommand{\textzh}{\zhfont}
-\setmonofont{Songti SC} % or another CJK-capable mono font
+\setmonofont{Songti SC}
 
-
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{Toward Tracing Knowledge Flows in Martial Arts: Biographical Data and Interpersonal Contacts}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1,2]{Yumeng Hou}[
-  orcid=0000-0002-7908-0693
+orcid=0000-0002-7908-0693
 ]
 
-
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 \affiliation{1}{Faculty of Arts and Social Sciences, National University of Singapore, Singapore}
 \affiliation{2}{Centre for Computational Social Science and Humanities, National University of Singapore, Singapore}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{knowledge extraction, martial arts, biographical data, interpersonal contact, prompt engineering}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
-\pagestart{1448}
-\pageend{1461}
+\pagestart{1453}
+\pageend{1466}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/m8c605kSTaEM}  
+\doi{10.63744/m8c605kSTaEM}
 \paperorder{91}
 
 \addbibresource{bibliography.bib}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % HERE IS THE START OF THE TEXT
@@ -311,22 +286,22 @@ You must output the result as valid JSON.
 
 ## Fields to extract in JSON schema
 {
-  "人名": "string or null",			        // Name
-  "字": "string or null",				         // Courtesy Name
-  "号": "string or null",				         // Style Name
-  "别名": ["string", ...] or [],			   // Aliases
-  "人物简介": "string or null",			    // Biography
-  "民族": "string or null",			        // Ethnicity
-  "组织机构": ["string", ...] or [],	 // Organisations
-  "职业": ["string", ...] or [],			   // Occupations
-  "朝代": "string or null",			        // Dynasty
-  "籍贯": "string or null",			        // Place of Birth
-  "生日": "YYYY-MM-DD or null",		     // Date of Birth
-  "卒日": "YYYY-MM-DD or null",		     // Date of Death
-  "创作作品": ["string", ...] or [],		// Works Authored
-  "提及作品": ["string", ...] or [],		// Works Mentioned
-  "拳种": ["string", ...] or [],			   // Martial Arts Practised
-  "事件": ["string", ...] or []			    // Related Events
+  "人名": "string or null",             // Name
+  "字": "string or null",                 // Courtesy Name
+  "号": "string or null",                 // Style Name
+  "别名": ["string", ...] or [],         // Aliases
+  "人物简介": "string or null",         // Biography
+  "民族": "string or null",             // Ethnicity
+  "组织机构": ["string", ...] or [],   // Organisations
+  "职业": ["string", ...] or [],         // Occupations
+  "朝代": "string or null",             // Dynasty
+  "籍贯": "string or null",             // Place of Birth
+  "生日": "YYYY-MM-DD or null",        // Date of Birth
+  "卒日": "YYYY-MM-DD or null",        // Date of Death
+  "创作作品": ["string", ...] or [],    // Works Authored
+  "提及作品": ["string", ...] or [],    // Works Mentioned
+  "拳种": ["string", ...] or [],         // Martial Arts Practised
+  "事件": ["string", ...] or []         // Related Events
 }
 
 ## Additional Rules
@@ -380,12 +355,12 @@ Extract structured relationship data from the given text and output the result a
 
 ## Relations to extract in JSON schema
 {
-    "起点实体": "string",				   // StartEntity
-    "终点实体": "string",				   // EndEntity
-    "起点实体类型": "string",			// StartEntityType
-    "终点实体类型": "string",			// EndEntityType
-    "关系类型": "string",				   // RelationType
-    "关系描述": "string"				    // RelationDescription
+    "起点实体": "string",          // StartEntity
+    "终点实体": "string",          // EndEntity
+    "起点实体类型": "string",     // StartEntityType
+    "终点实体类型": "string",     // EndEntityType
+    "关系类型": "string",          // RelationType
+    "关系描述": "string"            // RelationDescription
 }
 
 ## Additional Rules
@@ -409,13 +384,13 @@ supports this relation.
 
 <assistant_response id="example-1">
 {
-    "起点实体": "马捷元",			   // StartEntity: Ma Jieyuan
-    "终点实体": "马英图",			   // EndEntity: Ma Yingtu
-    "起点实体类型": "人物",			 // StartEntityType: Person
-    "终点实体类型": "人物",			 // EndEntityType: Person
-    "关系类型": "父子",				    // RelationType: Father–Son
-    "关系描述": 					          // RelationDescription
-    "马英图(1898—1956) 字健勋。回族。河北省沧县杨石桥(今属孟村回族自治县)人.幼从父马捷元习武"				
+    "起点实体": "马捷元",         // StartEntity: Ma Jieyuan
+    "终点实体": "马英图",         // EndEntity: Ma Yingtu
+    "起点实体类型": "人物",      // StartEntityType: Person
+    "终点实体类型": "人物",      // EndEntityType: Person
+    "关系类型": "父子",           // RelationType: Father–Son
+    "关系描述":                     // RelationDescription
+    "马英图(1898—1956) 字健勋。回族。河北省沧县杨石桥(今属孟村回族自治县)人.幼从父马捷元习武"       
 }
 </assistant_response>
 \end{verbatim}

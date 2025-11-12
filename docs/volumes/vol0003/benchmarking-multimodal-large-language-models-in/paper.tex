@@ -1,72 +1,43 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-%\documentclass{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
-% ADD your packages using \usepackage{}
 
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
-\title{Benchmarking Multimodal Large Language Models in Zero-shot and Few-shot Scenarios: Preliminary Results on Studying Christian Iconography
-}
+\title{Benchmarking Multimodal Large Language Models in Zero-shot and Few-shot Scenarios: Preliminary Results on Studying Christian Iconography}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% The numbers in brackets indicate the associated affiliations 
-% (next section) and ORCID ID for each author.  
 \author[1,2]{Gianmarco Spinaci}[
-  orcid=0000-0002-3504-3241
+orcid=0000-0002-3504-3241
 ]
 
 \author[2]{Lukas Klic}[
-  orcid=0000-0002-9620-7107
+orcid=0000-0002-9620-7107
 ]
 
-% While we encourage including ORCID-IDs for all authors, you can
-% include authors that do not have one by defining an empty ID.
 \author[1,3]{Giovanni Colavizza}[
-  orcid=0000-0002-9806-084X
+orcid=0000-0002-9806-084X
 ]
 
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to various authors. 
 \affiliation{1}{Department of Classical Philology and Italian Studies, University of Bologna, Bologna, Italy}
 \affiliation{2}{Villa i Tatti, The Harvard University Center for Italian Renaissance Studies, Firenze, Italy}
 \affiliation{3}{Department of Communication, University of Copenhagen, Copenhagen, Denmark}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases separated by commas
-% using the following command
 \keywords{Multimodal Models, Large Language Models, Image Classification, Iconography}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
-\pagestart{1178}
-\pageend{1190}
+\pagestart{1182}
+\pageend{1194}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/oxWtm5MhhwBH}  
+\doi{10.63744/oxWtm5MhhwBH}
 \paperorder{70}
 
 \addbibresource{bibliography.bib}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 
 \begin{document}
 
 \maketitle
 
-%TC:ignore 
 \begin{abstract}
 This study evaluates the capabilities of multimodal large language models (LLMs) in the task of single-label classification of Christian iconography, focusing on their performance in zero-shot and few-shot settings across curated datasets. The goal was to assess whether general-purpose models, such as \textit{GPT-4o} and \textit{Gemini 2.5}, can interpret the Iconography, typically addressed by supervised classifiers, and evaluate their performance. Two research questions guided the analysis: \textbf{(RQ1)} How do multimodal LLMs perform on image classification of Christian saints? And \textbf{(RQ2)}, how does performance vary when enriching input with contextual information or few-shot exemplars?
 
@@ -76,10 +47,10 @@ The findings show that \textit{Gemini-2.5 Pro} and \textit{GPT-4o} outperformed 
 
 We conclude that general-purpose multimodal LLMs are capable of classification in visually complex cultural heritage domains, even without specific fine-tuning. However, their performance is influenced by dataset consistency and the design of the prompts. These results support the application of LLMs as metadata curation tools in digital humanities workflows, suggesting future research on prompt optimization and the expansion of the study to other classification strategies and models.
 \end{abstract}
-%TC:endignore
-\section{Introduction} 
 
-For over two decades, the GLAM sector (galleries, libraries, archives, and museums) has undergone an extensive mass digitization process, resulting in a vast amount of digital archives containing a diverse array of artworks, photographs, and documents \cite{hawkins_archives_2022}. This rapid growth is transforming the analogical Cultural Heritage into a body of machine-readable knowledge, defining a critical mass of images and their metadata and serving as input to research in Artificial Intelligence (AI) and Computer Vision \cite{mishra_artificial_2024}. 
+\section{Introduction}
+
+For over two decades, the GLAM sector (galleries, libraries, archives, and museums) has undergone an extensive mass digitization process, resulting in a vast amount of digital archives containing a diverse array of artworks, photographs, and documents \cite{hawkins_archives_2022}. This rapid growth is transforming the analogical Cultural Heritage into a body of machine-readable knowledge, defining a critical mass of images and their metadata and serving as input to research in Artificial Intelligence (AI) and Computer Vision \cite{mishra_artificial_2024}.
 
 Computer Vision is a part of AI and Computer Science that enables computers to analyze, interpret, and make decisions based on image characteristics. At its core, it extracts and analyzes visual patterns, with applications that span the fields of medicine, robotics, and cultural heritage \cite{cetinic_understanding_2022, castellano_deep_2021}, with main tasks that include image classification \cite{cosovic_cnn_2020, jankovic_machine_2019, yu_image_2024}, object detection \cite{Gonthier_2018_ECCV_Workshops, inoue_2018_cvpr}, and semantic segmentation \cite{liu_recent_2019}. Among these, \textbf{image classification} stands out for its applicability to the semantically and visually complex objects in the Cultural Heritage field. For this task, the previously mentioned datasets are well-suited for image classification, as they also contain metadata, usually created by domain experts, that describes the general content of the images.
 
@@ -89,7 +60,7 @@ These datasets have become more significant and widely utilized due to the subst
 
 Over the last few years, several initiatives have been launched to leverage multimodal models and achieve state-of-the-art results in image classification on datasets such as Iconclass, that has been subject to several studies \cite{labusch2023gauging, santini2023multimodal, Springstein_2024_WACV}. Another example is fine-grained food image recognition through vision-language models \cite{kim_multimodal_2024}, leveraging \textit{CLIP} and image descriptions generated with \textit{MiniGPT-4} over data from two different datasets. Another study explores the use of off-the-shelf multimodal models, including \textit{CLIP}, \textit{SigLIP}, and \textit{BLIP-2} \cite{li_blip-2_2023}, in a zero-shot environment for classifying historical photographs in the Estonian Ajapaik archive \cite{maksimova_viability_2024}. The authors found these models to be underperforming in comparison to a fine-tuned supervised baseline for ambiguous or culturally specific categories, such as “viewpoint elevation”. For the case of image classification of Christian saints, the literature contains applications of CNNs to classify Christian iconography in artworks. For Example, in the paper introducing \textit{ArtDL} \cite{milani_dataset_2021}, the authors trained a \textit{ResNet50} model, achieving an accuracy of \textit{84.44\%} in identifying the depicted saints.
 
-These experiments demonstrate a growing interest in using multimodal models for general-purpose image classification tasks. Many advancements in the state-of-the-art have been achieved by implementing these models, and most importantly, by enhancing the accuracy scores of these models through the addition of meaningful context to the prompts \cite{kim_multimodal_2024}. Despite this interest, the literature has not yet benchmarked LLMs specifically for classification in Christian iconography. This gap in the literature highlights the novelty of our preliminary investigation, which aims to address the following research questions: \textbf{(RQ1)} How do LLMs perform on the classification of Christian saints? \textbf{(RQ2)} How do the results change with the progressive enrichment of contextual data, such as adding more descriptive data or tagged exemplars? 
+These experiments demonstrate a growing interest in using multimodal models for general-purpose image classification tasks. Many advancements in the state-of-the-art have been achieved by implementing these models, and most importantly, by enhancing the accuracy scores of these models through the addition of meaningful context to the prompts \cite{kim_multimodal_2024}. Despite this interest, the literature has not yet benchmarked LLMs specifically for classification in Christian iconography. This gap in the literature highlights the novelty of our preliminary investigation, which aims to address the following research questions: \textbf{(RQ1)} How do LLMs perform on the classification of Christian saints? \textbf{(RQ2)} How do the results change with the progressive enrichment of contextual data, such as adding more descriptive data or tagged exemplars?
 
 \section{Methodology}
 
@@ -109,17 +80,17 @@ The \textit{ICONCLASS} \cite{posthumus_iconclass_2020} dataset originates from t
 
 \subsubsection{Wikidata}
 
-To expand our benchmark beyond curated archives, we compiled a dataset of religious artworks using the \textit{Wikidata SPARQL endpoint}. We designed a SPARQL query to detect paintings\footnote{In Wikidata are instances of type \textit{“wd:Q3305213”}} with a valid image URL and associated with Iconclass codes representing Christian saints and the Virgin Mary (using the same codes as the \textit{ICONCLASS} dataset). After filtering out multi-label entries, failed downloads, and duplicates, we retained \textbf{718 images} of paintings. Images were retrieved in their original size, preserving native aspect ratios. 
+To expand our benchmark beyond curated archives, we compiled a dataset of religious artworks using the \textit{Wikidata SPARQL endpoint}. We designed a SPARQL query to detect paintings\footnote{In Wikidata are instances of type \textit{“wd:Q3305213”}} with a valid image URL and associated with Iconclass codes representing Christian saints and the Virgin Mary (using the same codes as the \textit{ICONCLASS} dataset). After filtering out multi-label entries, failed downloads, and duplicates, we retained \textbf{718 images} of paintings. Images were retrieved in their original size, preserving native aspect ratios.
 
 \subsubsection{Cross-Dataset Similarity Analysis}
 
 To assess dataset independence and uncover overlaps that could bias evaluation results, we conducted a cross-dataset similarity analysis using a robust block-based image hashing method inspired by digital image forensics \cite{steinebach_robust_2012}. This approach identifies near-duplicate images across datasets, even those that have been transformed, such as cropping or mirroring. This method is particularly suitable for comparing art datasets, where visual duplicates may originate from different digitization pipelines or cataloging standards, resulting in varying representations of the same artwork. We defined a duplicate as any pair of images across datasets with a Hamming distance of 8 or less, identifying \textbf{36 cross-dataset duplicate} pairs using the robust hash, primarily between ArtDL and Wikidata (Figure \ref{fig:cross-dataset}).
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.8\linewidth]{figures/img1.png}
-  \caption{Example of image pairs deemed as similar (Hamming distance less than or equal to 8)}
-  \label{fig:cross-dataset}
+\centering
+\includegraphics[width=0.8\linewidth]{figures/img1.png}
+\caption{Example of image pairs deemed as similar (Hamming distance less than or equal to 8)}
+\label{fig:cross-dataset}
 \end{figure}
 
 \subsection{Models}
@@ -130,22 +101,13 @@ We assess unified multimodal models, such as OpenAI \textit{GPT-4o (snapshot 202
 
 \subsection{Benchmarking design}
 
-For building the benchmarking, we employed three distinct test configurations applied across models and datasets. This framework assesses model performance under varying conditions of knowledge availability. 
+For building the benchmarking, we employed three distinct test configurations applied across models and datasets. This framework assesses model performance under varying conditions of knowledge availability.
 
+\paragraph{Test 1} is a zero-shot classification task with labeled names. The models classify images using only class label names (e.g., "St. Paul" or "Mary Magdalene") without additional contextual information. This configuration tests the model's ability to leverage pre-trained knowledge connections between visual features and semantic concepts.
 
+\paragraph{Test 2} is a zero-shot classification task with label descriptions. The Models receive detailed iconographic descriptions for each class, retrieved from Iconclass descriptions (e.g., "The penitent harlot Mary Magdalene; possible attributes: book (or scroll), crown …"). This approach evaluates how effectively models can utilize rich textual descriptions to guide visual classification.
 
-\noindent
-\textbf{Test 1} is a zero-shot classification task with labeled names. The models classify images using only class label names (e.g., "St. Paul" or "Mary Magdalene") without additional contextual information. This configuration tests the model's ability to leverage pre-trained knowledge connections between visual features and semantic concepts. 
-
-
-
-\noindent
-\textbf{Test 2} is a zero-shot classification task with label descriptions. The Models receive detailed iconographic descriptions for each class, retrieved from Iconclass descriptions (e.g., "The penitent harlot Mary Magdalene; possible attributes: book (or scroll), crown …"). This approach evaluates how effectively models can utilize rich textual descriptions to guide visual classification. 
-
-
-
-\noindent
-\textbf{Test 3} is a few-shot Learning classification task. During inference, LLMs are provided with an arbitrary number of five example images, along with their corresponding class labels. The images have been chosen to represent the five among the less performing classes from the first test. This configuration assesses the models' capacity for rapid adaptation and in-context learning from limited examples.
+\paragraph{Test 3} is a few-shot Learning classification task. During inference, LLMs are provided with an arbitrary number of five example images, along with their corresponding class labels. The images have been chosen to represent the five among the less performing classes from the first test. This configuration assesses the models' capacity for rapid adaptation and in-context learning from limited examples.
 
 \subsubsection{Technical implementation}
 
@@ -159,31 +121,31 @@ These closed-source models are accessed via API endpoints and have transparency 
 
 \section{Results}
 
-This section presents the preliminary results of the benchmarking experiments, which are structured to assess the classification performance of the models for each test in a progressive manner. We begin by establishing a supervised baseline. To ensure the reliability of our evaluation, we then include a cross-dataset analysis, which serves as a consistency check and measures whether models consistently assign stable predictions to similar images across the datasets. We then report overall accuracy scores across all models, datasets, and test configurations for a fine-grained benchmarking on iconographic classification. 
+This section presents the preliminary results of the benchmarking experiments, which are structured to assess the classification performance of the models for each test in a progressive manner. We begin by establishing a supervised baseline. To ensure the reliability of our evaluation, we then include a cross-dataset analysis, which serves as a consistency check and measures whether models consistently assign stable predictions to similar images across the datasets. We then report overall accuracy scores across all models, datasets, and test configurations for a fine-grained benchmarking on iconographic classification.
 
 \subsection{Baseline}
 
-To evaluate the models’ performances, we established a baseline based on supervised CNNs using \textit{ResNet50} architecture following the same methodology from the \textit{ArtDL} paper \cite{milani_dataset_2021}. 
+To evaluate the models’ performances, we established a baseline based on supervised CNNs using \textit{ResNet50} architecture following the same methodology from the \textit{ArtDL} paper \cite{milani_dataset_2021}.
 We leveraged two models, which were explicitly fine-tuned on an 80\% split of the images detected for the \textit{ICONCLASS} and \textit{Wikidata} datasets, respectively. The remaining 20\% has been used for testing. On ICONCLASS, this approach achieved an accuracy of \textbf{40.46\%}, while on Wikidata, it reached an accuracy of \textbf{43.97\%}. Please refer to Appendix \ref{appdx:first} for technical implementations and hyperparameters.
 
 \subsection{Cross-dataset consistency}
 
-We evaluate the robustness of model predictions by conducting a cross-dataset consistency analysis across \textbf{36 matched image pairs} in the three test scenarios. The goal was to measure the percentage of image pairs for which both images received identical model predictions. The results are shown in Table \ref{tab:model_consistency}. The models demonstrated low consistency and greater sensitivity to the test configuration, particularly in terms of image sizes. \textit{GPT-4o} ranged from \textbf{25.00\%} in the first test to \textbf{27.78\%} in the second and third tests. \textit{GPT-4o-mini} had slightly lower overall scores but followed a similar trend. \textit{Gemini-2.5-Flash} achieved consistency between \textbf{30.56\%} and \textbf{33.33\%}, while \textit{Gemini-2.5-Pro} maintained a stable performance of \textbf{33.33\%} across all tests, resulting in being the one with overall higher consistency. 
+We evaluate the robustness of model predictions by conducting a cross-dataset consistency analysis across \textbf{36 matched image pairs} in the three test scenarios. The goal was to measure the percentage of image pairs for which both images received identical model predictions. The results are shown in Table \ref{tab:model_consistency}. The models demonstrated low consistency and greater sensitivity to the test configuration, particularly in terms of image sizes. \textit{GPT-4o} ranged from \textbf{25.00\%} in the first test to \textbf{27.78\%} in the second and third tests. \textit{GPT-4o-mini} had slightly lower overall scores but followed a similar trend. \textit{Gemini-2.5-Flash} achieved consistency between \textbf{30.56\%} and \textbf{33.33\%}, while \textit{Gemini-2.5-Pro} maintained a stable performance of \textbf{33.33\%} across all tests, resulting in being the one with overall higher consistency.
 
 \begin{table}[h]
-  \centering 
-  \begin{tabular}{lcccc}
-    \toprule
-    \textbf{Model} & \textbf{Test 1} & \textbf{Test 2} & \textbf{Test 3} & \textbf{Avg. Consistency} \\
-    \midrule
-    \textit{gpt-4o-2024-08-06} & 25.00\% & 27.78\% & 27.78\% & 26.85\% \\
-    \textit{gpt-4o-mini-2024-07-18} & 22.22\% & 30.56\% & 25.00\% & 25.93\% \\
-    \textit{gemini-2.5-flash-preview-05-20} & 30.56\% & 30.56\% & \textbf{33.33\%} & 31.48\% \\
+\centering
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Model} & \textbf{Test 1} & \textbf{Test 2} & \textbf{Test 3} & \textbf{Avg. Consistency} \\
+\midrule
+\textit{gpt-4o-2024-08-06} & 25.00\% & 27.78\% & 27.78\% & 26.85\% \\
+\textit{gpt-4o-mini-2024-07-18} & 22.22\% & 30.56\% & 25.00\% & 25.93\% \\
+\textit{gemini-2.5-flash-preview-05-20} & 30.56\% & 30.56\% & \textbf{33.33\%} & 31.48\% \\
 \textit{gemini-2.5-pro-preview-05-06} & \textbf{33.33\%} & \textbf{33.33\%} & 33.33\% & \textbf{33.33\%} \\
-    \bottomrule
-  \end{tabular}
-  \caption{Consistency results across three tests for selected models, with the highest values in bold.}
-  \label{tab:model_consistency}
+\bottomrule
+\end{tabular}
+\caption{Consistency results across three tests for selected models, with the highest values in bold.}
+\label{tab:model_consistency}
 \end{table}
 
 \subsection{Classification performances}
@@ -193,58 +155,58 @@ The classification performances are summarized in the following tables, showcasi
 \textit{ArtDL} Performances (Table \ref{tab:artdl_performances}) resulted similarly across models and configurations, ranging from \textbf{82.46\%} for \textit{GPT-4o-mini} in \textbf{Test 1} to a peak of \textbf{90.45\%} achieved by \textit{Gemini-2.5 Pro}. These models outperformed the baseline in almost all configurations. The baseline model achieved an accuracy of \textbf{84.44\%}.
 
 \begin{table}[h]
-  \centering 
-  \begin{tabular}{lccc}
-    \toprule
-    \textbf{Model} & \textbf{Test 1} & \textbf{Test 2} & \textbf{Test 3} \\
-    \midrule
-    \textit{gpt-4o-2024-08-06} & 86.00\% & 87.45\% & 86.48\% \\
-    \textit{gpt-4o-mini-2024-07-18} & 82.46\% & 84.98\% & 84.60\% \\
-    \textit{gemini-2.5-flash-preview-05-20} & 88.20\% & 87.02\% & 84.71\% \\
-    \textit{gemini-2.5-pro-preview-05-06} & \textbf{90.45\%} & \textbf{90.18\%} & \textbf{86.59\%} \\
-    \textit{Baseline} & 84.44\% & 84.44\% & 84.44\% \\
-    \bottomrule
-  \end{tabular}
-  \caption{Accuracy scores across three tests for \textit{ArtDL} dataset}
-  \label{tab:artdl_performances}
+\centering
+\begin{tabular}{lccc}
+\toprule
+\textbf{Model} & \textbf{Test 1} & \textbf{Test 2} & \textbf{Test 3} \\
+\midrule
+\textit{gpt-4o-2024-08-06} & 86.00\% & 87.45\% & 86.48\% \\
+\textit{gpt-4o-mini-2024-07-18} & 82.46\% & 84.98\% & 84.60\% \\
+\textit{gemini-2.5-flash-preview-05-20} & 88.20\% & 87.02\% & 84.71\% \\
+\textit{gemini-2.5-pro-preview-05-06} & \textbf{90.45\%} & \textbf{90.18\%} & \textbf{86.59\%} \\
+\textit{Baseline} & 84.44\% & 84.44\% & 84.44\% \\
+\bottomrule
+\end{tabular}
+\caption{Accuracy scores across three tests for \textit{ArtDL} dataset}
+\label{tab:artdl_performances}
 \end{table}
 
 For the ICONCLASS dataset (Table \ref{tab:iconclass_performances}), \textit{Gemini-2.5 Pro} achieved the highest performance, with accuracy scores of \textbf{83.31\%}, \textbf{84.59\%}, and \textbf{84.82\%} across the three evaluation settings. \textit{GPT-4o} showed stable performance across the settings. The baseline, fine-tuned on the \textit{ICONCLASS} dataset, achieved an accuracy of \textbf{40.46\%}.
 
 \begin{table}[h]
-  \centering 
-  \begin{tabular}{lccc}
-    \toprule
-    \textbf{Model} & \textbf{Test 1} & \textbf{Test 2} & \textbf{Test 3} \\
-    \midrule
-    \textit{gpt-4o-2024-08-06} & 75.32\% & 75.43\% & 73.46\% \\
-    \textit{gpt-4o-mini-2024-07-18} & 55.74\% & 59.56\% & 55.50\% \\
-    \textit{gemini-2.5-flash-preview-05-20} & 77.17\% & 77.75\% & 78.22\% \\
-    \textit{gemini-2.5-pro-preview-05-06} & \textbf{83.31\%} & \textbf{84.82\%} & \textbf{84.59\%} \\
-    \textit{Baseline} & 40.46\% & 40.46\% & 40.46\% \\
-    \bottomrule
-  \end{tabular}
-  \caption{Accuracy scores across three tests for \textit{ICONCLASS} dataset}
-  \label{tab:iconclass_performances}
+\centering
+\begin{tabular}{lccc}
+\toprule
+\textbf{Model} & \textbf{Test 1} & \textbf{Test 2} & \textbf{Test 3} \\
+\midrule
+\textit{gpt-4o-2024-08-06} & 75.32\% & 75.43\% & 73.46\% \\
+\textit{gpt-4o-mini-2024-07-18} & 55.74\% & 59.56\% & 55.50\% \\
+\textit{gemini-2.5-flash-preview-05-20} & 77.17\% & 77.75\% & 78.22\% \\
+\textit{gemini-2.5-pro-preview-05-06} & \textbf{83.31\%} & \textbf{84.82\%} & \textbf{84.59\%} \\
+\textit{Baseline} & 40.46\% & 40.46\% & 40.46\% \\
+\bottomrule
+\end{tabular}
+\caption{Accuracy scores across three tests for \textit{ICONCLASS} dataset}
+\label{tab:iconclass_performances}
 \end{table}
 
 The \textit{Wikidata} dataset (Table \ref{tab:wikidata_performances}) generally showed lower accuracy scores compared to the other datasets, with most models clustering around the \textbf{35-45\%} range. Among all models, \textit{Gemini-2.5 Pro} achieved the highest performance, with a peak of \textbf{47.07\%} in the third test. In contrast to their strong results on previous datasets, \textit{GPT-4o} and \textit{Gemini-2.5} models demonstrated more modest performance here. \textit{GPT-4o-mini} fell behind the baseline, which reached \textbf{43.97\%} accuracy, highlighting the difficulty of classifying this dataset for LLMs.
 
 \begin{table}[h]
-  \centering 
-  \begin{tabular}{lccc}
-    \toprule
-    \textbf{Model} & \textbf{Test 1} & \textbf{Test 2} & \textbf{Test 3} \\
-    \midrule
-    \textit{gpt-4o-2024-08-06} & 45.75\% & 45.31\% & 45.31\% \\
-    \textit{gpt-4o-mini-2024-07-18} & 35.78\% & 36.95\% & 34.31\% \\
-    \textit{gemini-2.5-flash-preview-05-20} & 45.45\% & 45.31\% & 44.57\% \\
-    \textit{gemini-2.5-pro-preview-05-06} & \textbf{45.89\%} & \textbf{45.31\%} & \textbf{47.07\%} \\
-    \textit{Baseline} & 43.97\% & 43.97\% & 43.97\% \\
-    \bottomrule
-  \end{tabular}
-  \caption{Accuracy scores across three tests for \textit{ICONCLASS} dataset}
-  \label{tab:wikidata_performances}
+\centering
+\begin{tabular}{lccc}
+\toprule
+\textbf{Model} & \textbf{Test 1} & \textbf{Test 2} & \textbf{Test 3} \\
+\midrule
+\textit{gpt-4o-2024-08-06} & 45.75\% & 45.31\% & 45.31\% \\
+\textit{gpt-4o-mini-2024-07-18} & 35.78\% & 36.95\% & 34.31\% \\
+\textit{gemini-2.5-flash-preview-05-20} & 45.45\% & 45.31\% & 44.57\% \\
+\textit{gemini-2.5-pro-preview-05-06} & \textbf{45.89\%} & \textbf{45.31\%} & \textbf{47.07\%} \\
+\textit{Baseline} & 43.97\% & 43.97\% & 43.97\% \\
+\bottomrule
+\end{tabular}
+\caption{Accuracy scores across three tests for \textit{ICONCLASS} dataset}
+\label{tab:wikidata_performances}
 \end{table}
 
 Across all three datasets, \textit{Gemini-2.5 Pro} achieved the highest accuracy scores, consistently outperforming other models. On \textit{Wikidata}, we also observed a general decline in accuracy. While top-performing models often exceeded \textbf{80\%} accuracy on \textit{ArtDL} and \textit{ICONCLASS}, performance on \textit{Wikidata} was relatively lower, reflecting a more challenging classification scenario. The \textit{ResNet50} baselines were often outperformed by the models, despite being fine-tuned directly on the target datasets.
@@ -258,35 +220,29 @@ In this section, we discuss the performance of different model architectures and
 For \textbf{RQ1}, the results show that multimodal LLMs generally outperform traditional supervised models for the task of image classification of Christian iconography. For the three datasets, \textit{Gemini-2.5 Pro} achieved the highest accuracy in all three evaluation settings, surpassing fine-tuned \textit{ResNet50} baselines and yielding higher results in \textit{ArtDL}. These findings confirm the effectiveness of multimodal LMMs in semantically dense and specific tasks. The Classification for \textit{Wikidata} images witnessed overall lower accuracies, and this behavior suggests that these models tend to perform worse when facing inconsistent image qualities and sizes, such as the case of \textit{Wikidata}, and is confirmed by the consistency check, where the identical image pairs are predicted differently when the sizes differ (Figure \ref{fig:errors}). Additionally, these LLMs are likely being trained on ArtDL and ICONCLASS datasets, as is common knowledge that the publishers scrape the Internet for training data. At the same time, Wikidata, which presents denser metadata, may not have its specific weights corresponding to the Iconclass codes tuned efficiently. Additionally, the two supervised \textit{ResNet50} baselines, despite being fine-tuned only on a small set of 600 images, demonstrate that recent multimodal LLMs outperform supervised approaches, even for ArtDL, which has a more consistent number of images.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.8\linewidth]{figures/img2.png}
-  \caption{Example of incorrectly predicted images for Gemini 2.5 Pro, test 2. The image classification per row, one from ArtDL on the left and one from Wikidata. The focus is on the predicted class, differing for each dataset.}
-  \label{fig:errors}
+\centering
+\includegraphics[width=0.8\linewidth]{figures/img2.png}
+\caption{Example of incorrectly predicted images for Gemini 2.5 Pro, test 2. The image classification per row, one from ArtDL on the left and one from Wikidata. The focus is on the predicted class, differing for each dataset.}
+\label{fig:errors}
 \end{figure}
 
 Regarding \textbf{RQ2}, we found that zero-shot classification using label descriptions generally improved accuracy except for \textit{Wikidata}, where the changes are mostly negatives. Overall, the specific case of few-shot classification produced worse results. While \textit{Gemini 2.5 flash} in \textit{ICONCLASS} and \textit{Gemini 2.5 Pro} in \textit{Wikidata} demonstrated slight improvements in accuracy, the other models performed worse. This outcome proves that few-shot learning not always improve results and highlights the possible sensitivity to prompt formatting, class imbalance, or overfitting to a few visual characteristics. This also highlights the sensitivity to poorly chosen exemplars, which can degrade performance rather than enhance it.
 
-Despite these results, several limitations should be acknowledged. This study focuses on classifying single-labeled images, and the number of classes per dataset was relatively low; these limitations do not reflect a real-world scenario. Additionally, few-shot prompting did not consistently improve results, suggesting that the task is non-trivial. Further research is needed to optimize prompt formatting and choose the correct few-shot exemplars. 
-These findings provide empirical support for using general-purpose multimodal models for the iconographical classification of artwork images. In particular, they validate the applicability of multimodal LLMs for low-data and high-complexity domains, such as Christian iconography, where semantic and label overlap is common. Even with these limitations, state-of-the-art models can detect and classify \textit{Saint George} or \textit{Saint Sebastian}, suggesting that these tools may help scholars in metadata curation without the need for extensive retraining. 
+Despite these results, several limitations should be acknowledged. This study focuses on classifying single-labeled images, and the number of classes per dataset was relatively low; these limitations do not reflect a real-world scenario. Additionally, few-shot prompting did not consistently improve results, suggesting that the task is non-trivial. Further research is needed to optimize prompt formatting and choose the correct few-shot exemplars.
+These findings provide empirical support for using general-purpose multimodal models for the iconographical classification of artwork images. In particular, they validate the applicability of multimodal LLMs for low-data and high-complexity domains, such as Christian iconography, where semantic and label overlap is common. Even with these limitations, state-of-the-art models can detect and classify \textit{Saint George} or \textit{Saint Sebastian}, suggesting that these tools may help scholars in metadata curation without the need for extensive retraining.
 
 \section{Conclusions}
 
-This study serves to benchmark multimodal LLMs for the task of classifying Christian iconography, a domain with limited training data. The output is a reproducible evaluation framework spanning three datasets and classification settings, providing a baseline for future research in applying general-purpose AI systems to cultural heritage tasks. The results demonstrate that \textit{Gemini 2.5 Pro} and \textit{GPT 4o} can outperform traditional supervised baselines, indicating their potential as tools for metadata enrichment and semantic indexing in Digital Humanities workflows \textbf{(RQ1)}. Prompt enrichment improved performance in most settings, but few-shot learning mostly led to lower outcomes \textbf{(RQ2)}, suggesting that a more optimal example selection is required. This could be addressed by integrating Retrieval Augmented Generation (RAG) pipelines while also reducing the risk of hallucinations. 
+This study serves to benchmark multimodal LLMs for the task of classifying Christian iconography, a domain with limited training data. The output is a reproducible evaluation framework spanning three datasets and classification settings, providing a baseline for future research in applying general-purpose AI systems to cultural heritage tasks. The results demonstrate that \textit{Gemini 2.5 Pro} and \textit{GPT 4o} can outperform traditional supervised baselines, indicating their potential as tools for metadata enrichment and semantic indexing in Digital Humanities workflows \textbf{(RQ1)}. Prompt enrichment improved performance in most settings, but few-shot learning mostly led to lower outcomes \textbf{(RQ2)}, suggesting that a more optimal example selection is required. This could be addressed by integrating Retrieval Augmented Generation (RAG) pipelines while also reducing the risk of hallucinations.
 For future works, we aim to extend this benchmarking to include Vision-Language models, such as \textit{CLIP}, \textit{SigLIP}, and \textit{BLIP-2}, which are commonly used for this task due to their high value in zero-shot classification. Additionally, to align this study with real-world scenarios, where classification is required for polyptychs or paintings featuring multiple saints, we need to integrate various visual and textual elements through training on datasets specifically providing this information.
 
-
-
-%TC:ignore
 \section*{Acknowledgements}
 
 The authors acknowledge Villa I Tatti, the Harvard University Center for Italian Renaissance Studies, for providing
 access to a dedicated computation server equipped with an NVIDIA L40S GPU (AD102GL architecture), which was essential for running vision-language model inference and fine-tuning of the baseline ResNet50 models. Villa I Tatti also provided API access to the GPT and Gemini 2.5 models, enabling the experiments presented in this work.
 
-% Print the bibliography at the end. Keep this line after the main text of your paper, and before an appendix.
-
 \printbibliography
 
-% You can include an appendix using the following command
 \appendix
 
 \section{Training Parameters for Baseline Models} \label{appdx:first}
@@ -294,38 +250,37 @@ access to a dedicated computation server equipped with an NVIDIA L40S GPU (AD102
 The supervised baseline models were trained using \textit{ResNet50} architecture with the following hyperparameters for both datasets.
 
 \begin{table}[h]
-  \centering
-  \begin{tabular}{lc}
-    \toprule
-    \textbf{Parameter} & \textbf{Hyperparameters} \\
-    \midrule
-    Epochs & 50 \\
-    Batch Size & 32 \\
-    Learning Rate & 1e-3 \\
-    Image Size & 224×224 \\
-    Pretrained Weights & ImageNet \\
-    Weighted Sampling & Yes \\
-    \bottomrule
-  \end{tabular}
-  \caption{Training hyperparameters for baseline \textit{ResNet50} models on ICONCLASS and Wikidata datasets}
-  \label{tab:training_params}
+\centering
+\begin{tabular}{lc}
+\toprule
+\textbf{Parameter} & \textbf{Hyperparameters} \\
+\midrule
+Epochs & 50 \\
+Batch Size & 32 \\
+Learning Rate & 1e-3 \\
+Image Size & 224×224 \\
+Pretrained Weights & ImageNet \\
+Weighted Sampling & Yes \\
+\bottomrule
+\end{tabular}
+\caption{Training hyperparameters for baseline \textit{ResNet50} models on ICONCLASS and Wikidata datasets}
+\label{tab:training_params}
 \end{table}
 
 The models were trained using weighted sampling to address class imbalance in both datasets. Training was performed using PyTorch with \textit{Adam optimizer} and \textit{cross-entropy loss}. Early stopping was applied based on validation accuracy with a patience of 10 epochs.
 
 \begin{figure}[h!]
-  \centering
-  \includegraphics[width=\linewidth]{figures/iconclass_training_curves.png}
-  \caption{Training and validation curves for the \textit{ResNet50} baseline model on the ICONCLASS dataset. The plots show accuracy and loss progression over 50 epochs with the hyperparameters specified in Table \ref{tab:training_params}.}
-  \label{fig:iconclass_training}
+\centering
+\includegraphics[width=\linewidth]{figures/iconclass_training_curves.png}
+\caption{Training and validation curves for the \textit{ResNet50} baseline model on the ICONCLASS dataset. The plots show accuracy and loss progression over 50 epochs with the hyperparameters specified in Table \ref{tab:training_params}.}
+\label{fig:iconclass_training}
 \end{figure}
 
 \begin{figure}[h!]
-  \centering
-  \includegraphics[width=\linewidth]{figures/wikidata_training_curves.png}
-  \caption{Training and validation curves for the \textit{ResNet50} baseline model on the Wikidata dataset. The plots show accuracy and loss progression over 50 epochs with the hyperparameters specified in Table \ref{tab:training_params}.}
-  \label{fig:wikidata_training}
+\centering
+\includegraphics[width=\linewidth]{figures/wikidata_training_curves.png}
+\caption{Training and validation curves for the \textit{ResNet50} baseline model on the Wikidata dataset. The plots show accuracy and loss progression over 50 epochs with the hyperparameters specified in Table \ref{tab:training_params}.}
+\label{fig:wikidata_training}
 \end{figure}
-%TC:endignore
 
 \end{document}

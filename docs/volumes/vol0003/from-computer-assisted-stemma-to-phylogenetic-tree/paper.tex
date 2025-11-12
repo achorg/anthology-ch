@@ -1,38 +1,21 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-%\documentclass{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{url}
 \usepackage{subcaption}
-% ADD your own packages using \usepackage{}
 
-% The following line ensures that texcount counts footnotes as text:
-%TC:macro \footnote [text]
-
-% The following line ensures that texcount does not count the contents of figure and table environments as text:
-%TC:envir table [ignore] ignore
-%TC:envir figure [ignore] ignore
-
-% hyphenation patterns for unknown words
 \hyphenation{Bir-De-Py}
 
-% TITLE OF THE SUBMISSION
 \title{From a Computer-Assisted Stemma to a Phylogenetic Tree: The Medieval Dutch \textit{Martijn Trilogy} by Jacob van Maerlant}
 
-% AUTHOR AND AFFILIATION INFORMATION
 \author[1,2,3]{Sofie Moors}[
-  orcid=0000-0002-9444-9065
+orcid=0000-0002-9444-9065
 ]
 
 \author[4]{Joey McCollum}[
-  orcid=0000-0002-5647-0365
+orcid=0000-0002-5647-0365
 ]
 
 \affiliation{1}{Institute for the Study of Literature in the Low Countries (ISLN), University of Antwerp, Antwerp, Belgium}
@@ -40,37 +23,30 @@
 \affiliation{3}{Research Foundation Flanders (FWO), Brussels, Belgium}
 \affiliation{4}{Institute for Religion and Critical Inquiry, Australian Catholic University, Melbourne, Australia}
 
-% KEYWORDS
 \keywords{stemmatology, Bayesian Phylogenetics, digital philology, Jacob van Maerlant, medieval literature, Middle Dutch, manuscript transmission}
 
-% METADATA FOR THE PUBLICATION
 \pubyear{2025}
 \pubvolume{3}
 \pagestart{172}
 \pageend{193}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/vBRBHo3Hn4fX}  
+\doi{10.63744/vBRBHo3Hn4fX}
 \paperorder{13}
-
 
 \addbibresource{bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
 
-%TC:ignore
 \maketitle
 
 \begin{abstract}
 This paper examines how computer-assisted stemmatology can bridge the methodological divide between traditional and new philological approaches to medieval textual criticism, using Jacob van Maerlant's \textit{Martijn Trilogy} as a test case. With 18 surviving witnesses---including eight recently discovered manuscripts---this Middle Dutch text provides extensive evidence for understanding scribal variation and manuscript transmission. We reconstruct the 1918 stemma by Verdam and Leendertz and test more traditional stemmatic algorithms and Bayesian phylogenetic methods on datasets of varying inclusivity. We show that computational approaches with more traditional constraints on the classification of readings fail to reconcile conflicting genealogical developments in a single tree, while a Bayesian phylogenetic analysis that models these developments in terms of other scribal and demographic factors can overcome their conflicts and offer a result that measures the reliability of proposed relationships between witnesses. The results reveal that newly discovered single-quire manuscripts cluster with previously dismissed \enquote{worthless} fragments, such as E and Z, supporting recent evidence for rapid textual circulation during the second half of the 14th century. This clustering can explain the extensive variation in later witnesses. Ultimately, the Bayesian analysis confirms, refines, and expands on Verdam and Leendertz's reconstruction of the transmission history using traditional methods. We show that even when such an analysis is independent of Verdam and Leendertz's judgments about original readings, its results strongly agree with Verdam and Leendertz's 1918 stemma, which suggests that Bayesian phylogenetics captures many of the relationships they proposed between the manuscripts of the \textit{Martijn Trilogy}.\end{abstract}
-%TC:endignore
 
 \section{Introduction}\label{sec:introduction}
 
-Traditionally, the primary goal of stemmatology in medieval philology is to establish a critical text edition. This involves reconstructing \textquote{the most recent witness from which all extant witnesses of a text} are derived, the so-called \textit{archetype} \cite[4, 221]{roelli2020handbook}. This objective is often criticized by proponents of new philology \cite[68]{andrews2013third}\cite[28]{nury2018automated}. A new philologist rejects the notion of variation as mere \enquote{error} and questions the necessity or existence of a single archetype. As a result, the traditional concept of a stemma might be considered less relevant or even useless within this framework \cite[71]{andrews2013third}. What if instead we use a stemmatic analysis not to reconstruct an \textit{archetype} but to gain an understanding of the manuscript tradition itself \cite[27]{nury2018automated}\cite{kapitan2025digital}? Stemmatic analysis could help us approximate the order of copying and discover where witnesses converge and diverge \cite[71]{andrews2013third}\cite[232]{andrews2017what}. In that sense, stemmatology becomes a form of text analysis that can be of great help to medieval philologists \textquote{whether of the old school or the new} \cite[71]{andrews2013third}.\footnote{%
-    The \textit{Handbook of Stemmatology} edited by Philipp Roelli provides an overview of both traditional and modern digital, computerized methods for stemmatology \cite{roelli2020handbook}.%
+Traditionally, the primary goal of stemmatology in medieval philology is to establish a critical text edition. This involves reconstructing \textquote{the most recent witness from which all extant witnesses of a text} are derived, the so-called \textit{archetype} \cite[4, 221]{roelli2020handbook}. This objective is often criticized by proponents of new philology \cite[68]{andrews2013third}\cite[28]{nury2018automated}. A new philologist rejects the notion of variation as mere \enquote{error} and questions the necessity or existence of a single archetype. As a result, the traditional concept of a stemma might be considered less relevant or even useless within this framework \cite[71]{andrews2013third}. What if instead we use a stemmatic analysis not to reconstruct an \textit{archetype} but to gain an understanding of the manuscript tradition itself \cite[27]{nury2018automated}\cite{kapitan2025digital}? Stemmatic analysis could help us approximate the order of copying and discover where witnesses converge and diverge \cite[71]{andrews2013third}\cite[232]{andrews2017what}. In that sense, stemmatology becomes a form of text analysis that can be of great help to medieval philologists \textquote{whether of the old school or the new} \cite[71]{andrews2013third}.\footnote{
+The \textit{Handbook of Stemmatology} edited by Philipp Roelli provides an overview of both traditional and modern digital, computerized methods for stemmatology \cite{roelli2020handbook}.
 }
 
 In this paper, we will try to uncover the history of the \textit{Martijn Trilogy}, a poem written by the renowned medieval Flemish author Jacob van Maerlant (b.\ ca.\ 1230--1235, d.\ ca.\ 1288--1300) \cite{moors2023jacob}. This short text (1820 verses total) has been subject to extensive copying: with 18 text witnesses surviving, the \textit{Martijn Trilogy} is exceptionally well preserved for this type of Middle Dutch text, providing us with extensive evidence of scribal variation. Yet until now, scholars have studied the transmission primarily to gain insight into Maerlant's original text and its thirteenth-century origins \cites[e.g.,][]{warnar2010discovery}{vandriel2012meesters}. However, this wide transmission also allows us to examine how copyists dealt with a text. To what extent can a stemmatic analysis really help us to study and understand this manuscript tradition of the \textit{Martijn Trilogy}?
@@ -95,17 +71,17 @@ Andrews suggests \enquote{digital philology} as a potential way to navigate and 
 Can these steps help us transcend the distinction between old and new philology? How do we select the best from both approaches, depending on the \enquote{nature and heritage} of the \textit{Martijn Trilogy}? There is extensive research on the \textit{Martijn Trilogy} from the approach of old philology. Verdam and Leendertz \cite{verdam1918jacob} documented most of the scribal variants in a comprehensive \textit{variant apparatus} and \textit{stemma codicum} (Figure~\ref{fig:verdam_stemma} and Figure~\ref{fig:verdam_edition}). However, their analyses primarily aimed to determine which variants could be attributed to Jacob van Maerlant himself, reconstructing the \enquote{ideal author's original}. Fragment Z exemplifies this approach. According to Verdam and Leendertz, this fragment was \enquote{worthless} for text criticism, leading to its exclusion from their apparatus \cite[57]{sleiderink2020bandwerk}\cite[xxxv]{verdam1918jacob}.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.8\linewidth]{figures/verdam_stemma.png}
-  \caption{Stemma by Verdam and Leendertz \cite{verdam1918jacob} on the basis of ten text witnesses.}
-  \label{fig:verdam_stemma}
+\centering
+\includegraphics[width=0.8\linewidth]{figures/verdam_stemma.png}
+\caption{Stemma by Verdam and Leendertz \cite{verdam1918jacob} on the basis of ten text witnesses.}
+\label{fig:verdam_stemma}
 \end{figure}
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.6\linewidth]{figures/verdam_edition.jpg}
-  \caption{The first stanza of M2 in the standard edition by Verdam and Leendertz \cite{verdam1918jacob}, with variants listed below. Source: Delpher, https://resolver.kb.nl/resolve?urn=mmkb02a:000032275:00007}
-  \label{fig:verdam_edition}
+\centering
+\includegraphics[width=0.6\linewidth]{figures/verdam_edition.jpg}
+\caption{The first stanza of M2 in the standard edition by Verdam and Leendertz \cite{verdam1918jacob}, with variants listed below. Source: Delpher, https://resolver.kb.nl/resolve?urn=mmkb02a:000032275:00007}
+\label{fig:verdam_edition}
 \end{figure}
 
 Since this last edition over a hundred years ago, eight new witnesses have surfaced (Ant, K, L, Y, Br, D2, Ge, and H), making a revision long overdue \cite{moors2024martijn}. What if we used modern digital tools to create an updated stemma from a new philological perspective, shifting attention from the author to the scribes \cite[64]{andrews2013third}\cite[98]{palumbo2020criticism}? In doing so, could we still build upon the foundation laid by Verdam and Leendertz? Or, in Andrews's words, \textquote{Is the so-called \enquote{new philology} better suited for the digital age than the \enquote{old} methods that have their root in classical philology, and does the \enquote{old} way have a future?} \cite[61]{andrews2013third}.
@@ -116,7 +92,7 @@ Since this last edition over a hundred years ago, eight new witnesses have surfa
 
 This paper focuses on the third step in digital philology, which is \enquote{analysis}, but this requires the first two steps of \enquote{transcription} and \enquote{collation}. For the first step, we could use the diplomatic, digital XML-transcriptions of 17 textual witnesses that were published by Moors, Kestemont and Sleiderink \cite{moors2024martijn}. The transcription of an eighteenth textual witness, H, was recently added by Moors \cite{moors2025success}. The corpus amounts to over 16,000 verses.
 
-This XML-data incorporates features such as converting capital letters to small letters, removing punctuation, and expanding abbreviations. We also automatically lemmatized words using the GaLAHaD tool \cite{galahad2025} to handle spelling variation. Given the lack of consensus among scholars on the types of variants that reveal genealogical relationships, these digital data seem particularly useful. Some researchers argue, for example, that spelling variation is never significant, while others believe it indicates geographical and thus genealogical proximity \cite[192]{vanzundert2020data}. The capacity of the digital medium to analyze large amounts of data theoretically allows us to not have to limit ourselves to \enquote{relevant variants} \cite[62]{bleeker2017mapping}. Instead, we can compare \textit{every} textual variant, which in turn could result in unexpected findings. As Andrews argues, scholars must indeed attempt \textquote{to use \textit{all} the information available to us; to find out if some of those commas are significant after all} \cite[72--73]{andrews2013third}. However, as we will demonstrate, this ideal proves challenging to implement in practice. 
+This XML-data incorporates features such as converting capital letters to small letters, removing punctuation, and expanding abbreviations. We also automatically lemmatized words using the GaLAHaD tool \cite{galahad2025} to handle spelling variation. Given the lack of consensus among scholars on the types of variants that reveal genealogical relationships, these digital data seem particularly useful. Some researchers argue, for example, that spelling variation is never significant, while others believe it indicates geographical and thus genealogical proximity \cite[192]{vanzundert2020data}. The capacity of the digital medium to analyze large amounts of data theoretically allows us to not have to limit ourselves to \enquote{relevant variants} \cite[62]{bleeker2017mapping}. Instead, we can compare \textit{every} textual variant, which in turn could result in unexpected findings. As Andrews argues, scholars must indeed attempt \textquote{to use \textit{all} the information available to us; to find out if some of those commas are significant after all} \cite[72--73]{andrews2013third}. However, as we will demonstrate, this ideal proves challenging to implement in practice.
 
 \subsection{Collation}\label{sec:digital-philology-collation}
 
@@ -126,16 +102,15 @@ The second step before the analysis is defined by Andrews as \enquote{collation}
 
 \subsection{The Old Stemma}\label{subsec:analysis-old-stemma}
 
-As a baseline and reference point, we first reconstructed the 1918 stemma by Verdam and Leendertz using the online editor Edotor (Figure~\ref{fig:reconstructed_stemma}). To make further comparative research possible, we published this reconstruction on Open Stemmata, an organization founded in 2020 by Jean-Baptiste Camps and Gustavo Riva that aims to create an Open Source database of textual genealogies.\footnote{%
-    \url{https://github.com/OpenStemmata/database/tree/main/data/dum/VerdamLeendertz_1918_MartijnTrilogy}.%
+As a baseline and reference point, we first reconstructed the 1918 stemma by Verdam and Leendertz using the online editor Edotor (Figure~\ref{fig:reconstructed_stemma}). To make further comparative research possible, we published this reconstruction on Open Stemmata, an organization founded in 2020 by Jean-Baptiste Camps and Gustavo Riva that aims to create an Open Source database of textual genealogies.\footnote{
+\url{https://github.com/OpenStemmata/database/tree/main/data/dum/VerdamLeendertz_1918_MartijnTrilogy}.
 }
 
-
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.6\linewidth]{figures/reconstructed_stemma.png}
-  \caption{Reconstruction of the stemma by Verdam and Leendertz \cite{verdam1918jacob} using the online editor Edotor.}
-  \label{fig:reconstructed_stemma}
+\centering
+\includegraphics[width=0.6\linewidth]{figures/reconstructed_stemma.png}
+\caption{Reconstruction of the stemma by Verdam and Leendertz \cite{verdam1918jacob} using the online editor Edotor.}
+\label{fig:reconstructed_stemma}
 \end{figure}
 
 The reconstructed stemma reveals considerable complexity. Verdam and Leendertz themselves acknowledged the challenges they faced, asking for indulgence in advance, as they could not always succeed in finding the right way in the \enquote{labyrinth of crisscrossing, eye-confusing paths} \cite[xxii]{verdam1918jacob}. The 20th-century stemma consists of three main branches from which the entire extant tradition derives (Figure~\ref{fig:color_coded_stemma}):
@@ -146,10 +121,10 @@ The reconstructed stemma reveals considerable complexity. Verdam and Leendertz t
 \end{enumerate}
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.6\linewidth]{figures/color_coded_stemma.png}
-  \caption{Reconstruction of the stemma by Verdam and Leendertz \cite{verdam1918jacob}. Color-coding indicates the three main branches represented by witnesses A (brown), C (yellow) and B--G(W) (pink).}
-  \label{fig:color_coded_stemma}
+\centering
+\includegraphics[width=0.6\linewidth]{figures/color_coded_stemma.png}
+\caption{Reconstruction of the stemma by Verdam and Leendertz \cite{verdam1918jacob}. Color-coding indicates the three main branches represented by witnesses A (brown), C (yellow) and B--G(W) (pink).}
+\label{fig:color_coded_stemma}
 \end{figure}
 
 Verdam and Leendertz \cite[xxxv]{verdam1918jacob} noted that groups A and C are \enquote{the older text witnesses} and have been \enquote{out of circulation} in remote monasteries. These manuscripts show no influence of other witnesses. Regarding the final group B--G(W), they argue that while all manuscripts are mutually similar, B is distinguished by its age and \enquote{greater independence}, since it too was not influenced by other manuscripts. The aggregation of B with A and C is therefore of great importance, they conclude \cite[xxv, xxxvi]{verdam1918jacob}.
@@ -166,42 +141,42 @@ Computational procedures and tools for doing stemmatics are appearing at a rapid
 
 For the more traditional methodology, we used \textit{Stemmatology: an R package for the computer-assisted analysis of textual traditions} by Jean-Baptiste Camps and Florian Cafiero \cite{camps2018stemmatology}. They implement a method based on traditional philological principles in a user-friendly package, offering an algorithmic and easily computable transposition of the \enquote{common error} method \cite[66]{camps2018stemmatology}. The package identifies conflicts between variant locations through pairwise genealogical comparisons and visualizes these conflicts as a network graph where problematic variants can be identified and eliminated. It also detects potential contamination by systematically removing witnesses to see which ones significantly reduce overall conflict. Finally, it constructs a stemma using a disagreement-based algorithm that focuses on disagreements where at least two witnesses oppose at least two others. The algorithm proceeds step-by-step to assess manuscript groups and eliminate derivative copies until a genealogical tree emerges---all while maintaining strong user interaction to guide the computational analysis with scholarly expertise.
 
-Camps and Cafiero's package \cite[66]{camps2018stemmatology} does not prescribe a particular data model for representing textual variations, recognizing that both the basic unit of variation and the types of variation to incorporate may vary considerably across different contexts and projects. In other words, they offer complete flexibility: \textquote{The exact meaning to give to variant location and variant is defined by the user, according to his or her approach and the nature of the materials being analysed} \cite[66-67]{camps2018stemmatology}. To remain independent of all these choices, they adopt a very simple and abstract presentation, where each column stands for a witness, and each line for a variant location. Each variant gets a numeric code (0, 1, \ldots $n$). 
+Camps and Cafiero's package \cite[66]{camps2018stemmatology} does not prescribe a particular data model for representing textual variations, recognizing that both the basic unit of variation and the types of variation to incorporate may vary considerably across different contexts and projects. In other words, they offer complete flexibility: \textquote{The exact meaning to give to variant location and variant is defined by the user, according to his or her approach and the nature of the materials being analysed} \cite[66-67]{camps2018stemmatology}. To remain independent of all these choices, they adopt a very simple and abstract presentation, where each column stands for a witness, and each line for a variant location. Each variant gets a numeric code (0, 1, \ldots $n$).
 
 While this represents a significant advantage, it also poses the greatest challenge. In an ideal, new philologist world, stemmata would be generated with different input parameters---with and without spelling variation, with and without punctuation, and so forth. Using the digital data and the automated collation tool \textit{CollateX}, this approach should be feasible. \textit{CollateX} has an option to store output as a TEI XML variant apparatus, displaying witnesses that cluster together.
 
 Unfortunately, in practice, at least with our corpus, this approach is not so straightforward. Due to the extensive spelling and orthographic variation inherent in Middle Dutch, the variant apparatus contains an extreme amount of variation and fails to show consistency between witnesses where such consistency clearly exists. Even after normalization (removing punctuation, expanding abbreviations, and converting capital letters to small letters) and automatic lemmatization with the tool GaLAHaD, the problem persists \cite{galahad2025}.\footnote{Another possible implementation could be a Levenshtein metric to ignore these differences, but Levenshtein distance does not distinguish between allographs—different graphic forms of the same phoneme or letter, such as \emph{u} versus \emph{v}—and therefore does not offer a straightforward solution for orthographic variation.} In this example---which represents an extreme case---this actually creates an additional variant (Figure~\ref{fig:collatex_example}). According to Andrews \cite[68]{andrews2013third}, using digital tools should have \textquote{minimized the temptation to curtail or \enquote{normalize} the data prematurely and have avoided the need to assess the significance of any piece of evidence}. In reality, however, some intervention still appears necessary before the \enquote{analysis} step can begin.
 
 \begin{figure}[t!]
-  \centering
-  \begin{verbatim}
+\centering
+\begin{verbatim}
 <rdg wit="#A">vvaphene</rdg>            <rdg wit="#A">waphenen</rdg>
 <rdg wit="#B #L #O #Y">waphene</rdg>    <rdg wit="#B #O">Wafene</rdg>
 <rdg wit="#C">uuapene</rdg>             <rdg wit="#C">-</rdg>
 <rdg wit="#D #G">wapen</rdg>            <rdg wit="#D #F #G">wapen</rdg>
 <rdg wit="#F">wapene</rdg>              <rdg wit="#L">wafen</rdg>
-                                        <rdg wit="#Y">waphenen+hij</rdg>
-  \end{verbatim}
-  \caption{Excerpts from the TEI XML variant apparatus generated by \textit{CollateX} showing the first word of the \textit{Martijn Trilogy}. The left lines show the original corpus; the right lines show the lemmatized version (GaLAHaD) \cite{galahad2025}. For manuscript C, GaLAHaD could not identify a lemma.}
-  \label{fig:collatex_example}
+<rdg wit="#Y">waphenen+hij</rdg>
+\end{verbatim}
+\caption{Excerpts from the TEI XML variant apparatus generated by \textit{CollateX} showing the first word of the \textit{Martijn Trilogy}. The left lines show the original corpus; the right lines show the lemmatized version (GaLAHaD) \cite{galahad2025}. For manuscript C, GaLAHaD could not identify a lemma.}
+\label{fig:collatex_example}
 \end{figure}
 
-Based on our \enquote{approach and the nature} of the material we want to analyze, we decided not to work with the automatic generated variant apparatus but with two manually generated input files representing the \enquote{old} and \enquote{new} philologist approach.\footnote{%
-    All the data are available on the companion GitHub repository: \url{https://github.com/SofieMoors/martijncollation}.%
+Based on our \enquote{approach and the nature} of the material we want to analyze, we decided not to work with the automatic generated variant apparatus but with two manually generated input files representing the \enquote{old} and \enquote{new} philologist approach.\footnote{
+All the data are available on the companion GitHub repository: \url{https://github.com/SofieMoors/martijncollation}.
 }  For the \enquote{old} approach, we focused on variants identified by Verdam and Leendertz \cite{verdam1918jacob} as \enquote{important} for reconstructing their stemma. Their stemma, in fact, precedes nearly 15 pages of running text listing specific verses they believed contained meaningful variants. For these locations, we have added the variants from the eight newly discovered witnesses (Y, Ge, D2, K, Br, L, H, Ant). The data frame was created in Excel and then converted to CSV format. This final version included 116 variation units in total (Figure~\ref{fig:input_data}).
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.5\linewidth]{figures/input_data.png}
-  \caption{Input data frame for Camps and Cafiero's R package based on variants listed by Verdam and Leendertz \cite{verdam1918jacob} with witnesses as columns and variant locations as rows.}
-  \label{fig:input_data}
+\centering
+\includegraphics[width=0.5\linewidth]{figures/input_data.png}
+\caption{Input data frame for Camps and Cafiero's R package based on variants listed by Verdam and Leendertz \cite{verdam1918jacob} with witnesses as columns and variant locations as rows.}
+\label{fig:input_data}
 \end{figure}
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.8\linewidth]{figures/verse_200_collation.png}
-  \caption{Collation of verse 200 from the \textit{Eerste Martijn} showing word-level variation across witnesses A, B, C, D, F, G and O.}
-  \label{fig:verse_collation}
+\centering
+\includegraphics[width=0.8\linewidth]{figures/verse_200_collation.png}
+\caption{Collation of verse 200 from the \textit{Eerste Martijn} showing word-level variation across witnesses A, B, C, D, F, G and O.}
+\label{fig:verse_collation}
 \end{figure}
 
 For example, row 21 in Figure~\ref{fig:input_data} represents verse 200 from the \textit{Eerste Martijn}. The variation occurs in the rhyming word (Figure~\ref{fig:verse_collation}): witnesses A, B, C and G have \enquote{heet}, while D, F and O have \enquote{wreet}. The witnesses D, F and O receive a 2 instead of a 1, because they share this variant reading. The witnesses Ge, D2, K, W, Br, E, Z, H and Ant are marked \enquote{NA} because this verse is not present in these manuscripts, while 0 indicates a textual omission.
@@ -211,10 +186,10 @@ To validate our approach, we first tested the data frame using only the witnesse
 The computational stemma (Figure~\ref{fig:computational_stemma}) shows both convergences and divergences with the 1918 analysis. While it successfully identifies the separation of manuscripts A, B and C and recognizes smaller groupings like F--Z, G--W and O--E, it produces a fundamentally different architecture. Instead of three main branches, the algorithm generates a binary structure with branches \enquote{GWDFZ} and \enquote{OEBCA}.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.8\linewidth]{figures/computational_stemma.png}
-  \caption{Stemmatic output from Camps and Cafiero's R-package, based on \enquote{meaningful variants} defined by Verdam and Leendertz \cite{verdam1918jacob}.}
-  \label{fig:computational_stemma}
+\centering
+\includegraphics[width=0.8\linewidth]{figures/computational_stemma.png}
+\caption{Stemmatic output from Camps and Cafiero's R-package, based on \enquote{meaningful variants} defined by Verdam and Leendertz \cite{verdam1918jacob}.}
+\label{fig:computational_stemma}
 \end{figure}
 
 Our primary objective, however, was to construct an updated stemma that included the newly discovered witnesses. This task proved significantly more complex. Despite lowering the threshold to $0.0001$, the algorithm continued to encounter irreconcilable conflicts. As mentioned above, the 1918 stemma was constructed primarily according to old philological principles. When evidence contradicted their assumptions, Verdam and Leendertz quickly dismissed it as \enquote{too uncertain} or \enquote{coincidental} \cite[xxxii]{verdam1918jacob}. To test whether the algorithm's failure stemmed from insufficient data or rather from these restrictive editorial choices, we expanded our dataset using more inclusive criteria. Following the methodology established by Bosmans and Sleiderink \cite{bosmans2019maerlant} and Moors \cite{moors2022brabantse}, we created an extended variant apparatus that captures a broader range of textual differences. This approach prioritizes variations like omissions, additions, word replacements, and altered word order, while excluding features like dialectal and spelling differences, semantically neutral inflectional variants, gender alternations, and cliticization effects.
@@ -237,37 +212,37 @@ The time separating ancestors from their descendants is measured along the horiz
 Because various dates for reconstructed ancestors are sampled in the analysis, the early (left) ends of branches tend to spread over increasing date ranges.
 Similarly, for witnesses whose texts are fragmentary or potentially mixed, their varying placements in sampled stemmata are depicted as the convergence of branches from different directions.
 Each DensiTree also includes a \textquote{Placeholder} witness.
-This witness has no text, but it is included to overcome current limitations of how BEAST 2 determines the timespan of the reconstructed history; without a witness dated to the present, BEAST 2 would incorrectly treat the copying date of the latest extant witness as the present, and the shortened timeframe for transmission would fit poorly with estimated copying and loss rates for manuscripts.\footnote{%
-    This distinction is important for the tree prior described in the appendix.%
+This witness has no text, but it is included to overcome current limitations of how BEAST 2 determines the timespan of the reconstructed history; without a witness dated to the present, BEAST 2 would incorrectly treat the copying date of the latest extant witness as the present, and the shortened timeframe for transmission would fit poorly with estimated copying and loss rates for manuscripts.\footnote{
+This distinction is important for the tree prior described in the appendix.
 }
 DensiTrees for our four analyses are depicted in Figures~\ref{fig:densitree1}--\ref{fig:densitree4}.
 
 \begin{figure}[h!]
-  \centering
-  \includegraphics[width=1\linewidth]{figures/verdam_leendertz_selection_densitree.png}
-  \caption{DensiTree plot for the smaller dataset, with prior probabilities assigned according to Verdam and Leendertz \cite{verdam1918jacob}.}
-  \label{fig:densitree1}
+\centering
+\includegraphics[width=1\linewidth]{figures/verdam_leendertz_selection_densitree.png}
+\caption{DensiTree plot for the smaller dataset, with prior probabilities assigned according to Verdam and Leendertz \cite{verdam1918jacob}.}
+\label{fig:densitree1}
 \end{figure}
 
 \begin{figure}[h!]
-  \centering
-  \includegraphics[width=1\linewidth]{figures/moors_mccollum_densitree.png}
-  \caption{DensiTree plot for the larger dataset, with prior probabilities assigned according to Verdam and Leendertz \cite{verdam1918jacob}.}
-  \label{fig:densitree2}
+\centering
+\includegraphics[width=1\linewidth]{figures/moors_mccollum_densitree.png}
+\caption{DensiTree plot for the larger dataset, with prior probabilities assigned according to Verdam and Leendertz \cite{verdam1918jacob}.}
+\label{fig:densitree2}
 \end{figure}
 
 \begin{figure}[h!]
-  \centering
-  \includegraphics[width=1\linewidth]{figures/verdam_leendertz_selection_equal_intrinsic_densitree.png}
-  \caption{DensiTree plot for the smaller dataset, with equal prior probabilities for all variant readings.}
-  \label{fig:densitree3}
+\centering
+\includegraphics[width=1\linewidth]{figures/verdam_leendertz_selection_equal_intrinsic_densitree.png}
+\caption{DensiTree plot for the smaller dataset, with equal prior probabilities for all variant readings.}
+\label{fig:densitree3}
 \end{figure}
 
 \begin{figure}[h!]
-  \centering
-  \includegraphics[width=1\linewidth]{figures/moors_mccollum_equal_intrinsic_densitree.png}
-  \caption{DensiTree plot for the larger dataset, with equal prior probabilities for all variant readings.}
-  \label{fig:densitree4}
+\centering
+\includegraphics[width=1\linewidth]{figures/moors_mccollum_equal_intrinsic_densitree.png}
+\caption{DensiTree plot for the larger dataset, with equal prior probabilities for all variant readings.}
+\label{fig:densitree4}
 \end{figure}
 
 All four DensiTrees generally confirm Verdam and Leendertz's reconstruction of the earliest history of transmission. One branch in the archetypal split generally consists of the three multi-quire manuscripts A, B, and C or of A and C alone. These classifications resemble with the classical stemma of Figure~\ref{fig:verdam_stemma}, which depicts A and C as direct descendants of the tradition's archetype. The main distinction is that our sampled stemmata betray some uncertainty about how A, B, and C relate to one another.
@@ -280,8 +255,6 @@ The sampled stemmata show less resolution in the relationships among the witness
 
 For the nearly complete manuscripts whose placement varies among the sampled stemmata, mixture remains a reasonable explanation. In all of our analyses, B is variously placed as a sibling of C or an early sibling of the later tradition (in agreement with the classical stemma of Figure~\ref{fig:verdam_stemma} in the latter case). Under Kwakkel's proposed redating for this manuscript after the peak of the popular tradition (noted in Section \ref{subsec:analysis-computer-assisted-stemma}), it is entirely possible that B mixes an early text like that of A and C with elements of the popular text. Similarly, O, an equally late multi-quire manuscript, is variously placed as a sibling to G and W, as a sibling to E, K, and L, and as a transitional witness between both groups in the sampled stemmata. Its text could be derived from a progressive mixture of sources from both of these branches (among others), as the stemma in Figure~\ref{fig:verdam_stemma} suggests. As Bart Besamusca has noted, it seems that someone of high economic and intellectual status commissioned the copying of this manuscript for personal study \cite[17]{besamusca_boeken_2017}, so its copyist likely had both the means and the motivation to consult multiple manuscripts to produce an authoritative text. Finally, in the analysis with the larger dataset and non-uniform priors on root readings, just over $25\%$ of sampled stemmata place F as a sibling with Ant, Br, or the common ancestor of Ant and Br rather than with the common ancestor of the printed books D and D2. This may indicate that F inherited some of its early readings by mixture. This would agree with the hypothesis of mixture suggested by Figure~\ref{fig:verdam_stemma}, though not with respect to the source of this mixture.
 
-% Returning to the earliest part of the tradition, the results of analyses with uniform and non-uniform priors on root readings differed primarily in the placement of A relative to B and C. Given the 1918 edition's general preference for the readings of A, the analysis with non-uniform priors on the larger dataset more frequently placed A by itself at the end of one archetypal branch, with the other archetypal branch ending at the common ancestor of B and C on one side and the remaining witnesses on the other. For the larger dataset, this happened in $53.3\%$ of the sampled stemmata. For the smaller dataset, this surprisingly happened in only $6.4\%$ of the sampled stemmata. By contrast, for the larger dataset with uniform priors, this never happened, and for the smaller dataset with uniform priors, it happened in only $0.1\%$ of sampled stemmata.
-
 Even in the analyses where our priors on root readings favor many of A's readings in agreement with Verdam and Leendertz's, A is frequently grouped with C rather than set apart as a singularly authoritative witness. This can be explained by multiple factors. First, C is the earliest manuscript of the \textit{Martijn Trilogy} currently known. Second, because lacunae are evaluated over all of their possible original states in Bayesian phylogenetics, C can still have an early place in a candidate stemma because it could have agreed with A in its missing portions. Verdam and Leendertz themselves expressed doubt over which of A and C to prefer, because the strength of C's age conflicted with the defect of its lack of the \textit{Tweede Martijn} \cite[xxxvi]{verdam1918jacob}.
 
 Their concerns and ultimate reversion to A bring the philosophical and methodological distinctions between old and new philology into sharp relief. Under the old philological approach, more complete witnesses are preferred because they better facilitate the production of a complete critical text. New philology, which does not prioritize this goal to the same extent, is not limited by lacunae in the same way. By virtue of how it handles uncertainty in data, Bayesian phylogenetics is well-suited to operate within the framework of new philology.
@@ -291,31 +264,30 @@ Another factor that explains C's consistent proximity to the root (in terms of i
 On a final related note, it is worth discussing how the Bayesian phylogenetic analyses have estimated the expected number of textual changes made by the average scribe. Histograms of sampled values for our four analyses are depicted in Figure~\ref{fig:clock_rates}.
 
 \begin{figure}[h]
-    \centering
-    \begin{subfigure}[t]{0.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{figures/verdam_leendertz_selection_clock_rate_posterior.png}
-        \caption{}
-  \label{fig:clock_rates}
-\end{subfigure}%
-    ~ 
-    \begin{subfigure}[t]{0.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{figures/moors_mccollum_clock_rate_posterior.png}
-        \caption{}
-    \end{subfigure}\\
-    \begin{subfigure}[t]{0.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{figures/verdam_leendertz_selection_equal_intrinsic_clock_rate_posterior.png}
-        \caption{}
-    \end{subfigure}%
-    ~ 
-    \begin{subfigure}[t]{0.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{figures/moors_mccollum_equal_intrinsic_clock_rate_posterior.png}
-        \caption{}
-    \end{subfigure}
-    \caption{Posterior distribution histogram of scribal change rate (expected changes per variation per copying event) for the smaller dataset, with prior probabilities assigned according to Verdam and Leendertz (a); the larger dataset, with prior probabilities assigned according to Verdam and Leendertz (b); the smaller dataset, with equal prior probabilities for all variant readings (c); and the larger dataset, with equal prior probabilities for all variant readings (d).}
+\centering
+\begin{subfigure}[t]{0.5\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/verdam_leendertz_selection_clock_rate_posterior.png}
+\caption{}
+\end{subfigure}
+~
+\begin{subfigure}[t]{0.5\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/moors_mccollum_clock_rate_posterior.png}
+\caption{}
+\end{subfigure}\\
+\begin{subfigure}[t]{0.5\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/verdam_leendertz_selection_equal_intrinsic_clock_rate_posterior.png}
+\caption{}
+\end{subfigure}
+~
+\begin{subfigure}[t]{0.5\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/moors_mccollum_equal_intrinsic_clock_rate_posterior.png}
+\caption{}
+\end{subfigure}
+\caption{Posterior distribution histogram of scribal change rate (expected changes per variation per copying event) for the smaller dataset, with prior probabilities assigned according to Verdam and Leendertz (a); the larger dataset, with prior probabilities assigned according to Verdam and Leendertz (b); the smaller dataset, with equal prior probabilities for all variant readings (c); and the larger dataset, with equal prior probabilities for all variant readings (d).}\label{fig:clock_rates}
 \end{figure}
 
 \pagebreak
@@ -323,31 +295,31 @@ On a final related note, it is worth discussing how the Bayesian phylogenetic an
 The means and standard deviations of these distributions are given in Table~\ref{tab:clock_rates}.
 
 \begin{table}[h!]
-  \centering
-  \begin{tabular}{l|r|r}
-    \toprule
-    \textbf{Analysis} & \textbf{Mean} & \textbf{Standard deviation} \\
-    \hline
-    \hline
-    Smaller dataset, non-uniform root reading priors & $0.535$ & $0.160$ \\
-    \hline
-    Larger dataset, non-uniform root reading priors & $0.247$ & $0.034$ \\
-    \hline
-    Smaller dataset, uniform root reading priors & $0.698$ & $0.192$ \\
-    \hline
-    Larger dataset, uniform root reading priors & $0.354$ & $0.046$ \\
-    \bottomrule
-  \end{tabular}
-  \caption{Mean and standard deviation of estimated scribal change rate (expected changes per variation unit per copying event) by analysis.}
-  \label{tab:clock_rates}
+\centering
+\begin{tabular}{l|r|r}
+\toprule
+\textbf{Analysis} & \textbf{Mean} & \textbf{Standard deviation} \\
+\hline
+\hline
+Smaller dataset, non-uniform root reading priors & $0.535$ & $0.160$ \\
+\hline
+Larger dataset, non-uniform root reading priors & $0.247$ & $0.034$ \\
+\hline
+Smaller dataset, uniform root reading priors & $0.698$ & $0.192$ \\
+\hline
+Larger dataset, uniform root reading priors & $0.354$ & $0.046$ \\
+\bottomrule
+\end{tabular}
+\caption{Mean and standard deviation of estimated scribal change rate (expected changes per variation unit per copying event) by analysis.}
+\label{tab:clock_rates}
 \end{table}
 
 The magnitude of the expected number of changes per variation unit is suspiciously high. Even restricting our attention to places where textual variation occurs, it seems unlikely that the average scribe would alter $25\%$ of them (the lowest mean in Table \ref{tab:clock_rates}), much less $70\%$ of them (the highest mean in Table \ref{tab:clock_rates}), at one time. These values are well above the simulation-based estimates scribal accuracy described by Spencer and Howe \cite{spencer2002how}.
 
 One potential explanation is that our assumed ranges for copying and loss rates were too strict. Under the current ranges, many of the branches in the sampled stemmata are so short that we would not expect even one copying event to occur over their duration. If we expanded our ranges of birth rates to accommodate much higher values, this would allow for lower scribal change rates. But substantially increasing the birth rate in the most active period of transmission would result in a survival rate well above the $7.5\%$ estimate for medieval Dutch works given by Mike Kestemont et al.\ \cite[769]{kestemont2022forgotten}, at least as long as we assume the death rates in line with the estimates of Eltjo Buringh \cite[227--250]{buringh2011medieval}. If we allow for the reasonable possibility that manuscripts of the \textit{Martijn Trilogy} were discarded more frequently during the peak period of the work's transmission, then higher birth and death rates could achieve the same survival rate and admit scribal change rates closer to their expected values.
 
-Another solution is suggested by the observation that our stemmata have many short branches instead of a few long branches. Our current configuration with BEAST 2 does not allow branches to be collapsed together, so that an ancestor always has two descendants. But it is plausible that some hypothetical ancestors, especially those in the most active period of transmission, were copied in more than two surviving branches of transmission. It may even be that some of our extant manuscripts were ancestors to others.\footnote{%
-     Traditionally, \textit{codices descripti}, or surviving copies of surviving exemplars, are excluded from stemmata because they add no new information for reconstructing earlier states of the text. But in a Bayesian phylogenetic framework, they are still informative for the estimation of scribal change rates and should therefore be included in the analysis. This is yet another way that Bayesian phylogenetics complements the framework of new philology.%
+Another solution is suggested by the observation that our stemmata have many short branches instead of a few long branches. Our current configuration with BEAST 2 does not allow branches to be collapsed together, so that an ancestor always has two descendants. But it is plausible that some hypothetical ancestors, especially those in the most active period of transmission, were copied in more than two surviving branches of transmission. It may even be that some of our extant manuscripts were ancestors to others.\footnote{
+Traditionally, \textit{codices descripti}, or surviving copies of surviving exemplars, are excluded from stemmata because they add no new information for reconstructing earlier states of the text. But in a Bayesian phylogenetic framework, they are still informative for the estimation of scribal change rates and should therefore be included in the analysis. This is yet another way that Bayesian phylogenetics complements the framework of new philology.
 } Modeling such scenarios in our analysis would likely result in more conservative estimates of scribal change rates. This will require the adoption and development of Bayesian phylogenetic models better-suited to the idiosyncrasies of textual transmission.
 
 \section{Discussion}\label{sec:discussion}
@@ -356,22 +328,20 @@ This research demonstrates both the potential and limitations of computational a
 
 In this paper, we used a real world tradition with all its intricate complexities. To determine whether \textquote{old} or \textquote{new} philological methods are better suited, future work could include evaluating both types of methods on an equally complex \textit{artificial} tradition. However, the strong agreement between our Bayesian analysis using uniform priors, totally independent of Verdam and Leendertz’s judgments about original readings, and the traditional stemma from 1918, suggests that Bayesian phylogenetics captures many of the relationships they proposed between the manuscripts of the \textit{Martijn Trilogy}.
 
-%TC:ignore
-
 \section*{Acknowledgments}\label{sec:acknowledgments}
 
 The authors are grateful to the anonymous referees for their generous comments and recommendations, and to Elli Bleeker, Ben Nagy, and Joris van Zundert for looking over the submitted draft of this paper and offering constructive insights on it. We also thank Jean-Baptiste Camps for his feedback on the methodological aspect of the paper.
 
-This article is the result of a research project by Sofie Moors, funded by the Research Foundation – Flanders (FWO), project number 1182725N, under the supervision of Remco Sleiderink and Mike Kestemont. Joey McCollum's contribution to this work was supported by an Australian Government Research Training Program (RTP) Scholarship (\href{https://doi.org/10.82133/C42F-K220}{doi.org/10.82133/C42F-K220}) and by the University of Melbourne's Research Computing Services and the Petascale Campus Initiative. 
-    
+This article is the result of a research project by Sofie Moors, funded by the Research Foundation – Flanders (FWO), project number 1182725N, under the supervision of Remco Sleiderink and Mike Kestemont. Joey McCollum's contribution to this work was supported by an Australian Government Research Training Program (RTP) Scholarship (\href{https://doi.org/10.82133/C42F-K220}{doi.org/10.82133/C42F-K220}) and by the University of Melbourne's Research Computing Services and the Petascale Campus Initiative.
+
 \printbibliography
 
 \appendix
 
 \section{Bayesian Phylogenetic Analysis Design}\label{appendix:design}
 
-This appendix details our model design choices for the BEAST 2 Bayesian phylogenetic analysis described in Section \ref{subsec:analysis-bayesian-pylogenetic-tree-distribution}. While this section is more technical in nature, we have endeavored to present our model choices in an accessible manner, and we justify these choices based on previous studies that may interest readers with a humanities background. In addition to providing a template that others can use for their own Bayesian phylogenetics for textual traditions,\footnote{%
-    Our TEI XML collation files, the BEAST 2 XML input files we used for our analyses, and the auxiliary Python scripts we note in this section are all available at \url{https://github.com/SofieMoors/martijncollation}.%
+This appendix details our model design choices for the BEAST 2 Bayesian phylogenetic analysis described in Section \ref{subsec:analysis-bayesian-pylogenetic-tree-distribution}. While this section is more technical in nature, we have endeavored to present our model choices in an accessible manner, and we justify these choices based on previous studies that may interest readers with a humanities background. In addition to providing a template that others can use for their own Bayesian phylogenetics for textual traditions,\footnote{
+Our TEI XML collation files, the BEAST 2 XML input files we used for our analyses, and the auxiliary Python scripts we note in this section are all available at \url{https://github.com/SofieMoors/martijncollation}.
 } this section demonstrates the power and customizability of BEAST 2 in analyzing textual traditions.
 
 \subsection{Tree Prior}\label{appendix:design-tree-prior}
@@ -384,8 +354,8 @@ We allowed the Bayesian phylogenetic analysis to estimate the birth, death, and 
 
 Our second design choice was to use an epoch-based clock model. This type of clock model allows the mean mutation rate of branches to vary at different periods of time, similar to the rates in a birth-death tree prior. This is crucial for our purposes because in textual transmission, the rate of evolution is coupled with the birth rate of manuscripts. In biology, the process of genetic mutation is typically treated as independent of the birth-death process, because \enquote{birth} events actually correspond to events in which one population splits into two independently evolving subpopulations. In textual transmission, by contrast, \enquote{birth} events correspond to copying events, and it is precisely at these events, both at the nodes in the stemma and along its branches, that scribal changes are introduced. To know the expected number of textual changes along a branch, we must know the expected number of intermediate copying events along that branch and the expected number of changes introduced by each scribe. For a branch spanning a duration of time $t$, the expected number of intermediate copying events should be close to the expected number of \enquote{birth} events, which for a birth rate $\lambda$ is just $\lambda t$. For the average number of changes introduced by each scribe, the simulation-based estimates derived by Matthew Spencer and Christopher J.\ Howe \cite{spencer2002how} are a potential starting point. But since our collation currently does not account for segments of the text where variation is not observed (i.e., constant sites), and since the model assumed by Spencer and Howe assumes a pure-birth process in which no exemplars are lost, we felt it would be best to estimate the average number of changes per scribe in a Bayesian fashion. For our prior, we assumed that the mean number of changes per variation unit per scribe followed a log-normal distribution with a log-mean of -6 and a log-standard deviation of 1.
 
-One further note is in order regarding our choice of clock model. For this study, we have chosen a strict clock model \cite{zuckerkandl1965evolutionary}, which assumes that the rate of scribal change is the same for all branches in the same epoch. It is also possible to account for variation in the accuracy of different scribes using an uncorrelated random clock model \cite{drummond2008relaxed}. But since the epoch-based variations of clock models have so far only been tested with the strict clock model, and since we can reasonably expect different scribes' tendencies to average out along branches, we have opted to use this model at this time.\footnote{%
-    This is noted in \url{https://www.beast2.org/2025/02/01/epoch-clock-models.html} (last accessed 8 July 2025).%
+One further note is in order regarding our choice of clock model. For this study, we have chosen a strict clock model \cite{zuckerkandl1965evolutionary}, which assumes that the rate of scribal change is the same for all branches in the same epoch. It is also possible to account for variation in the accuracy of different scribes using an uncorrelated random clock model \cite{drummond2008relaxed}. But since the epoch-based variations of clock models have so far only been tested with the strict clock model, and since we can reasonably expect different scribes' tendencies to average out along branches, we have opted to use this model at this time.\footnote{
+This is noted in \url{https://www.beast2.org/2025/02/01/epoch-clock-models.html} (last accessed 8 July 2025).
 }
 
 \subsection{Variation Unit Rate Heterogeneity}\label{appendix:design-rate-heterogeneity}
@@ -399,6 +369,5 @@ Our fourth design choice was to include a variation unit for details of the mate
 \subsection{Root Reading Priors}\label{appendix:design-root-reading-priors}
 
 Finally, we incorporated prior probabilities for readings at the root of the stemma. For each of the two datasets described in Section \ref{subsec:analysis-computer-assisted-stemma}, we ran two analyses: one with equal prior probabilities for all readings in each variation unit, and one with prior probabilities informed by the editorial judgments of Verdam and Leendertz \cite{verdam1918jacob}. In the latter case, we assigned relative odds for one reading's originality over that of another reading, effectively quantifying Verdam and Leendertz's scholarly expertise about the intrinsic authority of readings, relevant scribal behavior, and textual history. Readings printed in their edition without qualification were assigned odds of 100 over all of their alternatives. Readings whose apparatus entries were marked with \enquote{=} were regarded as equally likely, and these readings were assigned odds of 100 over any remaining readings in their variation unit. Where a reading was marked in the apparatus with \enquote{=?} relative to another reading, we assigned the first reading odds of $\sqrt{10} \approx 3.162$ over the second reading to quantify a slight preference for the first reading, and we assigned the second reading odds of 100 over any remaining readings. As McCollum and Turnbull \cite{mccollum2024using} argue, the assignment of prior probabilities to authorial readings is not only defensible but beneficial, because Bayesian phylogenetics can manage and leverage the varying degrees of certainty inherent in human judgments, and it can use overall trends of prior probabilities to determine which witnesses are most likely to be close to the root of the stemma.
-%TC:endignore
 
 \end{document}

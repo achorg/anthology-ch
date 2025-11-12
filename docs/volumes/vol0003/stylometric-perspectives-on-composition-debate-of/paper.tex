@@ -1,11 +1,5 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *CHR 2025*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-%\documentclass{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{mdframed}
@@ -13,79 +7,34 @@
 \usepackage{multirow}
 \usepackage{float}
 
-% \usepackage{booktabs}
-% \usepackage{graphicx}
-% % ADD your own packages using \usepackage{}
-% \usepackage{microtype}
-% \usepackage{xcolor}
-% \usepackage{btxdockit}
-% \usepackage{realscripts}
-% \usepackage{xparse}
-% \usepackage{framed}
-% \usepackage{enumitem}
-% \usepackage{float}
-% \usepackage{tabularx}
-% \usepackage{tablefootnote}
-% \usepackage{amsmath}
-% \usepackage{graphicx}
-% \usepackage{multirow}
-% \usepackage{hyperref}
-% \usepackage{longtable}
-% \usepackage{pdflscape}
-% \usepackage{afterpage}
-% \usepackage{colortbl}
-%\usepackage{polyglossia}
-
 \usepackage{setspace}
 
-% FIGURES AND TABLES
-\captionsetup[table]{labelfont=bf}
-\captionsetup[figure]{labelfont=bf}
-
-
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{Stylometric Perspectives on the Composition Debate of \textit{Acts of Andrew}}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1]{Sophie Robert-Hayek}[
-  orcid=0000-0003-4359-9124
+orcid=0000-0003-4359-9124
 ]
 
 \author[2]{Christian Houth Vrangbæk}[
-  orcid=0009-0005-2011-3082
+orcid=0009-0005-2011-3082
 ]
 
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 \affiliation{1}{Sorbonne University, STIH laboratory, Paris, France}
 \affiliation{2}{Department of Theology, Aarhus University, Aarhus, Denmark}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{New Testament Apocrypha, Stylometry, Literary Composition}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
-\pagestart{1254}
-\pageend{1266}
+\pagestart{1258}
+\pageend{1269}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/hPm4C4anq08s}  
+\doi{10.63744/hPm4C4anq08s}
 \paperorder{77}
 
 \addbibresource{bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
 
 \maketitle
@@ -95,22 +44,20 @@ This paper engages with the ongoing scholarly debate surrounding the composition
 \end{abstract}
 
 \section{Introduction}
-%SR: \section{Introduction and Motivation} 
+
 Within the large, inhomogeneous text group known as the New Testament Apocrypha, we find a subgroup of Acts stories, i.e., narratives of the apostles' deeds, speeches, and deaths, among which the so-called apocryphal Acts of the Apostles \cite{Klauck2008}. These texts differ from the canonical acts and consist of stories of individual apostles, such as Paul, Peter, John, Andrew, or Thomas. Among literary works, the Acts of Andrew have come down to us in a complex textual state, leading to uncertainty regarding the relationship of the various textual materials to a possible original, or primitive, longer version of the Acts of Andrew \cite{Lanzillotta2011}. The central concern in this paper is the relation of \textit{Acts of Andrew and Matthew in the City of the Cannibals} (AAM) with the proper Acts of Andrew (AA) and possibly the AAM as an integral part of the AA.\\ The possible inclusion of AAM into an original larger Andrew cycle will have implications for the possible dating of the Andrew stories and it will affect the understanding of genre of apocryphal apostle stories to what extent they are more or less legendary in their style and content and to what extent they imitate canonical stories. All details of this huge discussion are outside the scope of this paper, in which we will revisit selected key points made in previous scholarship, however those implications provide the research context of the paper and the discussion of the matter.\\
 The debate on the relation between AA and AAM began with Denis MacDonald, who proposed that the AAM, in accordance with Gregory of Tours' sixth-century epitome, was to be included in the AA \cite{macdonald1986acts}. This claim has been challenged by Hilhorst and Lalleman \cite{hilhorst2000}, David Warren \cite{warren_greek_1999}, and by Jean-Marc Prieur \cite{prieur1989, Prieur1986}. We wish to take up this debate and, with the assistance of computational methods, reexamine the set of claims set forth on both sides of the debate. We regard this case as demonstrative for integrating computational methods into humanities scholarship of apocryphal literature by studying their style and content. Our findings contribute to the broader understanding of early Christian literature and demonstrate the potential of digital humanities approaches in resolving complex questions of textual criticism and composition in ancient religious texts.\\
-%SR:
+
 The contributions of this paper to the state of the art are thus:
 \begin{itemize}
-    \item The examination of three claims made regarding the relationship between the AAM and AA by leveraging stylometric approaches;
-    \item More broadly, demonstrate the potential of computational approaches to contribute to well-known debates rooted in more traditional humanities scholarship.
+\item The examination of three claims made regarding the relationship between the AAM and AA by leveraging stylometric approaches;
+\item More broadly, demonstrate the potential of computational approaches to contribute to well-known debates rooted in more traditional humanities scholarship.
 \end{itemize}
 \noindent
 \noindent
 The paper is structured as follows. Section~\ref{sec:state_of_art} offers insights into the existing debates concerning the relationship between the Acts of Andrew (AA) and the Acts of Andrew and Matthew (AAM). Section~\ref{sec:dataset} presents the selected texts used for the analysis, the performed pre-processing, and the sylometric features selected for discussing the existing claims regarding the relationship between the AAM and the AA. We then provide in section~\ref{sec:results} the obtained results on the text, and provide in section~\ref{sec:conclusion} our conclusions regarding the relationship between the AAM and the AA, as well as insights regarding our further works on New Testament apocrypha.
- 
 
 \section{The Relationship Between AA and AAM\label{sec:state_of_art}}
-%\subsection{State of the Art} \label{sec:intro_details}
 
 \subsection{Background of the Debate}
 
@@ -120,9 +67,9 @@ Hilhorst and Lalleman bridge the debate by noting both similarities and 11 signi
 \noindent
 In this paper, the investigation focuses on three quantitative arguments that advocate for a divergent stylistic approach between the AM and the AAM:
 \begin{itemize}
-    \item The AAM has a simpler language than AA.
-    \item There is a higher distribution of absolute genitives in AA than in AAM.
-    \item The verb is more often positioned in the middle in AA than in AAM.
+\item The AAM has a simpler language than AA.
+\item There is a higher distribution of absolute genitives in AA than in AAM.
+\item The verb is more often positioned in the middle in AA than in AAM.
 \end{itemize}
 
 \noindent
@@ -130,27 +77,13 @@ A summary of these different claims is available in table~\ref{tab:claims}.
 
 \subsection{Research Question}
 Our paper is thus positioned within the field of computational stylometry, which applies statistical and computational tools to written texts in order to uncover underlying stylistic patterns, often for authorship attribution or compositional analysis in order to revisit established debates by moving from qualitative interpretations to quantitative, data-driven modeling of linguistic features such as function words or n-grams~\cite{Zhang2018, deneire2018filelfo, nielbo2019automated, ml_stylometry_2020}. While the previous quoted studies have made their stylometric claims based on selected passages due to the manual computation, our paper seeks to systematically test and generalize these findings in light of the ongoing debate about the composition of AA and AAM.\\
-By systematically testing the different claims using quantitative metrics, we hope to \textbf{shed light on the possibility of the Acts of Andrew and Matthew being an integral part of the Acts of Andrew}, and highlight the potential of computational approaches to contribute to well-known debates rooted in humanities scholarship. 
-%taking a well-known debate rooted in scholarship and contributing to this debate with computational methods.
-
-% 
-
-\noindent
-\textbf{Stylometry and the question of authorship}
-
-% Our paper is positioned within computational stylometry, which applies statistical and computational tools to written texts in order to uncover underlying stylistic patterns, often for authorship attribution or compositional analysis in order to revisit established debates by moving from qualitative interpretations to quantitative, data-driven modeling of linguistic features such as function words or n-grams \cite{Zhang2018, deneire2018filelfo, nielbo2019automated}. While previous studies have made manual stylometric claims based on selected passages, our paper seeks to systematically test and generalize these findings in light of ongoing debates about the composition of AA and AAM.
-
-% Make the link with the previous state of the art for ancient texts
-
+By systematically testing the different claims using quantitative metrics, we hope to \textbf{shed light on the possibility of the Acts of Andrew and Matthew being an integral part of the Acts of Andrew}, and highlight the potential of computational approaches to contribute to well-known debates rooted in humanities scholarship.
 
 \section{Dataset and Methodology\label{sec:dataset}}
 
 \subsection{Selected Texts and Pre-processing}
 
-
-
-\noindent
-\textbf{Selected dataset}
+\paragraph{Selected dataset}
 The selected texts consist of 13 texts relating to what has generally been labeled as the Andrew cycle, taken from three text-critical editions: Prieur [\textbf{CCSA}], Bonnet [\textbf{Bonnet}], and Tischendorf [\textbf{Tischendorf}]. These editions include a variety of texts related to the stories of the Apostle Andrew. Even though some of the selected texts in the dataset exhibit minor differences, such as additional passions and martyrdoms, they have been included in our study to show the impact of selecting different critical texts on stylometric results, as well as to assert that our claims are not dependent on a selected edition.
 A summary of the selected texts is available in Table~\ref{tab:texts-used}.
 
@@ -171,15 +104,14 @@ MartAndrPrieurB       & CCSA             & 19  \\
 AndrMattBon           & Bonnet           & 33  \\
 AndrMattTisch         & Tischendorf      & 33  \\
 \end{tabular}
-\caption{Texts used for the analysis. 
+\caption{Texts used for the analysis.
 The titles of the individual texts follow the naming conventions used in the text-critical editions from which they have been retrieved \cite{prieur1989, bonnet1891, bonnet1894, tischendorf1851}.}
 \label{tab:texts-used}
 \end{table}
 
 \centering
 
-\begin{table}[h!]
-\centering
+\begin{table}
 \begin{tabular}{l l l}
 \textbf{Abbreviated Title} & \textbf{Source} & \textbf{Chapters} \\
 \midrule
@@ -195,52 +127,16 @@ MartAndrPrieurB       & CCSA             & 19  \\
 AndrMattBon           & Bonnet           & 33  \\
 AndrMattTisch         & Tischendorf      & 33  \\
 \end{tabular}
-\caption{Texts used for the analysis. 
-The titles of the individual texts follow the naming conventions used in the text-critical editions from which they have been retrieved \cite{prieur1989, bonnet1891, bonnet1894, tischendorf1851}.} \label{tab:texts-used}
+
+\caption{Texts used for the analysis.
+The titles of the individual texts follow the naming conventions used in the text-critical editions from which they have been retrieved \cite{prieur1989, bonnet1891, bonnet1894, tischendorf1851}. \label{tab:texts-used}}
 \end{table}
-
-
 
 \noindent
 The editions of Tischendorf and Bonnet were retrieved from high-quality OCR scans via Google Books, which we then manually checked for any possible errors. Texts sourced from the \textit{Corpus Christianorum Series Apocrypha} (abbreviated as CCSA in Table~\ref{tab:texts-used}) have been copied manually, with prior consent. Since there is no dispute in scholarship that chapters 11-15 of AAM are a later addition~\cite{hilhorst2000,macdonald1986acts}, we have extracted these chapters from AAM and excluded them from the analysis of AAM. However, we have kept the texts in the experiments so that we could validate that they are actually disjoint from the AAM.
-%last part from "However" inserted
 
-% 
-
-\noindent
-\textbf{Data processing}
-
-% Following standard natural language processing, we have processed the texts so that they are machine readable. This does not imply any change to the original text, it is only a matter of formatting the digital edition. We have carefully kept the text of the edition, as well as punctuations. 
-
-% We chose to process the texts with the tree bank of PROIEL which gave the best results of processing the texts \cite{haug_johndal_2008, Jacobo_grc_proiel_trf_2023}. Processing text means that the model can develop schemes of how every word in each text is parsed in terms of morphology and syntax, as well as lemmatisation. These calculations constitute the starting point for further analyses of e.g. verb positions and use of subordinate conjunctions. An example of how a word is parsed, and which information the program stores for a verb, a noun, and a conjunction, is displayed in the following example:
- 
-% \begin{table}[H]
-% \centering
-% \begin{tabular}{l l l l l l}
-% \toprule
-% \textbf{Verb} &  & \textbf{Noun} &  & \textbf{Conj} &  \\
-% \midrule
-% raw      & ἐλέγχεσθε & raw    & χρηστóτητα & raw    & εἰ \\
-% lemma    & ἐλέγχω    & lemma  & χρηστóτης  & lemma  & εἰ \\
-% pos      & VERB      & pos    & NOUN       & pos    & SCONJ \\
-% Mood     & Imp       & Case   & Acc        &        &      \\
-% Number   & Plur      & Gender & Fem        &        &      \\
-% Person   & 2         & Number & Sing       &        &      \\
-% Tense    & Pres      &        &            &        &      \\
-% VerbForm & Fin       &        &            &        &      \\
-% Voice    & Mid       &        &            &        &      \\
-% \bottomrule
-% \end{tabular}
-% \caption{Example of Morphosyntactic Annotation for Verb, Noun, and Conjunction}
-  \label{tab:morphosyntax-example}
-% 
-% \end{table}
-
-
-
-\noindent
-\textbf{Data Parsing}
-After the acquisition of the datasets and their manual cleaning to ensure high quality data, we perform automatic parsing using the pipeline for Ancient Greek GreCy~\cite{greCy}, used through SpaCy's API~\cite{spacy}. We retrieve from this parsing the required information for computing the stylistic features: the lemmatized form of each word, the Part Of Speech (POS) of each word, as well as the morphological form of each available word. We then post-checked and corrected the resulting information partly via reading through the parsed files and partly via search queries to ensure that our statistics returned 
+\paragraph{Data Parsing}
+After the acquisition of the datasets and their manual cleaning to ensure high quality data, we perform automatic parsing using the pipeline for Ancient Greek GreCy~\cite{greCy}, used through SpaCy's API~\cite{spacy}. We retrieve from this parsing the required information for computing the stylistic features: the lemmatized form of each word, the Part Of Speech (POS) of each word, as well as the morphological form of each available word. We then post-checked and corrected the resulting information partly via reading through the parsed files and partly via search queries to ensure that our statistics returned
 exact values, allowing us to compare our results with those from manual analysis. Afterwards we checked the parser again with random sampling.
 
 \subsection{Selected Stylometric Features}
@@ -248,7 +144,7 @@ exact values, allowing us to compare our results with those from manual analysis
 We divide our selected features into two sub-categories, classically used in stylometric  analysis~\cite{ml_stylometry_2020}, and that have been used as arguments regarding the relationship between AAM and AA in traditional scholarship. A summary of the claims made by the different authors, along with our selected quantitative metrics for assessing these claims, is presented in Table~\ref{tab:claims}.
 
 \begin{table}[!h]
-    \centering
+\centering
 \scriptsize
 \begin{tabular}{l | l | l }
 \textbf{Author} & \textbf{Claim} & \textbf{Metric} \\
@@ -259,27 +155,16 @@ Zachariades-Holmberg~\cite{zachariadesholmberg1999} & High distribution of abs g
 \hline
 Warren~\cite{warren_greek_1999} & Verb in the middle position in AA than in AAM & Split sent. in 3, find finite verb position \\
 \end{tabular}
-    \caption{Scholars claims and selected metrics for validation\label{tab:claims}}
-  \label{sec:results}
+\caption{Scholars claims and selected metrics for validation\label{tab:claims}}
 \end{table}
-
-
-
-% HELPP: Here put something that can be related to using stylometric approaches in general, instead of directly focusing on the application to the AM / AAM.
-% Something on the use of stylometric approaches for the study of ancient text
-% I have put it in the section on stylometry
 
 \subsubsection{Vocabulary Richness Analysis}
 
-% 
-
-\noindent
-\textbf{Vocabulary richness}
 The first axis of our analysis assesses the \textit{vocabulary richness} of the texts, in light of Prieur's observation that the language of the AA is much richer than that of the AAM, which he characterizes as employing a "simple" and "limited vocabulary"~\cite{Prieur1986}. \\
-We verify this claim by relying on three widely used stylometric indicators: the \textit{type-token ratio} (TTR), \textit{sentence-level vocabulary richness}, and the \textit{median sentence length}~\cite{kettunen2014typeratio}: %HELPP: add a ref for this
+We verify this claim by relying on three widely used stylometric indicators: the \textit{type-token ratio} (TTR), \textit{sentence-level vocabulary richness}, and the \textit{median sentence length}~\cite{kettunen2014typeratio}:
 \noindent
 \begin{enumerate}
-    \item \textit{The type-token ratio (TTR)} is a widely used metric for lexical diversity. It is defined as the ratio of the number of distinct word forms (\textit{types}), in our case in their lemmatized form, to the total number of word occurrences (\textit{tokens}):
+\item \textit{The type-token ratio (TTR)} is a widely used metric for lexical diversity. It is defined as the ratio of the number of distinct word forms (\textit{types}), in our case in their lemmatized form, to the total number of word occurrences (\textit{tokens}):
 
 \[
 \text{TTR} = \frac{|\text{types}|}{|\text{tokens}|}
@@ -288,53 +173,37 @@ If Prieur's claim is right, then AAM should display a lower TTR.
 
 \item \textit{Sentence-level vocabulary richness} measures lexical diversity on a per-sentence basis as localized TTR, instead of being computed on the sentence as a whole as the standard TTR. For each sentence \( s_i \), a localized TTR is calculated as:
 
-    \[
-    \text{TTR}(s_i) = \frac{|\text{types}(s_i)|}{|\text{tokens}(s_i)|}
-    \]
-    
-    The mean of these values across all \( N \) sentences provides an aggregate indicator, computing the local variation in vocabulary use, and mitigating the bias linked to difference in sequence length.
+\[
+\text{TTR}(s_i) = \frac{|\text{types}(s_i)|}{|\text{tokens}(s_i)|}
+\]
 
-    \item \emph{Median sentence length}: Median sentence length measure the median length of the sentences of the text, reflecting syntactic or rhetorical complexity, as longer sentences may reflect more elaborate structure.
+The mean of these values across all \( N \) sentences provides an aggregate indicator, computing the local variation in vocabulary use, and mitigating the bias linked to difference in sequence length.
+
+\item \emph{Median sentence length}: Median sentence length measure the median length of the sentences of the text, reflecting syntactic or rhetorical complexity, as longer sentences may reflect more elaborate structure.
 \end{enumerate}
-
-
-% 
-
-\noindent
-\textbf{Shared vocabulary}
-
-% To assess the proximity between the different texts, as closer proximity in vocabulary may indicate a common source for the considered texts, we quantify pairwise lexical overlap on the basis of unique lemmatized word forms relying on the Jaccard similarity~\cite{Jaccard1901}. Formally, this similarity between two sets of unique lemmas in two texts \( A \) and \( B \), is defined as 
-% \[
-% D_J(A, B) = 1 - \frac{|A \cap B|}{|A \cup B|}
-% \]
-
-% where \( |A \cap B| \) is the number of shared unique lemmas between the two texts, and \( |A \cup B| \) is the total number of unique lemmas across both. Thus, if \( D_J = 0 \), then there is a complete lexical identity, and if \( D_J = 1 \) a complete lexical dissimilarity, without any lemma in common between the two texts.
 
 \subsubsection{Sentence Construction Analysis}
 
- David H. Warren~\cite{warren_greek_1999}, Zachariades-Holmberg~\cite{zachariadesholmberg1999}, and Hilhorst and Lalleman~\cite{hilhorst2000} argue for a lack of homogeneity between AAM and AM due to their different sentence structure. We leverage their different arguments by comparing the sentence structures in terms of subordination and the placement of verbs.
+David H. Warren~\cite{warren_greek_1999}, Zachariades-Holmberg~\cite{zachariadesholmberg1999}, and Hilhorst and Lalleman~\cite{hilhorst2000} argue for a lack of homogeneity between AAM and AM due to their different sentence structure. We leverage their different arguments by comparing the sentence structures in terms of subordination and the placement of verbs.
 
-
-
-\noindent
-\textbf{Grammatical subordination}
+\paragraph{Grammatical subordination}
 We rely on three measures to quantify grammatical subordination: the ratio of subordinating conjunctions, the ratio of subordinated verbs, and the use of absolute genitives.
 
 \begin{enumerate}
-    \item \emph{Ratio of subordinating conjunctions}: 
+\item \emph{Ratio of subordinating conjunctions}:
 Subordinating conjunctions (e.g., ὅτι, ἵνα, ὡς \dots) introduce dependent clauses and are typically associated with more complex sentence structures. We compute their relative frequency as
 \[
 \text{Sub. Conj. Ratio} = \frac{|\text{Subordinating Conjunctions}|}{|\text{All Conjunctions}|}
 \]
 
-\item \emph{Ratio of Subordinated Verbs}: This metric captures the extent of verbal subordination by calculating the proportion of finite verbs (filtered through the morphological tagging of SpaCy) that occur in subordinate clauses. Every finite verb embedded under subordinating conjunctions or relative pronouns is counted as subordinated. 
+\item \emph{Ratio of Subordinated Verbs}: This metric captures the extent of verbal subordination by calculating the proportion of finite verbs (filtered through the morphological tagging of SpaCy) that occur in subordinate clauses. Every finite verb embedded under subordinating conjunctions or relative pronouns is counted as subordinated.
 
 \[
 \text{Sub. Verb Ratio} = \frac{|\text{Verbs in Subordinate Clauses}|}{|\text{All Finite Verbs}|}
 \]
 
-\item \textit{Frequency of genitive absolute}: The genitive absolute construction is composed of a noun or pronoun and a participle, both in the genitive case \cite{zachariadesholmberg1999}. 
-%HELP X argues that the AAM and the AM present a different ratio of appearance of this construction???. 
+\item \textit{Frequency of genitive absolute}: The genitive absolute construction is composed of a noun or pronoun and a participle, both in the genitive case \cite{zachariadesholmberg1999}.
+
 We compute its frequency per number of sentences:
 
 \[
@@ -343,11 +212,7 @@ We compute its frequency per number of sentences:
 
 \end{enumerate}
 
-
-
-
-\noindent
-\textbf{Verb positions}
+\paragraph{Verb positions}
 
 Following Warren's analysis, the verb position within the sentence serves as an indicator of the stylistic level in Ancient Greek prose. Skilled authors are typically associated with a preference for placing the (finite) verb in the middle of the sentence, rather than at the beginning or end. In contrast, less skilled or more colloquial styles tend to position the verb at the start of the sentence. While Warren examined seven chapters of AAM and ten chapters of AA, our computational approach allows us to treat a larger volume of data and consider the entirety of the book.\\
 To compute this score, sentences were divided into three equal parts, and we then identified in which part the finite verb occurred, defined as those tagged by SpaCy with a POS "AUX" or "VERB", as well as a  VerbForm set to "Fin" in the morphological analysis. The number of verbs found in each part is then summed across each text and divided by the total number of verbs in the text to account for different lengths.\\
@@ -380,35 +245,22 @@ R_{\text{text}} = \frac{1}{K} \sum_{k=1}^{K} \frac{i_k}{n_{s(k)}}
 where \( s(k) \) denotes the index \( j \) of the sentence \( S^{(j)} \) in which the \( k \)-th finite verb occurs, and \( n_{s(k)} \) is the length of that sentence.
 This then leads to the average relative position of finite verbs within their respective sentences, that we multiply by 100 in order to obtain a percentage.
 
-
-
-%SR: for me, we can stop there if we want to go for a shorter paper
-% \subsubsection{Other grammatical features}
-% Finally, we consider 
-
-% Hilhorst \& Lalleman observed a high use of periphrastic construction (eimi \+ perfect or aorist participle).
-
-
 \subsection{Implementation and Reproducibility}
 All code used in this study was written in Python, and the results are fully reproducible via the companion GitHub repository\footnote{\url{https://github.com/Computing-Antiquity/acts_andrew_stylometry}}. Due to copyright constraints, only the texts edited by Tischendorf and Bonnet are available on the GitHub repository. These datasets, to our knowledge, are the only freely available digital transcriptions of the Acts of Andrew and the Acts of Andrew and Matthew. We hope that these datasets will trigger further experimentation on these apocryphal texts.
 
-\section{Results and discussion}
+\section{Results and discussion\label{sec:results}}
 We present the selected metrics for investigating and systematizing the stylometric claims in the following section. We summarize our results and their relationship to existing claims in table~\ref{tab:summary}.
 
 \subsection{Vocabulary Analysis}
 
-
-
-\noindent
-\textbf{Richness of vocabulary}
+\paragraph{Richness of vocabulary}
 
 The results regarding the values of the TTR, the Sentence Vocabulary Richness, and the Median sentences are displayed in Table~\ref {tab:vocab-sentence}. As claimed by Prieur, Hillhorst, and Lallemand, AAM presents a lower type-token ratio in the AAM texts, corroborating their claims. All of our results thus single out the AAM as being simpler in language. The AAM-editions, which are very close in their wording, have lower TTR-scores compared to the other texts.
-
 
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrr}
- & \textbf{TTR} & \textbf{Sentence Vocabulary Richness} & \textbf{Median Sentence Length} \\
+& \textbf{TTR} & \textbf{Sentence Vocabulary Richness} & \textbf{Median Sentence Length} \\
 \midrule
 \rowcolor{lightgray} AndrMattBon         & 0.33 & 0.88 & 11.00 \\
 AndrMattTisch1115   & 0.34 & 0.83 & 14.00 \\
@@ -425,89 +277,28 @@ MartAndrBonAlt          & 0.47 & 0.90 & 10.00 \\
 MartAndrPrieurA         & 0.48 & 0.89 & 11.00 \\
 \end{tabular}
 \caption{Type-Token Ratio, Sentence Vocabulary Richness, and Median Sentence Length for All Texts. The table is sorted by the TTR, and the metrics concerning the AAM are highlighted in grey.~\label{tab:vocab-sentence}}
-  \label{fig:jaccard-distance}
 \end{table}
-%%%%%
+
 \noindent
 In terms of vocabulary richness per sentence, we can observe a lesser difference between the different claims, with Tischendorf's version still presenting the lowest score.\\
 \noindent
-The results of the median sentence length show a more complex image. Here, the \textit{martyrium prius} and Bonnet's \textit{acta} have the lowest median sentence length, whereas AAM from the Tischendorf version scores highest. These results should be correlated; for example, when AAM has a low TTR but a high median sentence length, it means that there are rather long sentences, but with few new terms, i.e., a simple and perhaps monotonous text. 
-
-%When the Passio2 has a high TTR and a high median sentence length it points to higher complexity of language. 
-%Notice however, that PAndr2 has a relatively low sentence vocabulary richness, so even though it has a high TTR, it disperses the newly introduced words equally across sentences.
-
-
-% \subsection{Shared Vocabulary: Jaccard Distances}
-
-% %Hapax per text (in the corpus):\\
-
-% %\begin{tabular}{lrr}
-%  %& Number & Ratio \\
-% %\hline
-% %AndrMattTisch1115 & 20 & 7.142857 \\
-% %AndrMattBon1115 & 20 & 7.117438 \\
-% %ActAndrBon & 31 & 4.341737 \\
-% %MartAndrBonAlt & 37 & 8.525346 \\
-% %MartAndrBonPrius & 62 & 8.299866 \\
-% %MartAndrPrieurB & 107 & 13.080685 \\
-% %AndrMattTisch & 124 & 13.581599 \\
-% %AndrMattBon & 130 & 13.727561 \\
-% %MartAndrPrieurA & 144 & 18.580645 \\
-% %PAndr1 & 153 & 22.938531 \\
-% %PAndr2 & 277 & 28.294178 \\
-% %ActAndrPrieur & 465 & 32.314107 \\
-% %MartAndrBonTert & 531 & 38.646288 \\
-% %\bottomrule
-% %\end{tabular}
-
-% In the next experiment on vocabulary richness, we employ the Jaccard Distance to compare the lexical similarity between pairs of texts. Unlike the previous analysis, which measured each text against the combined vocabulary of the entire corpus, the Jaccard Distance quantifies the overlap between each text and every other text individually.
-
-% Mathematically, the Jaccard Distance is defined as one minus the ratio of shared unique words (lemmas) to the total number of unique words across both texts:
-% Jaccard Distance=1−∣Shared Unique Words∣∣Total Unique Words∣
-% Jaccard Distance=1−∣Total Unique Words∣∣Shared Unique Words∣
-
-% A value of 1 indicates no shared vocabulary (complete dissimilarity), while a value of 0 means the texts are identical in terms of unique words.
-
-% This method provides a clear and intuitive way to assess common vocabulary. For instance, chapters 11–15 of AAM yield Jaccard scores of 0.9 and 0.8 when compared to the two main versions of AAM, highlighting a pronounced dissimilarity. This result is reassuring, as it confirms the reliability of our computational approach by aligning with established scholarly assessments of these chapters as textual outliers.
-
-% Conversely, Prieur’s \textit{Acta} exhibits Jaccard distances of 0.2 and 0.1 relative to the AAM versions, indicating a high degree of shared vocabulary. Although Prieur’s \textit{Acta} contains many unique words on a global scale, its vocabulary substantially overlaps with that of AAM. Similarly, Bonnet’s \textit{Acta} (BHG 95) shows a Jaccard distance of 0.6 to the AAM texts, suggesting a moderate similarity. These findings may support the hypothesis of a relationship between AA and AAM based on shared vocabulary.
-
-% In summary, these vocabulary analyses demonstrate that the Acts of Andrew and Matthew, as well as the third martyrdom story edited by Bonnet, tend to use a simpler language overall. The Jaccard Distance offers a robust and efficient computational method for measuring shared vocabulary, and may also point toward thematic similarities—an aspect that merits further investigation in future studies.
-
-% \begin{figure}[ht]
-%     \centering
-%     \includegraphics[width=0.8\linewidth]{figures/distance_matrix.png}
-%     \caption{Jaccard distance and shared lemmas across the text. Higher distance means higher dissimilarity between the texts.}
-  \label{tab:conjunction-ratios}
-%     
-% \end{figure}
-
-
-% %%% SENTENCE ANALYSES ‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰
+The results of the median sentence length show a more complex image. Here, the \textit{martyrium prius} and Bonnet's \textit{acta} have the lowest median sentence length, whereas AAM from the Tischendorf version scores highest. These results should be correlated; for example, when AAM has a low TTR but a high median sentence length, it means that there are rather long sentences, but with few new terms, i.e., a simple and perhaps monotonous text.
 
 \subsection{Sentence Analyses}
-
-% In the following section we will reexamine some of the experiments that have been made by David H. Warren, Zachariades-Holmberg and Hilhorst \& Lalleman concerning sentence structures. These concern the number of subordinate conjunctions, the use of subordinate verbs, the use of participles and absolute genitives, and finally, the position of the verb in the sentence \cite{hilhorst2000, warren_greek_1999, zachariadesholmberg1999}.
-
-%%%%%%%%%%subsec conjunctions etc.
 
 \subsubsection{Sentence construction analysis}
 The first experiment examines the level of grammatical subordination through three measures: the ratio of subordinating conjunctions, the ratio of subordinated verbs, and the use of absolute genitives.
 
-
-
-\noindent
-\textbf{Grammatical subordination}
+\paragraph{Grammatical subordination}
 Table~\ref{tab:conjunction-ratios} presents the ratio of coordinating and subordinating conjunctions.
 The ratio between coordinating and subordinating conjunctions reveals that the AAM texts, while exhibiting coordinating conjunction ratios within the 5--7\% range, are not unique in this respect; several other texts display similar values. Notably, MartAndrBonTert has the highest ratio of coordinating conjunctions at 7.36. The texts that stand out most in these results are PAndr1 and PAndr2, both of which are characterized by relatively high ratios of subordinating conjunctions (2.17 and 2.06, respectively) and low ratios of coordinating conjunctions (4.23 and 3.89). This indicates a higher degree of \textit{hypotaxis} and a lower degree of \textit{parataxis} in these texts. Overall, the use of subordinating conjunctions does not distinguish the authors of the Acts and Martyrdoms of Andrew from those of the AAM texts, as their ratios are broadly comparable, invalidating Zachariades' claims regarding the higher rate of subordinating conjunctions.
 
 \begin{table}[h]
 \centering
 
-
 \begin{tabular}{lrr}
 \toprule
- & \textbf{Ratio of subordinate conjunctions} & \textbf{Ratio of conjunctions} \\
+& \textbf{Ratio of subordinate conjunctions} & \textbf{Ratio of conjunctions} \\
 \midrule
 AndrMattTisch1115  & 2.27 & 6.54 \\
 AndrMattBon1115    & 2.15 & 6.80 \\
@@ -524,23 +315,17 @@ MartAndrBonPrius   & 1.16 & 6.61 \\
 MartAndrBonTert    & 0.62 & 7.36 \\
 \bottomrule
 \end{tabular}
-\caption{Ratio of Coordinating Conjunctions and Subordinating Conjunctions. Data relative to the AAM is highlighted in gray}
-  \label{tab:subordinate-nonsubordinates}
+\caption{Ratio of Coordinating Conjunctions and Subordinating Conjunctions. Data relative to the AAM is highlighted in gray\label{tab:conjunction-ratios}}
 \end{table}
 
+\paragraph{Subordinate and Non-Subordinate Verbs}
 
-%%%% subordinates and sub verbs %%%%
-
-
-\noindent
-\textbf{Subordinate and Non-Subordinate Verbs}
-
-Analysis of subordinate and main verb ratios reveals clear syntactic differences across the texts, as displayed in table~\ref {tab:subordinate-nonsubordinates}. 
+Analysis of subordinate and main verb ratios reveals clear syntactic differences across the texts, as displayed in table~\ref {tab:subordinate-nonsubordinates}.
 
 \begin{table}[H]
 \centering
 \begin{tabular}{lrr}
- & Subordinate Verbs Ratio (\%) & Main Verbs Ratio (\%) \\
+& Subordinate Verbs Ratio (\%) & Main Verbs Ratio (\%) \\
 \midrule
 PAndr1              & 28.95 & 28.57 \\
 PAndr2              & 25.93 & 24.20 \\
@@ -556,74 +341,16 @@ MartAndrBonTert     & 15.85 & 37.72 \\
 MartAndrBonPrius    & 13.87 & 39.05 \\
 MartAndrPrieurB     & 13.33 & 35.87 \\
 \end{tabular}
-\caption{Ratios of Subordinate and Main Verbs per Text. Data relative to the AAM is highlighted in gray.}
-  \label{tab:absolute}
+\caption{Ratios of Subordinate and Main Verbs per Text. Data relative to the AAM is highlighted in gray\label{tab:subordinate-nonsubordinates}.}
 \end{table}
-
-
-
 
 \noindent
 PAndr1, PAndr2, ActAndrBon, and ActAndrPrieur have the highest use of subordinate verbs and lower main verb ratios, indicating a preference for complex, hypotactic constructions. In contrast, martyrdom texts like MartAndrBonPrius, MartAndrPrieurB, and MartAndrBonTert show lower subordination and higher main verb ratios, reflecting a simpler, paratactic style. The AAM texts fall between, suggesting a moderate level of syntactic complexity.
 
-%%%%
-% \begin{table}[H]
-% \begin{tabular}{lrr}
-% \toprule
-%  & Subordinate Verbs Count & Subordinate Verbs Ratio \\
-% \midrule
-% PAndr1              & 77  & 28.947 \\
-% PAndr2              & 105 & 25.926 \\
-% ActAndrBon          & 93  & 24.800 \\
-% ActAndrPrieur       & 232 & 23.625 \\
-% AndrMattTisch1115   & 25  & 22.936 \\
-% AndrMattBon1115     & 27  & 21.951 \\
-% AndrMattBon         & 175 & 21.341 \\
-% AndrMattTisch       & 143 & 20.458 \\
-% MartAndrPrieurA     & 74  & 20.386 \\
-% MartAndrBonAlt      & 25  & 17.857 \\
-% MartAndrBonTert     & 71  & 15.848 \\
-% MartAndrBonPrius    & 38  & 13.869 \\
-% MartAndrPrieurB     & 42  & 13.333 \\
-% \bottomrule
-% \end{tabular}
-% \caption{Distribution of Subordinate Verbs}
-  \label{tab:verb-position}
-% \end{table}
-
-
-% \begin{table}[H]
-% \begin{tabular}{lrr}
-% \toprule
-%  & Main Verbs Count & Subordinate Verbs Ratio \\
-% \midrule
-% AndrMattTisch1115 & 62 & 56.881000 \\
-% AndrMattTisch & 490 & 70.100000 \\
-% MartAndrBonAlt & 39 & 27.857000 \\
-% MartAndrBonPrius & 107 & 39.051000 \\
-% PAndr2 & 98 & 24.198000 \\
-% AndrMattBon & 460 & 56.098000 \\
-% PAndr1 & 76 & 28.571000 \\
-% AndrMattBon1115 & 62 & 50.407000 \\
-% ActAndrPrieur & 275 & 28.004000 \\
-% MartAndrPrieurB & 113 & 35.873000 \\
-% MartAndrBonTert & 169 & 37.723000 \\
-% MartAndrPrieurA & 116 & 31.956000 \\
-% ActAndrBon & 86 & 22.933000 \\
-% \bottomrule
-% \end{tabular}
-% \caption{Distribution of Main verbs.}
-  \label{tab:summary}
-% \end{table}
 \noindent
 These results must be seen together with the following, namely the ratio of absolute genitives which would give a more complete picture of grammatical subordination \cite{warren_greek_1999}.
 
-
-%%%%%%%%%%%%%%%%%% abso gen. %%%%%%%%%%%%%%%%%%%%%%%
-
-
-\noindent
-\textbf{Absolute Genitives}
+\paragraph{Absolute Genitives}
 
 The distribution of absolute genitives is displayed in Table~\ref{tab:absolute} across the texts provides further insight into syntactic preferences and literary style. The results show that the later MartAndrBonTert stands out with the highest ratio of absolute genitives (6.70), followed by PAndr2 (3.70), MartAndrBonPrius (3.65), ActAndrPrieur (3.56), and MartAndrBonAlt (3.57). Most other texts, including the AAM versions, display lower ratios, typically between 1.8 and 3.3, however the distribution is does not indicate a clear overuse of absolute genitives in Prieur's versions which Zachariades-Holmberg used.
 
@@ -631,7 +358,7 @@ The distribution of absolute genitives is displayed in Table~\ref{tab:absolute} 
 \centering
 \begin{tabular}{lrr}
 \toprule
- & Absolute genitive count & ratio genitive count \\
+& Absolute genitive count & ratio genitive count \\
 \midrule
 MartAndrBonTert    & 30 & 6.696 \\
 PAndr2             & 15 & 3.704 \\
@@ -646,18 +373,12 @@ MartAndrPrieurA    & 9  & 2.479 \\
 ActAndrBon         & 8  & 2.133 \\
 \bottomrule
 \end{tabular}
-\caption{Number and ratio of detected absolute genitives.}
-  
+\caption{Number and ratio of detected absolute genitives\label{tab:absolute}.}
 \end{table}
-
-
-%%%%%%%%%%% sub sec verb positions %%%%%%%
 
 \subsubsection{Verb positions}
 
-% Following Warren's analysis, the verb position within the sentence serves as an indicator of the stylistic level in Ancient Greek prose. Skilled authors are typically associated with a preference for placing the (finite) verb in the middle of the sentence, rather than at the beginning or end. In contrast, less skilled or more colloquial styles tend to position the verb at the start of the sentence. Warren examined seven chapters of AAM and ten chapters of AA, where we can examine the entire texts.\\
-% All sentences were divided into three equal parts, and we then identified in which part the finite verb occurred, defined as those tagged with \texttt{pos = "AUX"} or \texttt{pos = "VERB"} and \texttt{VerbForm = "Fin"}. 
-The results regarding verb positions, available in Table~\ref{tab:verb-position}, corroborate Warren's findings with some nuances. 
+The results regarding verb positions, available in Table~\ref{tab:verb-position}, corroborate Warren's findings with some nuances.
 
 \begin{table}[h]
 \centering
@@ -678,85 +399,11 @@ MartAndrBonTert      & 33.17 & 30.92 & 35.91 \\
 PAndr2               & 32.62 & 30.24 & 37.14 \\
 PAndr1               & 31.19 & 33.90 & 34.92 \\
 \end{tabular}
-\caption{Normalized verb position distribution by sentence part. Results concerning the AAM texts are displayed as first and labeled in gray. Sorted according to First part position}
-  
+\caption{Normalized verb position distribution by sentence part. Results concerning the AAM texts are displayed as first and labeled in gray. Sorted according to First part position\label{tab:verb-position}}
 \end{table}
 
 \noindent
 The AAM texts (e.g., \textit{AndrMattBon}, \textit{AndrMattTisch}, and their variants) consistently show a higher proportion of verbs in the first part of the sentence (normalized values around 44--47\%), compared to the middle (about 33--36\%) and the last part (about 20--21\%). Warren had found 49\% , 40\% and  11\% for the first, middle and last position respectively for the AAM. For the AA, Warren found 23\%, 43\% and 34\% respectively for the AA. However, Warren's investigation of AA was limited to ten chapters of Prieur's \textit{Acta}, in which we also found a marked reduction in initial verb placement and an increase in medial and final positions. Warren's investigation of AAM was limited to chapters 1-7. In summary, the AAM texts' tendency to place verbs at the beginning of the sentence aligns to a large extent with Warren's findings, however, our results are more evenly distributed in the placement of the verb.
-
-%%%%%%%%%%% subsec grammatical features %%%%%%%%%
-
-% This we keep for the other paper, to fit the required number of pages
-
-% 
-
-\noindent
-\textbf{Ratio of other grammatical features}
-
-
-% \begin{table}[h]
-% \begin{tabular}{lrrrrrrrr}
-% \toprule
-%  & Optative & Subjunctive & Indicative & Participle & Infinitive & Present & Past & Future \\
-% \midrule
-% AndrMattBon         & 0.00 & 1.58 & 11.51 & 5.22 & 1.43 & 4.99 & 15.28 & 0.76 \\
-% AndrMattTisch       & 0.02 & 1.35 & 12.64 & 5.61 & 1.39 & 5.24 & 16.30 & 0.86 \\
-% AndrMattBon1115     & 0.00 & 0.72 & 11.45 & 5.55 & 0.63 & 6.17 & 13.51 & 0.27 \\
-% AndrMattTisch1115   & 0.00 & 0.76 & 12.04 & 5.21 & 0.76 & 6.16 & 13.74 & 0.19 \\
-% ActAndrPrieur       & 0.28 & 0.82 & 10.59 & 7.42 & 2.14 & 8.93 & 12.23 & 0.88 \\
-% ActAndrBon          & 0.18 & 1.18 & 10.38 & 6.34 & 2.51 & 9.81 & 10.74 & 0.93 \\
-% PAndr2              & 0.05 & 1.32 & 10.43 & 5.60 & 3.31 & 7.43 & 12.87 & 1.02 \\
-% MartAndrBonTert     & 0.15 & 0.68 & 6.92  & 8.29 & 2.44 & 7.39 & 11.50 & 0.59 \\
-% MartAndrPrieurA     & 0.21 & 1.08 & 11.00 & 7.53 & 2.32 & 9.75 & 12.63 & 0.66 \\
-% MartAndrBonPrius    & 0.00 & 1.28 & 8.45  & 7.40 & 1.13 & 5.22 & 14.01 & 0.38 \\
-% MartAndrPrieurB     & 0.00 & 1.52 & 8.75  & 6.99 & 1.07 & 5.19 & 14.12 & 0.31 \\
-% MartAndrBonAlt      & 0.16 & 0.87 & 10.14 & 8.80 & 2.77 & 7.92 & 14.90 & 0.40 \\
-% PAndr1              & 0.04 & 1.99 & 9.45  & 4.63 & 4.08 & 6.18 & 13.64 & 0.92 \\
-% \bottomrule
-% \end{tabular}
-% \caption{Distribution of grammatical features}
-% \end{table}
-
-
-% The distribution of grammatical features across the corpus reveals subtle but noteworthy stylistic differences between the AAM texts and the other narratives. The AAM-texts (\textit{AndrMattBon}, \textit{AndrMattTisch}, \textit{AndrMattBon1115}, \textit{AndrMattTisch1115}) consistently exhibit very low ratios of optative and subjunctive forms (optative: 0.00--0.02; subjunctive: 0.72--1.58), while their use of the indicative mood is relatively high (11.45--12.64). This pattern suggests a preference for straightforward, unmarked statements and a limited use of more nuanced or hypothetical expressions.
-
-% By contrast, several non-AAM texts display a greater grammatical variety. For instance, \textit{ActAndrPrieur}, \textit{MartAndrPrieurA}, and \textit{MartAndrBonTert} show higher ratios of optative (up to 0.28) and, in some cases, a more balanced distribution between moods. These texts also tend to make greater use of participles and infinitives, further contributing to syntactic complexity.
-
-
-% %%%%%%%%%% periphrastics %%%%%%%%%%
-
-% 
-
-\noindent
-\textbf{Ἐιμί + participle (aor. or perf.)}
-
-% Hilhorst \& Lalleman observed a high use of periphrastic construction (eimi \+ perfect or aorist participle). If we look at these results we can confirm that AAM has a significantly higher use of periphrastic constructions. Remarkably though also is that Prieur's \textit{Acta} is lying in the middle of the spectrum with 7 occurrences, but with a low frequency compared to length \cite{hilhorst2000}
-
-% \begin{table}[H]
-% \caption{Number and ratio of εἰμί (impf.) + participle in aor. or perf.}
-% \begin{tabular}{lrr}
-% \toprule
-%  & 0 & 0 \\
-% \hline
-% AndrMattTisch1115 & 0 & 0.000000 \\
-% AndrMattTisch & 21 & 3.004000 \\
-% MartAndrBonAlt & 2 & 1.429000 \\
-% MartAndrBonPrius & 0 & 0.000000 \\
-% PAndr2 & 3 & 0.741000 \\
-% AndrMattBon & 21 & 2.561000 \\
-% PAndr1 & 3 & 1.128000 \\
-% AndrMattBon1115 & 0 & 0.000000 \\
-% ActAndrPrieur & 7 & 0.713000 \\
-% MartAndrPrieurB & 0 & 0.000000 \\
-% MartAndrBonTert & 3 & 0.670000 \\
-% MartAndrPrieurA & 2 & 0.551000 \\
-% ActAndrBon & 2 & 0.533000 \\
-% \end{tabular}
-
-% \end{table}
-
-
 
 \begin{table}[!h]
 \centering
@@ -774,9 +421,8 @@ Prieur/Hilhorst \& Lallemand & Simple language in AAM & X & &  \\
 \hline
 Zachariades-Holmberg & High Distribution of Absolute Genitive in AA & X & \\
 \end{tabular}
-\caption{Summary of results and relationship between scholarly claims}
+\caption{Summary of results and relationship between scholarly claims\label{tab:summary}}
 \end{table}
-
 
 \section{Conclusion and Further Works\label{sec:conclusion}}
 Our results show that we on many points can corroborate the stylometric claims that have been conducted manually in previous scholarship, for example, concerning a lower vocabulary richness, a more paratactic sentence structure, and a high use of periphrastic constructions for the AAM, which would support the claim that AAM and AA do not belong to a common original. However, we could also detect important nuances: First, the placement of the verb is more evenly distributed than previously shown; second, the use of hypotaxis was not in the low end for the AAM, for which reason we cannot deem it completely "simple" in this regard. \\
@@ -788,6 +434,5 @@ This project has been partially funded by the Carlsberg Semper Ardens Project: "
 \pagebreak
 
 \printbibliography
-
 
 \end{document}

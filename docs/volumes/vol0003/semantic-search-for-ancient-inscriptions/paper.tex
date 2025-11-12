@@ -1,34 +1,16 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-%\documentclass[final]{anthology-ch} % for the final version
-\documentclass[final,greek,american]{anthology-ch}         % for the submission
+\documentclass[final,greek,american]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
-%\usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{ifthen}
 
-%%set to false to hide all the comments
 \newboolean{showcomments}
 \setboolean{showcomments}{true}
 
 \def\UrlBreaks{\do\/\do-\do\_}
-%\usepackage{breakurl}
+
 \usepackage{hyperref}
 
-%\usepackage[utf8]{inputenc}
-%\usepackage{url}
-%\usepackage{colortbl}
-%\usepackage{balance}
 \usepackage{xspace}
-% \usepackage{bold-extra}
-%\usepackage{paralist}
-%\usepackage{multirow}
-%\usepackage{listings}
-%\usepackage{boxedminipage}
-%\usepackage{soul}
 
 \usepackage{enumitem}
 \usepackage[normalem]{ulem}
@@ -41,25 +23,22 @@
 \useunder{\uline}{\ul}{}
 \usepackage[most]{tcolorbox}
 \captionsetup{skip=2pt}
-\usepackage{microtype} 
+\usepackage{microtype}
 \usepackage{algorithmic}
 \usepackage{textcomp}
 \usepackage{xcolor}
 
-% Required font, fixes bold face issue
 \usepackage{tinos}
-
-%\usepackage{amssymb}
 
 \ifthenelse{\boolean{showcomments}}
 {\newcommand{\nb}[2]{
-		\fbox{\bfseries\sffamily\scriptsize#1}
-		{\sf\small$\blacktriangleright$\textit{#2}$\blacktriangleleft$}
-	}
-	\newcommand{\cvsversion}{\emph{\scriptsize$-$Id: macro.tex,v 1.9 2005/12/09 22:38:33 giulio Exp $}}
+\fbox{\bfseries\sffamily\scriptsize#1}
+{\sf\small$\blacktriangleright$\textit{#2}$\blacktriangleleft$}
+}
+\newcommand{\cvsversion}{\emph{\scriptsize$-$Id: macro.tex,v 1.9 2005/12/09 22:38:33 giulio Exp $}}
 }
 {\newcommand{\nb}[2]{}
-	\newcommand{\cvsversion}{}
+\newcommand{\cvsversion}{}
 }
 
 \newcommand\cut[1]{{\color{purple} {\sout{#1}}}}
@@ -71,7 +50,6 @@
 \newcommand\benefiel[1]{{\color{blue} \nb{BENEFIEL}{#1}}}
 \newcommand\micah[1]{{\color{green} \nb{MICAH}{#1}}}
 
-%%\newcommand\todo[1]{\textcolor{red}{\nb{TODO}{#1}}}
 \newcommand\fix[1]{\textcolor{red}{\nb{FIX THIS}{#1}}}
 \newcommand{\here}{\textcolor{red}{\nb{***}{CONTINUE HERE}}}
 \newcommand{\re}{\textcolor{red}{\textbf{[REF]}\xspace}}
@@ -84,62 +62,45 @@
 \newcommand{\ellipsis}{\textit{…}\xspace}
 \usepackage{hyperref}
 \usepackage{tabularx}
-%\usepackage{caption}
-\usepackage{placeins} % for \FloatBarrier
-% \usepackage{geometry}
+
+\usepackage{placeins}
+
 \usepackage{todonotes}
 \usepackage{array}
-\newcolumntype{L}{>{\raggedright\arraybackslash}X} % Left-aligned X column
-%\usepackage{ragged2e}
-
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
 
 \geometry{margin=1in}
 
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{Semantic Search for Ancient Inscriptions}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1]{Micah Tongen}[
 ]
 
 \author[1]{Sara Sprenkle}[
-  orcid=0009-0000-1654-721X
+orcid=0009-0000-1654-721X
 ]
 
 \author[2]{Rebecca Benefiel}[
-  orcid=0000-0002-3312-1517
+orcid=0000-0002-3312-1517
 ]
 
 \author[3]{Trevor Stalnaker}[
-  orcid=0009-0005-6000-4227
+orcid=0009-0005-6000-4227
 ]
 
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 \affiliation{1}{Computer Science Department, Washington and Lee University, Lexington, VA, U.S.A.}
 \affiliation{2}{Classics Department, Washington and Lee University, Lexington, VA, U.S.A.}
 \affiliation{3}{Computer Science Department, William \& Mary, Williamsburg, VA, U.S.A.}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{semantic search, ancient graffiti, epigraphy, natural language processing, word embedding, classical languages}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
 \pagestart{496}
 \pageend{508}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/xLUm5DRZmDDq}  
+\doi{10.63744/xLUm5DRZmDDq}
 \paperorder{30}
 
 \addbibresource{bibliography.bib}
@@ -149,21 +110,18 @@
 \maketitle
 
 \begin{abstract}
-Digital humanities research has revolutionized the study of ancient inscriptions by providing researchers with access to immense epigraphic corpora. However, traditional search methods for these databases rely primarily on exact or fuzzy keyword matching, limiting researchers' ability to find semantically related inscriptions. This paper presents a new approach to searching ancient inscriptions using vector embeddings and semantic similarity, implemented through a hybrid search system that combines semantic search with keyword matching and large language model re-ranking. Our system processes Greek and Latin inscriptions from the Ancient Graffiti Project database, embedding them in a high-dimensional vector space that captures semantic meaning beyond exact text matches. Our process is designed for reproducibility, using open data and code, and shows promise in preliminary evaluation. Our results demonstrate the system's capability to identify thematically related inscriptions that would be missed by traditional search methods, offering new possibilities for epigraphic research and discovery. %\trevor{Not a huge deal, but just for general paper aesthetics, we should avoid paragraphs that end in orphan lines (\eg a few short words) }
+Digital humanities research has revolutionized the study of ancient inscriptions by providing researchers with access to immense epigraphic corpora. However, traditional search methods for these databases rely primarily on exact or fuzzy keyword matching, limiting researchers' ability to find semantically related inscriptions. This paper presents a new approach to searching ancient inscriptions using vector embeddings and semantic similarity, implemented through a hybrid search system that combines semantic search with keyword matching and large language model re-ranking. Our system processes Greek and Latin inscriptions from the Ancient Graffiti Project database, embedding them in a high-dimensional vector space that captures semantic meaning beyond exact text matches. Our process is designed for reproducibility, using open data and code, and shows promise in preliminary evaluation. Our results demonstrate the system's capability to identify thematically related inscriptions that would be missed by traditional search methods, offering new possibilities for epigraphic research and discovery.
 \end{abstract}
 
-\section{Introduction} 
-
+\section{Introduction}
 
 The field of epigraphy (\ie the study of inscriptions) is an important subject for historians, offering direct insights into the thoughts, beliefs, and daily lives of ancient peoples. For example, the preserved cities of Pompeii and Herculaneum, with their thousands of inscriptions ranging from formal dedicatory texts to scrawled insults, provide an exceptionally rich corpus for understanding Roman society~\cite{benefiel_ancient_2017}. However, the sheer volume of epigraphic material presents significant challenges for researchers seeking to identify patterns, connections, and themes within these texts.
 
-Current epigraphic databases mostly provide exact or fuzzy keyword matching on inscription text~\cite{hermankova_fair_nodate}, an approach that limits researchers' ability to discover semantically related inscriptions. Consider a researcher searching for inscriptions about ``victory'': the returned results might miss relevant texts that discuss success, winning, and celebration, concepts that are thematically connected but don't use exactly the same term. Variations in spelling, word form (\eg declension, gender, tense, \etc), and abbreviation can also confuse these traditional keyword searches, forcing scholars to search the database manually or search for only portions of words, a technique that can yield false positives. 
+Current epigraphic databases mostly provide exact or fuzzy keyword matching on inscription text~\cite{hermankova_fair_nodate}, an approach that limits researchers' ability to discover semantically related inscriptions. Consider a researcher searching for inscriptions about ``victory'': the returned results might miss relevant texts that discuss success, winning, and celebration, concepts that are thematically connected but don't use exactly the same term. Variations in spelling, word form (\eg declension, gender, tense, \etc), and abbreviation can also confuse these traditional keyword searches, forcing scholars to search the database manually or search for only portions of words, a technique that can yield false positives.
 
 This paper begins to address these limitations by introducing a semantic search system for ancient inscriptions that uses modern natural language processing techniques. Our approach combines vector embeddings, which capture semantic meaning in a high-dimensional numerical representation, with traditional keyword matching. By using transformer-based models and large language model (LLM) re-ranking, the system provides thematically related inscriptions that share conceptual connections rather than just entries with words that match the query or are syntactically similar. We focus on ancient Roman graffiti, an especially challenging case due to the informality and orthographic inconsistency of the inscriptions~\cite{benefiel_documenting_2023}, which seemed unlikely to yield robust embeddings. We argue that if semantic search succeeds on a small dataset of linguistically challenging graffiti, it will generalize to larger and more standardized epigraphic corpora.
 
-The contribution of this work is threefold: (1) we demonstrate how to apply semantic search techniques to ancient epigraphic corpora, (2) we present a hybrid search architecture that combines multiple retrieval strategies for improved precision, and (3) we offer a first step toward future developments in computational epigraphy that could transform how researchers discover and analyze ancient inscriptions. %\trevor{Do we want to stress that this is a proof of concept or a first step? It seems like we have already identified many points of improvement}
-
-
+The contribution of this work is threefold: (1) we demonstrate how to apply semantic search techniques to ancient epigraphic corpora, (2) we present a hybrid search architecture that combines multiple retrieval strategies for improved precision, and (3) we offer a first step toward future developments in computational epigraphy that could transform how researchers discover and analyze ancient inscriptions.
 
 \section{Background}
 \subsection{Digital Epigraphy}
@@ -173,13 +131,12 @@ The field of epigraphy has been completely transformed by digital humanities res
 Digital encoding standards, particularly EpiDoc, have facilitated the creation of structured and interoperable databases~\cite{elliot_epidoc_2006}.
 There is an international community around EpiDoc that produces guidelines and tools for encoding scholarly and educational editions of documents, especially inscriptions and papyri, in TEI XML (Text Encoding Initiative Extensible Markup Language, a standard for representing texts in digital form). Projects like the ItAnt project~\cite{murano_describing_2023} and CLaSSES~\cite{de_felice_classes_2015} have used these standards to create searchable corpora that enable a systematic analysis of ancient texts.
 
-Recent advances have also explored machine learning approaches for contextualizing ancient inscriptions. Assael~\etal~\cite{assael_contextualizing_2025} have recently introduced Aeneas, a generative neural network that retrieves textual parallels and performs restoration and attribution tasks for Latin inscriptions, demonstrating how machine learning %\trevor{Above we say machine learning, but here we use AI.  For consistency can we say `ML' here? Again, for the non-technical reader} 
+Recent advances have also explored machine learning approaches for contextualizing ancient inscriptions. Assael~\etal~\cite{assael_contextualizing_2025} have recently introduced Aeneas, a generative neural network that retrieves textual parallels and performs restoration and attribution tasks for Latin inscriptions, demonstrating how machine learning
 can assist historians in grounding their research by identifying epigraphic connections that might otherwise remain obscured. Such developments highlight the growing integration of computational methods in epigraphic scholarship.
 
-Despite these advances, current search capabilities for epigraphic databases operate primarily with exact or partial text keyword matching. %\trevor{Unless we can provide a citation to back up this claim, I would tone it down.  Instead of saying `solely' I would say `primarily' or something similar}.
-Researchers must know specific terms in the source language (\eg Latin or Greek) to find relevant inscriptions, and variations in spelling, abbreviations, and outdated words can prevent the discovery of related texts. %\trevor{Not all epigraphers deal with Latin and Greek, so should we make this more general? Or make this an example?}. 
+Despite these advances, current search capabilities for epigraphic databases operate primarily with exact or partial text keyword matching.
+Researchers must know specific terms in the source language (\eg Latin or Greek) to find relevant inscriptions, and variations in spelling, abbreviations, and outdated words can prevent the discovery of related texts.
 This limitation becomes especially problematic when studying thematic concepts that might only be seen through various vocabulary choices or when analyzing vernacular graffiti that often deviates from traditional philology.
-
 
 \subsection{Vector Search and Semantic Similarity}
 
@@ -191,26 +148,23 @@ For ancient languages, several specialized embedding models have been developed.
 
 Recent work by Riemenschneider and Frank~\cite{riemenschneider_exploring_2023} has also demonstrated the potential of large language models (LLMs) for classical philology tasks, including text analysis and semantic understanding of Latin and Ancient Greek texts. Their exploration of cross-lingual capabilities in classical languages provides important context for multilingual approaches to ancient text processing, though their focus differs from the retrieval-oriented applications presented in this work.
 
-Despite these developments, few models can effectively handle both Latin and Greek inscriptions within a single system. This limitation is particularly relevant for our epigraphic corpora, which %\trevor{I don't know if we can say often}
-contains texts in both languages. Furthermore, the informal nature of graffiti, with its non-standard spellings and abbreviations, presents additional challenges for traditional natural language processing approaches. 
-%\trevor{Yes, but we clean most of this before processing...}
+Despite these developments, few models can effectively handle both Latin and Greek inscriptions within a single system. This limitation is particularly relevant for our epigraphic corpora, which
+contains texts in both languages. Furthermore, the informal nature of graffiti, with its non-standard spellings and abbreviations, presents additional challenges for traditional natural language processing approaches.
 
 \subsection{LLM-Based Re-ranking in Information Retrieval}
 
 Large Language Models (LLMs) have emerged as powerful tools for enhancing information retrieval (IR) through re-ranking techniques. Zhu~\etal~\cite{zhu_large_2024} survey the application of LLMs in IR, emphasizing their potential for re-ranking while noting challenges such as data scarcity, a particularly relevant concern for ancient language corpora. Research has shown that combining smaller embedding models with LLM re-ranking can outperform larger models in retrieval tasks~\cite{rao_rethinking_2025}, suggesting that hybrid approaches may be particularly effective for this project.
 
-The application of LLM re-ranking to historical texts has shown promise in medieval Arabic texts~\cite{muther_querying_2023}, demonstrating the potential for these techniques to enhance retrieval precision in historical corpora. For epigraphic applications, LLM re-ranking offers the possibility of applying expert knowledge about thematic relationships and cultural contexts to refine search results beyond what standard computational measures might achieve. 
+The application of LLM re-ranking to historical texts has shown promise in medieval Arabic texts~\cite{muther_querying_2023}, demonstrating the potential for these techniques to enhance retrieval precision in historical corpora. For epigraphic applications, LLM re-ranking offers the possibility of applying expert knowledge about thematic relationships and cultural contexts to refine search results beyond what standard computational measures might achieve.
 \section{Semantic Search Pipeline}
 
-
-%\micah{Consider rewording so that you reference the Figure in the sentence rather than as a parenthetical} 
 Our semantic search system for ancient inscriptions employs a multi-stage approach that combines vector embeddings, hybrid search strategies, and LLM-based re-ranking. Figure~\ref{fig:overview} provides an overview of this process. The system architecture is designed to address the unique challenges of epigraphic texts while providing researchers with semantically relevant results.
 
 \begin{figure}[h]
-    \centering
-    \includegraphics[width=1\linewidth]{figures/Workflow.png}
-    \caption{An Overview of our Semantic Search Pipeline.}
-    \label{fig:overview}
+\centering
+\includegraphics[width=1\linewidth]{figures/Workflow.png}
+\caption{An Overview of our Semantic Search Pipeline.}
+\label{fig:overview}
 \end{figure}
 
 \subsection{Preparing the Vector Database}
@@ -221,64 +175,41 @@ Given the unique characteristics of ancient inscriptions, we developed a preproc
 
 The Ancient Graffiti Project (AGP) database provides inscriptions encoded in EpiDoc TEI XML format, containing rich structural and semantic annotations including abbreviation expansions, gap markers, and editorial interventions~\cite{elliot_epidoc_2006}. For our semantic search application, we retrieved the epigraphic markup from the AGP database and extracted only the textual content. Although some annotations might provide valuable information, we prioritized consistency for the embedding model by focusing on cleaned text.
 
-For Latin inscriptions, the system applies several standardization steps. Text is converted to uppercase following standard epigraphic conventions, with Unicode normalization handling diacritical marks and character variations. Classical Latin character standardization converts `V' to `U' and `J' to `I' to reflect ancient orthographic practices. Common abbreviations are expanded using a custom dictionary of 33 common Latin abbreviations mapped to their expansions. This dictionary covers personal names, official titles, and religious formulae frequently encountered in Roman inscriptions. 
-Compared to Latin texts, 
+For Latin inscriptions, the system applies several standardization steps. Text is converted to uppercase following standard epigraphic conventions, with Unicode normalization handling diacritical marks and character variations. Classical Latin character standardization converts `V' to `U' and `J' to `I' to reflect ancient orthographic practices. Common abbreviations are expanded using a custom dictionary of 33 common Latin abbreviations mapped to their expansions. This dictionary covers personal names, official titles, and religious formulae frequently encountered in Roman inscriptions.
+Compared to Latin texts,
 Greek inscriptions undergo minimal preprocessing, reflecting both their smaller representation in our dataset and different orthographic characteristics.
 
 To improve embedding quality, the system adds semantic markers that identify thematic categories within inscriptions. These markers tag inscriptions with categories such as `death', `family', `religious', or `official'. This tagging could potentially be expanded, but we decided to only include a small selection of categories as a general proof of concept.
-%\sprenkle{The "process" is the tagging?  Or is it what the categories are?  I think this should say something about the selection of the categories/markers were hardcoded.  I don't think that can be automated, can it?}
 
 \subsubsection{Embedding the Inscriptions}
 \label{sec:inscription_embedding}
 
-%\sprenkle{Should the model used be named here?  Or described more generally with a model? And then Section 4 talks about the specifics and how the model can be switched out?}
 The system uses a sentence embedding model to turn both the inscriptions and query into vectors. Inscriptions are then processed in batches of 32 to balance computational efficiency with memory usage, enabling the system to handle large corpora effectively.
 Then, to reduce bias toward longer texts, the system applies logarithmic length scaling that prevents longer inscriptions from dominating semantic relationships because of their size. All embeddings are normalized to unit length, ensuring that cosine similarity calculations focus on directional relationships rather than magnitude differences.
-
-
-
-
 
 \subsection{Conducting a Query}
 
 \subsubsection{Query Preprocessing}
 
-User queries undergo the same preprocessing pipeline as the inscriptions, ensuring consistency in vector representation. The system implements limited query expansion for common concepts, adding semantically related terms from a manually curated set of associations. For example, queries about death-related concepts are expanded to include terms like ``mortuus,'' ``obiit,'' and ``defunctus.'' This expansion covers six primary thematic areas: death, dedication, family, religious, official, and memorial concepts. The expansion process relies on expert knowledge rather than automated techniques, ensuring precision over comprehensive coverage. 
+User queries undergo the same preprocessing pipeline as the inscriptions, ensuring consistency in vector representation. The system implements limited query expansion for common concepts, adding semantically related terms from a manually curated set of associations. For example, queries about death-related concepts are expanded to include terms like ``mortuus,'' ``obiit,'' and ``defunctus.'' This expansion covers six primary thematic areas: death, dedication, family, religious, official, and memorial concepts. The expansion process relies on expert knowledge rather than automated techniques, ensuring precision over comprehensive coverage.
 
 \subsubsection{Hybrid Search Strategy}
 
 Rather than relying solely on semantic similarity, our system implements a hybrid approach that combines multiple search strategies:
 
+\paragraph{Semantic Search:} The processed query is embedded using the same model applied to inscriptions, and cosine similarity is computed between the query embedding and all inscription embeddings. Similarity scores range from 0 to 1, with all embeddings scoring above 0.5 advancing to the next step. This method identifies inscriptions that are semantically related to the query concept.
 
-
-\noindent
-\textbf{Semantic Search:} The processed query is embedded using the same model applied to inscriptions, and cosine similarity is computed between the query embedding and all inscription embeddings. Similarity scores range from 0 to 1, with all embeddings scoring above 0.5 advancing to the next step. This method identifies inscriptions that are semantically related to the query concept.
-
-
-
-\noindent
-\textbf{Keyword Search:} A parallel keyword search identifies inscriptions containing exact matches or variations of query terms. This component uses enhanced tokenization that includes not only individual words but also bigrams and trigrams to capture multi-word expressions and proper names.
-
-%Fuzzy Matching: The system implements fuzzy matching techniques such as enhanced tokenization%\trevor{Which ones?} 
-%to identify partial matches and handle variations in spelling or word forms, particularly important for ancient texts where orthographic consistency may be lacking.
+\paragraph{Keyword Search:} A parallel keyword search identifies inscriptions containing exact matches or variations of query terms. This component uses enhanced tokenization that includes not only individual words but also bigrams and trigrams to capture multi-word expressions and proper names.
 
 \subsubsection{Result Combination and Re-ranking}
 
-%\micah{I find the scoring to be confusing and not well explained.  Maybe it will get better :)} 
-The hybrid approach combines results from semantic and keyword searches using a weighted scoring system. %\trevor{What about the fuzzy matches?}. 
-Inscriptions that match semantic or keyword criteria receive corresponding boost scores, while the system prioritizes hybrid matches that contain the keywords as well as a similar embedding. %\micah{Maybe reword: The inscriptions are then ranked in two steps:}\trevor{Sounds good to me}
+The hybrid approach combines results from semantic and keyword searches using a weighted scoring system.
+Inscriptions that match semantic or keyword criteria receive corresponding boost scores, while the system prioritizes hybrid matches that contain the keywords as well as a similar embedding.
 The inscriptions are then ranked in two steps:
 
+\paragraph{Initial Ranking:} Results are initially ranked by a combined score that weights semantic similarity, measured by cosine distance, and keyword matching scores. The system retrieves a larger initial set of candidates to provide enough material for re-ranking. The combination weights are fine-tuned to balance semantic similarity scores with exact keyword match bonuses to optimize retrieval performance for epigraphic queries.
 
-
-\noindent
-\textbf{Initial Ranking:} Results are initially ranked by a combined score that weights semantic similarity, measured by cosine distance, and keyword matching scores. The system retrieves a larger initial set of candidates to provide enough material for re-ranking. The combination weights are fine-tuned to balance semantic similarity scores with exact keyword match bonuses to optimize retrieval performance for epigraphic queries.
-
-
-
-\noindent
-\textbf{LLM Re-ranking:} The LLM is prompted to evaluate each inscription's relevance to the query concept, considering not just exact matches but also cultural and historical connections. For example, when searching for ``love,'' the LLM might recognize that an inscription mentioning Venus is thematically relevant due to the goddess's association with love, while discarding proper names that happen to have similar embeddings. The LLM re-ranking process includes filtering mechanisms that remove completely irrelevant results while increasing the priority of inscriptions with subtle but meaningful connections to the query topic. This approach addresses the challenge of balancing precision and recall in semantic search systems.
-
+\paragraph{LLM Re-ranking:} The LLM is prompted to evaluate each inscription's relevance to the query concept, considering not just exact matches but also cultural and historical connections. For example, when searching for ``love,'' the LLM might recognize that an inscription mentioning Venus is thematically relevant due to the goddess's association with love, while discarding proper names that happen to have similar embeddings. The LLM re-ranking process includes filtering mechanisms that remove completely irrelevant results while increasing the priority of inscriptions with subtle but meaningful connections to the query topic. This approach addresses the challenge of balancing precision and recall in semantic search systems.
 
 \section{Proof of Concept: Searching the Ancient Graffiti Project}
 The Ancient Graffiti Project (AGP) exemplifies the digital transformation of epigraphic studies, providing a database of more than 3000 handwritten inscriptions from Pompeii, Herculaneum, Stabiae, and Smyrna~\cite{benefiel_ancient_2017}. The AGP was selected as the dataset for this research due to its extensive coverage of handwritten inscriptions, which offer a unique glimpse into the daily lives and thoughts of ancient Romans. Additionally, the project is fully downloadable and encoded in EpiDoc, making it an open and accessible resource for researchers. The project integrates epigraphic and archaeological data, providing context about the urban settings in which the inscriptions were found. This contextualization is crucial for understanding the social and spatial dynamics of ancient graffiti~\cite{benefiel_documenting_2023}.
@@ -287,15 +218,14 @@ Our system operates on inscription data from the AGP, specifically working with 
 
 The dataset's diversity is crucial for testing semantic search capabilities, as it encompasses various inscription types like dedicatory texts, memorials, poetry, personal messages, and casual graffiti. This variety ensures that the system can handle different linguistic registers and textual conventions present in ancient epigraphic corpora. Using a larger corpora, there would be more approximate inscriptions, but due to the size of our dataset, we chose a low semantic score threshold of 0.5 to maximize the number of conceptually related results while not including loosely related ideas.
 
-%\sprenkle{mention model here}
-For the embedding process, detailed in Section \ref{sec:inscription_embedding}, we chose the \href{https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2}{paraphrase-multilingual-mpnet-base-v2} model from Sentence Transformers.\footnote{https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2} We selected this model for its speed, strong performance in semantic similarity tasks, and multilingual capabilities~\cite{reimers_sentence-bert_2019}.  This model choice addresses the challenge of handling both Latin and Greek inscriptions within a single system while maintaining high-quality semantic representations. 
+For the embedding process, detailed in Section \ref{sec:inscription_embedding}, we chose the \href{https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2}{paraphrase-multilingual-mpnet-base-v2} model from Sentence Transformers.\footnote{https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2} We selected this model for its speed, strong performance in semantic similarity tasks, and multilingual capabilities~\cite{reimers_sentence-bert_2019}.  This model choice addresses the challenge of handling both Latin and Greek inscriptions within a single system while maintaining high-quality semantic representations.
 
-Following the embedding process, all embeddings are stored in ChromaDB,\footnote{https://www.trychroma.com/} chosen for its lightweight, file-based persistence, and simple Python API that supports efficient cosine similarity queries at scale. %\trevor{Should we mention the vector database in the approach?} \micah{We're trying to keep most of the paper super general so people can implement it however they want, so if they feel more comfortable with a different database they can choose it. We're just defending our choice here}
+Following the embedding process, all embeddings are stored in ChromaDB,\footnote{https://www.trychroma.com/} chosen for its lightweight, file-based persistence, and simple Python API that supports efficient cosine similarity queries at scale.
 We then employ Google's Gemini 2.0 Flash model,\footnote{https://ai.google.dev/} chosen for its fast inference on short contexts, simple Python API, and strong performance on semantic judgments, to re-rank the initial results based on thematic relevance and lexical similarity.
 
 We ran our framework on a MacBook Pro with four Intel cores and 16 GB of memory. Our system including the code and dataset used can be accessed at \\ \url{https://github.com/AncientGraffitiProject/semantic-search}.
 \section{Preliminary Results}
-\FloatBarrier                    % prevent earlier floats from moving past this point
+\FloatBarrier
 In this section we present our preliminary results, including search case studies, performance tests, and our discussion and analysis of the results.
 
 \subsection{Search Case Studies}
@@ -306,23 +236,20 @@ Consequently, we use a series of case studies to evaluate our model. The queries
 
 Each table lists the top inscriptions retrieved for the corresponding query. For each inscription, the table contains the inscription's position after LLM reranking, the unique inscription identifier,\footnote{The full agpID from the Ancient Graffiti Project database is AGP-EDR followed by the identification number but were shortened for space.} the original Latin inscription, whether the match is ``semantic,'' ``keyword,'' or ``hybrid,'' cosine similarity, and a translation.
 
-%\pagebreak
-
 \subsubsection{Search term: ``urbe'' (city) }
 
-% Table for "urbe"
 \begin{table}[htbp]
-  \centering
-  \begin{tabularx}{\linewidth}{c c L c c L}
-    \toprule
-    Rank & agpID     & Text & Match Type & Semantic Score & Translation \\
-    \midrule
-     1 & EDR128013 & Urbanus & SEMANTIC & 0.76 & Urban (name) \\
-    \addlinespace
-     2 & EDR128014 & Urbanus & SEMANTIC & 0.76 & Urban (name) \\
-    \bottomrule
-  \end{tabularx}
-  \caption{Search results for ``\textit{urbe}''. LLM was given two inscriptions for reranking (no LLM reranking applied).}
+\centering
+\begin{tabularx}{\linewidth}{c c L c c L}
+\toprule
+Rank & agpID     & Text & Match Type & Semantic Score & Translation \\
+\midrule
+1 & EDR128013 & Urbanus & SEMANTIC & 0.76 & Urban (name) \\
+\addlinespace
+2 & EDR128014 & Urbanus & SEMANTIC & 0.76 & Urban (name) \\
+\bottomrule
+\end{tabularx}
+\caption{Search results for ``\textit{urbe}''. LLM was given two inscriptions for reranking (no LLM reranking applied).}
 \end{table}
 
 Although \textit{urbe} and \textit{urbanus} do not share identical characters, our embeddings correctly identify them as linguistic variants,\footnote{Latin names were often derived from words.} underscoring semantic and lexical linking. This example demonstrates the model's ability to connect grammatical forms of related concepts.
@@ -331,51 +258,49 @@ Although \textit{urbe} and \textit{urbanus} do not share identical characters, o
 
 \subsubsection{Search term: \textnormal{``obiit''} (died)}
 
-% Table for "obiit"
 \begin{table}[htbp]
-  \centering
-  \begin{tabularx}{\linewidth}{c c L c c L}
-    \toprule
-    Rank & agpID     & Text & Match Type & Semantic Score & Translation \\
-    \midrule
-     1 & EDR154190 & Mortuus & SEMANTIC & 0.8119 & Dead \\
-    \addlinespace
-     2 & EDR157024 & Mortuus Deius & SEMANTIC & 0.7345 & Dead (is) Deius \\
-    \addlinespace
-     3 & EDR161836 & \foreignlanguage{greek}{Θ} mortuus Caerulus\newline postridie Nonas & SEMANTIC & 0.6118 & (Theta) Caerulus (was) dead the day after the Nonas\\
-    \addlinespace
-     4 & EDR161837 & mortuus Glorus\newline postridie\newline Nonas & SEMANTIC & 0.5879 & Glorus (was) dead the day after the Nonas \\
-    \addlinespace
-     5 & EDR156998 & Mortuus\newline Hercolanius & SEMANTIC & 0.512 &  Dead  (is) Hercolanius\\
-    \bottomrule
-  \end{tabularx}
-  \caption{Search results for ``\textit{obiit}''. LLM was given five inscriptions for reranking.}
+\centering
+\begin{tabularx}{\linewidth}{c c L c c L}
+\toprule
+Rank & agpID     & Text & Match Type & Semantic Score & Translation \\
+\midrule
+1 & EDR154190 & Mortuus & SEMANTIC & 0.8119 & Dead \\
+\addlinespace
+2 & EDR157024 & Mortuus Deius & SEMANTIC & 0.7345 & Dead (is) Deius \\
+\addlinespace
+3 & EDR161836 & \foreignlanguage{greek}{Θ} mortuus Caerulus\newline postridie Nonas & SEMANTIC & 0.6118 & (Theta) Caerulus (was) dead the day after the Nonas\\
+\addlinespace
+4 & EDR161837 & mortuus Glorus\newline postridie\newline Nonas & SEMANTIC & 0.5879 & Glorus (was) dead the day after the Nonas \\
+\addlinespace
+5 & EDR156998 & Mortuus\newline Hercolanius & SEMANTIC & 0.512 &  Dead  (is) Hercolanius\\
+\bottomrule
+\end{tabularx}
+\caption{Search results for ``\textit{obiit}''. LLM was given five inscriptions for reranking.}
 \end{table}
 
-While the term \textit{obiit} (died) never appears verbatim in the database, 
+While the term \textit{obiit} (died) never appears verbatim in the database,
 each returned result is relevant to death, most prominently \textit{mortuus} (dead). This confirms that the embeddings capture the conceptual relationship between ``dying'' and ``being dead'' rather than relying on exact string matches. This example demonstrates the system is able to understand some conceptual variations in Latin vocabulary.
 
 \subsubsection{Search term: ``love''}
 
-% Table for "love"
 \begin{table}[htbp]
-  \centering
-  \begin{tabularx}{\linewidth}{c c L c c L}
-    \toprule
-    Rank & agpID     & Text & Match Type & Semantic Score & Translation \\
-    \midrule
-     1 & EDR167551 & \foreignlanguage{greek}{Ἔρως} & SEMANTIC & 0.7778 & Eros \\
-    \addlinespace
-     2 & EDR167552 & \foreignlanguage{greek}{Ἔρως} & SEMANTIC & 0.7778 & Eros \\
-    \addlinespace
-     3 & EDR150782 & Venustus & SEMANTIC & 0.8112 & Charming \\
-    \addlinespace
-     4 & EDR177788 & fellat & SEMANTIC & 0.8042 & Performs fellatio \\
-    \addlinespace
-     5 & EDR179282 & \foreignlanguage{greek}{Μνῆστος} & SEMANTIC & 0.7903 & Name meaning ``wooed and wedded'' \\
-    \bottomrule
-  \end{tabularx}
-  \caption{Search results for ``love''. LLM was given 25 inscriptions for reranking.}
+\centering
+\begin{tabularx}{\linewidth}{c c L c c L}
+\toprule
+Rank & agpID     & Text & Match Type & Semantic Score & Translation \\
+\midrule
+1 & EDR167551 & \foreignlanguage{greek}{Ἔρως} & SEMANTIC & 0.7778 & Eros \\
+\addlinespace
+2 & EDR167552 & \foreignlanguage{greek}{Ἔρως} & SEMANTIC & 0.7778 & Eros \\
+\addlinespace
+3 & EDR150782 & Venustus & SEMANTIC & 0.8112 & Charming \\
+\addlinespace
+4 & EDR177788 & fellat & SEMANTIC & 0.8042 & Performs fellatio \\
+\addlinespace
+5 & EDR179282 & \foreignlanguage{greek}{Μνῆστος} & SEMANTIC & 0.7903 & Name meaning ``wooed and wedded'' \\
+\bottomrule
+\end{tabularx}
+\caption{Search results for ``love''. LLM was given 25 inscriptions for reranking.}
 \end{table}
 
 The English ``love'' query surfaces epigraphic gems: \textit{Venustus}, a love-related ``charming,'' and ``\foreignlanguage{greek}{Ἔρως}'', which keyword search alone would miss, showcase the system’s true discovery potential. However, most stunning is that this query returns the word ``\foreignlanguage{greek}{Μνῆστος}'', a Greek name with a strong connection to love that shares no lexical similarity with the English query, yet carries profound thematic relevance. The results of this search show incredible promise for epigraphers wanting to get a broad view of their database, exploring inscriptions related to a topic of their choosing.
@@ -385,65 +310,61 @@ The English ``love'' query surfaces epigraphic gems: \textit{Venustus}, a love-r
 \subsubsection{Search term: ``amat'' (love)}
 
 \begin{table}[htbp]
-  \centering
-  \begin{tabularx}{\linewidth}{c c L c c L}
-    \toprule
-    Rank & agpID     & Text & Match Type & Semantic Score & Translation \\
-    \midrule
-     1 & EDR168646 & quisquis amat valeat pereat qui nescit amare bis tanto pereat quisquis amare vetat & KEYWORD & --- & Whoever loves, may he be well. May he perish whoever does not know how to love. May he perish twice over whoever forbids love. \\
-    \addlinespace
-     2 & EDR187553 & quisquis amat calidis non debet fontibus uti nam nemo flammas ustus amare potest & KEYWORD & --- & Whoever loves ought not to use hot water for no one who has been burned is able to love flames. \\
-    \addlinespace
-     3 & EDR192096 & Quisquis amat veniat Veneri lumbos volo & KEYWORD & --- & Whoever loves let him come. I want to break Venus' back \\
-    \addlinespace
-     8 & EDR167482 & Quisquis amat & KEYWORD & --- & Whoever loves \\
-    \addlinespace
-     9 & EDR149060 & Unus amat unam Salutem Salutem & KEYWORD & --- & One guy loves one girl greetings greetings \\
-    \addlinespace
-    10 & EDR124975 & quos amat valeant & KEYWORD & --- & Those whom he loves may they fare well \\
-    \addlinespace
-    11 & EDR140143 & Amata & SEMANTIC & 0.7339 & Loved \\
-    \addlinespace
-    12 & EDR149179 & \foreignlanguage{greek}{Ἀφροδίτη} & SEMANTIC & 0.7224 & Aphrodite \\
-    \bottomrule
-  \end{tabularx}
-    \caption{Search results for ``\textit{amat}''. LLM was given 25 inscriptions for reranking. 13 results were reranked, but five were removed for space.}
+\centering
+\begin{tabularx}{\linewidth}{c c L c c L}
+\toprule
+Rank & agpID     & Text & Match Type & Semantic Score & Translation \\
+\midrule
+1 & EDR168646 & quisquis amat valeat pereat qui nescit amare bis tanto pereat quisquis amare vetat & KEYWORD & --- & Whoever loves, may he be well. May he perish whoever does not know how to love. May he perish twice over whoever forbids love. \\
+\addlinespace
+2 & EDR187553 & quisquis amat calidis non debet fontibus uti nam nemo flammas ustus amare potest & KEYWORD & --- & Whoever loves ought not to use hot water for no one who has been burned is able to love flames. \\
+\addlinespace
+3 & EDR192096 & Quisquis amat veniat Veneri lumbos volo & KEYWORD & --- & Whoever loves let him come. I want to break Venus' back \\
+\addlinespace
+8 & EDR167482 & Quisquis amat & KEYWORD & --- & Whoever loves \\
+\addlinespace
+9 & EDR149060 & Unus amat unam Salutem Salutem & KEYWORD & --- & One guy loves one girl greetings greetings \\
+\addlinespace
+10 & EDR124975 & quos amat valeant & KEYWORD & --- & Those whom he loves may they fare well \\
+\addlinespace
+11 & EDR140143 & Amata & SEMANTIC & 0.7339 & Loved \\
+\addlinespace
+12 & EDR149179 & \foreignlanguage{greek}{Ἀφροδίτη} & SEMANTIC & 0.7224 & Aphrodite \\
+\bottomrule
+\end{tabularx}
+\caption{Search results for ``\textit{amat}''. LLM was given 25 inscriptions for reranking. 13 results were reranked, but five were removed for space.}
 \end{table}
 
 The results from searching ``amat'' showcase the hybrid approach's effectiveness by combining extensive keyword matches with deeper semantic matches. The system finds multiple love poems containing the exact term, while also including deeper semantic matches, \textit{Amata} and ``\foreignlanguage{greek}{Ἀφροδίτη}'', which would have been missed by exact matching. This case demonstrates how hybrid search maintains precision while expanding discovery potential through conceptual links.
 
-%\pagebreak
-
 \subsubsection{Search term: ``donum'' (gift) }
 
-% Table for "donum"
 \begin{table}[htbp]
-  \centering
-  \begin{tabularx}{\linewidth}{c c L c c L}
-    \toprule
-    Rank & agpID     & Text & Match Type & Semantic Score & Translation \\
-    \midrule
-     1 & EDR189997 & Vota Restitutus donum dedit & KEYWORD & --- & Vows, Restitutus gave a gift \\
-    \bottomrule
-  \end{tabularx}
-  \caption{Search results for ``\textit{donum}''. LLM was given one inscription for reranking.}
+\centering
+\begin{tabularx}{\linewidth}{c c L c c L}
+\toprule
+Rank & agpID     & Text & Match Type & Semantic Score & Translation \\
+\midrule
+1 & EDR189997 & Vota Restitutus donum dedit & KEYWORD & --- & Vows, Restitutus gave a gift \\
+\bottomrule
+\end{tabularx}
+\caption{Search results for ``\textit{donum}''. LLM was given one inscription for reranking.}
 \end{table}
 
 When no semantically similar items exist, the model cleanly falls back on the single exact keyword match, preserving precision by avoiding irrelevant retrievals. Therefore, epigraphers who want to search solely for exact matches will still be satisfied with the hybrid search which keeps relevant keyword matches. This search shows the system will not inflate results with bad semantic connections when genuine matches can't be found.
 
 \subsubsection{Search term: ``medicamentum'' (medicine)}
 
-% Table for "medicamentum"
 \begin{table}[htbp]
-  \centering
-  \begin{tabularx}{\linewidth}{c c L c c L}
-    \toprule
-    Rank & agpID     & Text & Match Type & Semantic Score & Translation \\
-    \midrule
-     1 & EDR167955 & Augustalis Pierus Celadus\newline Papiri Amandumum\newline medicavit & SEMANTIC & 0.6143 & The Augustalis, Pier Celadus, cured Amandus the slave of Papirius \\
-    \bottomrule
-  \end{tabularx}
-  \caption{Search results for ``\textit{medicamentum}''. LLM was  given one inscription for reranking.}
+\centering
+\begin{tabularx}{\linewidth}{c c L c c L}
+\toprule
+Rank & agpID     & Text & Match Type & Semantic Score & Translation \\
+\midrule
+1 & EDR167955 & Augustalis Pierus Celadus\newline Papiri Amandumum\newline medicavit & SEMANTIC & 0.6143 & The Augustalis, Pier Celadus, cured Amandus the slave of Papirius \\
+\bottomrule
+\end{tabularx}
+\caption{Search results for ``\textit{medicamentum}''. LLM was  given one inscription for reranking.}
 \end{table}
 
 Despite no occurrence of \textit{medicamentum} (medicine), the system finds a parallel medical inscription, demonstrating its ability to link related words and concepts. The moderate similarity score reflects that it is more of a conceptual connection than an exact match, with the high score threshold still excluding completely irrelevant results. This query shows the system's ability to identify domain-specific semantic relationships.
@@ -463,17 +384,15 @@ The system's resource efficiency is another significant advantage for usability 
 
 These performance characteristics demonstrate that sophisticated semantic search capabilities can be delivered efficiently, supporting the broader goal of making advanced natural language processing tools accessible to the epigraphic research community.
 
-
 \subsection{Discussion and Analysis}
-
 
 This semantic search approach proposes a paradigm shift in epigraphic methodology, offering researchers an exploratory alternative to traditional exact-match searching. While epigraphers typically prioritize exhaustive precision through systematic keyword searches, our system demonstrates the potential for discovery-oriented research that can find thematically relevant inscriptions that might otherwise remain hidden.
 
 The system's strength lies in its ability to find conceptual connections that transcend lexical boundaries. Traditional search methods, while precise, may overlook inscriptions that discuss related concepts using different vocabulary, variant spellings, or cultural references. Our hybrid approach preserves the reliability of keyword matching while expanding the scope of discovery, enabling researchers to explore themes and connections more intuitively.
 
-Despite our successful results, we faced several significant challenges specific to ancient language processing during development: 
+Despite our successful results, we faced several significant challenges specific to ancient language processing during development:
 \begin{itemize}
-    
+
 \item Experiments with various embedding models (\eg Latin BERT~\cite{bamman_latin_2020}, PhilTa~\cite{riemenschneider_exploring_2023}, bge-m3,\footnote{\url{https://huggingface.co/BAAI/bge-m3}} and XLM RoBERTa\footnote{\url{https://huggingface.co/docs/transformers/en/model_doc/xlm-roberta}}) revealed significant limitations: monolingual models failed on cross-lingual queries, while other multilingual models produced inconsistent results.
 
 \item Early system iterations disproportionately favored shorter inscriptions in similarity calculations, creating false matches based on text length rather than semantic content. This issue was resolved through logarithmic length normalization and LLM re-ranking, which evaluates thematic relevance independent of inscription length.
@@ -483,17 +402,15 @@ Despite our successful results, we faced several significant challenges specific
 
 Several aspects of the system's behavior still require further investigation. The differential performance between semantically equivalent queries in different languages, for example ``love'' versus ``amat,'' suggests that multilingual embedding models may not capture cross-linguistic semantic relationships uniformly. Additionally, cases where semantically similar terms receive low similarity scores indicate potential limitations in the embedding model's representation of ancient language concepts. The LLM re-ranking process, while generally effective, occasionally produces rankings that seem inconsistent with thematic relevance. All of these sources of variability reflect the challenges of applying modern language models to ancient texts, where cultural and historical contexts can be much different than contemporary training data.
 
-Overall, the system's computational efficiency and accessibility represent significant advantages for widespread adoption. Implementation requires minimal technical expertise; researchers only have to provide their inscription data in CSV format, adjust the semantic similarity threshold, and customize the LLM reranking prompt to match their research objectives. 
-%\trevor{And we are providing the code?  We should link to the repo here if so.}
+Overall, the system's computational efficiency and accessibility represent significant advantages for widespread adoption. Implementation requires minimal technical expertise; researchers only have to provide their inscription data in CSV format, adjust the semantic similarity threshold, and customize the LLM reranking prompt to match their research objectives.
 
 Importantly, the system scales linearly with database size, making it suitable for larger epigraphic databases without significant increases in computational complexity. This scalability, combined with the lightweight architecture, positions the system as a practical tool for integration into existing digital humanities platforms and research workflows.
 
 Our approach demonstrates that sophisticated natural language processing techniques can be made accessible to humanities researchers without requiring extensive technical infrastructure or expertise, potentially democratizing access to advanced computational tools in epigraphic research.
-\FloatBarrier                    % force all tables to appear before moving on
-
+\FloatBarrier
 
 \section{Conclusions and Future Work}
-This paper presents a novel approach to searching ancient inscriptions that moves beyond traditional keyword matching to capture semantic relationships between texts. By combining vector embeddings, hybrid search strategies, and LLM re-ranking, our system demonstrates the potential for advanced natural language processing techniques to enhance epigraphic research. The semantic search system addresses fundamental limitations in current epigraphic query systems by identifying thematically related inscriptions that share conceptual connections rather than lexical overlap alone. This capability opens new possibilities for researchers to discover patterns, influences, and cultural connections within ancient corpora that might otherwise remain hidden. 
+This paper presents a novel approach to searching ancient inscriptions that moves beyond traditional keyword matching to capture semantic relationships between texts. By combining vector embeddings, hybrid search strategies, and LLM re-ranking, our system demonstrates the potential for advanced natural language processing techniques to enhance epigraphic research. The semantic search system addresses fundamental limitations in current epigraphic query systems by identifying thematically related inscriptions that share conceptual connections rather than lexical overlap alone. This capability opens new possibilities for researchers to discover patterns, influences, and cultural connections within ancient corpora that might otherwise remain hidden.
 
 While the current implementation only focuses on Latin and Greek inscriptions from Pompeii and Herculaneum, the underlying approach is broadly applicable to other ancient languages and epigraphic traditions. Additionally, several areas offer opportunities for improvement and expansion:
 
@@ -512,10 +429,9 @@ As digital humanities continues to evolve, the integration of modern AI technolo
 Future developments in this area could transform how scholars approach ancient texts, moving from laborious keyword searches to intuitive, concept-based exploration of historical corpora. As these technologies mature, they promise to make the voices of the ancient world more accessible to researchers and, ultimately, to the broader public interested in understanding our shared human heritage.
 
 \section*{Acknowledgements}
-Support for this project was provided by the Summer Research Scholars Program and the Lenfest Summer Fellowship Award at Washington and Lee University. 
+Support for this project was provided by the Summer Research Scholars Program and the Lenfest Summer Fellowship Award at Washington and Lee University.
 This work also benefited from the thorough comments and suggestions by the anonymous reviewers.
 
-% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
 \printbibliography
 
 \end{document}

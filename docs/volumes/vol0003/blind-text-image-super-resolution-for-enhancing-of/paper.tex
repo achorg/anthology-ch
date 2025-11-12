@@ -1,88 +1,63 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-%\documentclass{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
-\usepackage{orcidlink} 
-% ADD your own packages using \usepackage{}
+\usepackage{orcidlink}
 
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{Blind Text Image Super-resolution for Enhancing the Readability of Fragments Hidden in Book Bindings}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1]{Baharan Pourahmadi}[orcid=0009-0001-8566-1013]
-\author[1]{Charlotte Epple}[orcid=0009-0007-6964-708X] 
+\author[1]{Charlotte Epple}[orcid=0009-0007-6964-708X]
 \author[2]{Mads Toudal Frandsen}[orcid=0000-0003-2061-562X]
 
 \affiliation{1}{Department of Culture and Language, University of Southern Denmark, Odense, Denmark}
 \affiliation{2}{Department of Physics, Chemistry and Pharmacy, University of Southern Denmark, Odense, Denmark}
 
-
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{Text image super-resolution, Historical document analysis, Book fragments, Deep generative models}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
-\pagestart{1394}
-\pageend{1407}
+\pagestart{1398}
+\pageend{1411}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/Hgeypr5GUQfb}  
+\doi{10.63744/Hgeypr5GUQfb}
 \paperorder{87}
 
 \addbibresource{bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
 Fragments reused in bookbindings are a crucial source for studying pre-modern book culture, representing books that were no longer read, and thus repurposed for their material value. The texts on these fragments are often hidden beneath pastedowns, scraped off, or otherwise obscured. Recovering their content is essential for paleographic and book historical analysis. Imaging methods such as Hyperspectral Imaging (HSI), Multispectral Imaging (MSI), and Ultraviolet Reflected (UVR) photography, combined with post-processing, are commonly used to reveal hidden text. However, the resulting images are often blurry and of low resolution, limiting their readability by both Optical Character Recognition (OCR) systems and human experts. This paper explores the use of deep generative models for super-resolving Latin text in fragment images, with a focus on fragments from the Herlufsholm Collection at the University of Southern Denmark. This collection contains numerous books with fragments—a valuable but understudied resource for investigating Scandinavian book history. We evaluate the effectiveness of text-specific super-resolution models in enhancing legibility and demonstrate their potential to support fragmentological research by making unreadable text accessible for scholarly analysis. The relevant material is available at: \url{https://github.com/bhrnprhmd/Text_image_super_res_folatin_CHR2025}.
- \end{abstract}
+\end{abstract}
 
-\section{Introduction} 
-In the Middle Ages and the Early Modern period, cutting up old, no longer needed books and finding other uses for the material was common practice. Parchment and paper were valuable commodities, expensive and time consuming to produce, but also robust and versatile. Obsolete literature was often repurposed for making covers for other books. Such fragments are an important facet of medieval and early modern book culture, presenting a reservoir for potentially otherwise unknown texts, as well as illuminating the life cycles of books \cite{tahkokallio2023manuscript}. 
+\section{Introduction}
+In the Middle Ages and the Early Modern period, cutting up old, no longer needed books and finding other uses for the material was common practice. Parchment and paper were valuable commodities, expensive and time consuming to produce, but also robust and versatile. Obsolete literature was often repurposed for making covers for other books. Such fragments are an important facet of medieval and early modern book culture, presenting a reservoir for potentially otherwise unknown texts, as well as illuminating the life cycles of books \cite{tahkokallio2023manuscript}.
 
 However, in many cases, the damage done by the process of reuse impedes the legibility, and thus the study of the texts they contain. Two such examples are Herlufsholm 250.8 and Herlufsholm 24.1. They take their shelfmarks from Herlufsholm Skole, a Danish elite school founded in 1565. The institution accumulated a substantial book collection over the centuries \cite{outzenbirgitte, holck2015gamle}. In the 1960s, these books were sold to the University of Southern Denmark, where the 40,000 volumes form the core of the university library’s historical holdings. It contains many volumes bound in reused parchment and paper which have aroused scholarly interest in recent years \cite{holck2018nye, holck2022herlufsholm}.
 
-Herlufsholm 250.8 is an Early Modern medical text, the \textit{Progymnasmata} by French physician Jacques Aubert, printed in Basel in 1579. It is bound in a contemporary binding that was colored black in order to obscure the fact that the parchment had already been used once. The varnish appears to be a thin, but opaque layer, obscuring the dark ink used for most textual elements well. Nonetheless, the text on the fragment has been identified as a passage from the Vulgate bible with glosses by Origen, a theologian of late antiquity, and dated to around 1300 \cite{holck2018nye}. 
+Herlufsholm 250.8 is an Early Modern medical text, the \textit{Progymnasmata} by French physician Jacques Aubert, printed in Basel in 1579. It is bound in a contemporary binding that was colored black in order to obscure the fact that the parchment had already been used once. The varnish appears to be a thin, but opaque layer, obscuring the dark ink used for most textual elements well. Nonetheless, the text on the fragment has been identified as a passage from the Vulgate bible with glosses by Origen, a theologian of late antiquity, and dated to around 1300 \cite{holck2018nye}.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.6\linewidth]{figures/250_vis.jpg}
-  \caption{Back cover of Herlufsholm 250.8 under visible light, rotated 180 degrees to show fragment text correctly aligned.}
-  \label{250_vis}
+\centering
+\includegraphics[width=0.6\linewidth]{figures/250_vis.jpg}
+\caption{Back cover of Herlufsholm 250.8 under visible light, rotated 180 degrees to show fragment text correctly aligned.}
+\label{250_vis}
 \end{figure}
-
-
 
 Herlufsholm 24.1 consists of three printed volumes (Jacques Salian’s \textit{Annales Ecclesiastici}, printed in Cologne 1620–1624) bound in parchment over paste laminate boards made from paper waste with printed text on it. Herlufsholm 24.1 has recently been the subject of another case study~\cite{pourahmadi}, which states that the bindings were likely made in Denmark with local printer’s waste.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.8\linewidth]{figures/inner_binding_fig.png}
-  \caption{a) Herlufsholm 24.1 (RGB image captured with a standard camera). b) Hidden fragments are partially revealed at the edge of the binding.}
-  \label{24.1_vis}
+\centering
+\includegraphics[width=0.8\linewidth]{figures/inner_binding_fig.png}
+\caption{a) Herlufsholm 24.1 (RGB image captured with a standard camera). b) Hidden fragments are partially revealed at the edge of the binding.}
+\label{24.1_vis}
 \end{figure}
 
-In both cases the texts on the fragments are obscured and difficult to read. Developing a non-invasive method for improving legibility of such fragments can enable closer study in order to situate the fragments in the historical contexts in which they were produced and subsequently reused. 
-
+In both cases the texts on the fragments are obscured and difficult to read. Developing a non-invasive method for improving legibility of such fragments can enable closer study in order to situate the fragments in the historical contexts in which they were produced and subsequently reused.
 
 These books and fragments are historically valuable, and therefore cannot be physically altered or sampled for further analysis. Non-destructive imaging techniques such as Hyperspectral Imaging (HSI), Multispectral Imaging (MSI), and Ultraviolet Reflected (UVR) photography are widely used to recover obscured text without damaging the material \cite{tonazzini2019analytical, camba2015multispectral,fischer2006multispectral, easton2003multispectral}. While these methods have shown success in many cases, severe degradation, such as dark varnishes, pigment bleed, or the presence of overlaid paper, often leads to light scattering and low-contrast images. As a result, the retrieved text is frequently of poor quality: unreadable by automated transcription models and, in extreme cases, even by human experts.
 
@@ -90,18 +65,15 @@ Previous studies have explored the enhancement of degraded historical documents 
 One of the main obstacles in restoring historical text images is the lack of representative datasets. In most cases, high-resolution ground truth images of the degraded texts are unavailable, making it difficult to train supervised models effectively. As a result, researchers often rely on synthetically generated datasets, pairing artificially degraded images with their clean counterparts. This approach requires a carefully designed degradation model that realistically captures the visual complexity of historical damage.
 Furthermore, because the goal of restoration in this context is to recover not just image quality but textual fidelity, any restoration method must ensure that character shapes, spacing, and stylistic features are preserved. These factors are essential for both human readability and for enabling downstream tasks such as Optical Character Recognition (OCR) or paleographic analysis.
 
-Super-resolution techniques have previously been applied to text images and have shown promising results, particularly when using deep generative models such as MARCONet \cite{li2023marconet}. However, their applicability to historical fragments, especially those affected by physical layering or chemical darkening, remains largely unexplored. This study aims to investigate the potential of super-resolution approaches in the historical fragments context. 
+Super-resolution techniques have previously been applied to text images and have shown promising results, particularly when using deep generative models such as MARCONet \cite{li2023marconet}. However, their applicability to historical fragments, especially those affected by physical layering or chemical darkening, remains largely unexplored. This study aims to investigate the potential of super-resolution approaches in the historical fragments context.
 
 The following contributions are presented:
 
 1) A blind super-resolution model designed for text image restoration was trained on Latin script data, and adapted to the characteristics of historical fragmentary texts.
 
-
 2) To evaluate the effectiveness of the model in improving the readability of Latin text images, it was tested on synthetically degraded test samples, and the relevant image quality and readability metrics were measured. This quantitative evaluation was complemented by a qualitative assessment on a limited number of samples to visually examine the image quality of the super-resolved outputs.
 
-
 3) The trained model was applied to fragments from Herlufsholm 24.1 and 250.8, demonstrating measurable improvements in legibility and contributing to ongoing paleographic investigations of these materials.
-
 
 \section{Blind text super-resolution}
 
@@ -110,20 +82,19 @@ Blind text image super-resolution (SR) is a specialized subdomain of image resto
 Text image super-resolution differs fundamentally from general image SR, which primarily focuses on enhancing perceptual detail in natural scenes. In the context of text, the central goal is to improve readability and character clarity, which is essential for downstream applications such as OCR. Restoration methods must ensure high text fidelity and stylistic realism, as even minor distortions can render characters unrecognizable or ambiguous.
 Compared to natural image restoration, text image SR presents unique challenges. While minor imperfections may be acceptable in natural images, textual data demands precise structural recovery. Models must preserve fine character details and accurately reproduce typographic features to maintain the text’s integrity.
 In response to these challenges, recent developments in text image restoration have introduced advanced architectures, including diffusion models and Transformer-based approaches, which have demonstrated significant improvements in handling complex degradations and preserving fine-grained textual features \cite{chen2021scene, ma2022text}.
-Among these, MARCONet \cite{li2023marconet} has shown promising results, particularly in restoring low-resolution Chinese text images. 
+Among these, MARCONet \cite{li2023marconet} has shown promising results, particularly in restoring low-resolution Chinese text images.
 
 In this study, MARCONet was selected due to its demonstrated effectiveness and architectural suitability. This model enhances blind super-resolution (SR) of text images by leveraging structure priors learned from a StyleGAN \cite{karras2019stylegan, karras2020analyzing} trained on character images. A codebook constrains the generative space of the Generative Adversarial Network (GAN) \cite{goodfellow2014generative}, mapping each character to a specific latent code, while font style is controlled via the GAN’s latent space. Once trained, the GAN provides intermediate features that serve as structure priors for characters.
 A Transformer-based encoder predicts the font style, character positions, and corresponding codebook indices from a LR text image. These priors are then used by a text SR network to guide the super-resolution of each character, aligning them via predicted bounding boxes.
 
 To adapt the model for use on historical fragments, it was retrained on a dataset of Latin text, enabling its application to early modern and medieval script recovery tasks.
 
-
 \section{Training MARCONet on Latin text}
 \subsection{Data preparation}
 To focus this study on Latin characters, a large corpus of Later Latin words was first compiled. A diverse range of historical Latin scripts was represented by using eight fonts, including Fraktur, Meyene, Schwabacher, and Times New Roman. To simulate realistic historical conditions, background textures were patched from images of actual historical documents and fragments. These backgrounds were then used to synthesize the final high-resolution (HR) text images, following a process similar to that of MARCONet.
 To generate the corresponding low-resolution (LR) samples, degradation pipelines from BSRGAN \cite{zhang2021designing} and Real-ESRGAN \cite{wang2021realesrgan} were applied to the HR images. The degradation pipeline consists of the following:
 
-1) Random blurring: A Gaussian blur with a randomly selected kernel size and standard deviation is applied. 
+1) Random blurring: A Gaussian blur with a randomly selected kernel size and standard deviation is applied.
 
 2) Downsampling: The blurred image is downsampled using a random scaling factor (typically between 1/2 to 1/4) and interpolation methods (bicubic, bilinear, or nearest neighbour), simulating spatial resolution loss.
 
@@ -135,10 +106,10 @@ To generate the corresponding low-resolution (LR) samples, degradation pipelines
 
 Figure~\ref{hr-lr} illustrates an example of an LR–HR image pair produced through this pipeline.
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.8\linewidth]{figures/lr and sr.jpg}
-  \caption{Example of Latin HR-LR synthetic data sample pair.}
-  \label{hr-lr}
+\centering
+\includegraphics[width=0.8\linewidth]{figures/lr and sr.jpg}
+\caption{Example of Latin HR-LR synthetic data sample pair.}
+\label{hr-lr}
 \end{figure}
 
 The synthetic dataset of Latin HR-LR pairs consist of 10,000 samples.
@@ -146,7 +117,6 @@ The synthetic dataset of Latin HR-LR pairs consist of 10,000 samples.
 \subsection{Training setup}
 The training procedure closely followed the specifications provided in the original MARCONet paper. The model pre-trained on Chinese text was used to initialize the network weights. Fine-tuning was then performed on the custom Latin dataset described earlier.
 A batch size of 2 was used during training. The Adam optimizer~\cite{kingma2014adam} was employed, with the learning rate set to $1 \times 10^{-4}$. All training was conducted using PyTorch, on two Tesla A100 GPUs.
-
 
 \section{Evaluation setup}\label{eval}
 \subsection{Quantitative evaluation}
@@ -163,10 +133,10 @@ As presented in Table~\ref{tab:quantitative_results}, the CER for the super-reso
 \begin{table}[h!]
 \centering
 \begin{tabular}{|l|c|c|c|}
-\hline 
-\textbf{SSIM} & 
-\textbf{PSNR (dB)} & 
-\textbf{CER (SR) (\%)}& 
+\hline
+\textbf{SSIM} &
+\textbf{PSNR (dB)} &
+\textbf{CER (SR) (\%)}&
 \textbf{CER (LR)(\%)} \\
 \hline
 0.921 & 26.98 & 35.54 & 88.04\\
@@ -177,41 +147,37 @@ As presented in Table~\ref{tab:quantitative_results}, the CER for the super-reso
 \label{tab:quantitative_results}
 \end{table}
 
-
-
 \subsection{Qualitative comparison}
 
-To simulate the effect of overlaid paper often encountered in historical bindings, we fabricated test samples by placing thin Washi (Japanese) paper over printed text. Washi paper is commonly used in conservation practices due to its transparency and structural properties. 
-To reveal the underlying text in these samples, HSI was employed. Figure~\ref{majority} shows how the addition of this paper layer significantly degrades the final image. 
+To simulate the effect of overlaid paper often encountered in historical bindings, we fabricated test samples by placing thin Washi (Japanese) paper over printed text. Washi paper is commonly used in conservation practices due to its transparency and structural properties.
+To reveal the underlying text in these samples, HSI was employed. Figure~\ref{majority} shows how the addition of this paper layer significantly degrades the final image.
 
-The trained model was then used to restore text that had been degraded at three different levels: with one layer of paper, two layers, and three layers placed on top of the printed text. This was done to visualize how well the model can handle increasing levels of visual obstruction. The qualitative comparison is presented in Figure~\ref{majority}. In addition to these real degradation scenarios, the model was also tested on an artificially degraded sample to further assess its performance (Figure~\ref{induaartis}). 
-
+The trained model was then used to restore text that had been degraded at three different levels: with one layer of paper, two layers, and three layers placed on top of the printed text. This was done to visualize how well the model can handle increasing levels of visual obstruction. The qualitative comparison is presented in Figure~\ref{majority}. In addition to these real degradation scenarios, the model was also tested on an artificially degraded sample to further assess its performance (Figure~\ref{induaartis}).
 
 The CER was measured on the fabricated LR inputs and SR outputs (samples from Figure~\ref{majority}). As shown in Table~\ref{tab:ocr_majority}, the readability of super-resolved samples have increased compared to the low-resolution inputs.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.8\linewidth]{figures/majority_compare.jpg}
-  \caption{Fabricated samples and the resulting super-resolved results for text covered by a) 1 layer of paper, b) 2 layers of paper, and c) 3 layers of paper. The ground truth is shown in (d).}
-  \label{majority}
+\centering
+\includegraphics[width=0.8\linewidth]{figures/majority_compare.jpg}
+\caption{Fabricated samples and the resulting super-resolved results for text covered by a) 1 layer of paper, b) 2 layers of paper, and c) 3 layers of paper. The ground truth is shown in (d).}
+\label{majority}
 \end{figure}
 
-
 \begin{figure}[!h]
-  \centering
-  \includegraphics[width=0.7\linewidth]{figures/induaartis_compare.jpg}
-  \caption{Qualitative performance of model on artificially degraded text "Induaartis". a) The artificially degraded text image, b) the super-resolved result, and c) the ground truth.}
-  \label{induaartis}
+\centering
+\includegraphics[width=0.7\linewidth]{figures/induaartis_compare.jpg}
+\caption{Qualitative performance of model on artificially degraded text "Induaartis". a) The artificially degraded text image, b) the super-resolved result, and c) the ground truth.}
+\label{induaartis}
 \end{figure}
 
 \begin{table}[h!]
 \centering
 \begin{tabular}{|l|l|c|l|c|}
 \hline
-\textbf{} & 
-\textbf{Output (LR)} & 
-\textbf{CER (\%)\newline(LR)} & 
-\textbf{Output (SR)} & 
+\textbf{} &
+\textbf{Output (LR)} &
+\textbf{CER (\%)\newline(LR)} &
+\textbf{Output (SR)} &
 \textbf{CER (\%)\newline(SR)} \\
 \hline
 GT       & majority   & 0.00 & majority   & 0.00 \\
@@ -226,15 +192,14 @@ GT       & majority   & 0.00 & majority   & 0.00 \\
 
 As shown in Figure~\ref{majority} and Figure~\ref{induaartis}, the application of the super-resolution model noticeably improves the readability of degraded text images. This is evident from both the qualitative visual results and the quantitative OCR scores presented in the Table~\ref{tab:ocr_majority}. Standard OCR systems fail to recognize text in images covered by two or three layers of material, rendering them unreadable in an automated setting. Although the SR model does not always reconstruct every character perfectly, it still yields a substantial improvement in OCR performance. This demonstrates the potential of such models to support text recovery in challenging historical materials where conventional methods fall short.
 
-
 \section{Restoring real fragments}
 \subsection{Herlufsholm 24.1}
 
 \begin{figure}[!h]
-  \centering
-  \includegraphics[width=0.7\linewidth]{figures/24_snip.PNG}
-  \caption{The recovered text image of the fragment embedded in the inner binding of Herlufsholm 24.1.}
-  \label{24_snip}
+\centering
+\includegraphics[width=0.7\linewidth]{figures/24_snip.PNG}
+\caption{The recovered text image of the fragment embedded in the inner binding of Herlufsholm 24.1.}
+\label{24_snip}
 \end{figure}
 
 The HSI system used to recover the hidden fragment in Herlufsholm 24.1 includes a line-scan hyperspectral camera \cite{newtec_buteo} with a built-in spectrograph, featuring an IMX990 (1.3 MP) sensor and a Kowa lens with a 35 mm focal length. This system captures 900 spectral channels across the visible to short-wave infrared range (Vis-SWIR, 430 nm to 1700 nm), with a spatial resolution of 1296 pixels along the Y-axis. The camera is mounted 48 cm above a 34 cm-wide conveyor belt and operates at a scanning speed of 20 mm/s.
@@ -242,26 +207,22 @@ The HSI system used to recover the hidden fragment in Herlufsholm 24.1 includes 
 To extract the most readable text image from the hyperspectral data cube, the 900 spectral bands were reduced to four using Principal Component Analysis (PCA). The first four principal components retained over 95\% of the total variance. These components were then combined in a way that maximized Shannon entropy \cite{shannon1948mathematical}, enhancing the visibility and contrast of the obscured text. Figure~\ref{24_snip} shows a snippet of the recovered fragment on Herlufsholm 24.1 \cite{pourahmadi}.
 
 \begin{figure}[!h]
-  \centering
-  \includegraphics[width=0.7\linewidth]{figures/renser.jpg}
-  \caption{Qualitative performance of the model on degraded text image "renser" extracted from the fragment on Herlufsholm 24.1. The figure shows a) the LR input and b) the SR output.}
-  \label{renser}
+\centering
+\includegraphics[width=0.7\linewidth]{figures/renser.jpg}
+\caption{Qualitative performance of the model on degraded text image "renser" extracted from the fragment on Herlufsholm 24.1. The figure shows a) the LR input and b) the SR output.}
+\label{renser}
 \end{figure}
 
 \begin{figure}[!h]
-  \centering
-  \includegraphics[width=0.7\linewidth]{figures/sr_examples.jpg}
-  \caption{Qualitative performance of the model on degraded text images "Om" and "Lungen" extracted from the fragment on Herlufsholm 24.1. The figure shows a) the LR inputs and b) the SR outputs.}
-  \label{sr_examples}
+\centering
+\includegraphics[width=0.7\linewidth]{figures/sr_examples.jpg}
+\caption{Qualitative performance of the model on degraded text images "Om" and "Lungen" extracted from the fragment on Herlufsholm 24.1. The figure shows a) the LR inputs and b) the SR outputs.}
+\label{sr_examples}
 \end{figure}
 
-
-The recovered text of Herlufsholm 24.1 remains significantly degraded in certain areas. OCR systems developed specifically for historical documents, such as Transkribus \cite{kahle2017transkribus} and Kraken~\cite{Kraken}, fail to recognize portions of the text. In some severe cases, the degradation is such that even expert human readers are unable to interpret the content. To assess the effectiveness of the super-resolution model in such scenarios, a number of degraded text images were extracted from the recovered fragment of Herlufsholm 24.1 and used for testing. Figure~\ref{renser} and Figure~\ref{sr_examples} illustrate the model's qualitative performance. 
-
-
+The recovered text of Herlufsholm 24.1 remains significantly degraded in certain areas. OCR systems developed specifically for historical documents, such as Transkribus \cite{kahle2017transkribus} and Kraken~\cite{Kraken}, fail to recognize portions of the text. In some severe cases, the degradation is such that even expert human readers are unable to interpret the content. To assess the effectiveness of the super-resolution model in such scenarios, a number of degraded text images were extracted from the recovered fragment of Herlufsholm 24.1 and used for testing. Figure~\ref{renser} and Figure~\ref{sr_examples} illustrate the model's qualitative performance.
 
 For quantitative evaluation, the OCR score was measured on LR inputs as well as the SR outputs. Similar to Section~\ref{eval}, CER was used as the evaluation metric. Table~\ref{tab:ocr_results_lr_sr} summarizes the results.
-
 
 \begin{table}[!h]
 \centering
@@ -278,37 +239,33 @@ Om     & --      & Om      & 100.00  & 0.00 \\
 \label{tab:ocr_results_lr_sr}
 \end{table}
 
-
 \subsection{Herlufsholm 250.8}
-Hyperspectral imaging (HSI) was not successful in recovering the hidden text on Herlufsholm 250.8. Preliminary experiments, however, revealed that some text becomes visible under ultraviolet (UV) illumination. 
+Hyperspectral imaging (HSI) was not successful in recovering the hidden text on Herlufsholm 250.8. Preliminary experiments, however, revealed that some text becomes visible under ultraviolet (UV) illumination.
 
 \begin{figure}[h!]
-  \centering
-  \includegraphics[width=0.6\linewidth]{figures/250_uv.JPG}
-  \caption{Back cover of Herlufsholm 250.8 under Ultra-violet (UV) light.}
-  \label{250_uv}
+\centering
+\includegraphics[width=0.6\linewidth]{figures/250_uv.JPG}
+\caption{Back cover of Herlufsholm 250.8 under Ultra-violet (UV) light.}
+\label{250_uv}
 \end{figure}
 
 For this purpose, a Canon EOS M50 camera with a 24.1 MP APS-C sensor was used to capture the images. The manuscript cover was illuminated using ultraviolet (UV) light bulbs during imaging. Figure~\ref{250_uv} shows the recovered text on Herlufsholm 250.8 as it appears under UV illumination.
- 
 
-The illuminated text on Herlufsholm 250.8 is largely readable to expert human readers. However, due to interference from the complex background, standard OCR models (designed for historical texts) struggle to accurately recognize the characters. Super-resolution techniques can assist in improving the readability of such degraded images. A qualitative evaluation of extracted text samples is shown in Figure~\ref{nam_compare} and Figure~\ref{pu_compare}. 
-
+The illuminated text on Herlufsholm 250.8 is largely readable to expert human readers. However, due to interference from the complex background, standard OCR models (designed for historical texts) struggle to accurately recognize the characters. Super-resolution techniques can assist in improving the readability of such degraded images. A qualitative evaluation of extracted text samples is shown in Figure~\ref{nam_compare} and Figure~\ref{pu_compare}.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.7\linewidth]{figures/nam_compare.jpg}
-  \caption{Qualitative performance of the model on degraded text image "nam" extracted from the UV illuminated back-cover of Herlufsholm 250.8. The figure shows a) the LR input and b) the SR output.}
-  \label{nam_compare}
+\centering
+\includegraphics[width=0.7\linewidth]{figures/nam_compare.jpg}
+\caption{Qualitative performance of the model on degraded text image "nam" extracted from the UV illuminated back-cover of Herlufsholm 250.8. The figure shows a) the LR input and b) the SR output.}
+\label{nam_compare}
 \end{figure}
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.7\linewidth]{figures/pu_compare.jpg}
-  \caption{Qualitative performance of the model on degraded text image "pu" extracted from the UV illuminated back-cover of Herlufsholm 250.8. The figure shows a) the LR input and b) the SR output.}
-  \label{pu_compare}
+\centering
+\includegraphics[width=0.7\linewidth]{figures/pu_compare.jpg}
+\caption{Qualitative performance of the model on degraded text image "pu" extracted from the UV illuminated back-cover of Herlufsholm 250.8. The figure shows a) the LR input and b) the SR output.}
+\label{pu_compare}
 \end{figure}
-
 
 As with Herlufsholm 24.1, a quantitative evaluation was also conducted using OCR performance. The CER is used as the primary metric to assess the model’s ability to enhance machine-readability of the recovered text (Table~\ref{tab:ocr_results}).
 
@@ -316,10 +273,10 @@ As with Herlufsholm 24.1, a quantitative evaluation was also conducted using OCR
 \centering
 \begin{tabular}{|l|l|l|c|c|}
 \hline
-\textbf{GT} & 
-\textbf{Output (LR)} & 
-\textbf{Output (SR)} & 
-\textbf{CER (\%)\newline(LR)} & 
+\textbf{GT} &
+\textbf{Output (LR)} &
+\textbf{Output (SR)} &
+\textbf{CER (\%)\newline(LR)} &
 \textbf{CER  (\%)\newline(SR)} \\
 \hline
 nam    & an     & nam     & 66.66  & 0.00 \\
@@ -338,22 +295,17 @@ This study demonstrates the potential of blind super-resolution models to enhanc
 
 The successful use of HSI and UV illumination to recover obscured text in Herlufsholm 24.1 and 250.8 also underlines the importance of integrating imaging and computational enhancement techniques. While HSI provided limited benefit in the case of 250.8, UV illumination was effective in revealing text not visible under standard lighting conditions. This reinforces the value of tailored imaging strategies based on material and degradation type.
 
-While some portions of the recovered text image may still be readable by human experts, OCR models typically struggle with severe degradation, which limits the possibility of fully automated transcription. In this context, super-resolution methods can act as a bridge, improving OCR accuracy and enabling more efficient processing. Furthermore, by enhancing visual clarity, such models can also facilitate engagement with historical texts among non-experts, including the general public, who may find degraded fragments inaccessible without computational assistance. 
+While some portions of the recovered text image may still be readable by human experts, OCR models typically struggle with severe degradation, which limits the possibility of fully automated transcription. In this context, super-resolution methods can act as a bridge, improving OCR accuracy and enabling more efficient processing. Furthermore, by enhancing visual clarity, such models can also facilitate engagement with historical texts among non-experts, including the general public, who may find degraded fragments inaccessible without computational assistance.
 
-The restoration techniques presented here have the potential to be applied to other items featuring similarly obscured print and manuscript fragments, for example, a group of black fragment bindings similar to Herlufsholm 250.8 held at the University Library of Graz \cite{fehringer_buchbinderwerkstatten_2022}. This opens up new directions for comparative studies and wider deployment of computational restoration tools in manuscript collections beyond the current case study. 
+The restoration techniques presented here have the potential to be applied to other items featuring similarly obscured print and manuscript fragments, for example, a group of black fragment bindings similar to Herlufsholm 250.8 held at the University Library of Graz \cite{fehringer_buchbinderwerkstatten_2022}. This opens up new directions for comparative studies and wider deployment of computational restoration tools in manuscript collections beyond the current case study.
 
 A critical consideration for future work is the dependence of blind super-resolution performance on the quality and representativeness of the training data. Since ground truth images of historical fragments are rarely available, artificial degradation pipelines are often used to generate low-resolution samples from high-resolution text images. However, the effectiveness of the blind super-resolution model is closely tied to how well these synthetic degradations approximate real-world degradation. Prior works \cite{wang2021realesrgan, zhang2021designing, zhang2020deblurring} have proposed diverse degradation models that simulate blur, noise, and compression artifacts, but further investigation is needed to determine which of these models best capture the complexity of historical fragment degradation.
 Future directions include systematically evaluating different degradation pipelines, fine-tuning the model on fragment-specific styles, and integrating feedback from historical experts into the training loop. These steps will help tailor the model more effectively to the needs of manuscript restoration and cultural heritage preservation.
-
-
-
 
 \section*{Acknowledgements}
 
 This work is part of the project \textit{``AntCom: From Antiquity to Community.''} The AntCom project has received funding from the European Union’s Horizon 2021 research and innovation programme under the Marie Sklodowska-Curie grant agreement No 101073543.
 
-% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
 \printbibliography
-
 
 \end{document}

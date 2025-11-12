@@ -1,68 +1,40 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-%\documentclass{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
-% ADD your own packages using \usepackage{}
 
-\usepackage[caption=false, font=footnotesize]{subfig}% Modern replacement for subfigure package
-\usepackage{paralist}% extended list environments
-\usepackage[figure,table]{hypcap}% hyperref companion
+\usepackage[caption=false, font=footnotesize]{subfig}
+\usepackage{paralist}
+\usepackage[figure,table]{hypcap}
 
-% my own packages go here AF
 \usepackage{booktabs}
 \usepackage{tabularx}
-%\usepackage{subfigure}
 
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{Latent Topic and Tempo Differences Between East and West Coast Hip-Hop}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
-
 \author[1]{Ábel Boros}[
-  orcid=
+orcid=
 ]
 
 \author[1]{Arthur Flexer}[
-  orcid=0000-0002-1691-737X
+orcid=0000-0002-1691-737X
 ]
 
-
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 \affiliation{1}{Institute of Computational Perception, Johannes Kepler University Linz, Austria}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{music, topic modeling, lyrics, tempo, Hip-Hop, text analysis, audio analysis}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
-\pagestart{1208}
-\pageend{1218}
+\pagestart{1212}
+\pageend{1222}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/XvZKQm15UbPN}  
+\doi{10.63744/XvZKQm15UbPN}
 \paperorder{73}
 
 \addbibresource{bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
 
 \maketitle
@@ -71,8 +43,6 @@
 Our work presents a computational approach to exploring differences between Hip-Hop music from the US East and West Coast during the so-called "rap wars". This period in time was characterized by an intense rivalry prevalent especially in the lyrics of the music. We built a representative dataset of music from respective eminent artists and used topic modeling to analyze song lyrics. The resulting topic of "Vulgarity and Violence" is more attributed to West Coast artists and "Street Life and Rhythm" more to the East Coast. In addition we show that tempo of the music is slower for the West Coast and in general slowing down over the observation period. Our quantitative results align with existing theories concerning spatiality of Hip-Hop culture.
 \end{abstract}
 
-	
-	
 \section{Introduction}\label{sec:introduction}
 
 It is an established hypothesis in Hip-Hop studies that spatiality, i.e.\ the geographical origin of artists, is an important "organising principle of value, meaning and practice within Hip-Hop culture" \cite{forman2000represent}. In this work it is our goal to obtain and document a quantitative basis of differences in lyrical content and musical style between two geographically defined rivaling music sub-cultures: US East Coast and West Coast Hip-Hop.
@@ -86,74 +56,74 @@ In order to explore and empirically document differences in East and West Coast 
 Music lyrics are capable to communicate emotional expressions, topics, and stories which can greatly influence a listener's impression of songs. The field of lyrics-related studies has been termed "lyrics information processing" (LIP) in a comprehensive survey \cite{Watanabe:Goto:2020}, explicating that it shares core technologies with both natural language and music information processing. Popular application areas of LIP include lyrics structure analysis (e.g.\ rhyme scheme identification \cite{Addanki:Wu:2013} or verse-bridge-chorus labeling \cite{Mahedero:etal:2005}) and lyrics semantic analysis, including estimation of mood or emotion of lyrics \cite{Hu:Downie:2010,Delbouys:etal:2018,Mishra:etal:2021}, or modeling different topics in lyrics \cite{Kleedorfer:etal:2008,Sasaki:etal:2014,Sterckx:etal:2014}, e.g.\ concerning how typical they are for certain genres
 \cite{aljanaki2024genre}. In a rare example of a large scale topic modeling study \cite{czedik2024charting} on 124,288 lyrics from the metal music genre it was shown that, even in such a niche genre, topics are wide-ranging from love\&romance and epic tales to dystopia, satanism, battle and madness.
 
-The estimation of the global tempo of a music recording in beats per minute (BPM) is usually defined as "estimating the frequency with which humans tap along to the beat" \cite{Schreiber-2020}. It starts with beat tracking which identifies the temporal positions of beats within an audio signal. These positions correspond to a perceived regular pulse that aligns with the rhythm of the music \cite{dixon2007evaluation}. Historically, beat-tracking techniques have relied on detecting onsets—beginnings of musical events or notes—and subsequent post-processing steps to refine the placement of beats. Modern algorithms distinguish actual beats from other musical events by filtering out non-relevant onsets and employing probabilistic models or machine-learning techniques plus postprocessing to obtain final predictions. Many approaches also adapt dynamically to tempo fluctuations, ensuring robust performance even in compositions with varying rhythmic structures. Although research on improvements continues \cite{FoscarinSW24}, the \texttt{madmom} python library \cite{böck2016madmomnewpythonaudio} is still considered state-of-the-art and will be used for our computations related to beat tracking and tempo estimation. 
+The estimation of the global tempo of a music recording in beats per minute (BPM) is usually defined as "estimating the frequency with which humans tap along to the beat" \cite{Schreiber-2020}. It starts with beat tracking which identifies the temporal positions of beats within an audio signal. These positions correspond to a perceived regular pulse that aligns with the rhythm of the music \cite{dixon2007evaluation}. Historically, beat-tracking techniques have relied on detecting onsets—beginnings of musical events or notes—and subsequent post-processing steps to refine the placement of beats. Modern algorithms distinguish actual beats from other musical events by filtering out non-relevant onsets and employing probabilistic models or machine-learning techniques plus postprocessing to obtain final predictions. Many approaches also adapt dynamically to tempo fluctuations, ensuring robust performance even in compositions with varying rhythmic structures. Although research on improvements continues \cite{FoscarinSW24}, the \texttt{madmom} python library \cite{böck2016madmomnewpythonaudio} is still considered state-of-the-art and will be used for our computations related to beat tracking and tempo estimation.
 
 \section{Data}\label{sec:data}
 
-In order to compile a set of representative artists and their albums we utilized the renowned "Rolling Stone" magazine's lists of 100 best Hip-Hop songs from the East Coast\footnote{\url{https://www.rollingstone.com/music/music-lists/best-east-Coast-rap-songs-1234737704}} and the 
-West Coast\footnote{\url{https://www.rollingstone.com/music/music-lists/best-west-Coast-hip-hop-songs-1234712968}} published in 2023 covering songs from 1979 to 2020. 
+In order to compile a set of representative artists and their albums we utilized the renowned "Rolling Stone" magazine's lists of 100 best Hip-Hop songs from the East Coast\footnote{\url{https://www.rollingstone.com/music/music-lists/best-east-Coast-rap-songs-1234737704}} and the
+West Coast\footnote{\url{https://www.rollingstone.com/music/music-lists/best-west-Coast-hip-hop-songs-1234712968}} published in 2023 covering songs from 1979 to 2020.
 In order to focus on the historical period of greatest rivalry in the "golden era" of Hip-Hop (see section \ref{sec:introduction}), we kept only albums between 1986 and 1998 from these lists. To ensure a comprehensive dataset, we additionally included all albums produced by the listed artists between 1986 and 1998, even if the albums are not part of the top 100 lists.
- 
+
 To obtain the lyrics, we scraped the artist's pages from Genius,\footnote{\url{https://genius.com}} a well-known platform for song lyrics and annotations. For audio extraction, we utilized the \texttt{yt-dlp}\footnote{\url{https://github.com/yt-dlp/yt-dlp}} library to acquire the audio files from YouTube. After completing our data collection, we acquired 1364 lyrics and audio files, representing 16 East and 16 West Coast artists with 698 (East) and 666 (West) songs. The distribution of songs per Coast and year is shown in figure \ref{fig:song_counts_by_Coast_and_year}, highlighting peak periods of album releases from the early to mid 1990s. The list of artists, album and songs can be obtained from our repository.\footnote{See section 3 here: \url{https://github.com/CPJKU/thesis_abel_boros/blob/main/Master_Thesis_Appendix_Abel_Boros.pdf}}
 
- \begin{figure}
-    \centering
-    \includegraphics[width=1.0\textwidth]{figures/song_counts_by_Coast_and_year.jpg}
-    \caption{Annual distribution of songs: East Coast (698) vs.\ West Coast (666)}
-    \label{fig:song_counts_by_Coast_and_year}
- \end{figure}
+\begin{figure}
+\centering
+\includegraphics[width=1.0\textwidth]{figures/song_counts_by_Coast_and_year.jpg}
+\caption{Annual distribution of songs: East Coast (698) vs.\ West Coast (666)}
+\label{fig:song_counts_by_Coast_and_year}
+\end{figure}
 
 \section{Methods}\label{sec:methods}
 
 \subsection{Lyrics Preprocessing}
 \label{section:preprocessing}
 
-Hip-Hop lyrics often include unique linguistic structures, extensive use of slang and regional dialects, which necessitate a robust and adaptable text-cleanup pipeline. The preprocessing steps we implemented are as follows: 
+Hip-Hop lyrics often include unique linguistic structures, extensive use of slang and regional dialects, which necessitate a robust and adaptable text-cleanup pipeline. The preprocessing steps we implemented are as follows:
 
 \begin{enumerate}
-    \item Text normalization: We removed special characters and extra symbols that do not contribute to the semantic content, like brackets, parentheses, hashtags, quotations, marks, apostrophes, repeated punctuation, and multiple whitespaces after each other.
-    \item Tokenization: The cleaned text was segmented into individual tokens or words using the \texttt{nltk} word tokenizer\footnote{\url{https://www.nltk.org/api/nltk.tokenize.word\_tokenize.html}}
-    for easier manipulation and analysis of the text data.
-    \item Number removal: Tokens containing numerical characters were removed, because they typically do not add meaningful context within the lyrics-related content. 
-    \item Stopword removal: We removed an extended list of stopwords\footnote{See section 1 here: \url{https://github.com/CPJKU/thesis_abel_boros/blob/main/Master_Thesis_Appendix_Abel_Boros.pdf}
-    } that carried little or no semantic information.
-    \item Slang and colloquial expression handling: Recognizing that hip-hop lyrics heavily feature slang and colloquial language, we relied on manual fine-tuning to bring these terms to a common form. Many words or phrases have the same meaning but are expressed in slightly different formats due to regional or cultural variations. By mapping different slang terms
-    to the same words, we improved the consistency of our corpus (see the full list of slang mappings at our repository\footnote{See section 2 here: \url{https://github.com/CPJKU/thesis_abel_boros/blob/main/Master_Thesis_Appendix_Abel_Boros.pdf}}). Specific dictionaries\footnote{\url{https://www.dreadpen.com/hip-hop-slang-dictionary}} were helpful in understanding these expressions accurately. See table~\ref{table:slang_mapping_table} for examples of slang terms and their mappings.
+\item Text normalization: We removed special characters and extra symbols that do not contribute to the semantic content, like brackets, parentheses, hashtags, quotations, marks, apostrophes, repeated punctuation, and multiple whitespaces after each other.
+\item Tokenization: The cleaned text was segmented into individual tokens or words using the \texttt{nltk} word tokenizer\footnote{\url{https://www.nltk.org/api/nltk.tokenize.word\_tokenize.html}}
+for easier manipulation and analysis of the text data.
+\item Number removal: Tokens containing numerical characters were removed, because they typically do not add meaningful context within the lyrics-related content.
+\item Stopword removal: We removed an extended list of stopwords\footnote{See section 1 here: \url{https://github.com/CPJKU/thesis_abel_boros/blob/main/Master_Thesis_Appendix_Abel_Boros.pdf}
+} that carried little or no semantic information.
+\item Slang and colloquial expression handling: Recognizing that hip-hop lyrics heavily feature slang and colloquial language, we relied on manual fine-tuning to bring these terms to a common form. Many words or phrases have the same meaning but are expressed in slightly different formats due to regional or cultural variations. By mapping different slang terms
+to the same words, we improved the consistency of our corpus (see the full list of slang mappings at our repository\footnote{See section 2 here: \url{https://github.com/CPJKU/thesis_abel_boros/blob/main/Master_Thesis_Appendix_Abel_Boros.pdf}}). Specific dictionaries\footnote{\url{https://www.dreadpen.com/hip-hop-slang-dictionary}} were helpful in understanding these expressions accurately. See table~\ref{table:slang_mapping_table} for examples of slang terms and their mappings.
 \end{enumerate}
 
 \begin{table}[!ht]
-    \centering
-    \begin{tabular}{|c|c|}
-        \hline
-        \textbf{Slang} & \textbf{Replacement}    \\ \hline
-        niggas      & nigga                      \\ \hline
-        yo          & yeah                       \\ \hline
-        doggz       & dog                        \\ \hline
-        wanna       & want to                    \\ \hline
-        lemme       & let me                     \\ \hline
-        imma        & i am going to              \\ \hline
-        aks         & ask                        \\ \hline
-        bizzle      & bitch                      \\ \hline
-        muthaphuka  & motherfucking              \\ \hline
-        LA          & Los Angeles                \\ \hline
-        Cali        & California                 \\ \hline
-    \end{tabular}
-    \caption{Examples of slang mappings}
-    \label{table:slang_mapping_table}
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Slang} & \textbf{Replacement}    \\ \hline
+niggas      & nigga                      \\ \hline
+yo          & yeah                       \\ \hline
+doggz       & dog                        \\ \hline
+wanna       & want to                    \\ \hline
+lemme       & let me                     \\ \hline
+imma        & i am going to              \\ \hline
+aks         & ask                        \\ \hline
+bizzle      & bitch                      \\ \hline
+muthaphuka  & motherfucking              \\ \hline
+LA          & Los Angeles                \\ \hline
+Cali        & California                 \\ \hline
+\end{tabular}
+\caption{Examples of slang mappings}
+\label{table:slang_mapping_table}
 \end{table}
 
 On top of these preprocessing steps, we used the \texttt{OCTIS}\footnote{\url{https://github.com/MIND-Lab/OCTIS}} library for lemmatization and further punctuation removal and stopword elimination. Finally we filtered out words that appeared in less than 5\% or more than 85\% of the documents, helping us to avoid both overly rare and overly common terms. Table \ref{table:corpus} gives the statistics of tokens in the lyrics corpus before and after preprocessing, showing e.g.\ that the number of unique tokens decreases from 31,622 to 938 through preprocessing.
 
 \begin{table}[!ht]
-    \centering
-    \begin{tabular}{|c|c|c|c|c|}
-        \hline
-        \textbf{preprocessing} & $\mathbf{\#}$ \textbf{lyrics} & $\#$ \textbf{tokens} & \textbf{average $\#$ tokens per lyric} & $\#$ \textbf{unique tokens}\\ \hline
-        before & 1,368 & 792,599 & 579.4 & 31,622                     \\ \hline
-        after & 1,368 & 243,134 & 177.7 &  	938                    \\ \hline
-    \end{tabular}
-    \caption{Statistics of lyrics corpus before and after preprocessing}
-    \label{table:corpus}
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\textbf{preprocessing} & $\mathbf{\#}$ \textbf{lyrics} & $\#$ \textbf{tokens} & \textbf{average $\#$ tokens per lyric} & $\#$ \textbf{unique tokens}\\ \hline
+before & 1,368 & 792,599 & 579.4 & 31,622                     \\ \hline
+after & 1,368 & 243,134 & 177.7 &  	938                    \\ \hline
+\end{tabular}
+\caption{Statistics of lyrics corpus before and after preprocessing}
+\label{table:corpus}
 \end{table}
 
 \subsection{Topic modeling}
@@ -163,98 +133,97 @@ For topic modeling, a standard unsupervised method is latent Dirichlet allocatio
 
 While LDA is effective for uncovering general themes in a text corpus, it operates in a so-called bag-of-words regime treating words as isolated entities without considering the context in which a word appears. The more recent approach \cite{bianchi2021pretraining} of Contextualized Topic Modeling (CTM) is based on word embeddings, which model how words are related in different contexts. This makes CTM especially useful for analyzing lyrics, where slang, metaphors, and double meanings are common.
 
-The two most widely used metrics for evaluating topic modeling are topic coherence and topic diversity \cite{coherenceMeasures2015}. A high topic coherence score suggests that the words which are representative for a topic are likely to appear together in real-world contexts. One way to compute coherence is to use a sliding window across documents (lyrics) and provide a score based on how often the topic's words co-occur within documents. 
-Topic diversity measures the degree of uniqueness across topics in a model. It evaluates how different the generated topics are by considering the overlap of top representative words between different topics. High topic diversity suggests that the model has successfully identified distinct topics, whereas low diversity indicates significant redundancy. Topic diversity is calculated as the proportion of unique words across topics to the total number of words across all topics. 
+The two most widely used metrics for evaluating topic modeling are topic coherence and topic diversity \cite{coherenceMeasures2015}. A high topic coherence score suggests that the words which are representative for a topic are likely to appear together in real-world contexts. One way to compute coherence is to use a sliding window across documents (lyrics) and provide a score based on how often the topic's words co-occur within documents.
+Topic diversity measures the degree of uniqueness across topics in a model. It evaluates how different the generated topics are by considering the overlap of top representative words between different topics. High topic diversity suggests that the model has successfully identified distinct topics, whereas low diversity indicates significant redundancy. Topic diversity is calculated as the proportion of unique words across topics to the total number of words across all topics.
 
 \subsection{Tempo estimation}
 \label{sec:tempo}
 
 For tempo estimation we relied on the
-\texttt{madmom}\footnote{\url{https://pypi.org/project/madmom}} software's 
+\texttt{madmom}\footnote{\url{https://pypi.org/project/madmom}} software's
 \texttt{RNNBeatProcessor} routine employing multiple recurrent neural networks followed by \texttt{TempoEstimationProcessor}, which outputs a histogram of candidate
 tempi in beats per minute plus their probablities $(\text{BPM},\,P)$. The histogram typically shows two dominant peaks, namely the fundamental
 period $T$ and its first harmonic $2T$ (or, equivalently, $T/2$). To decide which of the peaks is the correct one is known as the half/double--time disambiguation problem. We
-retained the two most-probable candidates and applied a simple rule:
+retained the two most‐probable candidates and applied a simple rule:
 
 \begin{itemize}
-  \item Let $b_{\text{low}} < b_{\text{high}}$ be the BPMs of the two
-        peaks.%
-  \item If their likelihoods differ markedly
-        ($|P_{\text{low}}-P_{\text{high}}|>\tau = 0.15$), we keep the one with the larger likelihood.
-  \item Otherwise we adopt $b_{\text{low}}$, the slower value, because it
-        corresponds to the bar-level pulse and keeps all Hip-Hop tracks
-        in the stylistically typical range of roughly $70$–$110$\,BPM.
+\item Let $b_{\text{low}} < b_{\text{high}}$ be the BPMs of the two
+peaks.
+\item If their likelihoods differ markedly
+($|P_{\text{low}}-P_{\text{high}}|>\tau = 0.15$), we keep the one with the larger likelihood.
+\item Otherwise we adopt $b_{\text{low}}$, the slower value, because it
+corresponds to the bar‐level pulse and keeps all Hip-Hop tracks
+in the stylistically typical range of roughly $70$–$110$\,BPM.
 \end{itemize}
 
 The resulting tempo is stored for further analysis.
-
 
 \section{Results}\label{sec:results}
 
 To gain insights into the thematic content of East and West Coast lyrics, we applied and compared the Latent Dirichlet Allocation (LDA) model with that of the Contextualized Topic Modeling (CTM) approach. For both LDA and CTM, the number of topics $k$ is assumed to be known a priori, therefore we compared models with $k = 2, 3, 4$. We computed multiple models (36 for LDA and 18 for CTM) and provide average and best results in table \ref{table:model_performances_table}. We then ranked the models first by topic coherence score and next, in the case of ties, by topic diversity. Please note that although higher coherence values indicate more clearly separated topics \cite{mimno2011optimizing}, quantitative metrics should always be complemented with a qualitative evaluation \cite{chang2009reading}, in our case an interpretation of the most salient words for each topic.
 
 \begin{table}[!ht]
-    \centering
-    \begin{tabular}{|c|c|c|c|c|c|c|}
-        \hline
-        \textbf{model} & $\boldsymbol{\#}$ \textbf{models} & $\boldsymbol{k}$ & \textbf{ave. coherence} & \textbf{ave. diversity} & \textbf{best coherence} & \textbf{best diversity} \\ \hline
-        LDA          & 36 & 2 & 0.19 $\pm$ 0.0024 & 0.80 $\pm$ 0.0000 & 0.19 & 0.80 \\ \hline
-        LDA          & 36 & 3 & 0.19 $\pm$ 0.0025 & 0.60 $\pm$ 0.0000 & 0.19 & 0.60 \\ \hline
-        LDA          & 36 & 4 & 0.20 $\pm$ 0.0033 & 0.54 $\pm$ 0.0110 & \textbf{0.21} & \textbf{0.55} \\ \hline
-        CTM          & 18 & 2 & 0.28 $\pm$ 0.0270 & 1.00 $\pm$ 0.0000 & \textbf{0.34} & \textbf{1.00} \\ \hline
-        CTM          & 18 & 3 & 0.27 $\pm$ 0.0255 & 0.99 $\pm$ 0.0183 & 0.33 & 1.00 \\ \hline
-        CTM          & 18 & 4 & 0.28 $\pm$ 0.0284 & 0.94 $\pm$ 0.0411 & 0.34 & 1.00 \\ \hline
-    \end{tabular}
-    \caption{Comparison of LDA and CTM models. Shown are number of models computed, number of topics $k$, average coherence and diversity $\pm$ standard deviation, coherence and diversity of best performing models. Overall best performances for LDA and CTM are shown in bold face. }
-    \label{table:model_performances_table}
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+\textbf{model} & $\boldsymbol{\#}$ \textbf{models} & $\boldsymbol{k}$ & \textbf{ave. coherence} & \textbf{ave. diversity} & \textbf{best coherence} & \textbf{best diversity} \\ \hline
+LDA          & 36 & 2 & 0.19 $\pm$ 0.0024 & 0.80 $\pm$ 0.0000 & 0.19 & 0.80 \\ \hline
+LDA          & 36 & 3 & 0.19 $\pm$ 0.0025 & 0.60 $\pm$ 0.0000 & 0.19 & 0.60 \\ \hline
+LDA          & 36 & 4 & 0.20 $\pm$ 0.0033 & 0.54 $\pm$ 0.0110 & \textbf{0.21} & \textbf{0.55} \\ \hline
+CTM          & 18 & 2 & 0.28 $\pm$ 0.0270 & 1.00 $\pm$ 0.0000 & \textbf{0.34} & \textbf{1.00} \\ \hline
+CTM          & 18 & 3 & 0.27 $\pm$ 0.0255 & 0.99 $\pm$ 0.0183 & 0.33 & 1.00 \\ \hline
+CTM          & 18 & 4 & 0.28 $\pm$ 0.0284 & 0.94 $\pm$ 0.0411 & 0.34 & 1.00 \\ \hline
+\end{tabular}
+\caption{Comparison of LDA and CTM models. Shown are number of models computed, number of topics $k$, average coherence and diversity $\pm$ standard deviation, coherence and diversity of best performing models. Overall best performances for LDA and CTM are shown in bold face. }
+\label{table:model_performances_table}
 \end{table}
 
 Overall speaking, all CTM models outperformed all LDA models both in terms of coherence and diversity, irrespective of the number of topics chosen with CTM achieving top average coherence of $0.28$ at $k$ equal 2 and 4 (diversity of $1.00$ and $0.94$) vs.\ LDA's top average coherence of only $0.20$ at $k$ equal 4 (diversity of $0.55$). The higher coherence and diversity scores are also evident when exploring the resulting topics from the best performing LDA and CTM models. The nine most salient terms for each topic of the these models are given in tables \ref{table:topic_words_LDA} and \ref{table:topic_words_CTM}. Looking at the best performing LDA results in table \ref{table:topic_words_LDA}, which was achieved at $k$ equal 4 (coherence $0.21$, diversity $0.55$), there is an overlap between topics 1 and 4, which seem to deal with various aspects of personal life. Topics 2 and 3, which are also overlapping, contain a range of vulgar words which are typical for the genre Hip-Hop. Looking at table \ref{table:topic_words_CTM}, CTM provided significantly clearer topics for their best performing model at $k$ equal 2 (coherence $0.34$, diversity $1.00$), clustering the lyrics into two distinct themes which we named: topic 1 - Street Life and Rhythm (artistic, rhythmic, musically driven), and topic 2 - Vulgarity and Violence (street-oriented aggression). Whereas topic 2 is again about the prevalent vulgarity and aggression in Hip-Hop lyrics, topic 1 is more concerned with the musical and cultural side of the genre. Comparing this to an LDA result at $k$ equal 2 also given in table \ref{table:topic_words_CTM}, topic 2 features vulgar and aggressive terms comparable to the CTM result, but the salient terms of topic 1 appear to be relatively generic with terms like "go", "make", or "man" being about everyday life rather than anything specific to Hip-Hop culture. By being able to model the context of words in lyrics rather than treating them as isolated occurrences, the CTM approach seems to clearly outperform LDA.
 
 \begin{table}
-    \centering
-    \begin{tabular}{|c|c|c|c|c|}
-        \hline
-        \textbf{Word} & \textbf{Topic 1} & \textbf{Topic 2} & \textbf{Topic 3} & \textbf{Topic 4} \\ \hline
-        Word 1 & go & nigga & nigga & one \\ \hline
-        Word 2 & know & fuck & bitch & know \\ \hline
-        Word 3 & rhyme & shit & know & go \\ \hline
-        Word 4 & make & motherfucker & fuck & time \\ \hline
-        Word 5 & come & ass & want & man \\ \hline
-        Word 6 & let & go & shit & love \\ \hline
-        Word 7 & say & know & make & come \\ \hline
-        Word 8 & man & come & go & see \\ \hline
-        Word 9 & back & back & see & live \\ \hline
-    \end{tabular}
-    \caption{Most salient words for LDA model at $k=4$}
-    \label{table:topic_words_LDA}
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\textbf{Word} & \textbf{Topic 1} & \textbf{Topic 2} & \textbf{Topic 3} & \textbf{Topic 4} \\ \hline
+Word 1 & go & nigga & nigga & one \\ \hline
+Word 2 & know & fuck & bitch & know \\ \hline
+Word 3 & rhyme & shit & know & go \\ \hline
+Word 4 & make & motherfucker & fuck & time \\ \hline
+Word 5 & come & ass & want & man \\ \hline
+Word 6 & let & go & shit & love \\ \hline
+Word 7 & say & know & make & come \\ \hline
+Word 8 & man & come & go & see \\ \hline
+Word 9 & back & back & see & live \\ \hline
+\end{tabular}
+\caption{Most salient words for LDA model at $k=4$}
+\label{table:topic_words_LDA}
 \end{table}
 
 \begin{table}
-    \centering
-    \begin{tabular}{|c|c|c|c|c|}
-        \hline
-        & \multicolumn{2}{|c|}{\textbf{CTM}} & \multicolumn{2}{|c|}{\textbf{LDA}}\\ \hline
-        \textbf{Word} & \textbf{Topic 1} & \textbf{Topic 2} & \textbf{Topic 1} & \textbf{Topic 2}\\ \hline
-        Word 1 & rhyme & nigga & go & nigga \\ \hline
-        Word 2 & cuz & shit & know & fuck  \\ \hline
-        Word 3 & soul & ride & make & shit  \\ \hline
-        Word 4 & rhythm & dick & one & bitch  \\ \hline
-        Word 5 & stage & bitch & come & know  \\ \hline
-        Word 6 & lyric & die & man & motherfucker  \\ \hline
-        Word 7 & music & big & time &  go \\ \hline
-        Word 8 & cut & street & let & want  \\ \hline
-        Word 9 & funky & man & want &  ass \\ \hline
-    \end{tabular}
-    \caption{Most salient words for CTM and LDA models at $k = 2$}
-    \label{table:topic_words_CTM}
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+& \multicolumn{2}{|c|}{\textbf{CTM}} & \multicolumn{2}{|c|}{\textbf{LDA}}\\ \hline
+\textbf{Word} & \textbf{Topic 1} & \textbf{Topic 2} & \textbf{Topic 1} & \textbf{Topic 2}\\ \hline
+Word 1 & rhyme & nigga & go & nigga \\ \hline
+Word 2 & cuz & shit & know & fuck  \\ \hline
+Word 3 & soul & ride & make & shit  \\ \hline
+Word 4 & rhythm & dick & one & bitch  \\ \hline
+Word 5 & stage & bitch & come & know  \\ \hline
+Word 6 & lyric & die & man & motherfucker  \\ \hline
+Word 7 & music & big & time &  go \\ \hline
+Word 8 & cut & street & let & want  \\ \hline
+Word 9 & funky & man & want &  ass \\ \hline
+\end{tabular}
+\caption{Most salient words for CTM and LDA models at $k = 2$}
+\label{table:topic_words_CTM}
 \end{table}
 
 \begin{figure}
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/Coast_topic_contribution.jpg}
-    \caption{Proportional contribution of East (red bars) and West (blue bars) Coast lyrics to topic 1 (left side) and 2 (right side)}
-    \label{fig:topic_model_distribution}
+\centering
+\includegraphics[width=0.8\textwidth]{figures/Coast_topic_contribution.jpg}
+\caption{Proportional contribution of East (red bars) and West (blue bars) Coast lyrics to topic 1 (left side) and 2 (right side)}
+\label{fig:topic_model_distribution}
 \end{figure}
 
 Next we explored whether there is a difference of the contribution of East and West Coast lyrics to the two topics. For each lyric of a song, the CTM model gives a probability for how strongly it belongs to each topic. These probabilities are summed up for each topic for the East and West Coast contribution, normalized so that the four quota sum up to $100\%$, and depicted as four bars in figure \ref{fig:topic_model_distribution}. The results show that topic 1 is more prevalent among East Coast artists ($26\%$ vs.\ $14\% $), while topic 2 is more dominant in the lyrics of West Coast artists ($25\%$ vs.\ $34\%$). This suggests that East Coast artists tend to focus more on lyrics-related complexity and musicality, while West Coast artists emphasize themes related to street life and aggression. This is well in line with manually annotated results on a dataset of 340 Hip-Hop songs \cite{herd2009changing} showing that the amount of violent lyrics doubled from about $30\%$ to $60\%$ from the 1980s to the 1990s. For so-called "gangsta rap" songs the amount of violent lyrics even rose to $95\%$. Gangsta rap is a sub-genre of Hip-Hop romanticizing  the outlaw and a "violent lifestyle of American inner cities afflicted with poverty and the dangers of drug use and drug dealing"\footnote{\url{https://www.britannica.com/art/gangsta-rap}}. Although originating on the East Coast it became a dominant form of Hip-Hop music especially on the West Coast in the 1990s, in line with the stronger attribution of topic 2 to West Coast artists.
@@ -262,16 +231,15 @@ Next we explored whether there is a difference of the contribution of East and W
 To visualize the result of our tempo estimation in figure \ref{fig:avg_tempo_over_time_by_coast_and_overall}, we plot the average tempo per year (from 1986 to 1998) for the East and West Coast artists in red and blue and the average over all artists in green. In addition the figure contains the numbers of songs forming the basis for each depicted data point, thereby showing that for instance the start and end of the observation period has less data support with the years 1986 and 1998 not being based on West Coast artists at all.
 
 \begin{figure}
-    \centering
-    \includegraphics[width=1.0\textwidth]{figures/avg_tempo_by_year_coast.png}
-    \caption{Average tempo in BPM from 1986 to 1998 for East Coast (red), West Coast (blue) and all artists (green)}
+\centering
+\includegraphics[width=1.0\textwidth]{figures/avg_tempo_by_year_coast.png}
+\caption{Average tempo in BPM from 1986 to 1998 for East Coast (red), West Coast (blue) and all artists (green)}
 \label{fig:avg_tempo_over_time_by_coast_and_overall}
 \end{figure}
 
+The first observation is that the average tempo is decreasing considerably over most of the time period, from 113 BPM in 1989 down to 88 BPM in 1996. This trend does not hold before 1989 or after 1996, but as already mentioned there is little data support for these years. Since the decrease is visible for both East and West Coast artists we can state that tempo was gradually moving to a slower pace in the golden era of Hip-Hop era overall.
 
-The first observation is that the average tempo is decreasing considerably over most of the time period, from 113 BPM in 1989 down to 88 BPM in 1996. This trend does not hold before 1989 or after 1996, but as already mentioned there is little data support for these years. Since the decrease is visible for both East and West Coast artists we can state that tempo was gradually moving to a slower pace in the golden era of Hip-Hop era overall. 
-
-The second observation is that East Coast songs have an average higher tempo of 100.15 BPM compared to 90.16 BPM for West Coast songs. This is corroborated with an independent two-sample t-test comparing the tempo distributions of East and West Coast songs across all years. The result was statistically significant ($p < 0.05$) with a t-value of 7.107 at $698+666-2=1362$ degrees of freedom. This observation aligns with many West Coast albums being part of the "G-funk" subgenre \cite{williams2009you}, which started in 1992 with former {\em N.W.A} member's {\em Dr.\ Dre} realease of {\em The Chronic}  including "Nuthin' but a 'G' Thang". This album was a huge commercial success and introduced a slower form of Hip-Hop which became very popular especially on the West Coast. 
+The second observation is that East Coast songs have an average higher tempo of 100.15 BPM compared to 90.16 BPM for West Coast songs. This is corroborated with an independent two-sample t-test comparing the tempo distributions of East and West Coast songs across all years. The result was statistically significant ($p < 0.05$) with a t-value of 7.107 at $698+666-2=1362$ degrees of freedom. This observation aligns with many West Coast albums being part of the "G-funk" subgenre \cite{williams2009you}, which started in 1992 with former {\em N.W.A} member's {\em Dr.\ Dre} realease of {\em The Chronic}  including "Nuthin' but a 'G' Thang". This album was a huge commercial success and introduced a slower form of Hip-Hop which became very popular especially on the West Coast.
 
 \section{Conclusions}\label{sec:conclusions}
 
@@ -283,7 +251,6 @@ In terms of construct validity \cite{sturm2023review}, our dataset and experimen
 
 This research was funded in whole by the Austrian Science Fund (FWF) [10.55776/P36653]. For open access purposes, the authors have applied a CC BY public copyright license to any author accepted manuscript version arising from this submission.
 
-% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
 \printbibliography
 
 \end{document}

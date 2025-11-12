@@ -1,61 +1,34 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER.
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-% \documentclass{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
-%\usepackage{csquotes} % already loaded by anthology-ch.cls
+
 \usepackage{todonotes}
 \usepackage{multirow}
-% ADD your own packages using \usepackage{}
 
-% Workaround for csquotes/babel compatibility issue
 \makeatletter
 \providecommand{\csq@thequote@oinit}{}
 \providecommand{\csq@thequote@oopen}{}
 \providecommand{\csq@thequote@oclose}{}
 \makeatother
 
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{``Biblicality'' of Early Medieval Canon Law through the Lens of Language Modeling}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1]{Friederike Voit}[
-%  orcid=0000-0000-0000-0000
 ]
 
 \author[1]{Gleb Schmidt}[
-    orcid=0000-0001-6925-551X
+orcid=0000-0001-6925-551X
 ]
 
-% While we encourage including ORCID-IDs for all authors, you can
-% include authors that do not have one by definining an empty ID.
 \author[1]{Sven Meeder}[
-    orcid=0000-0002-0725-3575
+orcid=0000-0002-0725-3575
 ]
 
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 \affiliation{1}{Rich Institute of Culture and History, Radboud University, Nijmegen, Netherlands}
-% \affiliation{2}{Another Department, Another University, Another City, Another Country}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{Early Medieval Canon Law, Bible, Intertextuality, Language Modeling, Perplexity, Stylometry}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
 \pagestart{194}
@@ -65,121 +38,112 @@
 \doi{10.63744/i0rY9iLox3mL}
 \paperorder{14}
 
-
 \addbibresource{bibliography.bib}
-\addbibresource{references.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
 
-    \maketitle
+\maketitle
 
-    \begin{abstract}
-        Using language modeling and the information-theoretic concept of perplexity, this study explores the influence of the Bible on early medieval canon law. We demonstrate that calculating perplexity of a corpus of canon law under a language model trained exclusively on Scripture can serve as a reliable proxy for accessing the overall linguistic similarity---stylistic, semantic, and syntactic---of canon law to the Bible. The paper presents the measured ``biblicality'' of various canon law texts, explores its chronological development, and delves into the linguistic and stylistic meaning of higher or lower ``biblicality'' by observing correlations between perplexity under the biblical language model and various linguistic features of canon law texts which can be extracted from rich morpho-styntactic annotation. We hypothesize that changes in the levels of ``biblicality'', clearly observable across the chronological subdivisions of the corpus, suggest that the imitation of scriptural language may have been a deliberate strategy reflecting evolving views on the role and place of Scripture in legislation. Further research is needed to trace in more detail the connection between the authoritative status of canon law collections and the use of the Bible.
-    \end{abstract}
+\begin{abstract}
+Using language modeling and the information-theoretic concept of perplexity, this study explores the influence of the Bible on early medieval canon law. We demonstrate that calculating perplexity of a corpus of canon law under a language model trained exclusively on Scripture can serve as a reliable proxy for accessing the overall linguistic similarity---stylistic, semantic, and syntactic---of canon law to the Bible. The paper presents the measured \textquote{biblicality} of various canon law texts, explores its chronological development, and delves into the linguistic and stylistic meaning of higher or lower \textquote{biblicality} by observing correlations between perplexity under the biblical language model and various linguistic features of canon law texts which can be extracted from rich morpho-styntactic annotation. We hypothesize that changes in the levels of \textquote{biblicality}, clearly observable across the chronological subdivisions of the corpus, suggest that the imitation of scriptural language may have been a deliberate strategy reflecting evolving views on the role and place of Scripture in legislation. Further research is needed to trace in more detail the connection between the authoritative status of canon law collections and the use of the Bible.
+\end{abstract}
 
+\section{Introduction}
 
-    \section{Introduction}
+\begin{center}
+\blockquote{... We condemn those who promote rules that go against Scripture and the ecclesiastical canons and introduce new precepts.\footnote{\textquote{Sed et hos condemnamus qui se extollunt adversus scripturas et ecclesiasticos canones et nova introducunt praecepta} (PL 84, col. 115). A ninth-century forger attributed this text to the Synod of Gangra (340), presenting it as its epilogue.}}
+\end{center}
 
-    \begin{center}
-        \blockquote{... We condemn those who promote rules that go against Scripture and the ecclesiastical canons and introduce new precepts.\footnote{\textquote{Sed et hos condemnamus qui se extollunt adversus scripturas et ecclesiasticos canones et nova introducunt praecepta} (PL 84, col. 115). A ninth-century forger attributed this text to the Synod of Gangra (340), presenting it as its epilogue.}}
-    \end{center}
+The ninth-century author of this quote points to a central issue for medieval \emph{érudits} and, arguably, all of medieval society. Some texts carry authority, others do not. Distinguishing between these two categories was essential, especially in the context of normative texts such as canon law. Early medieval canon law is a rich, varied, and often unstructured body of texts which aims to communicate rules, norms, morals, and ideals for communities. Among authoritative sources of law, the Bible clearly took center stage, alongside church councils, papal letters, and the writings of a constantly redefined group of \textquote{Church Fathers}. Texts without authority included---equally obviously to the medieval mind---any novel rules by upstart authors.
 
-    The ninth-century author of this quote points to a central issue for medieval \emph{érudits} and, arguably, all of medieval society. Some texts carry authority, others do not. Distinguishing between these two categories was essential, especially in the context of normative texts such as canon law. Early medieval canon law is a rich, varied, and often unstructured body of texts which aims to communicate rules, norms, morals, and ideals for communities. Among authoritative sources of law, the Bible clearly took center stage, alongside church councils, papal letters, and the writings of a constantly redefined group of \textquote{Church Fathers}. Texts without authority included---equally obviously to the medieval mind---any novel rules by upstart authors.
+When deciding whether a text had authority, be it legal, spiritual, political or social, medieval readers trusted clear attributions. Yet they were equally aware that such attributions were often flawed, references muddled, and quotations manipulated or even outright forged \cite{flechner_making_2021}. This raises the question: What other markers could have aided readers in assessing a text's authority?
 
-    When deciding whether a text had authority, be it legal, spiritual, political or social, medieval readers trusted clear attributions. Yet they were equally aware that such attributions were often flawed, references muddled, and quotations manipulated or even outright forged \cite{flechner_making_2021}. This raises the question: What other markers could have aided readers in assessing a text's authority?
+A comprehensive exploration of the medieval notion of authority and the factors that shaped it would be impossible within the scope of a single study, even one restricted to the genre of canon law such as ours. For this reason, in this paper we narrow our focus to a single problem: the textual influence that the Bible---the ultimate source of authority---exerted on the canon law corpus.
 
-    A comprehensive exploration of the medieval notion of authority and the factors that shaped it would be impossible within the scope of a single study, even one restricted to the genre of canon law such as ours. For this reason, in this paper we narrow our focus to a single problem: the textual influence that the Bible---the ultimate source of authority---exerted on the canon law corpus.
+Importantly, by choosing this perspective, we do not want to imply that associating a canon law text with Scripture was necessarily a major---let alone the sole---means of establishing a text's authority. Such a claim would be too bold and trivial at the same time. Rather, we aim at offering a global overview of the presence of the Bible within the canon law corpus, in order to determine whether this presence exhibited a discernible structure---chronological or topical---that could be interpreted historically. Such an interpretation, in turn, may---in the future---shed light on whether \textit{biblicizing}, i.e., imbuing a text with a perceptible influence of the Bible---can indeed be considered as a conscious communicative strategy for constructing the authority of normative texts.
 
-    Importantly, by choosing this perspective, we do not want to imply that associating a canon law text with Scripture was necessarily a major---let alone the sole---means of establishing a text's authority. Such a claim would be too bold and trivial at the same time. Rather, we aim at offering a global overview of the presence of the Bible within the canon law corpus, in order to determine whether this presence exhibited a discernible structure---chronological or topical---that could be interpreted historically. Such an interpretation, in turn, may---in the future---shed light on whether \textit{biblicizing}, i.e., imbuing a text with a perceptible influence of the Bible---can indeed be considered as a conscious communicative strategy for constructing the authority of normative texts.
+Our approach echoes recent scholarship on canonicity in literature, which focuses on the interpretation of linguistic features as determinants explaining why certain written works enter the literary canon thus achieving lasting cultural significance \cite{van_cranenburgh_data-oriented_2017, baird_examining_2021, barre_operationalizing_2023}. It also speaks---albeit more distantly---to M.~M.~Bakhtin's concept of \textquote{dialogic literature}, in which the meaning of texts emerges from a continuous and reciprocal dialogue with other works \cite{bakhtin_dialogic_1981}.
 
-    Our approach echoes recent scholarship on canonicity in literature, which focuses on the interpretation of linguistic features as determinants explaining why certain written works enter the literary canon thus achieving lasting cultural significance \cite{van_cranenburgh_data-oriented_2017, baird_examining_2021, barre_operationalizing_2023}. It also speaks---albeit more distantly---to M.~M.~Bakhtin's concept of \textquote{dialogic literature}, in which the meaning of texts emerges from a continuous and reciprocal dialogue with other works \cite{bakhtin_dialogic_1981}.
+Without presuming to answer the question of how exactly the Bible contributed to establishing the authority of normative texts, we wish simply to listen---following Bakhtin---to the dialogue between canon law and the Bible, in the hope of discerning whether this dialogue remained equally lively and intensive across the centuries.
 
-    Without presuming to answer the question of how exactly the Bible contributed to establishing the authority of normative texts, we wish simply to listen---following Bakhtin---to the dialogue between canon law and the Bible, in the hope of discerning whether this dialogue remained equally lively and intensive across the centuries.
+Assessing \textquote{textual influence} of the Bible on canon law is not straightforward, as it may manifest at varied levels of granularity---from multi-word expressions, syntactic patterns, recurring allegories, commonplaces, or \textit{topoi}--- unsurprisingly, leaving the question open as to how it can be systematically studied.
 
-    Assessing \textquote{textual influence} of the Bible on canon law is not straightforward, as it may manifest at varied levels of granularity---from multi-word expressions, syntactic patterns, recurring allegories, commonplaces, or \textit{topoi}--- unsurprisingly, leaving the question open as to how it can be systematically studied.
+A number of other factors also complicate the matter and must be taken into account when selecting a methodological approach. At the most general level, Scripture is the source of all that regulates Christian life, and the entire body of canon law is therefore, by definition, biblical---as the ninth-century quotation above illustrates. Yet the Bible contains few norms presented in a form that would have been directly applicable to early medieval life. Although there were attempts to derive such norms from Scripture---most notably by the Irish monks responsible for the \textit{Collectio canonum Hibernensis} \cite{wasserschleben_irische_1966,flechner_hibernensis_2019,flechner_making_2021}---this approach was neither exclusive nor mainstream. More commonly, biblical norms entered canon law mediated through excerpts from patristic writings, theology, and political philosophy \cite{pelland_incidence_1993,moore_ancient_2010}. Moreover, a text that \textquote{sounds} biblical in tone and register may reflect both the central role of the Bible in early medieval education and its status as the underlying linguistic framework of the literate Latin West \cite{fishbane_types_2000}.
 
-    A number of other factors also complicate the matter and must be taken into account when selecting a methodological approach. At the most general level, Scripture is the source of all that regulates Christian life, and the entire body of canon law is therefore, by definition, biblical---as the ninth-century quotation above illustrates. Yet the Bible contains few norms presented in a form that would have been directly applicable to early medieval life. Although there were attempts to derive such norms from Scripture---most notably by the Irish monks responsible for the \textit{Collectio canonum Hibernensis} \cite{wasserschleben_irische_1966,flechner_hibernensis_2019,flechner_making_2021}---this approach was neither exclusive nor mainstream. More commonly, biblical norms entered canon law mediated through excerpts from patristic writings, theology, and political philosophy \cite{pelland_incidence_1993,moore_ancient_2010}. Moreover, a text that \textquote{sounds} biblical in tone and register may reflect both the central role of the Bible in early medieval education and its status as the underlying linguistic framework of the literate Latin West \cite{fishbane_types_2000}.
+To capture a variety of ways in which the influence of the Bible on canon law manifest, we propose using language modeling and a perplexity-based measure. As we hope to demonstrate, this approach makes it possible not only to quantify the degree of \textquote{biblicality}---the overall similarity to the Bible---of any given canon law text, but also to do so without relying on a pre-theoretical and thus bias-prone definition of what this \textquote{biblicality} entails. Instead, the interpretable evidence provided by our method can be analysed in its relevant context, contributing to a stronger understanding of the diverse law-making strategies employed by the compilers of early medieval canon law.
 
-    To capture a variety of ways in which the influence of the Bible on canon law manifest, we propose using language modeling and a perplexity-based measure. As we hope to demonstrate, this approach makes it possible not only to quantify the degree of \textquote{biblicality}---the overall similarity to the Bible---of any given canon law text, but also to do so without relying on a pre-theoretical and thus bias-prone definition of what this \textquote{biblicality} entails. Instead, the interpretable evidence provided by our method can be analysed in its relevant context, contributing to a stronger understanding of the diverse law-making strategies employed by the compilers of early medieval canon law.
+Building upon previous research, this paper introduces and critically evaluates a novel, corpus- and language-agnostic approach to intertextual association. Its main contributions can be summarized as follows:
+\begin{enumerate}
+\item Situating perplexity alongside other metrics, it identifies linguistic and semantic features that constitute \textquote{biblicality};
+\item Employing this approach, it identifies diachronical patterns in the influence of the Bible on early medieval canon law;
+\item Using the case study of the \textit{Collectio 250 capitulorum}, it explores the applicability of this approach \emph{within} a canonical collection.
+\end{enumerate}
 
-    Building upon previous research, this paper introduces and critically evaluates a novel, corpus- and language-agnostic approach to intertextual association. Its main contributions can be summarized as follows:
-    \begin{enumerate}
-        \item Situating perplexity alongside other metrics, it identifies linguistic and semantic features that constitute \textquote{biblicality};
-        \item Employing this approach, it identifies diachronical patterns in the influence of the Bible on early medieval canon law;
-        \item Using the case study of the \textit{Collectio 250 capitulorum}, it explores the applicability of this approach \emph{within} a canonical collection.
-    \end{enumerate}
+\section{Related Work}
+The complexity of these questions explains why not all levels of textual influence have been considered equally in earlier scholarship. While the identification of quotations across corpora \cite{mellerin_biblindex_2019, mellerin_biblindex_2021}, as well as allusion detection \cite{manjavacas_computational_2021, manjavacas_feasibility_2019} and thematic affinity analysis \cite{camps_make_2023}, have advanced, lower-level linguistic similarities---such as tone, register, and syntactic patterns---remain underexplored.
 
+We believe that it is possible to fill this gap by taking inspiration from stylometry, historical linguistics, and literary studies, and adopting an approach based on generative language modeling. The idea of conducting text classification indirectly, through generative language modeling---the so-called \textquote{generative approach}---stems from classical machine learning. Rather than explicitly searching for features that distinguish between corpora (the
+\textquote{discriminative approach}), this approach models the language of each class in the corpus as a whole, as if the task were to generate new samples of that class. A well-trained generative model can then predict if unseen texts resemble those belonging to the class in question \cite{peng_language_2003}.
 
-    \section{Related Work}
-    The complexity of these questions explains why not all levels of textual influence have been considered equally in earlier scholarship. While the identification of quotations across corpora \cite{mellerin_biblindex_2019, mellerin_biblindex_2021}, as well as allusion detection \cite{manjavacas_computational_2021, manjavacas_feasibility_2019} and thematic affinity analysis \cite{camps_make_2023}, have advanced, lower-level linguistic similarities---such as tone, register, and syntactic patterns---remain underexplored.
+\subsection{Perplexity-based Language Distances}
+In historical linguistics, generative language modeling has been used to \textquote{discriminate between similar languages or varieties and to measure language distance both synchronically and diachronically} \cite{campos_measuring_2018}. Here, perplexity is a measurement of how well a model that has been trained on a corpus predicts a sample text \cite{goldberg_neural_2017}. Higher perplexity means that the model is more uncertain about its predictions, and that the sample text is less closely associated with the training corpus.
+Such a perplexity-based approach involves using a statistical language model---character- or word-\textit{n}-gram-based models have been tested---which captures the language as a whole and is then used to compute a perplexity-based distance (see Section \ref{sec:ppl_based_measure}).
 
-    We believe that it is possible to fill this gap by taking inspiration from stylometry, historical linguistics, and literary studies, and adopting an approach based on generative language modeling. The idea of conducting text classification indirectly, through generative language modeling---the so-called \textquote{generative approach}---stems from classical machine learning. Rather than explicitly searching for features that distinguish between corpora (the
-    \textquote{discriminative approach}), this approach models the language of each class in the corpus as a whole, as if the task were to generate new samples of that class. A well-trained generative model can then predict if unseen texts resemble those belonging to the class in question \cite{peng_language_2003}.
+\subsection{Perplexity as an Indication of Intra- and Intertextuality}
 
-    \subsection{Perplexity-based Language Distances}
-    In historical linguistics, generative language modeling has been used to \textquote{discriminate between similar languages or varieties and to measure language distance both synchronically and diachronically} \cite{campos_measuring_2018}. Here, perplexity is a measurement of how well a model that has been trained on a corpus predicts a sample text \cite{goldberg_neural_2017}. Higher perplexity means that the model is more uncertain about its predictions, and that the sample text is less closely associated with the training corpus.
-    Such a perplexity-based approach involves using a statistical language model---character- or word-\textit{n}-gram-based models have been tested---which captures the language as a whole and is then used to compute a perplexity-based distance (see Section \ref{sec:ppl_based_measure}).
+Language modeling and perplexity-based distances have also been applied to research questions such as authorship analysis \cite{bagnall_authorship_2016, ge_authorship_2016}, the relationship between languages \cite{gamallo_comparing_2016, gamallo_language_2017, campos_measuring_2018, pichel_campos_measuring_2018, gamallo_measuring_2020}, intertextuality and formulaic language \cite{pavlopoulos_holm_2024, fasoi_computational_2021, konstantinidou_exploring_2024}, canonicity \cite{wu_perplexing_2024} and literary quality \cite{kurzynski_perplexity_2024}.
 
-    \subsection{Perplexity as an Indication of Intra- and Intertextuality}
+Recently, a number of studies used character \textit{n}-gram statistical language models (SLMs) to estimate linguistic proximity between different books in the Homeric poems, exploring the internal structure of the poems with a focus on reoccurring formulae and possible later interpolations \cite{fasoi_computational_2021,pavlopoulos_computational_2022,pavlopoulos_holm_2024,konstantinidou_exploring_2024}. In later studies \cite{pavlopoulos_holm_2024,konstantinidou_exploring_2024}, the same approach was applied at the verse level. By computing a \textquote{cross score} for each verse (see Appendix \ref{app:ppl_based_distance}), \citeauthor{konstantinidou_exploring_2024} were able to identify verses (\textit{ca.}~2–3\% of the total number) which are linguistically surprising in their immediate context. Subsequently, they examined correlations between such \textquote{unexpectedness} and linguistic features of the verses, including the presence of named entities and \textit{hapax legomena.}
 
-    Language modeling and perplexity-based distances have also been applied to research questions such as authorship analysis \cite{bagnall_authorship_2016, ge_authorship_2016}, the relationship between languages \cite{gamallo_comparing_2016, gamallo_language_2017, campos_measuring_2018, pichel_campos_measuring_2018, gamallo_measuring_2020}, intertextuality and formulaic language \cite{pavlopoulos_holm_2024, fasoi_computational_2021, konstantinidou_exploring_2024}, canonicity \cite{wu_perplexing_2024} and literary quality \cite{kurzynski_perplexity_2024}.
+\section{Methodology}
+Leveraging these methods to explore the \textquote{biblicality} of early medieval canon law, we trained a language model exclusively on the Vulgate and calculated perplexity of canon law texts under this model. Lower perplexity under the biblical language model---indicating that these texts are less challenging for the model---was interpreted as an indicator of a stronger linguistic affinity with the Bible, without \emph{necessarily} implying philological or historical causation. Additionally, we trained a model on canon law to contextualize each canon law text within its own corpus.
 
-    Recently, a number of studies used character \textit{n}-gram statistical language models (SLMs) to estimate linguistic proximity between different books in the Homeric poems, exploring the internal structure of the poems with a focus on reoccurring formulae and possible later interpolations \cite{fasoi_computational_2021,pavlopoulos_computational_2022,pavlopoulos_holm_2024,konstantinidou_exploring_2024}. In later studies \cite{pavlopoulos_holm_2024,konstantinidou_exploring_2024}, the same approach was applied at the verse level. By computing a \textquote{cross score} for each verse (see Appendix \ref{app:ppl_based_distance}), \citeauthor{konstantinidou_exploring_2024} were able to identify verses (\textit{ca.}~2–3\% of the total number) which are linguistically surprising in their immediate context. Subsequently, they examined correlations between such \textquote{unexpectedness} and linguistic features of the verses, including the presence of named entities and \textit{hapax legomena.}
+\subsection{Model}
+In principle, any generative model can be used to implement this approach. We opted for a compact character-level GPT-2, which we consider arguably the most powerful model available for training on limited data.
 
+This choice was motivated by two factors. Firstly, given the size and heterogeneity of our corpus, we could not rely on direct estimation of joint \textit{n}-gram probabilities \citeauthor{peng_language_2003} or \citeauthor{fasoi_computational_2021} did. Moreover, we sought to leverage more advanced deep learning techniques than those employed by \citeauthor{ge_authorship_2016} and \citeauthor{bagnall_authorship_2016}, who successfully used feedforward and Recurrent Neural Networks (RNNs) respectively.
+The total size of our dataset, especially the biblical corpus, is too small for effective token-level modeling without overfitting, even when using a custom tokenizer with a limited-size vocabulary (see Section \ref{sec:data}). Therefore, we considered character-level training a necessary trade-off, allowing us to leverage the robustness of GPT-2 in capturing regularities in texts, but at a more granular level. Although it is a considerable limitation, working at a character level did have advantages. Fine-grained patterns manifested in short spans of several words---at the sub-quotation level, so to speak---remain, as previously noted, among the most understudied dimensions of the Bible's influence on canon law.
 
-    \section{Methodology}
-    Leveraging these methods to explore the \textquote{biblicality} of early medieval canon law, we trained a language model exclusively on the Vulgate and calculated perplexity of canon law texts under this model. Lower perplexity under the biblical language model---indicating that these texts are less challenging for the model---was interpreted as an indicator of a stronger linguistic affinity with the Bible, without \emph{necessarily} implying philological or historical causation. Additionally, we trained a model on canon law to contextualize each canon law text within its own corpus.
+For implementation, training procedure, and hyperparameters, see Appendix \ref{app:gpt_hparams}.
 
-    \subsection{Model}
-    In principle, any generative model can be used to implement this approach. We opted for a compact character-level GPT-2, which we consider arguably the most powerful model available for training on limited data.
+\subsection{Perplexity-based Proximity Score}
+\label{sec:ppl_based_measure}
 
-    This choice was motivated by two factors. Firstly, given the size and heterogeneity of our corpus, we could not rely on direct estimation of joint \textit{n}-gram probabilities \citeauthor{peng_language_2003} or \citeauthor{fasoi_computational_2021} did. Moreover, we sought to leverage more advanced deep learning techniques than those employed by \citeauthor{ge_authorship_2016} and \citeauthor{bagnall_authorship_2016}, who successfully used feedforward and Recurrent Neural Networks (RNNs) respectively.
-    The total size of our dataset, especially the biblical corpus, is too small for effective token-level modeling without overfitting, even when using a custom tokenizer with a limited-size vocabulary (see Section \ref{sec:data}). Therefore, we considered character-level training a necessary trade-off, allowing us to leverage the robustness of GPT-2 in capturing regularities in texts, but at a more granular level. Although it is a considerable limitation, working at a character level did have advantages. Fine-grained patterns manifested in short spans of several words---at the sub-quotation level, so to speak---remain, as previously noted, among the most understudied dimensions of the Bible's influence on canon law.
+We employed neither the perplexity-based distance proposed by \citeauthor{campos_measuring_2018} \cite{campos_measuring_2018} nor the positive cross-score introduced by  \citeauthor{konstantinidou_exploring_2024} \cite{konstantinidou_exploring_2024} (for formal definitions of these metrics, see Appendix~\ref{app:ppl_based_distance}), but developed a formal scoring procedure---\textit{Perplexity-based Proximity Score} (PPS)---to identify canon law texts which exhibit a stronger affinity to the Bible while being less typical of the canon law corpus.
 
-    For implementation, training procedure, and hyperparameters, see Appendix \ref{app:gpt_hparams}.
+PPS compares the $z$-scores of text perplexities under two models. Standard score normalization efficiently addresses the problem of scale differences (see Appendix~\ref{app:z_score}), allowing us to assess whether any given text is \textit{relatively} more or less perplexing to a specific model, compared to the average perplexity of texts within the corresponding corpus and the same model. As a result, PPS helps to highlight canon law texts that are (1) less perplexing to the biblical model than canon law texts are on average, and (2) more perplexing to the canon law model than canon law texts are on average. Or, more formally:
+\[
+\textit{PPS} = z_{\text{test}}(\mathrm{PP}_{t}) - z_{\text{biblical}}(\mathrm{PP}_{t}),
+\]
+where $\mathrm{PP}_{t}$ denotes the perplexity of text $t$ under the specified model, and $z(\mathrm{PP})$ is the $z$-score of that perplexity. Only texts with a negative $z$-score under the biblical model are considered.
 
-    \subsection{Perplexity-based Proximity Score}
-    \label{sec:ppl_based_measure}
+\section{Data}
+\label{sec:data}
+Five bodies of data were used in this study. The Latin Vulgate Bible and a corpus of early medieval Latin canon law---currently under construction as part of \textquote{The Social Life of Early Medieval Normative Texts} (SOLEMNE) project---take center stage in our experiments. Additionally, for the validation procedure described in Section~\ref{sec:validation} below, we retrieved three supplementary corpora: (1) the \textit{Latinitas antiqua} corpus from the \textit{Corpus Corporum} \cite{roelli_corpus_2014}, (2) Theodosius' and Justinian's legislation extracted from the Latin Library \cite{carey_latin_2025}, and (3) the developing Patristic Sermon Textual Archive (PaSTA),\footnote{An ongoing effort following the ERC Starting Grant \textquote{Patristic Sermons in the Middle Ages} (2019—2023, PI Dr.~S.~Boodts) \cite{boodts_navigating_2019, macchioro_passim_2021, boodts_passim_2024}.} which contains texts reflecting the homiletic tradition of the patristic era.
 
-    We employed neither the perplexity-based distance proposed by \citeauthor{campos_measuring_2018} \cite{campos_measuring_2018} nor the positive cross-score introduced by  \citeauthor{konstantinidou_exploring_2024} \cite{konstantinidou_exploring_2024} (for formal definitions of these metrics, see Appendix~\ref{app:ppl_based_distance}), but developed a formal scoring procedure---\textit{Perplexity-based Proximity Score} (PPS)---to identify canon law texts which exhibit a stronger affinity to the Bible while being less typical of the canon law corpus.
+One of the ambitions of the ongoing SOLEMNE project is to provide access to the most comprehensive corpus of canon law from the fourth to the twelfth century and to equip it with the necessary heuristic and reference tools. At present, the corpus includes 415 texts and comprises 2,251,142 words. This encompasses: (1) published editions of councils, papal decretals, and canonical collections which are not yet available in digital form; (2) direct transcriptions of unpublished material; and (3) contributions from other comparable projects. It has greatly benefited from authorized reuse of data produced by several past and ongoing initiatives:
+\begin{itemize}
+\item the database of the Carolingian Canon Law (CCL) project \cite{chazelle_lawyers_2003};
+\item   texts published by Michael Elliot's Anglo-Saxon Canon Law project \cite{elliot_anglo-saxon_nodate};
+\item  XML-files shared by the Monumenta Germaniae Historica (MGH) \cite{noauthor_monumenta_nodate}.
+\end{itemize}
 
-    PPS compares the $z$-scores of text perplexities under two models. Standard score normalization efficiently addresses the problem of scale differences (see Appendix~\ref{app:z_score}), allowing us to assess whether any given text is \textit{relatively} more or less perplexing to a specific model, compared to the average perplexity of texts within the corresponding corpus and the same model. As a result, PPS helps to highlight canon law texts that are (1) less perplexing to the biblical model than canon law texts are on average, and (2) more perplexing to the canon law model than canon law texts are on average. Or, more formally:
-    \[
-        \textit{PPS} = z_{\text{test}}(\mathrm{PP}_{t}) - z_{\text{biblical}}(\mathrm{PP}_{t}),
-    \]
-    where $\mathrm{PP}_{t}$ denotes the perplexity of text $t$ under the specified model, and $z(\mathrm{PP})$ is the $z$-score of that perplexity. Only texts with a negative $z$-score under the biblical model are considered.
+For this study, the texts were assigned dates, provided with genre labels (council, decretal, penitential, chronological collection, systematic collection) and morpho-syntactic annotation was produced using Universal Dependencies EvaLatin 2024 \cite{straka_ufal_2024}. For more corpus-related statistics, see Appendix~\ref{app:corpus}. For more details on preprocessing, see Section~\ref{app:preprocessing} of Appendix \ref{app:language_models}.
 
+\section{Validation}
+\label{sec:validation}
+Applying concepts and methods from other fields, humanities scholars inevitably face numerous risks \cite{shadrova_topic_2021, da_computational_2019}. As such, validation---preliminary checks to assess whether the applied scientific methods yield results that are both interpretable and relevant to the field---is essential. In order to assess whether perplexity measures correspond to features relevant to human readers, we applied a two-step validation procedure.
 
-    \section{Data}
-    \label{sec:data}
-    Five bodies of data were used in this study. The Latin Vulgate Bible and a corpus of early medieval Latin canon law---currently under construction as part of \textquote{The Social Life of Early Medieval Normative Texts} (SOLEMNE) project---take center stage in our experiments. Additionally, for the validation procedure described in Section~\ref{sec:validation} below, we retrieved three supplementary corpora: (1) the \textit{Latinitas antiqua} corpus from the \textit{Corpus Corporum} \cite{roelli_corpus_2014}, (2) Theodosius' and Justinian's legislation extracted from the Latin Library \cite{carey_latin_2025}, and (3) the developing Patristic Sermon Textual Archive (PaSTA),\footnote{An ongoing effort following the ERC Starting Grant \textquote{Patristic Sermons in the Middle Ages} (2019—2023, PI Dr.~S.~Boodts) \cite{boodts_navigating_2019, macchioro_passim_2021, boodts_passim_2024}.} which contains texts reflecting the homiletic tradition of the patristic era.
+\subsection{Cross-Corpus Validation}
+The first method involves testing a biblical language model against several corpora whose relationship to biblical language---or lack thereof---is well established for historical reasons. To this end, in addition to the models trained on the biblical and canon law datasets, we trained three further models based on the corpora described above in Section \ref{sec:data}: Classical Latin, Patristic, and Roman Law. We then evaluated each model on every corpus, computing the perplexity of each corpus under each model. In this way, we assessed the relationships among these corpora through the lens of perplexity.
 
-    One of the ambitions of the ongoing SOLEMNE project is to provide access to the most comprehensive corpus of canon law from the fourth to the twelfth century and to equip it with the necessary heuristic and reference tools. At present, the corpus includes 415 texts and comprises 2,251,142 words. This encompasses: (1) published editions of councils, papal decretals, and canonical collections which are not yet available in digital form; (2) direct transcriptions of unpublished material; and (3) contributions from other comparable projects. It has greatly benefited from authorized reuse of data produced by several past and ongoing initiatives:
-    \begin{itemize}
-        \item the database of the Carolingian Canon Law (CCL) project \cite{chazelle_lawyers_2003};
-        \item   texts published by Michael Elliot's Anglo-Saxon Canon Law project \cite{elliot_anglo-saxon_nodate};
-        \item  XML-files shared by the Monumenta Germaniae Historica (MGH) \cite{noauthor_monumenta_nodate}.
-    \end{itemize}
+Due to the obvious risk of confirmation bias, such validation procedures often suffer from fundamental weaknesses and are rarely sufficient. However, we consider our case to be different. Each of the corpora represents a distinct genre or is thematically coherent: classical Roman prose, Roman law, and patristic preaching. Clear distinctions between them---as well as the intuitiveness with which any reader of Latin would describe their mutual relationships and degrees of similarity---are strong enough to make this a useful first step of validation.
 
-    For this study, the texts were assigned dates, provided with genre labels (council, decretal, penitential, chronological collection, systematic collection) and morpho-syntactic annotation was produced using Universal Dependencies EvaLatin 2024 \cite{straka_ufal_2024}. For more corpus-related statistics, see Appendix~\ref{app:corpus}. For more details on preprocessing, see Section~\ref{app:preprocessing} of Appendix \ref{app:language_models}.
+\subsection{Classification-based Validation}
 
+Our second validation procedure is based on classification. The assumption is that canonical texts which yield lower perplexity scores under the biblical model---and thus appear more biblical compared to other canon law texts---will also be more difficult to classify as part of the canon law corpus. To verify this, we trained three binary classifiers on canon law texts whose perplexity $z$-score under the biblical model is negative. We then identified the misclassified texts---i.e., canon law texts that the model incorrectly classified as biblical---and computed the correlation between the confidence of the classifiers' incorrect prediction and the absolute perplexity of these texts under the biblical model. For a detailed overview of the procedure, see Appendix \ref{app:classification_val}.
 
-    \section{Validation}
-    \label{sec:validation}
-    Applying concepts and methods from other fields, humanities scholars inevitably face numerous risks \cite{shadrova_topic_2021, da_computational_2019}. As such, validation---preliminary checks to assess whether the applied scientific methods yield results that are both interpretable and relevant to the field---is essential. In order to assess whether perplexity measures correspond to features relevant to human readers, we applied a two-step validation procedure.
-
-    \subsection{Cross-Corpus Validation}
-    The first method involves testing a biblical language model against several corpora whose relationship to biblical language---or lack thereof---is well established for historical reasons. To this end, in addition to the models trained on the biblical and canon law datasets, we trained three further models based on the corpora described above in Section \ref{sec:data}: Classical Latin, Patristic, and Roman Law. We then evaluated each model on every corpus, computing the perplexity of each corpus under each model. In this way, we assessed the relationships among these corpora through the lens of perplexity.
-
-    Due to the obvious risk of confirmation bias, such validation procedures often suffer from fundamental weaknesses and are rarely sufficient. However, we consider our case to be different. Each of the corpora represents a distinct genre or is thematically coherent: classical Roman prose, Roman law, and patristic preaching. Clear distinctions between them---as well as the intuitiveness with which any reader of Latin would describe their mutual relationships and degrees of similarity---are strong enough to make this a useful first step of validation.
-
-    \subsection{Classification-based Validation}
-
-    Our second validation procedure is based on classification. The assumption is that canonical texts which yield lower perplexity scores under the biblical model---and thus appear more biblical compared to other canon law texts---will also be more difficult to classify as part of the canon law corpus. To verify this, we trained three binary classifiers on canon law texts whose perplexity $z$-score under the biblical model is negative. We then identified the misclassified texts---i.e., canon law texts that the model incorrectly classified as biblical---and computed the correlation between the confidence of the classifiers' incorrect prediction and the absolute perplexity of these texts under the biblical model. For a detailed overview of the procedure, see Appendix \ref{app:classification_val}.
-
-    \subsection{Validation Results}
+\subsection{Validation Results}
 \begin{table*}[h]
 \small
 \centering
@@ -199,12 +163,12 @@ Model/Corpus & \textbf{Bible} & \textbf{Canon law} & \textbf{Roman law} & \textb
 \label{tab:cross_corpus_val}
 \end{table*}
 
-    Table~\ref{tab:cross_corpus_val} and \ref{tab:cross_corpus_val_raw} (in Appendix~\ref{app:z_score}) present the perplexities of the five models, each tested on its source dataset and the four remaining corpora. Several observations indicate that this first validation check was confidently passed.
+Table~\ref{tab:cross_corpus_val} and \ref{tab:cross_corpus_val_raw} (in Appendix~\ref{app:z_score}) present the perplexities of the five models, each tested on its source dataset and the four remaining corpora. Several observations indicate that this first validation check was confidently passed.
 
-    All five models performed best when predicting texts from their respective source datasets. Other patterns also align well with scholarly consensus. For example, the Roman law model performs well on canon law, which is the only other corpus that is thematically related to, and historically connected with, the texts used to train this model
-    \cite{Maassen:1870,biondo_diritto_1952,gaudemet_droit_1965}. The patristic preaching model also performs well on the Bible. This likely reflects the inherently biblical focus of preaching in the patristic era \cite{boodts_sermonhomiletics_2022}. Quoting scripture was not merely a rhetorical device but also integral to the liturgical rite \cite{olivar_predicacion_1991}. As a result, the corpus that was used to train this model contains numerous direct references to the Bible.
+All five models performed best when predicting texts from their respective source datasets. Other patterns also align well with scholarly consensus. For example, the Roman law model performs well on canon law, which is the only other corpus that is thematically related to, and historically connected with, the texts used to train this model
+\cite{Maassen:1870,biondo_diritto_1952,gaudemet_droit_1965}. The patristic preaching model also performs well on the Bible. This likely reflects the inherently biblical focus of preaching in the patristic era \cite{boodts_sermonhomiletics_2022}. Quoting scripture was not merely a rhetorical device but also integral to the liturgical rite \cite{olivar_predicacion_1991}. As a result, the corpus that was used to train this model contains numerous direct references to the Bible.
 
-    One result stands out: the Classical Latin model. However, its surprisingly strong performance on canon law and patristic preaching may be explained by the somewhat unusual decision of the \textit{Corpus Corporum}'s curators to include within this \textit{Latinitas Antiqua} corpus authors from an excessively broad period even including Church Fathers such as Jerome, Bede, and Augustine.
+One result stands out: the Classical Latin model. However, its surprisingly strong performance on canon law and patristic preaching may be explained by the somewhat unusual decision of the \textit{Corpus Corporum}'s curators to include within this \textit{Latinitas Antiqua} corpus authors from an excessively broad period even including Church Fathers such as Jerome, Bede, and Augustine.
 
 \begin{table*}[h]
 \centering
@@ -221,204 +185,129 @@ Classifier      & \textbf{Precision} & \textbf{Recall} & \textbf{F1}   & \textbf
 \label{tab:classification}
 \end{table*}
 
-    Table~\ref{tab:classification} summarizes the results of classification-based validation. It shows the performance of binary classifiers trained to recognize canon law texts (positive class), along with three correlation coefficients computed across all classifiers,\footnote{In all three cases, the p-value is below $0.0001$.} capturing the relationship between perplexity under the biblical model and the confidence with which samples were misclassified. Notably, all three classifiers consistently yield a negative correlation---canon law texts that are misclassified as biblical (i.e., assigned a high negative-class probability) tend to have lower perplexity under the biblical model. The fact that all three values are weak to moderate should not surprise us: similarity to the Bible is only one possible reason for misclassification. Overall, we can be reasonably confident that perplexity under the biblical model correlates to canonical \textquote{biblicality}.
+Table~\ref{tab:classification} summarizes the results of classification-based validation. It shows the performance of binary classifiers trained to recognize canon law texts (positive class), along with three correlation coefficients computed across all classifiers,\footnote{In all three cases, the p-value is below $0.0001$.} capturing the relationship between perplexity under the biblical model and the confidence with which samples were misclassified. Notably, all three classifiers consistently yield a negative correlation---canon law texts that are misclassified as biblical (i.e., assigned a high negative-class probability) tend to have lower perplexity under the biblical model. The fact that all three values are weak to moderate should not surprise us: similarity to the Bible is only one possible reason for misclassification. Overall, we can be reasonably confident that perplexity under the biblical model correlates to canonical \textquote{biblicality}.
 
+\section{Experiments and Results}
 
-    \section{Experiments and Results}
+Following our validation procedures, we employed the trained biblical and canon law models for examination of our canon law corpus. The study is organized around three experiments.
 
-    Following our validation procedures, we employed the trained biblical and canon law models for examination of our canon law corpus. The study is organized around three experiments.
+\subsection{Linguistic and Semantic Meaning of \textquote{Biblicality}}
+\label{sec:linguistic_meaning}
+As previously discussed, a significant advantage of employing perplexity is that it avoids a pre-theoretical interpretation of \textquote{biblicality}. Yet this method also raises the question: what makes a text sound biblical?
 
-    \subsection{Linguistic and Semantic Meaning of \textquote{Biblicality}}
-    \label{sec:linguistic_meaning}
-    As previously discussed, a significant advantage of employing perplexity is that it avoids a pre-theoretical interpretation of \textquote{biblicality}. Yet this method also raises the question: what makes a text sound biblical?
+Our validation procedures suggest that lower perplexity under the biblical model indeed reflects textual similarity to the Bible. In this first experiment, we attempt to identify specific linguistic and semantic features which constitute this similarity. The experiment has two parts. Firstly, we explore how perplexity correlates with various linguistic features.
 
-    Our validation procedures suggest that lower perplexity under the biblical model indeed reflects textual similarity to the Bible. In this first experiment, we attempt to identify specific linguistic and semantic features which constitute this similarity. The experiment has two parts. Firstly, we explore how perplexity correlates with various linguistic features.
-
-    We defined a number of linguistic features that can be easily extracted from an automatic morpho-syntactic annotation of the text. At the core of this feature set are the distributions of parts of speech, along with several traditional stylometric features. However, following the approach described by Ph.~\cite{roelli_latin_2021}, we supplemented this feature set with several composite features that capture the density of information-rich and formal writing,\footnote{\texttt{nominal\_style\_ratio},   \texttt{average\_tree\_depth}, \texttt{nonfinite\_verb\_ratio}.} as well as \texttt{quotation\_marker\_ratio}, which reflects the prevalence of syntactic patterns typically associated with direct speech or quotation. Having extracted the features for each text, we computed the correlation coefficients between each feature and the perplexity under the biblical model.
+We defined a number of linguistic features that can be easily extracted from an automatic morpho-syntactic annotation of the text. At the core of this feature set are the distributions of parts of speech, along with several traditional stylometric features. However, following the approach described by Ph.~\cite{roelli_latin_2021}, we supplemented this feature set with several composite features that capture the density of information-rich and formal writing,\footnote{\texttt{nominal\_style\_ratio},   \texttt{average\_tree\_depth}, \texttt{nonfinite\_verb\_ratio}.} as well as \texttt{quotation\_marker\_ratio}, which reflects the prevalence of syntactic patterns typically associated with direct speech or quotation. Having extracted the features for each text, we computed the correlation coefficients between each feature and the perplexity under the biblical model.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=\linewidth]{figures/ppl_linguistic_meaning.png}
-  \caption{Linguistic meaning of \textquote{biblicality}.}
-  \label{fig:linguistic_meaning}
+\centering
+\includegraphics[width=\linewidth]{figures/ppl_linguistic_meaning.png}
+\caption{Linguistic meaning of \textquote{biblicality}.}
+\label{fig:linguistic_meaning}
 \end{figure}
 
-    As shown in Figure~\ref{fig:linguistic_meaning}, \textquote{perplexity}, and its inverse \textquote{biblicality}, aligns with specific linguistic patterns, primarily along the axis of syntactic and lexical complexity. Texts with longer, more complex sentences, higher \texttt{nominal\_style\_ratio}, frequent passive constructions, and greater lexical diversity (measured through \texttt{richness\_Yule\_k}, where a lower index corresponds to a richer vocabulary) tend to be more perplexing under the biblical model. This will prove especially relevant for our assessment of papal decretals, a sub-category of canon law which is often syntactically complex due to its epistolary form \cite{chazelle_lawyers_2003, jasper_papal_2001}.
+As shown in Figure~\ref{fig:linguistic_meaning}, \textquote{perplexity}, and its inverse \textquote{biblicality}, aligns with specific linguistic patterns, primarily along the axis of syntactic and lexical complexity. Texts with longer, more complex sentences, higher \texttt{nominal\_style\_ratio}, frequent passive constructions, and greater lexical diversity (measured through \texttt{richness\_Yule\_k}, where a lower index corresponds to a richer vocabulary) tend to be more perplexing under the biblical model. This will prove especially relevant for our assessment of papal decretals, a sub-category of canon law which is often syntactically complex due to its epistolary form \cite{chazelle_lawyers_2003, jasper_papal_2001}.
 
-    Conversely, texts with more coordinating structures and frequent use of the indicative and imperative moods are less perplexing under the model. The feature \texttt{quotation\_marker\_ratio} is also revealing. High frequency of quotation markers corresponds to lower perplexity under the biblical model, possibly reflecting the extent to which texts directly quote Scripture. Since this feature captures constructions marking reported speech or communication, it may encompass both acts of speech within excerpted passages or the attribution of quotations to an authority such as the Bible. This result is also intriguing given that attributions through formulaic speech markers are a common convention in canon law texts, especially systematic canonical collections \cite{Flechner:2012}.
+Conversely, texts with more coordinating structures and frequent use of the indicative and imperative moods are less perplexing under the model. The feature \texttt{quotation\_marker\_ratio} is also revealing. High frequency of quotation markers corresponds to lower perplexity under the biblical model, possibly reflecting the extent to which texts directly quote Scripture. Since this feature captures constructions marking reported speech or communication, it may encompass both acts of speech within excerpted passages or the attribution of quotations to an authority such as the Bible. This result is also intriguing given that attributions through formulaic speech markers are a common convention in canon law texts, especially systematic canonical collections \cite{Flechner:2012}.
 
-    Beyond correlating perplexity with different linguistic features, the second part of this experiment examines how perplexity relates to the semantic aspects of our canon law corpus. We employ the \texttt{bowphs/LaBerta} model \cite{riemenschneider_exploring_2023} to obtain semantic representations for every Bible verse and every fragment of canon law text. Subsequently, for each vector representing a canon law fragment, we compute the median distance to its three closest Bible verses. This yields an alternative, primarily semantic measure of \textquote{biblicality}. Figure~\ref{fig:embeddings_and_perplexity} presents a diachronic comparison of the $z$-scores for this embedding-based measure and those of perplexity.
+Beyond correlating perplexity with different linguistic features, the second part of this experiment examines how perplexity relates to the semantic aspects of our canon law corpus. We employ the \texttt{bowphs/LaBerta} model \cite{riemenschneider_exploring_2023} to obtain semantic representations for every Bible verse and every fragment of canon law text. Subsequently, for each vector representing a canon law fragment, we compute the median distance to its three closest Bible verses. This yields an alternative, primarily semantic measure of \textquote{biblicality}. Figure~\ref{fig:embeddings_and_perplexity} presents a diachronic comparison of the $z$-scores for this embedding-based measure and those of perplexity.
 
 \begin{figure}
-    \centering
-    \includegraphics[width=0.8\linewidth]{figures/embeddings_box_plot.png}
-    \caption{Perplexity and Median Distance of Closest Three Embeddings (100-year Spans)}
-    \label{fig:embeddings_and_perplexity}
+\centering
+\includegraphics[width=0.8\linewidth]{figures/embeddings_line_graph.png}
+\caption{Perplexity and Median Distance of Closest Three Embeddings (100-year Spans)}
+\label{fig:embeddings_and_perplexity}
 \end{figure}
 
-    The embedding-based measure has a broadly similar trend to perplexity. Both measures highlight three periods of lower \textquote{biblicality}, around 600-700, 900 (although this is less apparent in the embedding-based trend line), and after 1100. Additionally, both measures indicate higher \textquote{biblicality} at similar points, such as around 800. This suggests that a significant part of what produces high or low perplexity under our biblical model is the semantic closeness of texts to the Bible. This may encompass direct quotations (which are semantically near-identical to the Bible), but also captures biblical allusions and statements whose content merely resembles the Bible. This provides a useful starting point for our analysis of \textquote{biblicality} in canon law texts such as penitentials, which contain fewer direct quotations of the Bible.
+The embedding-based measure has a broadly similar trend to perplexity. Both measures highlight three periods of lower \textquote{biblicality}, around 600-700, 900 (although this is less apparent in the embedding-based trend line), and after 1100. Additionally, both measures indicate higher \textquote{biblicality} at similar points, such as around 800. This suggests that a significant part of what produces high or low perplexity under our biblical model is the semantic closeness of texts to the Bible. This may encompass direct quotations (which are semantically near-identical to the Bible), but also captures biblical allusions and statements whose content merely resembles the Bible. This provides a useful starting point for our analysis of \textquote{biblicality} in canon law texts such as penitentials, which contain fewer direct quotations of the Bible.
 
-    By investigating how perplexity corresponds to linguistic and semantic features, we thus reach initial answers about how canon law texts assert their similarity to the Bible. In particular, our comparison of perplexity with an embedding-based measure hints at historically significant trends in the diachronic relationship of canon law texts to the Bible. This provides the foundation for our analysis of how the \textquote{biblicality} of canon law changes throughout the early Middle Ages.
+By investigating how perplexity corresponds to linguistic and semantic features, we thus reach initial answers about how canon law texts assert their similarity to the Bible. In particular, our comparison of perplexity with an embedding-based measure hints at historically significant trends in the diachronic relationship of canon law texts to the Bible. This provides the foundation for our analysis of how the \textquote{biblicality} of canon law changes throughout the early Middle Ages.
 
-    \subsection{Diachronic \textquote{Biblicality} of Canon Law, \textit{ca.} 300-1150}
+\subsection{Diachronic \textquote{Biblicality} of Canon Law, \textit{ca.} 300-1150}
 
-    The second experiment examines the diachronic trajectory of the Bible in our canon law corpus. We test a long-standing hypothesis, originally proposed by Jean Gaudemet \cite{gaudemet_bible_1984}, that the Bible played little role in canon law texts from the sixth to mid-ninth centuries and that it was only during the Carolingian era that it became, to borrow Contreni's expression, \textquote{a prominent part of the landscape informing contemporary thought}\space\cite{contreni_patristic_2012} in canon law.
+The second experiment examines the diachronic trajectory of the Bible in our canon law corpus. We test a long-standing hypothesis, originally proposed by Jean Gaudemet \cite{gaudemet_bible_1984}, that the Bible played little role in canon law texts from the sixth to mid-ninth centuries and that it was only during the Carolingian era that it became, to borrow Contreni's expression, \textquote{a prominent part of the landscape informing contemporary thought}\space\cite{contreni_patristic_2012} in canon law.
 
-    A secondary goal of this experiment is to highlight an underexplored feature of early medieval legal culture. Abigail Firey recently discussed the essential peculiarity of canon law in the early Middle Ages. She argued that it \textquote{accommodated pluralism [\dots] Such untidiness does not seem to have unduly hindered those seeking to learn and apply canon law, or to have damaged confidence in its value} \cite[13]{firey_between_2024}. Our investigation sheds light on this legal pluralism by foregrounding the coexistence of many discourse universes and strategies of asserting \textquote{biblicality}.
+A secondary goal of this experiment is to highlight an underexplored feature of early medieval legal culture. Abigail Firey recently discussed the essential peculiarity of canon law in the early Middle Ages. She argued that it \textquote{accommodated pluralism [\dots] Such untidiness does not seem to have unduly hindered those seeking to learn and apply canon law, or to have damaged confidence in its value} \cite[13]{firey_between_2024}. Our investigation sheds light on this legal pluralism by foregrounding the coexistence of many discourse universes and strategies of asserting \textquote{biblicality}.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=\linewidth]{figures/ppl_diachronically_5-year-bin-50.png}
-  \caption{\textquote{Biblicality} of Canon Law in the Fourth-Twelfth Centuries}
-  \label{fig:historical}
+\centering
+\includegraphics[width=\linewidth]{figures/ppl_diachronically_5-year-bin-50.png}
+\caption{\textquote{Biblicality} of Canon Law in the Fourth-Twelfth Centuries}
+\label{fig:historical}
 \end{figure}
 
-    Figure~\ref{fig:historical} shows the median perplexity of canon law texts under the biblical model, distributed over chronological bins of $50$ years. A clear increasing trend from \textit{ca}. 300 to 650 reflects gradually increasing perplexity and decreasing \textquote{biblicality} over this period. This aligns with Gaudement's hypothesis, and indeed, it is historically intuitive. In the fourth century, Jerome translated the Hebrew and Greek Bible and revised earlier Latin versions, producing the Vulgate Bible. As such, the language of the Vulgate resembles that of other texts from this period \cite{hauser_jerome_2003, tkacz_labor_1996}. We see here not only the reflection of \textquote{biblicality} in early canonical works, but the reflection of underlying cultural and linguistic frameworks---including canon law---in Jerome's education and work.
+Figure~\ref{fig:historical} shows the median perplexity of canon law texts under the biblical model, distributed over chronological bins of $50$ years. A clear increasing trend from \textit{ca}. 300 to 650 reflects gradually increasing perplexity and decreasing \textquote{biblicality} over this period. This aligns with Gaudement's hypothesis, and indeed, it is historically intuitive. In the fourth century, Jerome translated the Hebrew and Greek Bible and revised earlier Latin versions, producing the Vulgate Bible. As such, the language of the Vulgate resembles that of other texts from this period \cite{hauser_jerome_2003, tkacz_labor_1996}. We see here not only the reflection of \textquote{biblicality} in early canonical works, but the reflection of underlying cultural and linguistic frameworks---including canon law---in Jerome's education and work.
 
-    A period of significantly lower perplexity begins \textit{ca}. 700. Further supporting Gaudemet's theory, the canon law texts produced at this time display a growing affinity with the Bible. This coincides with the composition of the \textit{Collectio canonum Hibernensis}, which saw an expansion of the source materials used in canon law to include the Bible itself as well as highly biblical patristic writings \cite{Flechner:2012, reynolds_unity_1983}. This trend of increasing \textquote{biblicality} continues throughout the eighth and ninth centuries. This period is equally significant in the history of canon law, as the forgers in the Pseudo-Isidorian workshop crafted their false decretals \textit{ca.}~850. These texts contain innumerable biblical allusions\cite{chazelle_lawyers_2003} and---in their efforts to appear genuine---may have deliberately echoed the language of earlier popes, and thus also Jerome and the Vulgate. As such, the trend indicates that these influential canonical collections had a significant impact on the \textquote{biblicality} of canon law.
+A period of significantly lower perplexity begins \textit{ca}. 700. Further supporting Gaudemet's theory, the canon law texts produced at this time display a growing affinity with the Bible. This coincides with the composition of the \textit{Collectio canonum Hibernensis}, which saw an expansion of the source materials used in canon law to include the Bible itself as well as highly biblical patristic writings \cite{Flechner:2012, reynolds_unity_1983}. This trend of increasing \textquote{biblicality} continues throughout the eighth and ninth centuries. This period is equally significant in the history of canon law, as the forgers in the Pseudo-Isidorian workshop crafted their false decretals \textit{ca.}~850. These texts contain innumerable biblical allusions\cite{chazelle_lawyers_2003} and---in their efforts to appear genuine---may have deliberately echoed the language of earlier popes, and thus also Jerome and the Vulgate. As such, the trend indicates that these influential canonical collections had a significant impact on the \textquote{biblicality} of canon law.
 
-    Finally, following a temporary increase over the tenth century,  perplexity drops abruptly \textit{ca}.~1050 and remains low into the twelfth century. This dramatic increase in \textquote{biblicality} coincides with the composition of a highly influential canonical collection, Gratian's \textit{Concordia discordantium canonum}. This collection incorporates a significant amount of biblical and patristic material. Indeed, Gratian's work is known to have shifted the direction of canon law \cite {rennie_medieval_2018, rolker_using_2008}. Due to its considerable length, this work also constitutes the vast majority of our data for this period, which may also have amplified its influence on the trend. Nevertheless, this aspect of our analysis extends Gaudemet's argument by hinting at the continuities and shifts in the \textquote{biblicality} of canon law going into the high and late Middle Ages.
+Finally, following a temporary increase over the tenth century,  perplexity drops abruptly \textit{ca}.~1050 and remains low into the twelfth century. This dramatic increase in \textquote{biblicality} coincides with the composition of a highly influential canonical collection, Gratian's \textit{Concordia discordantium canonum}. This collection incorporates a significant amount of biblical and patristic material. Indeed, Gratian's work is known to have shifted the direction of canon law \cite {rennie_medieval_2018, rolker_using_2008}. Due to its considerable length, this work also constitutes the vast majority of our data for this period, which may also have amplified its influence on the trend. Nevertheless, this aspect of our analysis extends Gaudemet's argument by hinting at the continuities and shifts in the \textquote{biblicality} of canon law going into the high and late Middle Ages.
 
-    This complex diachronic trajectory also speaks to the legal pluralism of the period \cite{firey_between_2024}. Far from a linear relationship, it appears that historical events and processes, cultural and linguistic shifts, and developments within canon law itself all impacted the \textquote{biblicality} of the corpus at various times. Moreover, several chronological bins---especially \textit{ca.} 400 and 700-800---contain a number of outliers with very high or low perplexity under the biblical model. Beyond diachronic developments, this highlights that canon law was always heterogeneous and pluralistic with regard to its \textquote{biblicality}.
+This complex diachronic trajectory also speaks to the legal pluralism of the period \cite{firey_between_2024}. Far from a linear relationship, it appears that historical events and processes, cultural and linguistic shifts, and developments within canon law itself all impacted the \textquote{biblicality} of the corpus at various times. Moreover, several chronological bins---especially \textit{ca.} 400 and 700-800---contain a number of outliers with very high or low perplexity under the biblical model. Beyond diachronic developments, this highlights that canon law was always heterogeneous and pluralistic with regard to its \textquote{biblicality}.
 
-    Pluralism does not mean chaos. Some of these outliers can be explained by other factors which intersect with diachronic developments. Analyzing the 50 texts with the highest PPS, it is notable that 18 are decretals. This is a striking proportion, given that the same list includes only six chronological or systematic collections and a single penitential. Moreover, several of these decretals originate from the fifth and sixth centuries, when \textquote{biblicality} was generally low. This can plausibly be explained by the fact that decretals, as previously mentioned, tend to contain complex language and a high number of biblical references. As such, these results suggest that genre was a further factor influencing the prominence of the Bible in early medieval canon law.
+Pluralism does not mean chaos. Some of these outliers can be explained by other factors which intersect with diachronic developments. Analyzing the 50 texts with the highest PPS, it is notable that 18 are decretals. This is a striking proportion, given that the same list includes only six chronological or systematic collections and a single penitential. Moreover, several of these decretals originate from the fifth and sixth centuries, when \textquote{biblicality} was generally low. This can plausibly be explained by the fact that decretals, as previously mentioned, tend to contain complex language and a high number of biblical references. As such, these results suggest that genre was a further factor influencing the prominence of the Bible in early medieval canon law.
 
-    More tentatively, geographic patterns can also be identified in the collections with remarkably high \textquote{biblicality}. In the ninth century, a period where the Bible was already highly present in canon law, no less than three Councils of Quierzy and two Councils of Aachen appear among the exceptionally \textquote{biblical} outliers. These locations are in close geographical proximity, suggesting that local cultural frameworks or perhaps even individual bishops or rulers may have played a role in the prominence of the Bible in some canonical collections. In this way, a diachronic analysis of \textquote{biblicality} provides a window into the legal pluralism of the early Middle Ages, foregrounding diversity while hinting at the underlying cultural, linguistic, and political structures that guided the development of canon law.
+More tentatively, geographic patterns can also be identified in the collections with remarkably high \textquote{biblicality}. In the ninth century, a period where the Bible was already highly present in canon law, no less than three Councils of Quierzy and two Councils of Aachen appear among the exceptionally \textquote{biblical} outliers. These locations are in close geographical proximity, suggesting that local cultural frameworks or perhaps even individual bishops or rulers may have played a role in the prominence of the Bible in some canonical collections. In this way, a diachronic analysis of \textquote{biblicality} provides a window into the legal pluralism of the early Middle Ages, foregrounding diversity while hinting at the underlying cultural, linguistic, and political structures that guided the development of canon law.
 
-    \subsection{\textit{Collectio 250 capitulorum}}
+\subsection{\textit{Collectio 250 capitulorum}}
 
-    Our third experiment analyses how diverse strategies of asserting \textquote{biblicality} converge in an individual canonical collection. The \textit{Collectio 250 capitulorum} provides an intriguing example. Composed during the peak of highly \textquote{biblical} canon law in the ninth-century, this systematically arranged collection consists almost exclusively of excerpts from another highly biblical collection, the \textit{Collectio canonum Hibernensis} \cite{wasserschleben_irische_1966,reynolds_unity_1983}. Indeed, its compilers emphasised the significance of the Bible as a canonical authority. The opening canon, an excerpt from a papal decretal by Innocent I, directs readers towards:
+Our third experiment analyses how diverse strategies of asserting \textquote{biblicality} converge in an individual canonical collection. The \textit{Collectio 250 capitulorum} provides an intriguing example. Composed during the peak of highly \textquote{biblical} canon law in the ninth-century, this systematically arranged collection consists almost exclusively of excerpts from another highly biblical collection, the \textit{Collectio canonum Hibernensis} \cite{wasserschleben_irische_1966,reynolds_unity_1983}. Indeed, its compilers emphasised the significance of the Bible as a canonical authority. The opening canon, an excerpt from a papal decretal by Innocent I, directs readers towards:
 
-    \blockquote{[\,\ldots ] the twenty-five books of the Old Testament, and the four Gospels. When an answer should not present itself in all the writings of the apostles, turn to the divine Greek texts, i.e. the oecumenical councils. If you do not find the answer in them, reach for the catholic histories of the catholic church, [\,\ldots ] the canons of the apostolic see [\,\ldots ] the examples of saints [\,\ldots ] the elders of the province [\,\ldots ] For the true surety, the Lord, said: Should two of you or three come together upon the earth in my name, concerning anything whatsoever they shall ask, it shall be done for them [Matthew 18:19].\footnote{\textquote{[\,\ldots ] XXV librorum ueteris testamenti, IIII euangeliorum. Cum scriptis totis apostolorum non appareat, ad diuina recurrito scripta grece. Si nec in illis, ad catholicae ecclesiae historias catholicas [\,\ldots ] canones apostolicæ sedis [\,\ldots ] sanctorum exempla [\,\ldots ] seniores prouinciae [\,\ldots ] Uerus enim repromissor Dominus ait: Si duo ex uobis uel tres conueniant super terram in nomine meo de omni re quaecumque petierint fiet illis}. For translation see Meeder \cite{meeder_negotiating_2025}.}}
+\blockquote{[\,\ldots ] the twenty-five books of the Old Testament, and the four Gospels. When an answer should not present itself in all the writings of the apostles, turn to the divine Greek texts, i.e. the oecumenical councils. If you do not find the answer in them, reach for the catholic histories of the catholic church, [\,\ldots ] the canons of the apostolic see [\,\ldots ] the examples of saints [\,\ldots ] the elders of the province [\,\ldots ] For the true surety, the Lord, said: Should two of you or three come together upon the earth in my name, concerning anything whatsoever they shall ask, it shall be done for them [Matthew 18:19].\footnote{\textquote{[\,\ldots ] XXV librorum ueteris testamenti, IIII euangeliorum. Cum scriptis totis apostolorum non appareat, ad diuina recurrito scripta grece. Si nec in illis, ad catholicae ecclesiae historias catholicas [\,\ldots ] canones apostolicæ sedis [\,\ldots ] sanctorum exempla [\,\ldots ] seniores prouinciae [\,\ldots ] Uerus enim repromissor Dominus ait: Si duo ex uobis uel tres conueniant super terram in nomine meo de omni re quaecumque petierint fiet illis}. For translation see Meeder \cite{meeder_negotiating_2025}.}}
 
-    This positions the Bible as the principal source of legal authority, relegating patristic writings, the \textit{Canones Apostolorum}, and conciliar rulings to a supplementary role \cite{meeder_negotiating_2025}. Concluding with a quotation from the Gospel of Matthew, it also exemplifies how biblical rulings could be used to interpret and reaffirm other authoritative sources. According to the compilers of the \textit{Collectio 250}, canonical authority begins with, and inevitably circles back to, the Bible.
+This positions the Bible as the principal source of legal authority, relegating patristic writings, the \textit{Canones Apostolorum}, and conciliar rulings to a supplementary role \cite{meeder_negotiating_2025}. Concluding with a quotation from the Gospel of Matthew, it also exemplifies how biblical rulings could be used to interpret and reaffirm other authoritative sources. According to the compilers of the \textit{Collectio 250}, canonical authority begins with, and inevitably circles back to, the Bible.
 
-    This raises the question of how the compilers' perspective on \textquote{biblicality} shaped the collection. In order to analyse this, we encode a transcription of one manuscript, München, Bayerische Staatsbibliothek, Clm 4592, according to the SOLEMNE XML-TEI standard and produce perplexity scores for each atomic unit (smallest citable chunk of text). The results highlight the collection's remarkable \textquote{biblicality}. Of its 508 atomic units, 130 had a positive PPS, indicating that they were on average more difficult for the canon law model to predict and easier for the biblical model. Moreover, in 76 cases, the perplexity $z$-score under the biblical model was below -0.25 while the perplexity $z$-score under to the canon law model was above 0.25. As such, the \textit{Collectio 250} not only demonstrates high \textquote{biblicality} in a significant number of atomic units, but also to a statistically significant extent. This aligns with broader interpretations of how legal scholars in the Carolingian consciously evoked the Bible in their work \cite{flechner_making_2021,Flechner:2012}. The compilers of the \textit{Collectio 250} succeeded in their stated intention to compose \textquote{biblical} canon law.
+This raises the question of how the compilers' perspective on \textquote{biblicality} shaped the collection. In order to analyse this, we encode a transcription of one manuscript, München, Bayerische Staatsbibliothek, Clm 4592, according to the SOLEMNE XML-TEI standard and produce perplexity scores for each atomic unit (smallest citable chunk of text). The results highlight the collection's remarkable \textquote{biblicality}. Of its 508 atomic units, 130 had a positive PPS, indicating that they were on average more difficult for the canon law model to predict and easier for the biblical model. Moreover, in 76 cases, the perplexity $z$-score under the biblical model was below -0.25 while the perplexity $z$-score under to the canon law model was above 0.25. As such, the \textit{Collectio 250} not only demonstrates high \textquote{biblicality} in a significant number of atomic units, but also to a statistically significant extent. This aligns with broader interpretations of how legal scholars in the Carolingian consciously evoked the Bible in their work \cite{flechner_making_2021,Flechner:2012}. The compilers of the \textit{Collectio 250} succeeded in their stated intention to compose \textquote{biblical} canon law.
 
-    Notably, the compilers also intensified their efforts in certain parts of the collection. Almost half of the 25 atomic units with the highest PPS concern judgements (six) or inheritance (six), while others discuss usury and stolen goods. This distribution is atypical for the collection, suggesting that the compilers considered \textquote{biblicality} more appropriate – or necessary – in financial and jurisprudential matters. Such insights expand existing discussions on the use of the Bible alongside other sources of canon law and perceived hierarchies of authority \cite{meeder_negotiating_2025, flechner_making_2021}. It suggests that particular sources were considered more authoritative on certain topics, with compilers' approaches to the incorporation of biblical material shifting depending on subject matter. Moreover, highly \textquote{biblical} atomic units which are not attributed to the Bible itself are almost exclusively identified with the church fathers Jerome and Origen. These results are also unrepresentative of the collection---after attributions to Jerome (113), the most frequently cited patristic source is Augustine (68), with Origen only appearing on 27 occasions. This adds nuance to Jean Werckmeister’s argument that \textquote{the Fathers were cited in their capacity as commentators of the Bible} \cite{werckmeister_reception_1997}. Certain patristic authorities, such as Origen, were indeed disproportionally cited for their biblical material, while others like Augustine appear to have been cited for other reasons. This demonstrates that compilers took nuanced approaches to \textquote{biblicality} depending on the content and context of individual canons.
+Notably, the compilers also intensified their efforts in certain parts of the collection. Almost half of the 25 atomic units with the highest PPS concern judgements (six) or inheritance (six), while others discuss usury and stolen goods. This distribution is atypical for the collection, suggesting that the compilers considered \textquote{biblicality} more appropriate – or necessary – in financial and jurisprudential matters. Such insights expand existing discussions on the use of the Bible alongside other sources of canon law and perceived hierarchies of authority \cite{meeder_negotiating_2025, flechner_making_2021}. It suggests that particular sources were considered more authoritative on certain topics, with compilers' approaches to the incorporation of biblical material shifting depending on subject matter. Moreover, highly \textquote{biblical} atomic units which are not attributed to the Bible itself are almost exclusively identified with the church fathers Jerome and Origen. These results are also unrepresentative of the collection---after attributions to Jerome (113), the most frequently cited patristic source is Augustine (68), with Origen only appearing on 27 occasions. This adds nuance to Jean Werckmeister’s argument that \textquote{the Fathers were cited in their capacity as commentators of the Bible} \cite{werckmeister_reception_1997}. Certain patristic authorities, such as Origen, were indeed disproportionally cited for their biblical material, while others like Augustine appear to have been cited for other reasons. This demonstrates that compilers took nuanced approaches to \textquote{biblicality} depending on the content and context of individual canons.
 
-    Finally, analysis of the \textit{Collectio 250} provides a glimpse into how compilers achieved this complex engagement with the Bible. The chapters containing the 25 atomic units with the highest PPS encompass 37 identifiable biblical references and 30 other statements.\footnote{Identification of biblical reference is based on Roy Flechner's edition of the \textit{Hibernensis}\space\cite{flechner_hibernensis_2019}.} Many of the identifiable references are not quotations, but abbreviations of biblical passages. This underscores that direct quotation was not the only---and perhaps not even the most effective---strategy to assert affinity with the Bible.
+Finally, analysis of the \textit{Collectio 250} provides a glimpse into how compilers achieved this complex engagement with the Bible. The chapters containing the 25 atomic units with the highest PPS encompass 37 identifiable biblical references and 30 other statements.\footnote{Identification of biblical reference is based on Roy Flechner's edition of the \textit{Hibernensis}\space\cite{flechner_hibernensis_2019}.} Many of the identifiable references are not quotations, but abbreviations of biblical passages. This underscores that direct quotation was not the only---and perhaps not even the most effective---strategy to assert affinity with the Bible.
 
-    Indeed, the chapter containing the atomic unit with the single highest PPS reveals compilers' layered engagement with biblical syntax, \textit{exempla}, and quotations. Eight of its eleven statements are correctly attributed references to the Bible. Two further statements are (falsely) attributed to the apostle Paul, guiding readers to read them as biblical excerpts. Notably, all statements are paraphrased in clear and repetitive language, retaining the names of biblical characters but employing an otherwise limited vocabulary (e.g. frequent repetition of \textit{iurare/iuramentum}, \textquote{to judge/judgement}) and \textit{testari/testimonium} ,\textquote{to testify/testimony}). This syntax and vocabulary further simplifies the already uncomplicated language of the Bible, effectively creating ultra-biblical Bible quotations. In this way, perplexity-based analysis also facilitates insights into the layered strategies by which compilers foregrounded the Bible in their work. Even within a single collection, \textquote{biblicality} had a range of meanings and was achieved in various ways.
+Indeed, the chapter containing the atomic unit with the single highest PPS reveals compilers' layered engagement with biblical syntax, \textit{exempla}, and quotations. Eight of its eleven statements are correctly attributed references to the Bible. Two further statements are (falsely) attributed to the apostle Paul, guiding readers to read them as biblical excerpts. Notably, all statements are paraphrased in clear and repetitive language, retaining the names of biblical characters but employing an otherwise limited vocabulary (e.g. frequent repetition of \textit{iurare/iuramentum}, \textquote{to judge/judgement}) and \textit{testari/testimonium} ,\textquote{to testify/testimony}). This syntax and vocabulary further simplifies the already uncomplicated language of the Bible, effectively creating ultra-biblical Bible quotations. In this way, perplexity-based analysis also facilitates insights into the layered strategies by which compilers foregrounded the Bible in their work. Even within a single collection, \textquote{biblicality} had a range of meanings and was achieved in various ways.
 
+\section{Conclusion}
 
-    \section{Conclusion}
+Overall, perplexity-based analysis has proved useful in modeling the influence of the Bible on early medieval canon law. This approach facilitated analysis of the linguistic and semantic features that signal biblical affinity, without imposing preconceived assumptions. On a diachronic scale and at the granular level of individual texts, our PPS metric of similarity enabled us to analyse the \textquote{biblicality} of the corpus of canon law.
 
-    Overall, perplexity-based analysis has proved useful in modeling the influence of the Bible on early medieval canon law. This approach facilitated analysis of the linguistic and semantic features that signal biblical affinity, without imposing preconceived assumptions. On a diachronic scale and at the granular level of individual texts, our PPS metric of similarity enabled us to analyse the \textquote{biblicality} of the corpus of canon law.
+Furthermore, the results facilitated intriguing historical insights. Analysis of the chronological trajectory of the Bible in canon law substantiated a Gaudemet's hypothesis regarding the greater \textquote{biblicality} of canon law in the fourth and ninth centuries. Moreover, these threads of biblical influence provided a window into the legal pluralism of the Carolingian era and the early Middle Ages more generally. Our experiments also revealed different strategies of asserting \textquote{biblicality} in canon law. We identified a range of linguistic features which contribute to canon law texts sounding biblical, and analysed how these features were applied and combined in one highly biblical collection. This ultimately highlighted medieval legal scholars' diverse understandings of both \textquote{biblicality} and the norms of canon law.
 
-    Furthermore, the results facilitated intriguing historical insights. Analysis of the chronological trajectory of the Bible in canon law substantiated a Gaudemet's hypothesis regarding the greater \textquote{biblicality} of canon law in the fourth and ninth centuries. Moreover, these threads of biblical influence provided a window into the legal pluralism of the Carolingian era and the early Middle Ages more generally. Our experiments also revealed different strategies of asserting \textquote{biblicality} in canon law. We identified a range of linguistic features which contribute to canon law texts sounding biblical, and analysed how these features were applied and combined in one highly biblical collection. This ultimately highlighted medieval legal scholars' diverse understandings of both \textquote{biblicality} and the norms of canon law.
+Although this study revealed trends in the use of \textquote{biblicality} as a linguistic strategy, it remains unclear how---and whether---this \textquote{biblicality} was successful in communicating authoritativeness. Unlike researchers of (early) modern \textquote{canonicity} and cultural canons, those studying the early Middle Ages cannot draw on publishing data, sales records, and historical catalogs to test hypotheses about popularity and authority. Since our corpus of canon law depends largely on accidents of survival, care must be taken not to conflate the preservation of texts with their perceived authoritativeness in the early Middle Ages. Future historical research is needed to address this problem.
 
-    Although this study revealed trends in the use of \textquote{biblicality} as a linguistic strategy, it remains unclear how---and whether---this \textquote{biblicality} was successful in communicating authoritativeness. Unlike researchers of (early) modern \textquote{canonicity} and cultural canons, those studying the early Middle Ages cannot draw on publishing data, sales records, and historical catalogs to test hypotheses about popularity and authority. Since our corpus of canon law depends largely on accidents of survival, care must be taken not to conflate the preservation of texts with their perceived authoritativeness in the early Middle Ages. Future historical research is needed to address this problem.
+The study has also demonstrated the need for further corpus expansion and experimentation. Most notably, the Bible may not appear monolithically in canon law. The investigation of linguistic and semantic meaning revealed numerous elements that comprise \textquote{biblicality}, while analysis of the \textit{Collectio 250 capitulorum} highlighted compilers' nuanced and selective use of biblical material. It would be valuable to train models on individual biblical books, investigating the comparative form and weight of their influence. Additionally, diachronic analysis revealed several canon law texts---notably decretals---with an unusually low perplexity $z$-score under the biblical model. While a key limitation of our corpus was the near-absence of some types of canon law, such as penitentials, an expansion of the dataset and an exploration of biblical influence on various types of canon law also seems promising.
 
-    The study has also demonstrated the need for further corpus expansion and experimentation. Most notably, the Bible may not appear monolithically in canon law. The investigation of linguistic and semantic meaning revealed numerous elements that comprise \textquote{biblicality}, while analysis of the \textit{Collectio 250 capitulorum} highlighted compilers' nuanced and selective use of biblical material. It would be valuable to train models on individual biblical books, investigating the comparative form and weight of their influence. Additionally, diachronic analysis revealed several canon law texts---notably decretals---with an unusually low perplexity $z$-score under the biblical model. While a key limitation of our corpus was the near-absence of some types of canon law, such as penitentials, an expansion of the dataset and an exploration of biblical influence on various types of canon law also seems promising.
+\section*{Acknowledgements}
+An earlier version of this paper was presented at the conference for \textquote{Formulaic Language in Historical Linguistics: data, methods, tools, and theory} in Helsinki (2–3 June 2025). We thank the organisers for their invitation and the attendees for their thoughtful questions.
 
-% Here is an example of the first section of the paper. You may modify \texttt{paper.tex} by renaming, deleting, or adding sections of your own and substituting our instructional text with the text of your paper. Add references to previous work to \texttt{biblography.bib} as BibTeX entries. Refer to the Conference Call for Papers (CfP) for details about submission types and paper lengths. Do \textit{not} modify \texttt{anthology-ch.cls} when editing this template. 
+We extend our gratitude to the anonymous reviewers for their attentive reading and insightful suggestions, which contributed significantly to the final version of this study.
 
-% \subsection{Details} \label{sec:intro_details}
+\section*{Funding}
+Funded by the European Union. Views and opinions expressed are those of the authors only and do not necessarily reflect those of the European Union or the European Research Council Executive Agency. Neither the European Union nor the granting authority can be held responsible for them. This work is supported by the SOLEMNE project (ERC Cons. grant 101087979).
 
-% You may also include subsections if they help organize your text, but they
-% are not required. Use as many sections and subsections with whatever names work
-% for your submission!
+\printbibliography
 
-% 
+\appendix
 
-\noindent
-\textbf{Another tip.} In some cases, it may be helpful to use \texttt{paragraph} to title individual paragraphs. For example, if a section describes features for a classifier, you can optionally title each paragraph with the name of each feature. 
-
-% \section{Elements}
-
-% \subsection{Citing elements}
-
-% Here are some examples of how to construct and reference common elements in LaTeX. References to elements such as tables, figures, equations and sections make use of \texttt{label} names that you set. References to citations should use the labels you indicate in \texttt{bibliography.bib}. Change all of these examples and values with your own data. 
-
-% We can cite Table~\ref{tab:example} as well as Figure~\ref{fig:example}, and we also cite an example paper \cite{tettoni2024discoverability}.
-% We can also include mathematical notations, such as:
-% \begin{align}
-% f(y) &= x^2. \label{fig:squared}
-% \end{align}
-% The line number of the equation can be cited as
-% Equation~\ref{fig:squared}. You can also cite multiple papers together \cite{barré2024latent, levenson2024textual, bambaci2024steps}, and reference figures or tables indirectly in parentheses (Figure~\ref{fig:example_bigger}). You can also cite other sections or subsections of your paper, such as \S\ref{sec:intro_details}. 
-
-
-% \begin{table}[h]
-%   \centering 
-%   \begin{tabular}{cc}
-%     \toprule
-%     Column Name 1 & Column Name 2\\
-%     \midrule
-%     d1 & d2 \\
-%     d1 & d2 \\
-%     d1 & d2 \\
-%     \bottomrule
-%   \end{tabular}
-%   \caption{Example table and table caption.}
-  \label{tab:example}
-%   
-% \end{table}
-
-
-% \subsection{Required specifications}
-
-% Tables and figures should \textit{not} appear at the top of the first page above the paper title and abstract, but can be placed within the main text, as exemplified by Table~\ref{tab:example}. They may also be placed at the top of non-first pages, as exemplified by Figures~\ref{fig:example} and \ref{fig:example_bigger}. Figures and tables discussed in the main text should appear \textit{before} the References section. Supplementary materials should be referenced by their relevant Appendix section, such as Appendix~\ref{appdx:first}. 
-
-% Do \textit{not} change the font size of table and figure captions, or the spacing between text lines, section/subsection titles, tables, figures, and captions. You should size your figures and tables so that they stay within the \texttt{linewidth} of the paper. 
-
-% \begin{figure}[t!]
-%   \centering
-%   \includegraphics[width=0.4\linewidth]{640x480.png}
-%   \caption{Example figure and figure caption.}
-  \label{fig:example}
-%   
-% \end{figure}
-
-% \begin{figure}[t!]
-%   \centering
-%   \includegraphics[width=0.4\linewidth]{640x480.png}
-%   \includegraphics[width=0.4\linewidth]{640x480.png}
-%   \caption{Example figure, where two \texttt{.png} are placed side by side.}
-  \label{fig:example_bigger}
-%   
-% \end{figure}
-
-
-    \section*{Acknowledgements}
-    An earlier version of this paper was presented at the conference for \textquote{Formulaic Language in Historical Linguistics: data, methods, tools, and theory} in Helsinki (2–3 June 2025). We thank the organisers for their invitation and the attendees for their thoughtful questions.
-
-    We extend our gratitude to the anonymous reviewers for their attentive reading and insightful suggestions, which contributed significantly to the final version of this study.
-
-
-    \section*{Funding}
-    Funded by the European Union. Views and opinions expressed are those of the authors only and do not necessarily reflect those of the European Union or the European Research Council Executive Agency. Neither the European Union nor the granting authority can be held responsible for them. This work is supported by the SOLEMNE project (ERC Cons. grant 101087979).
-
-% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
-    \printbibliography
-% You can include an appendix using the following command
-    \appendix
-
-
-    \section{Corpus Statistics}
-    \label{app:corpus}
-    Figure \ref{fig:corpus_stat_chrono} and \ref{fig:corpus_stat_genre} present chronological distributions of works and word counts per century as well as genres words per genre.
-    \begin{figure}[]
-  \centering
-  \includegraphics[width=0.85\linewidth]{figures/corpus_stats_chrono.png}
-  \caption{Chronological structure of the corpus.}
-  \label{fig:corpus_stat_chrono}
+\section{Corpus Statistics}
+\label{app:corpus}
+Figure \ref{fig:corpus_stat_chrono} and \ref{fig:corpus_stat_genre} present chronological distributions of works and word counts per century as well as genres words per genre.
+\begin{figure}[]
+\centering
+\includegraphics[width=0.85\linewidth]{figures/corpus_stats_chrono.png}
+\caption{Chronological structure of the corpus.}
+\label{fig:corpus_stat_chrono}
 \end{figure}
 
 \begin{figure}[]
-  \centering
-  \includegraphics[width=0.7\linewidth]{figures/corpus_stats_genre.png}
-  \caption{Genres represented in the corpus. \textbf{SYSCOLL}: systematic collections; \textbf{CHROCOLL}: chronological collections; \textbf{D}: decretal; \textbf{P}: penitentials; \textbf{C}: councils.}
-  \label{fig:corpus_stat_genre}
+\centering
+\includegraphics[width=0.7\linewidth]{figures/corpus_stats_genre.png}
+\caption{Genres represented in the corpus. \textbf{SYSCOLL}: systematic collections; \textbf{CHROCOLL}: chronological collections; \textbf{D}: decretal; \textbf{P}: penitentials; \textbf{C}: councils.}
+\label{fig:corpus_stat_genre}
 \end{figure}
 
+\section{Language Modeling}
+\label{app:language_models}
 
-    \section{Language Modeling}
-    \label{app:language_models}
-
-    \subsection{GPT-2 Hyperparameters}
-    \label{app:gpt_hparams}
+\subsection{GPT-2 Hyperparameters}
+\label{app:gpt_hparams}
 \begin{table*}[h]
 \centering
 \begin{tabular}{lc}
@@ -441,15 +330,14 @@ Warmup steps & $200$ \\
 \caption{GPT-2 Hyperparameters and Training}
 \label{tab:gpt_hparams}
 \end{table*}
-    The model and experimentation framework was implemented in \texttt{PyTorch Lightning}, relying on Andrej Karpathy's implementation, \texttt{nanoGPT}.\footnote{\href{https://github.com/karpathy/nanoGPT}{https://github.com/karpathy/nanoGPT}.} All the code is publicly available on GitHub.\footnote{\href{https://github.com/Solemne-ERC/canon-law-biblicality}{https://github.com/Solemne-ERC/canon-law-biblicality}.}
+The model and experimentation framework was implemented in \texttt{PyTorch Lightning}, relying on Andrej Karpathy's implementation, \texttt{nanoGPT}.\footnote{\href{https://github.com/karpathy/nanoGPT}{https://github.com/karpathy/nanoGPT}.} All the code is publicly available on GitHub.\footnote{\href{https://github.com/Solemne-ERC/canon-law-biblicality}{https://github.com/Solemne-ERC/canon-law-biblicality}.}
 
-    \subsection{Preprocessing}
-    \label{app:preprocessing}
-    For the purposes of character-level language modeling, we created a heavily simplified version of the data by reducing the vocabulary to $25$ characters. This was done not only to reduce the model’s size and make it trainable on limited data, but also to mitigate potential discrepancies in typography and orthography arising due to variations in editorial conventions and the inherent instability of medieval spellings. The preprocessing decisions were informed by Ph.~\citeauthor{roelli_usability_2023}’s recommendations on preparing texts for computer-assisted stemmatological analysis \cite{roelli_usability_2023}. This simplified version of the data was used exclusively for training language models and computing perplexity. UDPipe morpho-syntactic annotation, by contrast, was carried out on significantly less preprocessed versions of the texts.
+\subsection{Preprocessing}
+\label{app:preprocessing}
+For the purposes of character-level language modeling, we created a heavily simplified version of the data by reducing the vocabulary to $25$ characters. This was done not only to reduce the model’s size and make it trainable on limited data, but also to mitigate potential discrepancies in typography and orthography arising due to variations in editorial conventions and the inherent instability of medieval spellings. The preprocessing decisions were informed by Ph.~\citeauthor{roelli_usability_2023}’s recommendations on preparing texts for computer-assisted stemmatological analysis \cite{roelli_usability_2023}. This simplified version of the data was used exclusively for training language models and computing perplexity. UDPipe morpho-syntactic annotation, by contrast, was carried out on significantly less preprocessed versions of the texts.
 
-
-    \section{Classification-based Validation}
-    \label{app:classification_val}
+\section{Classification-based Validation}
+\label{app:classification_val}
 \begin{table*}[h]
 \centering
 \begin{tabular}{lc}
@@ -471,11 +359,10 @@ Components & $50$ \\
 \caption{Classification-based validation parameters.}
 \label{tab:val_classifiers}
 \end{table*}
-    Table \ref{tab:val_classifiers} presents parameters of the classification-based validation implemented in \texttt{sklearn}. Conceptually similar to the one described \cite{konstantinidou_exploring_2024}, our procedure reduces dimensionality and opts for another cross-validation strategy.
+Table \ref{tab:val_classifiers} presents parameters of the classification-based validation implemented in \texttt{sklearn}. Conceptually similar to the one described \cite{konstantinidou_exploring_2024}, our procedure reduces dimensionality and opts for another cross-validation strategy.
 
-
-    \section{Standard Score}
-    \label{app:z_score}
+\section{Standard Score}
+\label{app:z_score}
 \begin{table*}[h]
 \small
 \centering
@@ -494,23 +381,20 @@ Model/Corpus & \textbf{Bible} & \textbf{Canon law} & \textbf{Roman law} & \textb
 \caption{Raw perplexity values for cross-corpus validation (see Table \ref{tab:cross_corpus_val}).}
 \label{tab:cross_corpus_val_raw}
 \end{table*}
-    Formally, $z$-score (or standard score) normalization involves dividing the difference between a raw value and the mean by the standard deviation. In the context of comparative language model evaluation, the rationale for using this normalization is as follows. The raw perplexity values of models trained on small and diverse corpora are influenced not only by the linguistic differences between corpora, which are the primary focus of the evaluation. Other factors beyond our control and interest are the intrinsic complexity of each corpus and the limited capacity of small models to generalize from such scarce data. As a result, raw perplexity values from different models can be thought of as being on different scales, making direct comparison difficult or misleading.
+Formally, $z$-score (or standard score) normalization involves dividing the difference between a raw value and the mean by the standard deviation. In the context of comparative language model evaluation, the rationale for using this normalization is as follows. The raw perplexity values of models trained on small and diverse corpora are influenced not only by the linguistic differences between corpora, which are the primary focus of the evaluation. Other factors beyond our control and interest are the intrinsic complexity of each corpus and the limited capacity of small models to generalize from such scarce data. As a result, raw perplexity values from different models can be thought of as being on different scales, making direct comparison difficult or misleading.
 
-    Normalization standardizes each model's perplexity scores in relation to its performance across all corpora. This allows us to describe the model's performance on a given corpus in terms of how it deviates from its average performance. Therefore, a low negative $z$-score indicates that the model performs better than average (i.e., the corpus is easier for the model to predict). A positive $z$-score suggests that the model performs worse than average (i.e., the corpus is more challenging). This approach enables a fairer comparative evaluation and ranks the corpora based on their relative ease or difficulty for any given model.
+Normalization standardizes each model's perplexity scores in relation to its performance across all corpora. This allows us to describe the model's performance on a given corpus in terms of how it deviates from its average performance. Therefore, a low negative $z$-score indicates that the model performs better than average (i.e., the corpus is easier for the model to predict). A positive $z$-score suggests that the model performs worse than average (i.e., the corpus is more challenging). This approach enables a fairer comparative evaluation and ranks the corpora based on their relative ease or difficulty for any given model.
 
+\section{Perplexity-based Measures}
+\label{app:ppl_based_distance}
 
-    \section{Perplexity-based Measures}
-    \label{app:ppl_based_distance}
+\subsection{Perplexity-based Distance}
+\citeauthor{campos_measuring_2018} proposed the following perplexity-based distance \cite[6]{campos_measuring_2018}:
+\blockquote{Perplexity (PP) is a robust metric to calculate distance between languages. Perplexity measures how well a language model fit the test data. A perplexity-based distance (PLD) between languages or varieties is determined by comparing n-gram based language model (LM) of language L1 and test text (CH) of language L2. The comparison must be made in the two directions. \[
+\mathrm{PLD}(L_{1}, L_2) = \mathrm{PP}(\mathrm{CH}L_1, \mathrm{LM}L_2) + \mathrm{PP}(\mathrm{CH}L_2, \mathrm{LM}L_1)
+\] }
 
-    \subsection{Perplexity-based Distance}
-    \citeauthor{campos_measuring_2018} proposed the following perplexity-based distance \cite[6]{campos_measuring_2018}:
-    \blockquote{Perplexity (PP) is a robust metric to calculate distance between languages. Perplexity measures how well a language model fit the test data. A perplexity-based distance (PLD) between languages or varieties is determined by comparing n-gram based language model (LM) of language L1 and test text (CH) of language L2. The comparison must be made in the two directions. \[
-                                                                                                                                                                                                                                                                                                                                                                                                   \mathrm{PLD}(L_{1}, L_2) = \mathrm{PP}(\mathrm{CH}L_1, \mathrm{LM}L_2) + \mathrm{PP}(\mathrm{CH}L_2, \mathrm{LM}L_1)
-    \] }
-
-    \subsection{Positive Cross-Score}
-    \citeauthor{konstantinidou_exploring_2024} employed perplexity in what they call a positive cross-score (PCV), defined as \blockquote{the difference between the PPL for that verse computed with the model trained on the source poem and the equivalent PPL computed with the model trained on the other poem} \cite[262]{konstantinidou_exploring_2024}.
-
+\subsection{Positive Cross-Score}
+\citeauthor{konstantinidou_exploring_2024} employed perplexity in what they call a positive cross-score (PCV), defined as \blockquote{the difference between the PPL for that verse computed with the model trained on the source poem and the equivalent PPL computed with the model trained on the other poem} \cite[262]{konstantinidou_exploring_2024}.
 
 \end{document}
-

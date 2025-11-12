@@ -1,53 +1,29 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-% \documentclass{anthology-ch}         % for the submission
- 
-% LOAD LaTeX PACKAGES
+\documentclass[final]{anthology-ch}
+
 \usepackage{booktabs}
 \usepackage{graphicx}
-% ADD your own packages using \usepackage{}
 
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{Cultural Collapse: Toward a Generative Formalism for AI Cultural Production}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1]{Ryan Heuser}[
-  orcid=0000-0002-4155-4961
+orcid=0000-0002-4155-4961
 ]
 
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 \affiliation{1}{Cambridge Digital Humanities, University of Cambridge, Cambridge, UK}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{AI, large language models, poetry, prosody, aesthetics}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
-\pagestart{558}
-\pageend{571}
+\pagestart{559}
+\pageend{572}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/USvuyzSIapvy}  
+\doi{10.63744/USvuyzSIapvy}
 \paperorder{34}
 
 \addbibresource{bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
 
 \maketitle
@@ -56,7 +32,7 @@
 This paper examines systematic patterns of idealization in large language model outputs through computational analysis of over 15,000 AI-generated poems and artificial bibliographic data. The study reveals and theorizes ‘cultural collapse’—the tendency of LLMs to generate cultural content that is more formulaic and idealized than can be observed in any historical period. Analysis of rhyme patterns shows that models produce formally conservative verse at rates that exceed even the most traditional historical periods. This bias persists even when models are explicitly instructed against traditional forms and cannot be explained by training data composition, suggesting deep computational tendencies toward idealization. Extending beyond poetics, parallel patterns emerge in historical domains: when prompted to generate historical publication data, models systematically produce demographic distributions that obscure well-known exclusion patterns, creating revisionist narratives where marginalized authors were published at rates far exceeding historical reality. The study identifies instruction tuning as one contributing mechanism, with models fine-tuned to be helpful assistants showing significantly greater `idealization' than base models. These findings suggest that cultural collapse operates through a computational logic that privileges satisfaction over frustration, regularity over variation, and conformity over contradiction. As generative systems become ubiquitous in cultural production, their idealizing tendencies threaten to flatten cultural diversity and historical complexity, requiring new critical frameworks for understanding computational mediation of cultural transmission.
 \end{abstract}
 
-\section{Introduction} 
+\section{Introduction}
 What is ‘slop’? Critics of AI have increasingly used this word to express aesthetic embarrassment, disappointment, even disgust with generative AI artistic production \parencite{InternetsAISlop}. Historically, ‘slop’ referred concretely to liquid food for the ill (1658) and pig feed (1805) before metaphorically to sentimentality (1866) and ‘nonsense, rubbish; insolence’ \parencite{SlopN2Meanings}. Today, the rise of ‘slop’ as a new aesthetic category similarly registers a visceral distaste for AI art as a kind of sentimental nonsense. Generative art, for example, despite impressive achievements in stylistic imitation, is easily satirized for an identifiable ‘house style,’ with highly saturated colors and digital, anime-inflected, and often idealized aesthetic qualities. AI-generated verse struggles not to write sing-song poems with rhyme and regular meter, and AI-generated prose is now long familiar for its flat and neutral style combined with an eager-to-please, ‘Certainly!’-like tone.
 
 This paper is part of a larger project seeking to discover what constitutes ‘slop’ in AI-generated cultural production. What specific aesthetic qualities, formal features, thematic concerns or other characteristics lead us to perceive AI art as unimaginative? Hypothetically, I call the mechanisms underlying slop ‘cultural collapse’—a variant on the concept of early model collapse, wherein models increasingly lose the tail of their distributions and gravitate toward their more common, expected, ‘ideal,’ or formulaic outputs \parencite{shumailovAIModelsCollapse2024}. This tendency is particularly acute in the creative arts, a domain where the playful frustration of expectations is a key source of aesthetic pleasure. But the mechanisms causing AI to default to expected, un-innovative output in traditionally creative domains may similarly constrain their ability to propose nuanced and innovative responses in other contexts. By studying these patterns in cultural production—for which the humanities have deep expertise, and where aesthetic innovation is highly valued and readily observable—we also produce insights and methods applicable to all domains of creativity and innovation in AI.
@@ -81,10 +57,10 @@ The historical poetry analysis drew on Chadwyck-Healey’s hand-coded poetry col
 
 The analysis employed the Prosodic tool for phonetic and phonological annotation to detect rhyme patterns in both historical and generated poetry \parencite{heuserProsodic,anttilaPhonologicalMetricalVariation2015a}. The rhyme detection algorithm compared the relevant phonemes in the final syllable (or syllables if the final syllable was unstressed) across all pairs of lines within each stanza. Only exact phonemic matches counted as rhymes, a conservative yet more cautious approach that undercounts slant rhymes and partial rhymes. When validated against human-coded rhyme classifications in the Chadwyck-Healey metadata, this method achieved 88\% precision and 90\% recall, with an optimal cutoff threshold of four or more rhyming lines per ten-line segment (Figure 1).
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=1.0\linewidth]{figures/predicted_rhyme_avgs_f1.png}
-  \caption{Accuracy of rhyme detection in 1,000 poems sampled from those marked as ‘rhyming’ and ‘unrhyming’ in the metadata of the Chadwyck-Healey poetry corpora. The optimally predictive cutoff value for the number of rhyming lines (per 10 lines) is 4, with an F1 score of 89\%.}
-  \label{fig:rhyme_validation}
+\centering
+\includegraphics[width=1.0\linewidth]{figures/predicted_rhyme_avgs_f1.png}
+\caption{Accuracy of rhyme detection in 1,000 poems sampled from those marked as ‘rhyming’ and ‘unrhyming’ in the metadata of the Chadwyck-Healey poetry corpora. The optimally predictive cutoff value for the number of rhyming lines (per 10 lines) is 4, with an F1 score of 89\%.}
+\label{fig:rhyme_validation}
 \end{figure}
 
 To generate the corpus of AI poetry, the study created 22 distinct prompts divided into three categories designed to test different aspects of formal bias. Rhyming prompts included explicit instructions such as ``Write a short poem that uses rhyme'' and ``Write a poem in heroic couplets,'' while unrhyming prompts provided contrary instructions like ``Write a poem that does NOT rhyme'' and ``Write a poem in free verse.'' A third category of prompts simply requested poems without specifying formal characteristics, using phrases like ``Write a poem'' or ``Write a short poem.''\footnote{All ‘rhyming’ prompts included: ‘Write a short poem that uses rhyme,’ ‘Write a poem in heroic couplets,’ ‘Write a poem that uses rhyme,’ ‘Write a rhyming poem,’ ‘Write a poem with 20+ lines that rhymes,’ ‘Write a rhymed poem in the style of Shakespeare’s sonnets,’ ‘Write a long poem that uses rhyme,’ and ‘Write a poem in the style of Emily Dickinson.’ ‘Unrhyming’ prompts included: ‘Write a poem with 20+ lines that does NOT rhyme,’ ‘Write a long poem that does NOT rhyme,’ ‘Write a short poem that does NOT rhyme,’ ‘Write a poem in free verse,’ ‘Write an unrhymed poem,’ ‘Write a poem that does NOT rhyme,’ ‘Write a poem in blank verse,’ and ‘Write a poem in the style of Walt Whitman.’ ‘Rhyme unspecified’ prompts included: ‘Write a poem,’ ‘Write a poem in stanzas of 4 lines each,’ ‘Write a short poem,’ ‘Write a long poem,’ ‘Write a poem in groups of two lines,’ and ‘Write a poem (with 20+ lines).’} This design allowed measurement of both baseline tendencies and responsiveness to explicit formal instructions. Across all models and prompts, the study generated 15,018 poems for analysis.
@@ -111,7 +87,6 @@ To ensure robustness, the study tested multiple prompt variations within each ca
 
 This comprehensive methodological approach enables systematic testing of whether LLMs exhibit consistent idealizing biases across both aesthetic and historical domains, while controlling for alternative explanations such as training data composition and prompt artifacts. The combination of formal literary analysis, historical data evaluation, and computational validation provides multiple lines of evidence for assessing the cultural collapse hypothesis.
 
-
 \section{Results}
 
 \subsection{Prompting for and against rhyme}
@@ -121,10 +96,10 @@ Historical analysis of 1,000 poems per half-century from poets born 1600-2000 sh
 In stark contrast, generative models produced rhyming verse at rates that exceed any historical period. When prompted simply for poems without formal specification, all nine language models generated rhyming verse at rates of 93-99\%, with a mean of 95\% across models (Figure 2). This frequency substantially exceeds even the most formally conservative historical periods and suggests a remarkably stubborn association between the concept of poetry and the formal feature of rhyme within these models.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=1.0\linewidth]{figures/predicted_rhyme_avgs_rhyme_pred_perc_std.png}
-  \caption{Frequency of rhymed poems in the Chadwyck-Healey corpora compared with LLM-generated verse. Generative models were prompted for three types of poems: rhyming poems, unrhyming poems, and for poems without specifying whether to rhyme. Points indicate mean likelihood; size indicates the number of poems per data point; whiskers show standard error.}
-  \label{fig:rhyme_frequency}
+\centering
+\includegraphics[width=1.0\linewidth]{figures/predicted_rhyme_avgs_rhyme_pred_perc_std.png}
+\caption{Frequency of rhymed poems in the Chadwyck-Healey corpora compared with LLM-generated verse. Generative models were prompted for three types of poems: rhyming poems, unrhyming poems, and for poems without specifying whether to rhyme. Points indicate mean likelihood; size indicates the number of poems per data point; whiskers show standard error.}
+\label{fig:rhyme_frequency}
 \end{figure}
 
 Even more striking, when explicitly instructed to avoid rhyme, models continued producing rhyming poetry at rates far exceeding contemporary practice. Prompting for unrhyming poems yielded rhyming poems 53\% of the time on average across models, an order of magnitude more often than the historical reality of postwar poetry (4\%). Model-specific variations revealed different degrees of formal responsiveness while confirming the general pattern. Google’s Gemini Pro stubbornly rhymed 88\% of the time even when instructed not to do so, as did the open-source model OLMo2 (83\%). Other models showed greater formal obedience to prompts: Anthropic’s Claude models rhymed 50\% of the time when prompted against it, OpenAI’s ChatGPT models 36\%, DeepSeek 31\%, and Meta’s Llama 25\%. Nevertheless, all these frequencies far exceeded the past century’s documented practices.
@@ -132,10 +107,10 @@ Even more striking, when explicitly instructed to avoid rhyme, models continued 
 Analysis of individual prompts revealed systematic biases beyond simple formal preference (Figure 3). Prompting for blank verse inaccurately produced rhymed verse in all models except ChatGPT, suggesting that this metrical form is comparatively unfamiliar to other models. Conversely, ChatGPT produced more rhyme when prompted to imitate Walt Whitman’s free verse than did models that failed to recognize the blank verse instruction. These variations are idiosyncratic rather than systemic, reflecting different degrees of the same underlying tendency toward rhyme while proving the same general formal rule.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=1.0\linewidth]{figures/rhyme_avgs_by_prompt.png}
-  \caption{Frequency of rhyme in generative verse across a variety of prompts. Prompts categorized above as ‘write a rhyming poem’ are shown in green; ‘write an unrhyming poem’ in purple; and simply to ‘write a poem’ in blue. Whiskers show standard error around the mean for each model and prompt.}
-  \label{fig:prompt_analysis}
+\centering
+\includegraphics[width=1.0\linewidth]{figures/rhyme_avgs_by_prompt.png}
+\caption{Frequency of rhyme in generative verse across a variety of prompts. Prompts categorized above as ‘write a rhyming poem’ are shown in green; ‘write an unrhyming poem’ in purple; and simply to ‘write a poem’ in blue. Whiskers show standard error around the mean for each model and prompt.}
+\label{fig:prompt_analysis}
 \end{figure}
 
 \subsection{Prompting for poem completion}
@@ -145,10 +120,10 @@ To eliminate potential prompt artifacts, the analysis conducted poem completion 
 Analysis of 8,571 generative completions of 5,823 unique historical poems confirmed that formal bias persists even when rhyme is not linguistically primed by prompts (Figure 4). The generative completions showed some responsiveness to historical patterns, producing more rhyming verse when completing pre-twentieth century poems and less when completing modern verse. However, no model reflected the full extent of rhyme’s historical disappearance.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=1.0\linewidth]{figures/rhyme_avgs_by_period_completions.png}
-  \caption{Frequency of rhymed verse across generative completions of historical poems. Points indicate mean likelihood; size indicates the number of poems per data point; whiskers show standard error.}
-  \label{fig:completion_analysis}
+\centering
+\includegraphics[width=1.0\linewidth]{figures/rhyme_avgs_by_period_completions.png}
+\caption{Frequency of rhymed verse across generative completions of historical poems. Points indicate mean likelihood; size indicates the number of poems per data point; whiskers show standard error.}
+\label{fig:completion_analysis}
 \end{figure}
 
 Statistical analysis revealed that all LLMs produced significantly more rhyme in their completions than historically documented for postwar poets. Effect sizes were large for Claude (Cohen's d = 1.46), Llama (d = 0.98), and OLMo (d = 0.84), medium for DeepSeek (d = 0.63), and small but significant for ChatGPT (d = 0.45). These results indicate that generative verse appears formally retrograde, as if temporally displaced between the nineteenth and twentieth centuries rather than reflecting contemporary poetic practice.
@@ -160,23 +135,22 @@ To test whether rhyme bias could be explained by training data composition, the 
 The analysis examined four datasets: Chadwyck-Healey poems in open and closed training data, and canonical poems from the Poetry Foundation and Academy of American Poets in open and closed training data. Across all methods and datasets, poems found in LLM training data were not disproportionately rhyming compared to those absent from training data (Figure 5).
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=1.0\linewidth]{figures/rhyme_memorization_by_source.png}
-  \caption{Poems in LLM training data are not disproportionately rhyming. Found poems (blue) vs. not found poems (red) across four different detection methods. Whiskers show standard error around the mean.}
-  \label{fig:training_data}
+\centering
+\includegraphics[width=1.0\linewidth]{figures/rhyme_memorization_by_source.png}
+\caption{Poems in LLM training data are not disproportionately rhyming. Found poems (blue) vs. not found poems (red) across four different detection methods. Whiskers show standard error around the mean.}
+\label{fig:training_data}
 \end{figure}
 
 Comparison of means between found and unfound poems showed statistically insignificant differences in all cases except the open training dataset queried for canonical poems, which showed only a negligible effect size (Cohen's d = 0.14) below conventional significance thresholds. Moreover, very few poems from the historical corpora were found in closed-source LLM training data, and those found actually rhymed less often than those not found. These results demonstrate that LLMs' tendency to overuse rhyme cannot be explained by overrepresentation of rhyming poetry in training data, pointing instead to more fundamental characteristics of how these models process and generate poetic forms.
-
 
 \subsection{Instruction tuning effects}
 
 To investigate potential mechanisms underlying formal bias, the analysis compared rhyme frequencies between instruction-tuned and base versions of the same model. Using Llama 3.1, the study contrasted the instruction-tuned variant (Llama 3.1:instruct), which has been fine-tuned via reinforcement learning from human feedback to respond helpfully to user instructions, with the base model (Llama 3.1:text), which performs only next-token prediction without instruction-following capabilities (Figure 6).
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=1.0\linewidth]{figures/rhyme_by_text_vs_instruction.png}
-  \caption{Frequency of rhymed verse across generative completions of historical poems. The two models here are both llama3.1, pretrained on the same data, but one (llama3.1:instruct) is ’instruction-tuned’—trained via reinforcement-learning human feedback (RLHF) to respond to instruction prompts—and the other (llama3.1:text) is a raw next token generator. Points indicate mean likelihood; size indicates the number of poems per data point; whiskers show standard error.}
-  \label{fig:example4}
+\centering
+\includegraphics[width=1.0\linewidth]{figures/rhyme_by_text_vs_instruction.png}
+\caption{Frequency of rhymed verse across generative completions of historical poems. The two models here are both llama3.1, pretrained on the same data, but one (llama3.1:instruct) is ’instruction-tuned’—trained via reinforcement-learning human feedback (RLHF) to respond to instruction prompts—and the other (llama3.1:text) is a raw next token generator. Points indicate mean likelihood; size indicates the number of poems per data point; whiskers show standard error.}
+\label{fig:example}
 \end{figure}
 
 The poem completion experiment revealed significant differences between these model variants across all historical periods. The instruction-tuned model consistently produced higher rates of rhyming poetry when completing historical poems, with the difference particularly pronounced for twentieth-century verse. For postwar poetry completions, the instruction-tuned model rhymed approximately 60\% of the time compared to 10\% for the base model, representing a statistically significant difference with large effect size (Cohen's d > 1.0).
@@ -189,22 +163,21 @@ Analysis of AI-generated historical publication data revealed parallel patterns 
 
 The 43,876 pseudo-authors generated across 12 models showed white authors accounting for approximately 50\% of Random House publications in the AI-generated data, compared to the actual historical rate of 90-95\% documented by So \parencite{soRedliningCultureData2020}. In some years, models generated scenarios where Black authors were published more frequently than white authors, and other authors of color (Latinx, Asian, and Native American) showed meteoric rises from 5\% in 1950 to 30-50\% by 2000 in the generated data (Figure 7).
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=1.0\linewidth]{figures/RandomHouseRace2.png}
-  \caption{AI-generated list of authors and their race published by Random House in the second half of the twentieth century. 43,876 pseudo-authors were generated by 12 models. Data from actual Random House publication history taken from Richard So, \textit{Redlining Culture}. Points indicate mean likelihood; whiskers indicate standard error.}
-  \label{fig:example2}
+\centering
+\includegraphics[width=1.0\linewidth]{figures/RandomHouseRace2.png}
+\caption{AI-generated list of authors and their race published by Random House in the second half of the twentieth century. 43,876 pseudo-authors were generated by 12 models. Data from actual Random House publication history taken from Richard So, \textit{Redlining Culture}. Points indicate mean likelihood; whiskers indicate standard error.}
+\label{fig:example}
 \end{figure}
 
 Similar patterns emerged in the analysis of gender representation in English-language fiction. The 113,869 pseudo-authors generated for the period 1800-2000 showed women accounting for 90-100\% of fictional production in most models' outputs, compared to the actual historical range of 40-50\% documented by Underwood, Bamman, and Lee \parencite{underwoodTransformationGenderEnglishLanguage2018}. This idealization occurred despite models having limited familiarity with the longer history of fiction, with nineteenth- and early twentieth-century texts accounting for only a small fraction of training data (Figure 8).
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=1.0\linewidth]{figures/GenderWriters2.png}
-  \caption{Actual historical distribution of female authors of Anglophone fiction, 1800-2000 (in red) vs. its AI-generated simulations. 113,869 pseudo-authors were generated by 12 models. Actual gender publication history taken from Underwood et al, “Transformation of Gender in English-language Fiction.” Points indicate mean likelihood; whiskers indicate standard error.}
-  \label{fig:example3}
+\centering
+\includegraphics[width=1.0\linewidth]{figures/GenderWriters2.png}
+\caption{Actual historical distribution of female authors of Anglophone fiction, 1800-2000 (in red) vs. its AI-generated simulations. 113,869 pseudo-authors were generated by 12 models. Actual gender publication history taken from Underwood et al, “Transformation of Gender in English-language Fiction.” Points indicate mean likelihood; whiskers indicate standard error.}
+\label{fig:example}
 \end{figure}
 
 These findings parallel the formal idealization observed in poetry, suggesting that cultural collapse operates across both aesthetic and historical domains. Rather than reproducing historical biases by parroting training data, models appear to generate idealized versions of the past that obscure the very patterns of marginalization and exclusion that digital humanities scholarship seeks to illuminate.
-
 
 \section{Discussion}
 
@@ -232,7 +205,6 @@ As generative AI systems become increasingly ubiquitous in cultural production, 
 
 This has particularly troubling implications for cultural diversity and historical memory. If AI systems systematically flatten cultural complexity and generate revisionist versions of historical demographics, they may inadvertently undermine efforts to understand and address patterns of systemic exclusion. The idealized publication histories generated by models in this study do not simply fail to represent historical reality but actively obscure it, creating fictional narratives of diversity and inclusion that never existed.
 
-
 \subsection{Toward a generative formalism}
 
 Understanding cultural collapse requires new critical frameworks capable of analyzing AI-generated content as a distinct form of cultural artifact. This study proposes ‘generative formalism’ as an extension of traditional formalist methods to the generative domain. Just as historical formalist approaches examine how literary techniques create meaning in their historical contexts, generative formalist approaches investigate how computational processes algorithmically remediate those historical contexts into an alien form of cultural production.
@@ -241,9 +213,6 @@ This approach treats AI-generated content not as transparent representation but 
 
 Future research in generative formalism might examine how different architectural choices, training procedures, and alignment methods affect distinct cultural outputs of AI systems. The instruction tuning findings in this study suggest that seemingly technical decisions about model development have profound implications for cultural reproduction. Understanding these relationships will become increasingly important as AI systems play a larger role in the present and future of culture.
 
-
-% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
 \printbibliography
-
 
 \end{document}

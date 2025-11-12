@@ -1,63 +1,56 @@
-\documentclass[final]{anthology-ch} 
+\documentclass[final]{anthology-ch}
 
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{pgfplots}
 \usepackage{siunitx}
 
-
-\usepackage{booktabs} 
+\usepackage{booktabs}
 \usepackage{fancyvrb}
 \usepackage{fvextra}
 \usepackage{csquotes}
-
-
 
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric, arrows, positioning}
 \tikzset{
-    corpus/.style = {
-        rectangle, draw=blue!70, fill=blue!20, text centered, rounded corners,
-        minimum height=1cm, minimum width=2.5cm, font=\footnotesize
-    },
-    preprocessing/.style = {
-        rectangle, draw=cyan!70, fill=cyan!20, text centered, rounded corners,
-        minimum height=1cm, minimum width=2.5cm, font=\footnotesize
-    },
-    similarity/.style = {
-        rectangle, draw=orange!70, fill=orange!20, text centered, rounded corners,
-        minimum height=1cm, minimum width=2.5cm, font=\footnotesize
-    },
-    prompting/.style = {
-        rectangle, draw=purple!70, fill=purple!20, text centered, rounded corners,
-        minimum height=1cm, minimum width=2.5cm, font=\footnotesize
-    },
-    evaluation/.style = {
-        rectangle, draw=red!70, fill=red!20, text centered, rounded corners,
-        minimum height=1cm, minimum width=2.5cm, font=\footnotesize
-    },
-    arrow/.style = {
-        thick, ->, >=stealth
-    }
+corpus/.style = {
+rectangle, draw=blue!70, fill=blue!20, text centered, rounded corners,
+minimum height=1cm, minimum width=2.5cm, font=\footnotesize
+},
+preprocessing/.style = {
+rectangle, draw=cyan!70, fill=cyan!20, text centered, rounded corners,
+minimum height=1cm, minimum width=2.5cm, font=\footnotesize
+},
+similarity/.style = {
+rectangle, draw=orange!70, fill=orange!20, text centered, rounded corners,
+minimum height=1cm, minimum width=2.5cm, font=\footnotesize
+},
+prompting/.style = {
+rectangle, draw=purple!70, fill=purple!20, text centered, rounded corners,
+minimum height=1cm, minimum width=2.5cm, font=\footnotesize
+},
+evaluation/.style = {
+rectangle, draw=red!70, fill=red!20, text centered, rounded corners,
+minimum height=1cm, minimum width=2.5cm, font=\footnotesize
+},
+arrow/.style = {
+thick, ->, >=stealth
+}
 }
 
 \newcommand\booktitle[1]{\textit{#1}}
 
 \title{Between Woolf and Homer: An Explorative Approach to Intertextuality Detection using Large Language Models}
 
-
-
 \author[1,2]{Nicolas Werner}[
-  orcid=
+orcid=
 ]
 
 \author[1]{Nils Reiter}[
-  orcid=0000-0003-3193-6170
+orcid=0000-0003-3193-6170
 ]
-
-
 
 \affiliation{1}{Department for Digital Humanities, University of Cologne, Germany}
 \affiliation{2}{inovex GmbH, 76131 Karlsruhe, Germany}
@@ -70,20 +63,18 @@
 \pageend{418}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/EaxjRBggSdgf}  
+\doi{10.63744/EaxjRBggSdgf}
 \paperorder{25}
 
-
 \addbibresource{bibliography.bib}
+
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
-This paper investigates the potential of Large Language Models (LLMs) for computational analysis of intertextual relationships in literary texts, focusing specifically on the methodological challenges of operationalizing complex literary concepts. We propose a two-stage approach that combines semantic similarity search with prompt-based analysis to examine intertextual connections between Virginia Woolf's \textit{Mrs. Dalloway} and Homer's \textit{Odyssey}. Through systematic evaluation of both expert-informed and naive prompting strategies, we demonstrate that while LLMs show promise in detecting sophisticated literary relationships, their performance depends critically on the effective operationalization of domain knowledge. Our results indicate that expert-informed prompts achieve higher theoretical alignment (+16.23\%) but also reveal a tendency toward over-interpretation, with 90\% of analyses claiming classical transformations.
+This paper investigates the potential of Large Language Models (LLMs) for computational analysis of intertextual relationships in literary texts, focusing specifically on the methodological challenges of operationalizing complex literary concepts. We propose a two-stage approach that combines semantic similarity search with prompt-based analysis to examine intertextual connections between Virginia Woolf's \booktitle{Mrs. Dalloway} and Homer's \booktitle{Odyssey}. Through systematic evaluation of both expert-informed and naive prompting strategies, we demonstrate that while LLMs show promise in detecting sophisticated literary relationships, their performance depends critically on the effective operationalization of domain knowledge. Our results indicate that expert-informed prompts achieve higher theoretical alignment (+\qty{16.23}{\percent}) but also reveal a tendency toward over-interpretation, with \qty{90}{\percent} of analyses claiming classical transformations.
 \end{abstract}
-
-
 
 \section{Introduction}
 \label{sec:Intro}
@@ -92,16 +83,11 @@ The emergence of large language models (LLMs) has created new opportunities for 
 
 Intertextuality, as conceptualized by Kristeva and later systematized by Genette, presents a particularly compelling case for investigating the possibilities and limitations of LLM-based literary analysis, as the challenge lies not merely in detecting surface-level textual similarities but in engaging with the multiple levels of textual interaction that characterize literary influence. While previous computational approaches have often defaulted to simplified similarity metrics, the sophisticated language understanding capabilities of modern LLMs offer potential new avenues for operationalizing more complex theoretical frameworks.
 
-
 Computational approaches to the automatic detection of intertextual relations are faced with two major non-obvious challenges: i) If any text can have relations with any other text, a huge number of text pairs needs to be processed. This in turn limits the (computational) complexity that can be invested on each pair. ii) Because language follows rules of grammar or efficiency, any two texts (in the same language) are almost guaranteed to contain similar token sequences. For instance, it will be hard to identify an English text that does not contain the sequence \enquote{to the}, as these are highly frequent tokens. The second challenge is thus to differentiate between \enquote*{spurious} and meaningful repetitions.\footnote{This is not to say that intertextual relations necessarily contain repetitions, just that textual similarity can constitute intertextual relations.}
 
-We propose a two-stage approach that combines semantic similarity search with prompt-based analysis, aiming to leverage both the pattern-recognition capabilities of modern language models and the sophisticated theoretical frameworks developed by literary scholars. Our methodology treats semantic similarity as a practical heuristic for prioritizing computational resources rather than as a definitive indicator of intertextual relationships, with the LLM analysis serving as the interpretive layer that determines actual intertextual significance. As a concrete use case, we investigate intertextual relationships between Virginia Woolf's \booktitle{Mrs. Dalloway} and Homer's \booktitle{Odyssey}.  While we acknowledge that the analysis is done on this specific case of intertextuality, we believe that the methodological insights can be generalized to other cases. 
+We propose a two-stage approach that combines semantic similarity search with prompt-based analysis, aiming to leverage both the pattern-recognition capabilities of modern language models and the sophisticated theoretical frameworks developed by literary scholars. Our methodology treats semantic similarity as a practical heuristic for prioritizing computational resources rather than as a definitive indicator of intertextual relationships, with the LLM analysis serving as the interpretive layer that determines actual intertextual significance. As a concrete use case, we investigate intertextual relationships between Virginia Woolf's \booktitle{Mrs. Dalloway} and Homer's \booktitle{Odyssey}.  While we acknowledge that the analysis is done on this specific case of intertextuality, we believe that the methodological insights can be generalized to other cases.
 
-Our investigation thus focuses on two key methodological questions: First, can a two-stage approach combining semantic pre-filtering with prompt-based analysis provide a scalable framework for this kind of study? Second, how can domain-specific literary knowledge be effectively incorporated into LLM prompts to enable sophisticated intertextual analysis and how does this knowledge impact the performance of the prompts? 
-
-
-
- 
+Our investigation thus focuses on two key methodological questions: First, can a two-stage approach combining semantic pre-filtering with prompt-based analysis provide a scalable framework for this kind of study? Second, how can domain-specific literary knowledge be effectively incorporated into LLM prompts to enable sophisticated intertextual analysis and how does this knowledge impact the performance of the prompts?
 
 \section{Background and Related Work}
 
@@ -110,8 +96,7 @@ Our investigation thus focuses on two key methodological questions: First, can a
 
 In her seminal work of the late 1960s, Julia Kristeva introduced the term \enquote{intertextuality} \parencite{kristeva_mot_1969}, which she conceptualized as \enquote{an intersection of textual surfaces rather than a point (a fixed meaning), as a dialogue among several writings} \parencite[65]{kristeva_desire_2024}. She asserted that any text is \enquote{constructed as a mosaic of quotations; any text is the absorption and transformation of another} \parencite[64]{kristeva_desire_2024}. This notion re-framed the understanding of literary works as dynamic networks of shared references, displacing the traditional focus on individual authorship and meaning. In this model, the very act of reading generates new interactions, since the reader's own textual experiences continually shape how intertextual connections are perceived.
 
-Roland Barthes' observation that texts are \enquote{woven from cultural citations} \parencite[190]{barthes_image_1977} amplifies Kristeva's dialogical perspective. Rather than existing as self-contained works, texts participate in a broader cultural fabric where meanings and references extend beyond their immediate boundaries. According to María Jesús Martínez Alfaro, this expanded view of textuality ultimately derives from Mikhail Bakhtin's concept of dialogism, underscoring that \enquote{a text cannot exist as a self-sufficient whole} \parencite[1-2]{alfaro_intertextuality_1996}. However, while Kristeva's and Barthes' broad conceptualizations highlight the ubiquity of intertextual relationships, they offer limited guidance for systematic identification and analysis. As Alfaro points out, the proliferation of intertextual theories can risk \enquote{the progressive dissolution of the text as a coherent and self-contained unit of meaning} \parencite[2]{alfaro_intertextuality_1996}, making it analytically difficult to distinguish where textual boundaries begin or end. This tension between theoretical richness and methodological feasibility set the stage for more structured approaches to intertextuality. 
-
+Roland Barthes' observation that texts are \enquote{woven from cultural citations} \parencite[190]{barthes_image_1977} amplifies Kristeva's dialogical perspective. Rather than existing as self-contained works, texts participate in a broader cultural fabric where meanings and references extend beyond their immediate boundaries. According to María Jesús Martínez Alfaro, this expanded view of textuality ultimately derives from Mikhail Bakhtin's concept of dialogism, underscoring that \enquote{a text cannot exist as a self-sufficient whole} \parencite[1-2]{alfaro_intertextuality_1996}. However, while Kristeva's and Barthes' broad conceptualizations highlight the ubiquity of intertextual relationships, they offer limited guidance for systematic identification and analysis. As Alfaro points out, the proliferation of intertextual theories can risk \enquote{the progressive dissolution of the text as a coherent and self-contained unit of meaning} \parencite[2]{alfaro_intertextuality_1996}, making it analytically difficult to distinguish where textual boundaries begin or end. This tension between theoretical richness and methodological feasibility set the stage for more structured approaches to intertextuality.
 
 \subsection{Toward Operational Definitions: Genette's Framework}
 \label{sec:genette}
@@ -120,25 +105,16 @@ Gérard Genette's typology of transtextual relationships sought to categorize te
 
 In this article, we focus on two subtypes: intertextuality and hypertextuality. Genette defined intertextuality as \enquote{a relationship of copresence between two texts or among several texts} and emphasized its manifestations in forms such as quotation, plagiarism, and allusion \parencite[1-2]{genette_palimpsests_1997}. Hypertextuality, on the other hand, describes the relationship between a derived text (the hypertext) and its predecessor (the hypotext) and involves either direct transformation or imitation of the earlier work \parencite[5-6]{genette_palimpsests_1997}. For example, \booktitle{Ulysses} by James Joyce is a hypertext of Homer's \booktitle{Odyssey}, transposing its themes and structures into a modernist framework.
 
-Genette's framework highlights the interconnectedness of transtextual categories and their roles in analyzing textual transcendence. Hypertextuality, defined as the transformation or imitation of an earlier text (hypotext), can involve intertextual elements like allusions or quotations, which contribute to a derived work's relationship with its source \parencite[5]{genette_palimpsests_1997} 
+Genette's framework highlights the interconnectedness of transtextual categories and their roles in analyzing textual transcendence. Hypertextuality, defined as the transformation or imitation of an earlier text (hypotext), can involve intertextual elements like allusions or quotations, which contribute to a derived work's relationship with its source \parencite[5]{genette_palimpsests_1997}
 
 Recent years have also witnessed a number of scientific publications and activities with a clear computational agenda: Schubert highlights the importance of \enquote*{operationalizable} definitions that do not rely on interpretive hierarchies but can be systematically applied to large textual corpora \cite[4]{schubert_intertextuality_2020}.\footnote{For further discussion on the notion of operationalization cf. \cite{pichler_concepts_2022}.} For different languages and use-cases, tools for interactive exploration have been published \cite{liebl-burghardt-2020-shakespeare,10.1093/llc/fqr009}, which focus on specific languages and/or authors, typically employing some kind of indexing database. In addition to the algorithmic work, the formal description of intertextual relations has received some attention \cite{kups70449,schlupkothen-formit-2019,kraneiss_2025_14943022}.
-
-
-
-
-
-
-
-
-
 
 \subsection{LLMs for Intertextual Analysis}
 \label{sec:llms_opportunities_challenges}
 
 LLMs, such as GPT-4o \parencite{openai_gpt-4o_2024}, Phi-4 \parencite{abdin_phi-4_2024} or LLaMa 3 \parencite{grattafiori_llama_2024}, offer promising avenues for detecting and analyzing intertextual phenomena. Advances in LLM prompting techniques, particularly \emph{Chain-of-Thought} (CoT) prompting, enable models to articulate step-by-step reasoning processes, making their outputs more transparent and interpretable \parencite{wei_chain--thought_2023}. Retrieval-Augmented Generation (RAG), which pulls external context from sources like vector databases, has further mitigated issues of hallucination by grounding outputs in factual data \parencite{lewis_retrieval-augmented_2021}.
 
-Another key innovation is \emph{In-Context Learning} (ICL), which allows models to adapt to new tasks based solely on natural language instructions and a few demonstrations provided at inference time, without requiring gradient updates or fine-tuning. ICL underpins the effectiveness of \emph{Few-Shot Learning}, as demonstrated by Brown et al. (2020), enabling models to generalize and perform specialized tasks with minimal input examples. For computational literary studies (CLS), the synergy between ICL and few-shot learning is particularly advantageous: few-shot demonstrations provide models with the contextual knowledge needed to identify subtle intertextual patterns, while ICL ensures that the model dynamically applies these patterns across varied literary texts. For instance, these combined techniques can guide LLMs to identify subtle intertextual connections, such as thematic or stylistic parallels, with minimal additional input. 
+Another key innovation is \emph{In-Context Learning} (ICL), which allows models to adapt to new tasks based solely on natural language instructions and a few demonstrations provided at inference time, without requiring gradient updates or fine-tuning. ICL underpins the effectiveness of \emph{Few-Shot Learning}, as demonstrated by Brown et al. (2020), enabling models to generalize and perform specialized tasks with minimal input examples. For computational literary studies (CLS), the synergy between ICL and few-shot learning is particularly advantageous: few-shot demonstrations provide models with the contextual knowledge needed to identify subtle intertextual patterns, while ICL ensures that the model dynamically applies these patterns across varied literary texts. For instance, these combined techniques can guide LLMs to identify subtle intertextual connections, such as thematic or stylistic parallels, with minimal additional input.
 
 However, challenges persist, particularly in ensuring reproducibility, as even minor changes to the prompt or configuration can lead to divergent outputs \parencite{umphrey_investigating_2024, gu_survey_2024}. Bias in training data also presents a significant obstacle. As \textcite{bender_dangers_2021} caution, large corpora often reflect dominant cultural narratives, making LLMs more attuned to Western canonical references while potentially overlooking non-canonical or marginalized traditions. These biases necessitate careful prompt engineering and post-analysis to ensure equitable representation in computational intertextual studies.
 
@@ -155,24 +131,14 @@ Equipped with carefully designed prompts that integrate such domain knowledge, a
 
 This domain-knowledge-driven approach exemplifies how LLMs could be harnessed to uncover intertextual relationships without requiring extensive pre-training or annotation efforts. In the case of \emph{Mrs. Dalloway}, this enables scholars to explore Woolf's intertextual dialogue with Homer while accounting for her modernist and feminist transformations.
 
- 
-
-
 \section{Detecting and Analysing Intertextual-References in Two Steps}
 \label{sec:methodology}
 
-The method we propose consists of two main stages: i) Vectorization of the texts in question, and their storage in a vector database to facilitate retrieval and ii) comparative analysis of similar chunks using a large language model. The two stages, together with necessary work steps are depicted in Figure~\ref{fig:architecture}. Due to the fact that all texts are (pre-)processed individually, the approach scales well even to larger corpora: The most \enquote*{expensive} method (prompting an LLM) is used only for promising candidate pairs. 
+The method we propose consists of two main stages: i) Vectorization of the texts in question, and their storage in a vector database to facilitate retrieval and ii) comparative analysis of similar chunks using a large language model. The two stages, together with necessary work steps are depicted in Figure~\ref{fig:architecture}. Due to the fact that all texts are (pre-)processed individually, the approach scales well even to larger corpora: The most \enquote*{expensive} method (prompting an LLM) is used only for promising candidate pairs.
 
-The first step (vectorization) includes a number of preprocessing steps, and each of them a number of parameters to be set: Texts first need to be segmented, and there of course are different options on segmentation criteria, ranging from pragmatic, window-based to content-based criteria such as scenes. A number of different models can be employed to convert the segments into vectors, potentially even in different variants (cased vs. uncased). Finally, to retrieve similar chunks, different similarity metrics can be used (e.g., cosine, manhattan, \dots). 
+The first step (vectorization) includes a number of preprocessing steps, and each of them a number of parameters to be set: Texts first need to be segmented, and there of course are different options on segmentation criteria, ranging from pragmatic, window-based to content-based criteria such as scenes. A number of different models can be employed to convert the segments into vectors, potentially even in different variants (cased vs. uncased). Finally, to retrieve similar chunks, different similarity metrics can be used (e.g., cosine, manhattan, \dots).
 
-The second step consists in the actual analysis of similar chunks, and the first parameter is the way pairs are selected for further analysis. In addition the LLM context offers a number of parameters to be set: Next to the model itself, this is primarily the  way the prompt is formulated, and in particular, how literary knowledge and theoretic foundations are included. 
-
-
-
-
-
-
-
+The second step consists in the actual analysis of similar chunks, and the first parameter is the way pairs are selected for further analysis. In addition the LLM context offers a number of parameters to be set: Next to the model itself, this is primarily the  way the prompt is formulated, and in particular, how literary knowledge and theoretic foundations are included.
 
 \section{Experiments}
 
@@ -180,64 +146,61 @@ The second step consists in the actual analysis of similar chunks, and the first
 
 This section outlines our experimental setup in order to implement and evaluate the two-step process described above. We have not done exhaustive testing of the different parameters described above, but focused on the prompt formulation, and in particular distinguish between a naive and an expert prompt.
 
-
 \begin{figure}[ht]
-    \centering
-    \sffamily
-    \begin{tikzpicture}[node distance=1.2cm]
+\centering
+\sffamily
+\begin{tikzpicture}[node distance=1.2cm]
 
 \node (corpus) [corpus] {Corpus Selection};
 
 \node (odyssey) [preprocessing, below of=corpus, xshift=-2cm, align=center] {Odyssey\\ Preprocessing};
-        \node (mrsDalloway) [preprocessing, below of=corpus, xshift=2cm, align=center] {Mrs. Dalloway\\ Preprocessing};
-        \node (odysseyChunk) [preprocessing, below of=odyssey] {Chunk Segmentation};
-        \node (mrsDallowayChunk) [preprocessing, below of=mrsDalloway] {Chunk Segmentation};
-        \node (odysseyEmbeddings) [preprocessing, below of=odysseyChunk] {Generate Embeddings};
-        \node (mrsDallowayEmbeddings) [preprocessing, below of=mrsDallowayChunk] {Generate Embeddings};
+\node (mrsDalloway) [preprocessing, below of=corpus, xshift=2cm, align=center] {Mrs. Dalloway\\ Preprocessing};
+\node (odysseyChunk) [preprocessing, below of=odyssey] {Chunk Segmentation};
+\node (mrsDallowayChunk) [preprocessing, below of=mrsDalloway] {Chunk Segmentation};
+\node (odysseyEmbeddings) [preprocessing, below of=odysseyChunk] {Generate Embeddings};
+\node (mrsDallowayEmbeddings) [preprocessing, below of=mrsDallowayChunk] {Generate Embeddings};
 
 \node (vectorDB1) [similarity, below of=odysseyEmbeddings, yshift=0cm] {Vector Database};
-        \node (vectorDB2) [similarity, below of=mrsDallowayEmbeddings, yshift=0cm] {Vector Database};
-        \node (cosineSimilarity) [similarity, below of=corpus, yshift=-5cm] {Similarity Search};
+\node (vectorDB2) [similarity, below of=mrsDallowayEmbeddings, yshift=0cm] {Vector Database};
+\node (cosineSimilarity) [similarity, below of=corpus, yshift=-5cm] {Similarity Search};
 
 \node (dualPrompt) [prompting, right=2.5cm of corpus, yshift=0cm, xshift=2cm] {Dual Prompting Framework};
-        \node (naivePrompt) [prompting, below left of=dualPrompt, xshift=-1cm, yshift= -0.5cm] {Naive Prompt};
-        \node (expertPrompt) [prompting, below right of=dualPrompt, xshift=1cm, yshift= -0.5cm] {Expert Prompt};
-        \node (llmAnalysis) [prompting, below of=dualPrompt, yshift=-2cm] {LLM Analysis};
+\node (naivePrompt) [prompting, below left of=dualPrompt, xshift=-1cm, yshift= -0.5cm] {Naive Prompt};
+\node (expertPrompt) [prompting, below right of=dualPrompt, xshift=1cm, yshift= -0.5cm] {Expert Prompt};
+\node (llmAnalysis) [prompting, below of=dualPrompt, yshift=-2cm] {LLM Analysis};
 
 \node (blindReview) [evaluation, below of=llmAnalysis, yshift=-0.8cm] {Manual evaluation};
 
 \draw [arrow] (corpus) -- (odyssey);
-        \draw [arrow] (corpus) -- (mrsDalloway);
-        \draw [arrow] (odyssey) -- (odysseyChunk);
-        \draw [arrow] (mrsDalloway) -- (mrsDallowayChunk);
-        \draw [arrow] (odysseyChunk) -- (odysseyEmbeddings);
-        \draw [arrow] (mrsDallowayChunk) -- (mrsDallowayEmbeddings);
-        \draw [arrow] (odysseyEmbeddings) -- (vectorDB1);
-        \draw [arrow] (mrsDallowayEmbeddings) -- (vectorDB2);
-        \draw [arrow] (vectorDB1) -- (cosineSimilarity);
-        \draw [arrow] (vectorDB2) -- (cosineSimilarity);
-        \draw [arrow] (cosineSimilarity.east) .. controls +(6,0) and +(-4.5,0) .. (dualPrompt.west);
-        \draw [arrow] (dualPrompt) -- (naivePrompt);
-        \draw [arrow] (dualPrompt) -- (expertPrompt);
-        \draw [arrow] (naivePrompt) -- (llmAnalysis);
-        \draw [arrow] (expertPrompt) -- (llmAnalysis);
-        \draw [arrow] (llmAnalysis) -- (blindReview);
+\draw [arrow] (corpus) -- (mrsDalloway);
+\draw [arrow] (odyssey) -- (odysseyChunk);
+\draw [arrow] (mrsDalloway) -- (mrsDallowayChunk);
+\draw [arrow] (odysseyChunk) -- (odysseyEmbeddings);
+\draw [arrow] (mrsDallowayChunk) -- (mrsDallowayEmbeddings);
+\draw [arrow] (odysseyEmbeddings) -- (vectorDB1);
+\draw [arrow] (mrsDallowayEmbeddings) -- (vectorDB2);
+\draw [arrow] (vectorDB1) -- (cosineSimilarity);
+\draw [arrow] (vectorDB2) -- (cosineSimilarity);
+\draw [arrow] (cosineSimilarity.east) .. controls +(6,0) and +(-4.5,0) .. (dualPrompt.west);
+\draw [arrow] (dualPrompt) -- (naivePrompt);
+\draw [arrow] (dualPrompt) -- (expertPrompt);
+\draw [arrow] (naivePrompt) -- (llmAnalysis);
+\draw [arrow] (expertPrompt) -- (llmAnalysis);
+\draw [arrow] (llmAnalysis) -- (blindReview);
 
-        \coordinate (boundary) at (4,1);
-        \draw [dotted] (boundary) -- ++(0,-8);
-        \node at (boundary) 
-            [anchor=north east]
-            {Stage 1};
-        \node at (boundary) 
-            [anchor=north west]
-            {Stage 2};
+\coordinate (boundary) at (4,1);
+\draw [dotted] (boundary) -- ++(0,-8);
+\node at (boundary)
+[anchor=north east]
+{Stage 1};
+\node at (boundary)
+[anchor=north west]
+{Stage 2};
 
-    \end{tikzpicture}
-    \caption{Proposed architecture for intertextuality detection, including evaluation}
-    \label{fig:architecture}
+\end{tikzpicture}
+\caption{Proposed architecture for intertextuality detection, including evaluation}
+\label{fig:architecture}
 \end{figure}
-
-
 
 \subsection{Corpus Selection and Preparation}
 \label{subsec:corpus_selection}
@@ -248,137 +211,118 @@ Both texts were sourced from Project Gutenberg, a freely available and widely us
 
 Finally, the corpus preparation phase involved minor preprocessing to standardize formatting (e.g., removal of page numbers and erratic line breaks) while preserving the integrity of the original texts. This step was essential to ensure clean input for subsequent text segmentation and computational analysis.
 
-
 \subsection{Text Processing and Segmentation}
 \label{subsec:text_processing}
 
-Our implementation employs a sentence-aware chunking strategy that balances 
-computational requirements with literary coherence. Each segment contains ten 
-sentences, roughly corresponding to a 512-token window. This approach preserves 
-semantic integrity by maintaining complete sentences and avoiding mid-sentence truncation 
-that could otherwise disrupt literary analysis, while also retaining paragraph-level contextual 
-relationships. 
+Our implementation employs a sentence-aware chunking strategy that balances
+computational requirements with literary coherence. Each segment contains ten
+sentences, roughly corresponding to a 512-token window. This approach preserves
+semantic integrity by maintaining complete sentences and avoiding mid-sentence truncation
+that could otherwise disrupt literary analysis, while also retaining paragraph-level contextual
+relationships.
 
 Other ways of segmentation  are in principle also possible, yet lead to different problems: A segmentation by paragraph leads to a high variance in segment length and may occasionally also be too long for LLM analysis. At the same time, there is no unique and clear meaning assigned to paragraph boundaries as well.
-
-
-
 
 \subsection{Semantic Similarity Retrieval}
 \label{subsec:semantic_similarity}
 
-
-
-Each chunk from the two corpora is then projected into a shared vector space using pre-trained embeddings, thereby enabling 
+Each chunk from the two corpora is then projected into a shared vector space using pre-trained embeddings, thereby enabling
 systematic comparison across texts \parencite{lewis_retrieval-augmented_2021}.
 
-We employ OpenAI's transformer-based embedding model 
-\texttt{text-embedding-3-small}) to generate 1536-dimensional vector representations 
-for each chunk. These embeddings are stored in a vector database, facilitating 
-efficient similarity-based lookups. 
+We employ OpenAI's transformer-based embedding model
+\texttt{text-embedding-3-small}) to generate 1536-dimensional vector representations
+for each chunk. These embeddings are stored in a vector database, facilitating
+efficient similarity-based lookups.
 
-For each query chunk $q$ from \emph{Mrs. Dalloway} with normalized embedding vector $\vec{q}$, 
-we compute its similarity to all chunks $o$ from \emph{The Odyssey} with normalized embedding 
+For each query chunk $q$ from \emph{Mrs. Dalloway} with normalized embedding vector $\vec{q}$,
+we compute its similarity to all chunks $o$ from \emph{The Odyssey} with normalized embedding
 vectors $\vec{o}$ using cosine similarity:
 
 \begin{equation}
-    \text{sim}(q, o) = \frac{\vec{q} \cdot \vec{o}}{\|\vec{q}\| \cdot \|\vec{o}\|},
+\text{sim}(q, o) = \frac{\vec{q} \cdot \vec{o}}{\|\vec{q}\| \cdot \|\vec{o}\|},
 \end{equation}
 
-where the equality holds due to L2 normalization ($\|\vec{q}\| = \|\vec{o}\| = 1$). For each 
-selected \emph{Mrs. Dalloway} chunk, the system identifies both the most similar Odyssey passage 
-($\argmax_o \text{sim}(q, o)$) and -- for evaluative purposes -- the most dissimilar passage ($\argmin_o \text{sim}(q, o)$). 
+where the equality holds due to L2 normalization ($\|\vec{q}\| = \|\vec{o}\| = 1$). For each
+selected \emph{Mrs. Dalloway} chunk, the system identifies both the most similar Odyssey passage
+($\argmax_o \text{sim}(q, o)$) and -- for evaluative purposes -- the most dissimilar passage ($\argmin_o \text{sim}(q, o)$).
 
-This bidirectional retrieval approach serves as a methodological control: by examining the LLM's 
-analysis of both semantically similar and dissimilar passages, we can evaluate whether semantic 
-similarity correlates with the detection of intertextual relationships. This design enables us 
-to test the hypothesis that semantically similar passages are more likely to be classified as 
-intertextual references, thereby providing a quantifiable baseline for assessing the LLM's 
+This bidirectional retrieval approach serves as a methodological control: by examining the LLM's
+analysis of both semantically similar and dissimilar passages, we can evaluate whether semantic
+similarity correlates with the detection of intertextual relationships. This design enables us
+to test the hypothesis that semantically similar passages are more likely to be classified as
+intertextual references, thereby providing a quantifiable baseline for assessing the LLM's
 analytical capabilities.
-
 
 \subsection{Comparative Analysis through Prompting}
 \label{subsec:comparative_prompting}
 
-Building on the semantic similarity retrieval process described in 
-Section~\ref{subsec:semantic_similarity}, we employ a \emph{comparative prompting} 
-approach to evaluate how differing levels of domain-specific knowledge affect the 
-detection and analysis of potential intertextual and hypertextual connections. 
-Inspired by prior work on prompt engineering and expert-in-the-loop strategies 
-\parencite{wei_chain--thought_2023, umphrey_investigating_2024}, this methodology 
-systematically contrasts a \emph{Naive Prompt} -- which encodes only fundamental 
-transtextual concepts -- with an \emph{Expert Prompt} that integrates specific knowledge 
+Building on the semantic similarity retrieval process described in
+Section~\ref{subsec:semantic_similarity}, we employ a \emph{comparative prompting}
+approach to evaluate how differing levels of domain-specific knowledge affect the
+detection and analysis of potential intertextual and hypertextual connections.
+Inspired by prior work on prompt engineering and expert-in-the-loop strategies
+\parencite{wei_chain--thought_2023, umphrey_investigating_2024}, this methodology
+systematically contrasts a \emph{Naive Prompt} -- which encodes only fundamental
+transtextual concepts -- with an \emph{Expert Prompt} that integrates specific knowledge
 of Woolf's nuanced engagement with classical texts.  For our experiment, we employed OpenAI's GPT-4o model (version \texttt{gpt-4o-2024-08-06}), a
 large language model with significantly enhanced reasoning capabilities compared
 to its predecessors \parencite{openai_gpt-4o_2024}, using a temperature setting of 0.5.
 
-
-
-\noindent
-\textbf{Rationale.}
-As discussed in Section~\ref{sec:llms_opportunities_challenges}, LLMs 
-can exhibit variability in outputs depending on prompt design and the extent of 
-domain-specific information provided. By comparing analyses generated under two 
+\paragraph{Rationale.}
+As discussed in Section~\ref{sec:llms_opportunities_challenges}, LLMs
+can exhibit variability in outputs depending on prompt design and the extent of
+domain-specific information provided. By comparing analyses generated under two
 distinct prompting conditions (Naive vs. Expert), we aim to:
 
 \begin{enumerate}
-    \item Evaluate how well an LLM can detect subtle intertextual cues \emph{without} 
-    specialized background knowledge.
-    \item Assess whether supplying explicit scholarly perspectives on Woolf's 
-    intertextual practices (e.g., her feminist reframing of classics) improves the 
-    quality and depth of the model's literary analysis.
+\item Evaluate how well an LLM can detect subtle intertextual cues \emph{without}
+specialized background knowledge.
+\item Assess whether supplying explicit scholarly perspectives on Woolf's
+intertextual practices (e.g., her feminist reframing of classics) improves the
+quality and depth of the model's literary analysis.
 \end{enumerate}
 
 In both cases, it has to be assumed that a reasonably large LLM has been trained on both the primary texts (even on the specific editions, as they are included in Project Gutenberg). It is also likely that the model has \enquote*{seen} secondary literature about the two texts -- interpretations and literary scholarly discussions --, including about their intertextual relationship. This likely has influence on the generalizability of our findings, but as both prompt types are executed on the same model, we consider the comparison of the prompt types to be generalizable.
 
-
-
-\noindent
-\textbf{Naive Prompt.}
-The \emph{Naive Prompt} (see Appendix~\ref{appendix:naive_prompt}) provides the LLM 
-with general definitions of intertextuality and hypertextuality grounded in Genette's 
-terminology \cite{genette_palimpsestes_2014}. It instructs the model to identify 
-possible references or transformations between \emph{Mrs. Dalloway} and \emph{The 
-Odyssey}, highlighting key indicators such as direct quotations, allusions, and 
-adaptations. However, the prompt does not include specialized knowledge of Virginia 
-Woolf's modernist style or her specific mode of subtly embedding classical motifs 
+\paragraph{Naive Prompt.}
+The \emph{Naive Prompt} (see Appendix~\ref{appendix:naive_prompt}) provides the LLM
+with general definitions of intertextuality and hypertextuality grounded in Genette's
+terminology \cite{genette_palimpsestes_2014}. It instructs the model to identify
+possible references or transformations between \emph{Mrs. Dalloway} and \emph{The
+Odyssey}, highlighting key indicators such as direct quotations, allusions, and
+adaptations. However, the prompt does not include specialized knowledge of Virginia
+Woolf's modernist style or her specific mode of subtly embedding classical motifs
 \cite{hoff_pseudo-homeric_1999}.
 
-
-
-\noindent
-\textbf{Expert Prompt.}
-In contrast, the \emph{Expert Prompt} (see Appendix~\ref{appendix:expert_prompt}) 
-augments the same baseline instructions with targeted information about Woolf's 
-literary methodology. Drawing on scholarship that situates Woolf's work within 
-classical traditions \parencite{randall_woolf_2012, hoff_pseudo-homeric_1999}, this extended prompt explicitly 
+\paragraph{Expert Prompt.}
+In contrast, the \emph{Expert Prompt} (see Appendix~\ref{appendix:expert_prompt})
+augments the same baseline instructions with targeted information about Woolf's
+literary methodology. Drawing on scholarship that situates Woolf's work within
+classical traditions \parencite{randall_woolf_2012, hoff_pseudo-homeric_1999}, this extended prompt explicitly
 instructs the LLM to look for:
 
 \begin{itemize}
-    \item \textit{Subtle allusions} at phonemic, thematic, or narrative levels.
-    \item \textit{Feminist transformations} of patriarchal narratives (e.g., 
-    downplaying elements of warfare or revenge).
-    \item \textit{\enquote{Secret founts of pleasure}}
- that Woolf sometimes includes 
-    without overtly signaling their Homeric roots. Molly Hoff \cite{hoff_pseudo-homeric_1999} uses the term \enquote{secret founts of pleasure} to describe Virginia Woolf's subtle and intrinsic use of intertextual references in \emph{Mrs. Dalloway}. These references are not intended for overt recognition by the reader but instead enrich the narrative as hidden gifts to the text itself. Unlike her contemporaries, such as T.S. Eliot or James Joyce, who often foreground their intertextuality, Woolf integrates allusions seamlessly at thematic, structural, and phonemic levels. Hoff illustrates this through examples such as Homeric allusions that quietly shape the novel's characters and themes.
+\item \textit{Subtle allusions} at phonemic, thematic, or narrative levels.
+\item \textit{Feminist transformations} of patriarchal narratives (e.g.,
+downplaying elements of warfare or revenge).
+\item \textit{\enquote{Secret founts of pleasure}}
+that Woolf sometimes includes
+without overtly signaling their Homeric roots. Molly Hoff \cite{hoff_pseudo-homeric_1999} uses the term \enquote{secret founts of pleasure} to describe Virginia Woolf's subtle and intrinsic use of intertextual references in \emph{Mrs. Dalloway}. These references are not intended for overt recognition by the reader but instead enrich the narrative as hidden gifts to the text itself. Unlike her contemporaries, such as T.S. Eliot or James Joyce, who often foreground their intertextuality, Woolf integrates allusions seamlessly at thematic, structural, and phonemic levels. Hoff illustrates this through examples such as Homeric allusions that quietly shape the novel's characters and themes.
 \end{itemize}
 
-By providing domain-specific context, we capture the multi-level engagement that 
-scholars like Hoff and Fernald attribute to Woolf, thereby eliciting more focused 
+By providing domain-specific context, we capture the multi-level engagement that
+scholars like Hoff and Fernald attribute to Woolf, thereby eliciting more focused
 and informed LLM outputs.
 
-
-
-\noindent
-\textbf{Example Analyses and Few-Shot Learning.}
+\paragraph{Example Analyses and Few-Shot Learning.}
 The example analyses differ between prompts in accordance with their knowledge scope. The Naive Prompt employs four generic literary examples spanning different periods and styles to demonstrate the application of Genette's framework across varied contexts. The Expert Prompt includes three examples of documented Woolfian intertextual relationships (see e.g., \cite{hoff_pseudo-homeric_1999, randall_woolf_2012}) alongside one non-Woolfian case. This approach operationalizes domain expertise by providing the model with canonical examples of Woolf's characteristic intertextual patterns as identified by literary scholars. While this creates different baseline knowledge between prompts, it directly tests our research question: whether grounding an LLM in documented scholarly examples enhances its capacity to detect similar patterns in unanalyzed passages.
 
-To guide the LLM's behavior under both Naive and Expert prompts, we provide a set of 
-\textit{example analyses} within each prompt (few-shot learning). Following best 
-practices for in-context learning \parencite{parnami_learning_2022, wei_chain--thought_2023}, 
-these examples illustrate how to identify explicit and implicit references, as well as 
-cases with no meaningful relationship. Including both \enquote{positive} and \enquote{negative} cases 
-helps ensure the model can distinguish genuine intertextual resonances from incidental 
+To guide the LLM's behavior under both Naive and Expert prompts, we provide a set of
+\textit{example analyses} within each prompt (few-shot learning). Following best
+practices for in-context learning \parencite{parnami_learning_2022, wei_chain--thought_2023},
+these examples illustrate how to identify explicit and implicit references, as well as
+cases with no meaningful relationship. Including both \enquote{positive} and \enquote{negative} cases
+helps ensure the model can distinguish genuine intertextual resonances from incidental
 overlaps.
 
 \subsection{Structured Output Generation}
@@ -389,33 +333,25 @@ To ensure consistent output generation, we adopt a \emph{structured output} prot
 \subsection{Evaluation Framework}
 \label{subsec:evaluation_framework}
 
-
-
-To assess the quality of intertextual analyses produced by both prompting approaches, 
-we implemented a blind evaluation methodology where the analysis of 20 randomly selected chunks from \emph{Mrs. Dalloway} was evaluated on 
-three dimensions using a standardized 5-point-Likert scale, with documented rationales for each 
+To assess the quality of intertextual analyses produced by both prompting approaches,
+we implemented a blind evaluation methodology where the analysis of 20 randomly selected chunks from \emph{Mrs. Dalloway} was evaluated on
+three dimensions using a standardized 5-point-Likert scale, with documented rationales for each
 score. For each chunk, the most similar and the most dissimilar \textit{Odyssey} chunk was selected, and both pairs then presented to both the naive and expert prompt, leading to 80 evaluation pairs in total.
 
-
-
-\noindent
-\textbf{Assessment Dimensions.}
-The evaluation framework examines i) evidence quality, ii) theoretical alignment, and iii) internal 
-consistency. Scores for evidence quality range from 1 (no specific textual evidence) to 5 
-(comprehensive evidence with detailed analysis), measuring how effectively each analysis 
-supports its claims with textual references. Scores on theoretical alignment evaluate understanding 
-and application of Genette's transtextual framework and Woolf's modernist techniques, 
-where 1 indicates surface-level comparison without theoretical grounding and 5 represents 
-sophisticated analysis of how Woolf transforms Homeric themes through modernist and feminist 
-perspectives. Scores on internal consistency assess logical coherence, ranging from contradictory 
+\paragraph{Assessment Dimensions.}
+The evaluation framework examines i) evidence quality, ii) theoretical alignment, and iii) internal
+consistency. Scores for evidence quality range from 1 (no specific textual evidence) to 5
+(comprehensive evidence with detailed analysis), measuring how effectively each analysis
+supports its claims with textual references. Scores on theoretical alignment evaluate understanding
+and application of Genette's transtextual framework and Woolf's modernist techniques,
+where 1 indicates surface-level comparison without theoretical grounding and 5 represents
+sophisticated analysis of how Woolf transforms Homeric themes through modernist and feminist
+perspectives. Scores on internal consistency assess logical coherence, ranging from contradictory
 claims (1) to thoroughly coherent analysis with strong supporting evidence (5).
 
-
-
-\noindent
-\textbf{Process and Controls.}
-The evaluation process incorporated several methodological controls to ensure reliability. The order of the items was randomized, and the same annotation was done by two people. Prompt-type identifiers were removed to enable 
-blind assessment.  
+\paragraph{Process and Controls.}
+The evaluation process incorporated several methodological controls to ensure reliability. The order of the items was randomized, and the same annotation was done by two people. Prompt-type identifiers were removed to enable
+blind assessment.
 \section{Results}
 Our analysis revealed several key patterns in how \enquote*{our} LLM detects and interprets intertextual relationships between \booktitle{Mrs. Dalloway} and \booktitle{The Odyssey}, with notable differences between expert-informed and naive approaches. Before discussing these findings, we will look at the achieved inter-annotator agreement of the annotations.
 
@@ -426,7 +362,7 @@ To ensure the reliability of our evaluation, two annotators evaluated the LLM's 
 \begin{table}[hbt!]
 \begin{tabular}{lp{0.12\linewidth}p{0.18\linewidth}p{0.20\linewidth}p{0.12\linewidth}}
 \toprule
-\textbf{Metric} & \textbf{Perfect agreement (\%)} & \textbf{Absolute differences (mean)} & \textbf{Correlation ($r$ / $\rho$)} & \textbf{Fleiss' $\kappa$}\\ 
+\textbf{Metric} & \textbf{Perfect agreement (\%)} & \textbf{Absolute differences (mean)} & \textbf{Correlation ($r$ / $\rho$)} & \textbf{Fleiss' $\kappa$}\\
 \midrule
 Evidence Quality & 88.8 & 0.113 & 0.690 / 0.696 & 0.635 \\
 Theoretical Alignment & 67.5 & 0.325 & 0.671 / 0.635 & 0.460 \\
@@ -437,83 +373,77 @@ Internal Consistency & 68.8 & 0.312 & 0.485 / 0.486 & 0.331 \\
 \label{tab:iaa-metrics}
 \end{table}
 
-
-
-
-
 Overall, the agreement was robust, indicating a consistent application of the scoring criteria. Across all categories, the mean absolute difference between annotators was low, and the number of items with perfect agreement was high. For every single rating, the annotators' scores were never more than one Likert-point apart, achieving \qty{100}{\percent} agreement within a one-point margin.
 
 Given the ordinal nature of our rating scales, we report both Pearson's $r$ (measuring linear association) and Spearman's $\rho$ (measuring rank-order correlation). The convergence between these two metrics across all categories demonstrates that the inter-rater agreement is robust regardless of the specific correlation approach. Both measures show strong positive correlations, with Spearman's $\rho$ ranging from 0.486 to 0.696.
-
 
 The fact that Fleiss' $\kappa$ scores are relatively low can easily be explained by the fact that Fleiss' $\kappa$ takes the actual number of choices for a specific category into account. If many of the annotators' choices are concentrated on one or two labels, the expected agreement gets high, which in turn lowers overall $\kappa$.
 
 A more granular analysis of the score distribution, broken down by annotator and category, further illuminates the evaluation tendencies (Figure~\ref{fig:score-distribution}). The aggregated results show that both annotators had remarkably similar scoring patterns, with almost identical proportions of positive, neutral, and negative ratings. This suggests that no single evaluator had a significant leniency bias.
 
-
 \begin{figure}[hbt!]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-    name=plot1,
-    width=0.45\textwidth,
-    height=5.5cm,
-    ybar stacked,
-    bar width=25pt,
-    ylabel={Percentage (\%)},
-    symbolic x coords={Evidence, Theory, Consistency, Overall},
-    xtick=data,
-    x tick label style={rotate=45, anchor=east},
-    enlarge x limits=0.2,
-    ymin=0,
-    ymax=100,
-    title={\textbf{Annotator 1}},
-    legend style={at={(0.5,-0.4)}, anchor=north, legend columns=1, font=\small},
+name=plot1,
+width=0.45\textwidth,
+height=5.5cm,
+ybar stacked,
+bar width=25pt,
+ylabel={Percentage (\%)},
+symbolic x coords={Evidence, Theory, Consistency, Overall},
+xtick=data,
+x tick label style={rotate=45, anchor=east},
+enlarge x limits=0.2,
+ymin=0,
+ymax=100,
+title={\textbf{Annotator 1}},
+legend style={at={(0.5,-0.4)}, anchor=north, legend columns=1, font=\small},
 ]
 
 \addplot[fill={rgb,255:red,255;green,204;blue,204}, draw=black] coordinates {
-    (Evidence, 2.50) (Theory, 6.25) (Consistency, 0.00) (Overall, 2.92)
+(Evidence, 2.50) (Theory, 6.25) (Consistency, 0.00) (Overall, 2.92)
 };
 
 \addplot[fill={rgb,255:red,255;green,230;blue,204}, draw=black] coordinates {
-    (Evidence, 86.25) (Theory, 42.50) (Consistency, 2.50) (Overall, 43.75)
+(Evidence, 86.25) (Theory, 42.50) (Consistency, 2.50) (Overall, 43.75)
 };
 
 \addplot[fill={rgb,255:red,196;green,233;blue,251}, draw=black] coordinates {
-    (Evidence, 11.25) (Theory, 51.25) (Consistency, 97.50) (Overall, 53.33)
+(Evidence, 11.25) (Theory, 51.25) (Consistency, 97.50) (Overall, 53.33)
 };
 
 \legend{$<3$ (Low), $=3$ (Neutral), $>3$ (High)}
 \end{axis}
 
 \begin{axis}[
-    at={(plot1.east)},
-    anchor=west,
-    xshift=1.5cm,
-    width=0.45\textwidth,
-    height=5.5cm,
-    ybar stacked,
-    bar width=25pt,
-    symbolic x coords={Evidence, Theory, Consistency, Overall},
-    xtick=data,
-    x tick label style={rotate=45, anchor=east},
-    enlarge x limits=0.2,
-    ymin=0,
-    ymax=100,
-    title={\textbf{Annotator 2}},
-    legend style={at={(0.5,-0.4)}, anchor=north, legend columns=1, font=\small},
+at={(plot1.east)},
+anchor=west,
+xshift=1.5cm,
+width=0.45\textwidth,
+height=5.5cm,
+ybar stacked,
+bar width=25pt,
+symbolic x coords={Evidence, Theory, Consistency, Overall},
+xtick=data,
+x tick label style={rotate=45, anchor=east},
+enlarge x limits=0.2,
+ymin=0,
+ymax=100,
+title={\textbf{Annotator 2}},
+legend style={at={(0.5,-0.4)}, anchor=north, legend columns=1, font=\small},
 ]
 
 \addplot[fill={rgb,255:red,255;green,204;blue,204}, draw=black] coordinates {
-    (Evidence, 2.50) (Theory, 6.25) (Consistency, 0.00) (Overall, 2.92)
+(Evidence, 2.50) (Theory, 6.25) (Consistency, 0.00) (Overall, 2.92)
 };
 
 \addplot[fill={rgb,255:red,255;green,230;blue,204}, draw=black] coordinates {
-    (Evidence, 77.50) (Theory, 42.50) (Consistency, 12.50) (Overall, 44.17)
+(Evidence, 77.50) (Theory, 42.50) (Consistency, 12.50) (Overall, 44.17)
 };
 
 \addplot[fill={rgb,255:red,196;green,233;blue,251}, draw=black] coordinates {
-    (Evidence, 20.00) (Theory, 51.25) (Consistency, 87.50) (Overall, 52.92)
+(Evidence, 20.00) (Theory, 51.25) (Consistency, 87.50) (Overall, 52.92)
 };
 
 \legend{$<3$ (Low), $=3$ (Neutral), $>3$ (High)}
@@ -522,11 +452,6 @@ A more granular analysis of the score distribution, broken down by annotator and
 \caption{Distribution of scores per category and annotator. On the 5-point Likert scale, scores of 1 and 2 represent low quality ($<3$), a score of 3 a neutral assessment ($=3$), and scores of 4 or 5 high quality ($>3$).}
 \label{fig:score-distribution}
 \end{figure}
-
-
-
-
-
 
 The breakdown reveals different evaluation patterns across the categories. Both annotators scored \enquote*{Evidence Quality} conservatively, with the majority of scores being neutral. Conversely, they scored \enquote*{Theoretical Alignment} more positively. More strikingly, the scores for \enquote*{Internal Consistency} are overwhelmingly positive for both annotators, with \qty{97.5}{\percent} and \qty{87.5}{\percent} of scores being above 3, respectively, and no scores below 3.
 
@@ -549,8 +474,6 @@ Dissimilar & 0.0 & 5.0 \\
 \label{tab:ref-detection}
 \end{table}
 
-
-
 The effectiveness of our comparative analysis approach was validated by examining reference detection rates in similar versus dissimilar text pairs. For each of the 20 \booktitle{Mrs. Dalloway} passages in our test set, we compared the analysis of its most similar and most dissimilar \booktitle{Odyssey} counterparts. As shown in Table~\ref{tab:ref-detection}, the expert prompt identified references in \qty{55}{\percent} of similar pairs versus \qty{5}{\percent} of dissimilar pairs. The naive prompt showed a more stark contrast, finding references in \qty{10}{\percent} of similar pairs but none in dissimilar pairs. This pattern suggests that semantic similarity serves as a meaningful indicator of potential intertextual relationships, particularly when combined with expert knowledge.
 
 \subsection{Analysis Quality Metrics}
@@ -572,10 +495,6 @@ Consistency & 4.00 & 4.08 & 4.04 & 4.18 & 4.28 & 4.23 & +4.64\% \\
 \caption{Detailed quality metrics comparison (scores 1--5).}
 \label{tab:quality-metrics-detailed}
 \end{table}
-
-
-
-
 
 As shown in Table~\ref{tab:quality-metrics-detailed}, this pattern of improvement with the expert prompt was consistent across both annotators. While both prompts generated analyses with good internal consistency and evidence quality, the expert prompt achieved a substantial advantage in theoretical alignment (+16.23\%). This indicates that its analyses were more firmly grounded in literary theory and demonstrated a better understanding of Woolf's intertextual practices, a conclusion supported by both evaluators.
 
@@ -600,10 +519,8 @@ Naive Only & 0 & 0.0 \\
 \label{tab:agreement}
 \end{table}
 
-
-
-Analysis of inter-prompt agreement revealed high consensus on non-references but divergence in reference detection. As shown in Table~\ref{tab:agreement}, both prompts agreed on the absence of references in \qty{70}{\percent} of cases ($n=28$) and their presence in \qty{5}{\percent} of cases ($n=2$). The expert prompt uniquely identified references in \qty{25}{\percent} of cases ($n=10$), while the naive prompt never identified references that the expert prompt missed. 
-This pattern suggests that expert knowledge enables the detection of subtle intertextual relationships that might be overlooked by a more general approach. 
+Analysis of inter-prompt agreement revealed high consensus on non-references but divergence in reference detection. As shown in Table~\ref{tab:agreement}, both prompts agreed on the absence of references in \qty{70}{\percent} of cases ($n=28$) and their presence in \qty{5}{\percent} of cases ($n=2$). The expert prompt uniquely identified references in \qty{25}{\percent} of cases ($n=10$), while the naive prompt never identified references that the expert prompt missed.
+This pattern suggests that expert knowledge enables the detection of subtle intertextual relationships that might be overlooked by a more general approach.
 \section{Discussion}
 
 This paper investigated two key methodological questions: (1) how to effectively operationalize domain-specific literary knowledge in LLM prompts for intertextual analysis, and (2) whether a two-stage approach combining semantic similarity pre-filtering with prompt-based analysis could provide a scalable framework for computational intertextual studies. Our findings offer insights into both the possibilities and limitations of using LLMs for sophisticated literary analysis tasks -- but we should keep in mind that our analysis is based on a rather small test set from a specific pair of books. More general empirical investigations remain a desideratum.
@@ -612,8 +529,8 @@ This paper investigated two key methodological questions: (1) how to effectively
 
 The integration of domain-specific knowledge through expert prompting revealed both promising capabilities and significant methodological challenges. While the expert prompt achieved higher theoretical alignment scores (+\qty{16.23}{\percent}) and demonstrated increased sensitivity in reference detection (\qty{30}{\percent} vs \qty{5}{\percent}), the results highlight crucial considerations for operationalizing literary expertise in computational frameworks.
 
-The disparity between naive and expert prompt performance suggests that LLMs can effectively leverage domain knowledge when properly contextualized. However, the expert prompt's tendency toward over-interpretation -- evidenced by the \qty{90}{\percent} rate of classical transformation claims and observed 
-in manual inspection  -- reveals a fundamental challenge in operationalizing nuanced literary concepts. This pattern suggests that transforming qualitative literary expertise into computational parameters requires more sophisticated constraints than simple prompt augmentation. 
+The disparity between naive and expert prompt performance suggests that LLMs can effectively leverage domain knowledge when properly contextualized. However, the expert prompt's tendency toward over-interpretation -- evidenced by the \qty{90}{\percent} rate of classical transformation claims and observed
+in manual inspection  -- reveals a fundamental challenge in operationalizing nuanced literary concepts. This pattern suggests that transforming qualitative literary expertise into computational parameters requires more sophisticated constraints than simple prompt augmentation.
 
 \subsection{Evaluating the Two-Stage Methodology}
 
@@ -635,22 +552,18 @@ These findings have several implications for computational literary studies:
 
 Two fundamental validation questions remain for future work. First, we have not validated whether semantic similarity reliably indicates intertextual potential through comparison with manually annotated gold-standard data. While this would be clearly desirable, developing a gold standard on intertextual references comes with substantial challenges: Without any kind of pre-filtering, which in turn would need to make certain assumptions, the rate of negative cases (i.e., pairs without any intertextual relation) can be expected to be very high. This is not only frustrating to annotators (and may quickly lead to tiredness and inattention), it would also mean that the gold standard is very small or highly biased towards the negative class.
 
-Second, we have not evaluated the precision of detected references. While they could be compared with established Woolf scholarship, this would only be insightful as a confirmation step, but not as refutation -- after all, such a reference might not have been detected (or described) yet in the established body of literature. Evaluating the references from scratch would require significant literary expertise. Still, these validations would strengthen confidence in both the filtering mechanism and analytical accuracy. 
-
+Second, we have not evaluated the precision of detected references. While they could be compared with established Woolf scholarship, this would only be insightful as a confirmation step, but not as refutation -- after all, such a reference might not have been detected (or described) yet in the established body of literature. Evaluating the references from scratch would require significant literary expertise. Still, these validations would strengthen confidence in both the filtering mechanism and analytical accuracy.
 
 Several methodological limitations warrant consideration. Most fundamentally, while our comparative approach of analyzing both similar and dissimilar passages provides evidence that semantic similarity correlates with reference detection rates, we have not validated the foundational assumption that high semantic similarity reliably indicates intertextual potential. Our methodology treats semantic similarity as a practical heuristic for prioritizing computational resources, with the LLM analysis serving as the interpretive layer that determines actual intertextual significance. However, future work should establish this baseline through manual annotation of a gold-standard corpus, comparing semantic similarity scores against expert-identified intertextual relationships to quantify the precision and recall of similarity-based filtering.
 Additionally, the binary classification of similarity relationships (most similar vs. most dissimilar) may oversimplify the complex nature of intertextual connections. Our evaluation framework, while systematic, could benefit from more granular assessment criteria for different types of intertextual relationships.
 
-
 \section{Conclusions}
 In this exploratory seminar paper, we investigated the potential of Large Language Models for computational analysis of intertextual relationships, focusing specifically on Virginia Woolf's \booktitle{Mrs. Dalloway} and Homer's \booktitle{Odyssey}. We developed and evaluated a two-stage methodology combining semantic similarity pre-filtering with prompt-based analysis, comparing the performance of expert-informed versus naive prompting strategies. Through systematic evaluation across multiple dimensions -- including reference detection patterns, analysis quality metrics, and inter-prompt agreement -- we demonstrated both the capabilities and constraints of LLM-based approaches to literary analysis. Our experimental results revealed significant differences between expert-informed and naive approaches, with the expert prompt achieving higher theoretical alignment (+\qty{16.23}{\percent}) and increased sensitivity in reference detection (\qty{30}{\percent} versus \qty{5}{\percent}).
 
-Our findings demonstrate both the potential and limitations of operationalizing literary analysis through LLMs. While the two-stage methodology shows promise for systematic intertextual detection, the challenges in effectively constraining domain knowledge application highlight the need for more sophisticated approaches to computational literary analysis. These results contribute to ongoing discussions about the integration of computational methods with traditional literary scholarship and suggest productive directions for developing more robust methodological frameworks. 
+Our findings demonstrate both the potential and limitations of operationalizing literary analysis through LLMs. While the two-stage methodology shows promise for systematic intertextual detection, the challenges in effectively constraining domain knowledge application highlight the need for more sophisticated approaches to computational literary analysis. These results contribute to ongoing discussions about the integration of computational methods with traditional literary scholarship and suggest productive directions for developing more robust methodological frameworks.
 \section*{Acknowledgments}
 
 We thank Michael Göggelmann for his work as annotator.
-
-
 
 \printbibliography
 
@@ -660,8 +573,8 @@ We thank Michael Göggelmann for his work as annotator.
 \section{Naive System Prompt}
 \label{appendix:naive_prompt}
 \begin{Verbatim}[
-  breaklines=true,breaksymbol=, breakanywheresymbolpre=]
-   You are a literary analyst tasked with comparing two text passages to identify potential intertextual connections between them. Your goal is to determine whether there are meaningful relationships between the texts and explain your reasoning.
+breaklines=true,breaksymbol=, breakanywheresymbolpre=]
+You are a literary analyst tasked with comparing two text passages to identify potential intertextual connections between them. Your goal is to determine whether there are meaningful relationships between the texts and explain your reasoning.
 
 ---
 
@@ -695,55 +608,54 @@ We thank Michael Göggelmann for his work as annotator.
 1. Read both passages carefully.
 
 2. Compare the provided passages and identify connections in terms of:
-   - Direct references (quotes, allusions, similar phrases)
-   - Transformations (adaptations, reinterpretations)
+- Direct references (quotes, allusions, similar phrases)
+- Transformations (adaptations, reinterpretations)
 
 3. For each connection you identify:
-   - Quote or describe the relevant parts of each text
-   - Explain why you think they are related
-   - Rate your confidence in the connection (high/medium/low)
+- Quote or describe the relevant parts of each text
+- Explain why you think they are related
+- Rate your confidence in the connection (high/medium/low)
 
 4. Consider whether the similarities are:
-   - Intentional references from one text to another
-   - Common literary patterns
-   - Coincidental similarities
+- Intentional references from one text to another
+- Common literary patterns
+- Coincidental similarities
 
 5. Support your analysis with specific evidence from the texts.
-
 
 ---
 
 ## Output Format
 
 1. **Initial Observations**:
-   - Brief overview of the most obvious connections. 
-   - General impression of how the two text chunks relate.
-   - Key themes or motifs that suggest relationship. 
+- Brief overview of the most obvious connections.
+- General impression of how the two text chunks relate.
+- Key themes or motifs that suggest relationship.
 
 2. **Thinking Steps**:
-   For each analytical step, provide:
-   - Step number
-   - Current thought/consideration
-   - Specific analysis being performed
-   - What was discovered
-   - Confidence level (high/medium/low)
-   - What to consider next or if you're done: "I can't think of anything else. No further thoughts needed"
+For each analytical step, provide:
+- Step number
+- Current thought/consideration
+- Specific analysis being performed
+- What was discovered
+- Confidence level (high/medium/low)
+- What to consider next or if you're done: "I can't think of anything else. No further thoughts needed"
 
 3. **Connections**:
-   For each connection identified:
-   - Connection type (intertextual/hypertextual)
-   - Evidence from the Odyssey passage (including context)
-   - Evidence from Mrs. Dalloway passage (including context)
-   - Detailed explanation of the relationship and its significance
-   - Confidence level (high/medium/low)
+For each connection identified:
+- Connection type (intertextual/hypertextual)
+- Evidence from the Odyssey passage (including context)
+- Evidence from Mrs. Dalloway passage (including context)
+- Detailed explanation of the relationship and its significance
+- Confidence level (high/medium/low)
 
 4. **Evaluation**:
-   - Intentionality: Are the connections intentional or coincidental?
-   - Significance: What is the literary importance of the connections?
-   - Interpretation: How do the connections contribute to meaning?
-   - Uncertainties: What questions or doubts exist about the connections?
-   - Conclusion: Final assessment of whether a meaningful relationship exists
-   - Is Reference: Whether the connections constitute intentional references (true/false)
+- Intentionality: Are the connections intentional or coincidental?
+- Significance: What is the literary importance of the connections?
+- Interpretation: How do the connections contribute to meaning?
+- Uncertainties: What questions or doubts exist about the connections?
+- Conclusion: Final assessment of whether a meaningful relationship exists
+- Is Reference: Whether the connections constitute intentional references (true/false)
 
 ---
 
@@ -768,66 +680,66 @@ The passages show strong similarities in setting and situation, with the later t
 THINKING STEPS
 
 Step 1
-**Step Number**: 1  
-**Thought**: First examine texts for direct textual parallels  
-**Action**: Close reading of both passages, marking similar phrases and motifs  
-**Result**: Identified shared elements: nighttime setting, solitary reader, books/manuscripts, interruption by knocking  
-**Confidence**: High  
+**Step Number**: 1
+**Thought**: First examine texts for direct textual parallels
+**Action**: Close reading of both passages, marking similar phrases and motifs
+**Result**: Identified shared elements: nighttime setting, solitary reader, books/manuscripts, interruption by knocking
+**Confidence**: High
 **Next Thought**: Analyze how these parallel elements are presented differently in each text
 
 Step 2
-**Step Number**: 2  
-**Thought**: Based on identified parallels, analyzing how elements are presented differently  
-**Action**: Compare narrative techniques, language choices, and structural elements  
-**Result**: Poe emphasizes musicality and repetition while Gaiman opts for atmospheric prose description  
-**Confidence**: High  
+**Step Number**: 2
+**Thought**: Based on identified parallels, analyzing how elements are presented differently
+**Action**: Compare narrative techniques, language choices, and structural elements
+**Result**: Poe emphasizes musicality and repetition while Gaiman opts for atmospheric prose description
+**Confidence**: High
 **Next Thought**: Examine how this transformation from verse to prose affects the gothic atmosphere
 
 Step 3
-**Step Number**: 3  
-**Thought**: Examining how the verse-to-prose transformation affects gothic atmosphere  
-**Action**: Compare how each version builds tension and creates mood  
-**Result**: Gaiman maintains gothic elements through descriptive language rather than sonic effects  
-**Confidence**: Medium  
+**Step Number**: 3
+**Thought**: Examining how the verse-to-prose transformation affects gothic atmosphere
+**Action**: Compare how each version builds tension and creates mood
+**Result**: Gaiman maintains gothic elements through descriptive language rather than sonic effects
+**Confidence**: Medium
 **Next Thought**: Consider whether this transformation suggests conscious homage or genre convention
 
 Step 4
-**Step Number**: 4  
-**Thought**: Analyzing whether similarities indicate deliberate reference or genre convention  
-**Action**: Evaluate specific parallels against common gothic tropes  
-**Result**: Combination of specific details suggests intentional reference while adapting to modern style  
-**Confidence**: Medium  
+**Step Number**: 4
+**Thought**: Analyzing whether similarities indicate deliberate reference or genre convention
+**Action**: Evaluate specific parallels against common gothic tropes
+**Result**: Combination of specific details suggests intentional reference while adapting to modern style
+**Confidence**: Medium
 **Next Thought**: Explore how this conscious adaptation contributes to the evolution of gothic literature
 
 Step 5
-**Step Number**: 5  
-**Thought**: Examining contribution to gothic literature's evolution  
-**Action**: Consider how modern adaptation maintains genre connection while speaking to contemporary readers  
-**Result**: Demonstrates how gothic traditions can be preserved while updating form and style  
-**Confidence**: High  
+**Step Number**: 5
+**Thought**: Examining contribution to gothic literature's evolution
+**Action**: Consider how modern adaptation maintains genre connection while speaking to contemporary readers
+**Result**: Demonstrates how gothic traditions can be preserved while updating form and style
+**Confidence**: High
 **Next Thought**: Everything is done. No further thoughts needed
 
 CONNECTIONS
 
 Connection 1: Setting Construction
-**Type**: hypertextual  
-**Text 1 Evidence**: "midnight dreary... pondered, weak and weary"  
-**Text 2 Evidence**: "It was dark in the room, and outside the wind was howling"  
-**Explanation**: Gaiman transforms Poe's metered, gothic atmosphere into modern prose while maintaining the core elements of darkness and isolation.  
+**Type**: hypertextual
+**Text 1 Evidence**: "midnight dreary... pondered, weak and weary"
+**Text 2 Evidence**: "It was dark in the room, and outside the wind was howling"
+**Explanation**: Gaiman transforms Poe's metered, gothic atmosphere into modern prose while maintaining the core elements of darkness and isolation.
 **Confidence**: High
 
 Connection 2: Character Activity
-**Type**: intertextual  
-**Text 1 Evidence**: "while I pondered... over many a quaint and curious volume"  
-**Text 2 Evidence**: "surrounded by leather-bound books, half-dozing over an old manuscript"  
-**Explanation**: Direct parallel in both activity and props, suggesting deliberate reference.  
+**Type**: intertextual
+**Text 1 Evidence**: "while I pondered... over many a quaint and curious volume"
+**Text 2 Evidence**: "surrounded by leather-bound books, half-dozing over an old manuscript"
+**Explanation**: Direct parallel in both activity and props, suggesting deliberate reference.
 **Confidence**: High
 
 Connection 3: The Interruption
-**Type**: hypertextual  
-**Text 1 Evidence**: "suddenly there came a tapping... gently rapping"  
-**Text 2 Evidence**: "when he heard the first knock at the door"  
-**Explanation**: Gaiman simplifies Poe's repetitive, musical description while maintaining the core dramatic element.  
+**Type**: hypertextual
+**Text 1 Evidence**: "suddenly there came a tapping... gently rapping"
+**Text 2 Evidence**: "when he heard the first knock at the door"
+**Explanation**: Gaiman simplifies Poe's repetitive, musical description while maintaining the core dramatic element.
 **Confidence**: Medium
 
 EVALUATION
@@ -874,27 +786,27 @@ The second text directly quotes Shakespeare's famous soliloquy, marking it expli
 THINKING STEPS
 
 Step 1
-**Step Number**: 1  
-**Thought**: First examine texts for direct textual parallels  
-**Action**: Identify explicit quotation and its markers  
-**Result**: Found direct quote with attribution and quotation marks  
-**Confidence**: High  
+**Step Number**: 1
+**Thought**: First examine texts for direct textual parallels
+**Action**: Identify explicit quotation and its markers
+**Result**: Found direct quote with attribution and quotation marks
+**Confidence**: High
 **Next Thought**: Analyze how the modern context transforms the quote's meaning
 
 Step 2
-**Step Number**: 2  
-**Thought**: Analyzing how modern context transforms the quote's meaning  
-**Action**: Compare original tragic context with contemporary usage  
-**Result**: Quote recontextualized from existential crisis to career decision  
-**Confidence**: High  
+**Step Number**: 2
+**Thought**: Analyzing how modern context transforms the quote's meaning
+**Action**: Compare original tragic context with contemporary usage
+**Result**: Quote recontextualized from existential crisis to career decision
+**Confidence**: High
 **Next Thought**: Examine how this recontextualization affects the quote's gravity
 
 Step 3
-**Step Number**: 3  
-**Thought**: Examining effect of recontextualization on quote's gravity  
-**Action**: Compare emotional weight in both contexts  
-**Result**: Modern usage creates ironic contrast between profound original and mundane new context  
-**Confidence**: High  
+**Step Number**: 3
+**Thought**: Examining effect of recontextualization on quote's gravity
+**Action**: Compare emotional weight in both contexts
+**Result**: Modern usage creates ironic contrast between profound original and mundane new context
+**Confidence**: High
 **Next Thought**: I can't think of anything else. No further thoughts needed
 
 CONNECTIONS
@@ -961,43 +873,43 @@ The second text alludes to Frost's poem without direct quotation, recreating the
 THINKING STEPS
 
 Step 1
-**Step Number**: 1  
-**Thought**: First examine texts for thematic and structural parallels  
-**Action**: Compare core metaphors and situations  
-**Result**: Both texts present moment of choice between two paths  
-**Confidence**: High  
+**Step Number**: 1
+**Thought**: First examine texts for thematic and structural parallels
+**Action**: Compare core metaphors and situations
+**Result**: Both texts present moment of choice between two paths
+**Confidence**: High
 **Next Thought**: Analyze how modern text adapts the metaphor
 
 Step 2
-**Step Number**: 2  
-**Thought**: Analyzing adaptation of path metaphor to modern context  
-**Action**: Compare symbolic elements in both texts  
-**Result**: Physical paths become flight paths; wood becomes airport  
-**Confidence**: High  
+**Step Number**: 2
+**Thought**: Analyzing adaptation of path metaphor to modern context
+**Action**: Compare symbolic elements in both texts
+**Result**: Physical paths become flight paths; wood becomes airport
+**Confidence**: High
 **Next Thought**: Examine how modernization affects the metaphor's resonance
 
 Step 3
-**Step Number**: 3  
-**Thought**: Examining metaphor's effectiveness in modern context  
-**Action**: Compare emotional impact in both settings  
-**Result**: Modern version maintains core tension while updating imagery  
-**Confidence**: Medium  
+**Step Number**: 3
+**Thought**: Examining metaphor's effectiveness in modern context
+**Action**: Compare emotional impact in both settings
+**Result**: Modern version maintains core tension while updating imagery
+**Confidence**: Medium
 **Next Thought**: I can't think of anything else. No further thoughts needed
 
 CONNECTIONS
 
 Connection 1: Core Metaphor
-**Type**: intertextual  
-**Text 1 Evidence**: "Two roads diverged"  
-**Text 2 Evidence**: "two departure boards"  
-**Explanation**: Modern text transforms physical paths into flight paths while maintaining the binary choice metaphor  
+**Type**: intertextual
+**Text 1 Evidence**: "Two roads diverged"
+**Text 2 Evidence**: "two departure boards"
+**Explanation**: Modern text transforms physical paths into flight paths while maintaining the binary choice metaphor
 **Confidence**: High
 
 Connection 2: Moment of Decision
-**Type**: intertextual  
-**Text 1 Evidence**: "long I stood"  
-**Text 2 Evidence**: "couldn't help lingering there"  
-**Explanation**: Both texts emphasize the weight of the moment through physical pause  
+**Type**: intertextual
+**Text 1 Evidence**: "long I stood"
+**Text 2 Evidence**: "couldn't help lingering there"
+**Explanation**: Both texts emphasize the weight of the moment through physical pause
 **Confidence**: High
 
 EVALUATION
@@ -1116,8 +1028,8 @@ Is Reference: false
 \label{appendix:expert_prompt}
 
 \begin{Verbatim}[
-  breaklines=true,breaksymbol=, breakanywheresymbolpre=]
-You are a literary analyst tasked with comparing two text passages to identify potential intertextual connections between them. 
+breaklines=true,breaksymbol=, breakanywheresymbolpre=]
+You are a literary analyst tasked with comparing two text passages to identify potential intertextual connections between them.
 
 Virginia Woolf (1882-1941) was a pioneering modernist writer known for her innovative narrative techniques and feminist perspectives. Her masterpiece Mrs. Dalloway (1925) demonstrates her sophisticated approach to intertextuality, particularly in its engagement with classical texts. Unlike her contemporaries James Joyce and T.S. Eliot who made their classical references obvious, Woolf developed a subtle and integrated style of intertextual reference that operates on multiple levels simultaneously.
 
@@ -1172,23 +1084,23 @@ In Woolf's work, hypertextuality often appears as:
 1. Read both passages carefully.
 
 2. Compare the provided passages and identify connections in terms of:
-   - Direct references (quotes, allusions, similar phrases)
-   - Transformations (adaptations, reinterpretations)
-   - Subtle patterns of integration
-   - Multiple operational levels ("from the word and phoneme through sentence, character, and plot to genre itself" - Woolf in Context, p.55)
-   - Potential feminist transformations
+- Direct references (quotes, allusions, similar phrases)
+- Transformations (adaptations, reinterpretations)
+- Subtle patterns of integration
+- Multiple operational levels ("from the word and phoneme through sentence, character, and plot to genre itself" - Woolf in Context, p.55)
+- Potential feminist transformations
 
 3. For each connection you identify:
-   - Quote or describe the relevant parts of each text
-   - Explain why you think they are related
-   - Rate your confidence in the connection (high/medium/low)
-   - Consider both obvious and hidden relationships
+- Quote or describe the relevant parts of each text
+- Explain why you think they are related
+- Rate your confidence in the connection (high/medium/low)
+- Consider both obvious and hidden relationships
 
 4. Consider whether the similarities are:
-   - Intentional references from one text to another
-   - Common literary patterns
-   - Coincidental similarities
-   - "Secret founts of pleasure" that enrich without requiring recognition
+- Intentional references from one text to another
+- Common literary patterns
+- Coincidental similarities
+- "Secret founts of pleasure" that enrich without requiring recognition
 
 5. Support your analysis with specific evidence from the texts.
 
@@ -1202,34 +1114,34 @@ Additional aspects to consider:
 ## Output Format
 
 1. **Initial Observations**:
-   - Brief overview of the most obvious connections. 
-   - General impression of how the two text chunks relate.
-   - Key themes or motifs that suggest relationship. 
+- Brief overview of the most obvious connections.
+- General impression of how the two text chunks relate.
+- Key themes or motifs that suggest relationship.
 
 2. **Thinking Steps**:
-   For each analytical step, provide:
-   - Step number
-   - Current thought/consideration
-   - Specific analysis being performed
-   - What was discovered
-   - Confidence level (high/medium/low)
-   - What to consider next or if you're done: "I can't think of anything else. No further thoughts needed"
+For each analytical step, provide:
+- Step number
+- Current thought/consideration
+- Specific analysis being performed
+- What was discovered
+- Confidence level (high/medium/low)
+- What to consider next or if you're done: "I can't think of anything else. No further thoughts needed"
 
 3. **Connections**:
-   For each connection identified:
-   - Connection type (intertextual/hypertextual)
-   - Evidence from the Odyssey passage (including context)
-   - Evidence from Mrs. Dalloway passage (including context)
-   - Detailed explanation of the relationship and its significance
-   - Confidence level (high/medium/low)
+For each connection identified:
+- Connection type (intertextual/hypertextual)
+- Evidence from the Odyssey passage (including context)
+- Evidence from Mrs. Dalloway passage (including context)
+- Detailed explanation of the relationship and its significance
+- Confidence level (high/medium/low)
 
 4. **Evaluation**:
-   - Intentionality: Critical analysis of the intentionality of the connections
-   - Significance: Synthesis of the significance of the connections
-   - Interpretation: Possible interpretation of the connections
-   - Uncertainties: Could the connections be interpreted differently? Is it possible that the connections are not intentional?
-   - Conclusion: Conclusion on whether a meaningful relationship exists between the texts based on the analysis
-   - Is Reference: Whether the connections are references to the Odyssey
+- Intentionality: Critical analysis of the intentionality of the connections
+- Significance: Synthesis of the significance of the connections
+- Interpretation: Possible interpretation of the connections
+- Uncertainties: Could the connections be interpreted differently? Is it possible that the connections are not intentional?
+- Conclusion: Conclusion on whether a meaningful relationship exists between the texts based on the analysis
+- Is Reference: Whether the connections are references to the Odyssey
 
 ---
 
@@ -1554,7 +1466,6 @@ Is Reference: false
 
 ---
 
-
 ## Important Notes:
 - Base your analysis only on the provided two passages
 - If you find no significant connections, state this clearly and explain why
@@ -1571,173 +1482,170 @@ Is Reference: false
 \section{Pydantic Schemas for Structured Output}
 \label{appendix:structured_schema}
 \begin{Verbatim}[
-  breaklines=true,breaksymbol=, breakanywheresymbolpre=]
+breaklines=true,breaksymbol=, breakanywheresymbolpre=]
 from typing import List, Literal
 from pydantic import BaseModel, Field
 
 # Type Definitions
 ConfidenceLevel = Literal["low", "medium", "high"]
 ConnectionType = Literal[
-    "intertextual",    # Direct presence through quotation, allusion, or plagiarism
-    "hypertextual",     # Transformation or adaptation of earlier text
-    "none"  # No connection found
+"intertextual",    # Direct presence through quotation, allusion, or plagiarism
+"hypertextual",     # Transformation or adaptation of earlier text
+"none"  # No connection found
 ]
 
 class ThinkingStep(BaseModel):
-    """A step in the analytical thinking process following Genette's framework."""
-    step_number: int = Field(
-        description="Sequential number of this thinking step"
-    )
-    thought: str = Field(
-        description=(
-            "Current analytical consideration. For example:\n"
-            "- First examining text for direct references (intertextuality)\n"
-            "- Then considering possible transformations (hypertextuality)\n"
-            "- Analyzing the significance of identified connections\n"
-            "- Evaluating how the connection contributes to meaning"
-        )
-    )
-    action: str = Field(
-        description=(
-            "Specific analysis being performed. For example:\n"
-            "- Close reading of specific passages\n"
-            "- Comparing textual elements\n"
-            "- Analyzing transformation techniques\n"
-            "- Examining contextual significance"
-        )
-    )
-    result: str = Field(
-        description=(
-            "What was discovered in this step. For example:\n"
-            "- Identified specific textual parallel\n"
-            "- Found transformation of Homeric element\n"
-            "- Discovered pattern of adaptation\n"
-            "- Recognized significant variation"
-        )
-    )
-    confidence: ConfidenceLevel = Field(
-        description=(
-            "Confidence in this step's conclusion:\n"
-            "- low: Speculative or requires more evidence\n"
-            "- medium: Clear connection but interpretive questions remain\n"
-            "- high: Strong textual and theoretical support"
-        )
-    )
-    next_thought: str = Field(
-        description=(
-            "Based on this result, what should be considered next. For example:\n"
-            "- Examine how this connection creates new meaning\n"
-            "- Analyze how transformation serves Woolf's purposes\n"
-            "- Consider broader patterns of engagement\n"
-            "- Evaluate significance within modernist context\n"
-            "- If no further thoughts are needed: 'I can't think of anything else. No further thoughts needed'"
-        )
-    )
-    
+"""A step in the analytical thinking process following Genette's framework."""
+step_number: int = Field(
+description="Sequential number of this thinking step"
+)
+thought: str = Field(
+description=(
+"Current analytical consideration. For example:\n"
+"- First examining text for direct references (intertextuality)\n"
+"- Then considering possible transformations (hypertextuality)\n"
+"- Analyzing the significance of identified connections\n"
+"- Evaluating how the connection contributes to meaning"
+)
+)
+action: str = Field(
+description=(
+"Specific analysis being performed. For example:\n"
+"- Close reading of specific passages\n"
+"- Comparing textual elements\n"
+"- Analyzing transformation techniques\n"
+"- Examining contextual significance"
+)
+)
+result: str = Field(
+description=(
+"What was discovered in this step. For example:\n"
+"- Identified specific textual parallel\n"
+"- Found transformation of Homeric element\n"
+"- Discovered pattern of adaptation\n"
+"- Recognized significant variation"
+)
+)
+confidence: ConfidenceLevel = Field(
+description=(
+"Confidence in this step's conclusion:\n"
+"- low: Speculative or requires more evidence\n"
+"- medium: Clear connection but interpretive questions remain\n"
+"- high: Strong textual and theoretical support"
+)
+)
+next_thought: str = Field(
+description=(
+"Based on this result, what should be considered next. For example:\n"
+"- Examine how this connection creates new meaning\n"
+"- Analyze how transformation serves Woolf's purposes\n"
+"- Consider broader patterns of engagement\n"
+"- Evaluate significance within modernist context\n"
+"- If no further thoughts are needed: 'I can't think of anything else. No further thoughts needed'"
+)
+)
 
 class Connection(BaseModel):
-    """Details of a specific transtextual relationship based on Genette's framework."""
-    connection_type: ConnectionType = Field(
-        description=(
-            "The type of transtextual relationship identified:\n"
-            "- intertextual: 'Effective presence of one text within another' through "
-            "quotation, allusion, or plagiarism\n"
-            "- hypertextual: 'Transformation or adaptation of an earlier text (hypotext) "
-            "into a new text (hypertext)'\n"
-            "- none: No connection found"
-        )
-    )
-    text1_evidence: str = Field(
-        description=(
-            "Relevant passage from the Odyssey, including:\n"
-            "- Specific quotation or description\n"
-            "- Context within the Odyssey\n"
-            "- Significant elements or motifs"        
-            )
-    )
-    text2_evidence: str = Field(
-        description=(
-            "Relevant passage from Mrs. Dalloway, showing:\n"
-            "- How Woolf incorporates or transforms the Homeric material\n"
-            "- Context within Mrs. Dalloway\n"
-            "- Significance of the adaptation"
-        )
-    )
-    explanation: str = Field(
-        description=(
-            "Literary analysis of the potential transtextual relationship, including:\n"
-            "- Nature of the connection\n"
-            "- How Woolf adapts, references or reinterprets Homer\n"
-            "- Purpose and effect of the connection\n"
-            "- Contribution to broader themes and meanings"
-        )
-    )
-    confidence: ConfidenceLevel = Field(
-        description=(
-            "Confidence level in this connection:\n"
-            "- low: Possible but requires more evidence\n"
-            "- medium: Clear connection but questions about significance remain\n"
-            "- high: Well-supported connection with clear literary significance"
-        )
-    )
+"""Details of a specific transtextual relationship based on Genette's framework."""
+connection_type: ConnectionType = Field(
+description=(
+"The type of transtextual relationship identified:\n"
+"- intertextual: 'Effective presence of one text within another' through "
+"quotation, allusion, or plagiarism\n"
+"- hypertextual: 'Transformation or adaptation of an earlier text (hypotext) "
+"into a new text (hypertext)'\n"
+"- none: No connection found"
+)
+)
+text1_evidence: str = Field(
+description=(
+"Relevant passage from the Odyssey, including:\n"
+"- Specific quotation or description\n"
+"- Context within the Odyssey\n"
+"- Significant elements or motifs"
+)
+)
+text2_evidence: str = Field(
+description=(
+"Relevant passage from Mrs. Dalloway, showing:\n"
+"- How Woolf incorporates or transforms the Homeric material\n"
+"- Context within Mrs. Dalloway\n"
+"- Significance of the adaptation"
+)
+)
+explanation: str = Field(
+description=(
+"Literary analysis of the potential transtextual relationship, including:\n"
+"- Nature of the connection\n"
+"- How Woolf adapts, references or reinterprets Homer\n"
+"- Purpose and effect of the connection\n"
+"- Contribution to broader themes and meanings"
+)
+)
+confidence: ConfidenceLevel = Field(
+description=(
+"Confidence level in this connection:\n"
+"- low: Possible but requires more evidence\n"
+"- medium: Clear connection but questions about significance remain\n"
+"- high: Well-supported connection with clear literary significance"
+)
+)
 
 class Evaluation(BaseModel):
-    """Critical evaluation of the potential transtextual relationships"""
-    intentionality: str = Field(
-        description="Critical analysis of the intentionality of the connections"
-    )
-    significance: str = Field(
-        description="Synthesis of the significance of the connections"
-    )
-    interpretation: str = Field(
-        description="Possible interpretation of the connections"
-    )
-    uncertainties: str = Field(
-        description="Could the connections be interpreted differently? Is it possible that the connections are not intentional?"
-    )
-    conclusion: str = Field(
-        description="Conclusion on whether a meaningful relationship exists between the texts based on the analysis"
-    )
-    is_reference: bool = Field(
-        description="Whether the connections are references to the Odyssey"
-    )
+"""Critical evaluation of the potential transtextual relationships"""
+intentionality: str = Field(
+description="Critical analysis of the intentionality of the connections"
+)
+significance: str = Field(
+description="Synthesis of the significance of the connections"
+)
+interpretation: str = Field(
+description="Possible interpretation of the connections"
+)
+uncertainties: str = Field(
+description="Could the connections be interpreted differently? Is it possible that the connections are not intentional?"
+)
+conclusion: str = Field(
+description="Conclusion on whether a meaningful relationship exists between the texts based on the analysis"
+)
+is_reference: bool = Field(
+description="Whether the connections are references to the Odyssey"
+)
 
 class Analysis(BaseModel):
-    """The complete transtextual analysis following Genette's framework."""
-    initial_observations: str = Field(
-        description=(
-            "Preliminary analysis of the passages, including:\n"
-            "- Initial identification of potential connections\n"
-            "- Notable patterns of reference or transformation\n"
-            "- Key elements that could suggest relationship"
-        )
-    )
-    
-    thinking_steps: List[ThinkingStep] = Field(
-        description=(
-            "Systematic analysis process, showing:\n"
-            "- Application of theoretical framework\n"
-            "- Close reading and comparison\n"
-            "- Development of interpretation"
-        )
-    )
-    
-    connections: List[Connection] = Field(
-        description=(
-            "Detailed analysis of each potential transtextual relationship, examining:\n"
-            "- Type of connection (intertextual/hypertextual)\n"
-            "- Evidence from both texts\n"
-            "- Literary and theoretical significance"
-        )
-    )
-    
-    evaluation: Evaluation = Field(
-        description="Synthesis and evaluation of the analysis"
-    )
+"""The complete transtextual analysis following Genette's framework."""
+initial_observations: str = Field(
+description=(
+"Preliminary analysis of the passages, including:\n"
+"- Initial identification of potential connections\n"
+"- Notable patterns of reference or transformation\n"
+"- Key elements that could suggest relationship"
+)
+)
 
+thinking_steps: List[ThinkingStep] = Field(
+description=(
+"Systematic analysis process, showing:\n"
+"- Application of theoretical framework\n"
+"- Close reading and comparison\n"
+"- Development of interpretation"
+)
+)
+
+connections: List[Connection] = Field(
+description=(
+"Detailed analysis of each potential transtextual relationship, examining:\n"
+"- Type of connection (intertextual/hypertextual)\n"
+"- Evidence from both texts\n"
+"- Literary and theoretical significance"
+)
+)
+
+evaluation: Evaluation = Field(
+description="Synthesis and evaluation of the analysis"
+)
 
 \end{Verbatim}
-
 
 \section{Example LLM Analyses}
 \label{app:example-analyses}
@@ -1749,18 +1657,12 @@ This section presents three comparative analyses of text pairs, each analyzed by
 
 \subsubsection{Text Pair}
 
-
-
-\noindent
-\textbf{Mrs. Dalloway:}
+\paragraph{Mrs. Dalloway:}
 \begin{quote}
 As he opened the door of the room where the Italian girls sat making hats, he could see them; could hear them; they were rubbing wires among coloured beads in saucers; they were turning buckram shapes this way and that; the table was all strewn with feathers, spangles, silks, ribbons; scissors were rapping on the table; but something failed him; he could not feel. Still, scissors rapping, girls laughing, hats being made protected him; he was assured of safety; he had a refuge. But he could not sit there all night. There were moments of waking in the early morning. The bed was falling; he was falling. Oh for the scissors and the lamplight and the buckram shapes! He asked Lucrezia to marry him, the younger of the two, the gay, the frivolous, with those little artist's fingers that she would hold up and say ``It is all in them.'' Silk, feathers, what not were alive to them. ``It is the hat that matters most,'' she would say, when they walked out together. Every hat that passed, she would examine; and the cloak and the dress and the way the woman held herself. Ill-dressing, over-dressing she stigmatised, not savagely, rather with impatient movements of the hands, like those of a painter who puts from him some obvious well-meant glaring imposture; and then, generously, but always critically, she would welcome a shopgirl who had turned her little bit of stuff gallantly, or praise, wholly, with enthusiastic and professional understanding, a French lady descending from her carriage, in chinchilla, robes, pearls.
 \end{quote}
 
-
-
-\noindent
-\textbf{The Odyssey:}
+\paragraph{The Odyssey:}
 \begin{quote}
 Also this other wile she contrived in her heart. She set up in her halls a mighty web, fine of woof and very wide, whereat she would weave, and anon she spake among us: ``Ye princely youths, my wooers, now that goodly Odysseus is dead, do ye abide patiently, how eager soever to speed on this marriage of mine, till I finish the robe. I would not that the threads perish to no avail, even this shroud for the hero Laertes, against the day when the ruinous doom shall bring him low, of death that lays men at their length. So shall none of the Achaean women in the land count it blame in me, as well might be, were he to lie without a winding-sheet, a man that had gotten great possessions.'' So spake she, and our high hearts consented thereto. So then in the daytime she would weave the mighty web, and in the night unravel the same, when she had let place the torches by her. Thus for the space of three years she hid the thing by guile and won the minds of the Achaeans; but when the fourth year arrived and the seasons came round, as the months waned and many days were accomplished, then it was that one of her women who knew all declared it, and we found her unravelling the splendid web. Thus she finished it perforce and sore against her will. Now when she brought the robe to light, after she had woven the great web and washed it, and it shone even as sun or moon, at that very hour some evil god led Odysseus, I know not whence, to the upland farm, where the swineherd abode in his dwelling. Thither too came the dear son of divine Odysseus out of sandy Pylos, voyaging with his black ship.
 \end{quote}
@@ -1769,30 +1671,21 @@ Also this other wile she contrived in her heart. She set up in her halls a might
 
 \subsubsection{Naive Prompt Analysis}
 
-
-
-\noindent
-\textbf{Initial Observations}
+\paragraph{Initial Observations}
 The passages from Mrs. Dalloway and The Odyssey both involve themes of creation and craftsmanship, with the former focusing on hat-making and the latter on weaving. The semantic similarity score suggests a moderate level of similarity, potentially indicating thematic parallels rather than direct textual references.
 
-
-
-\noindent
-\textbf{Connection Identified}
+\paragraph{Connection Identified}
 
 \noindent\textbf{Connection: Craftsmanship Motif}
 \begin{itemize}
-    \item \textbf{Type:} None
-    \item \textbf{Odyssey Evidence:} ``she would weave the mighty web, and in the night unravel the same''
-    \item \textbf{Mrs. Dalloway Evidence:} ``they were rubbing wires among coloured beads in saucers; they were turning buckram shapes this way and that''
-    \item \textbf{Explanation:} While both passages involve detailed descriptions of craftsmanship, the contexts and purposes differ significantly. The Odyssey uses weaving as a metaphor for cunning and patience, while Mrs. Dalloway uses hat-making to convey a sense of refuge and safety. The thematic parallels appear to be coincidental rather than intentional references.
-    \item \textbf{Confidence:} Medium
+\item \textbf{Type:} None
+\item \textbf{Odyssey Evidence:} ``she would weave the mighty web, and in the night unravel the same''
+\item \textbf{Mrs. Dalloway Evidence:} ``they were rubbing wires among coloured beads in saucers; they were turning buckram shapes this way and that''
+\item \textbf{Explanation:} While both passages involve detailed descriptions of craftsmanship, the contexts and purposes differ significantly. The Odyssey uses weaving as a metaphor for cunning and patience, while Mrs. Dalloway uses hat-making to convey a sense of refuge and safety. The thematic parallels appear to be coincidental rather than intentional references.
+\item \textbf{Confidence:} Medium
 \end{itemize}
 
-
-
-\noindent
-\textbf{Evaluation}
+\paragraph{Evaluation}
 
 \noindent\textbf{Intentionality:} The thematic parallels between the passages appear to be coincidental rather than intentional. Both texts use craftsmanship as a motif, but in different contexts and for different purposes.
 
@@ -1806,41 +1699,29 @@ The passages from Mrs. Dalloway and The Odyssey both involve themes of creation 
 
 \noindent\textbf{Is Reference:} False
 
-
-
-\noindent
-\textbf{Annotator Scores}
+\paragraph{Annotator Scores}
 \begin{itemize}
-    \item \textbf{Annotator 1:} Evidence Quality: 4, Theoretical Alignment: 3, Internal Consistency: 4
-    \item \textbf{Annotator 2:} Evidence Quality: 4, Theoretical Alignment: 3, Internal Consistency: 4
+\item \textbf{Annotator 1:} Evidence Quality: 4, Theoretical Alignment: 3, Internal Consistency: 4
+\item \textbf{Annotator 2:} Evidence Quality: 4, Theoretical Alignment: 3, Internal Consistency: 4
 \end{itemize}
 
 \subsubsection{Expert Prompt Analysis}
 
-
-
-\noindent
-\textbf{Initial Observations}
+\paragraph{Initial Observations}
 The passages from Mrs. Dalloway and The Odyssey both involve themes of craft and creation, with the former focusing on hat-making and the latter on weaving. Both passages also explore themes of deception and concealment, with the Mrs. Dalloway passage hinting at emotional refuge and the Odyssey passage detailing Penelope's ruse. The semantic similarity score suggests a moderate level of thematic overlap, though the contexts differ significantly.
 
-
-
-\noindent
-\textbf{Connection Identified}
+\paragraph{Connection Identified}
 
 \noindent\textbf{Connection: Craftsmanship as Refuge and Strategy}
 \begin{itemize}
-    \item \textbf{Type:} Hypertextual (transformation)
-    \item \textbf{Odyssey Evidence:} Penelope's weaving as a strategic deception to delay remarriage, involving craft and concealment.
-    \item \textbf{Mrs. Dalloway Evidence:} Hat-making as a form of emotional refuge and artistic expression, with Lucrezia's focus on craft and style.
-    \item \textbf{Explanation:} While Penelope uses weaving to deceive and delay, Lucrezia's hat-making provides emotional refuge and artistic expression. Woolf transforms the theme of craft from a tool of deception to a source of personal agency and creativity, reflecting a feminist reinterpretation of women's roles.
-    \item \textbf{Confidence:} Medium
+\item \textbf{Type:} Hypertextual (transformation)
+\item \textbf{Odyssey Evidence:} Penelope's weaving as a strategic deception to delay remarriage, involving craft and concealment.
+\item \textbf{Mrs. Dalloway Evidence:} Hat-making as a form of emotional refuge and artistic expression, with Lucrezia's focus on craft and style.
+\item \textbf{Explanation:} While Penelope uses weaving to deceive and delay, Lucrezia's hat-making provides emotional refuge and artistic expression. Woolf transforms the theme of craft from a tool of deception to a source of personal agency and creativity, reflecting a feminist reinterpretation of women's roles.
+\item \textbf{Confidence:} Medium
 \end{itemize}
 
-
-
-\noindent
-\textbf{Evaluation}
+\paragraph{Evaluation}
 
 \noindent\textbf{Intentionality:} The thematic parallels suggest Woolf may be engaging with classical themes of craft and concealment, but the transformation into a modern context with a focus on women's agency indicates a more subtle and integrated reference.
 
@@ -1854,78 +1735,56 @@ The passages from Mrs. Dalloway and The Odyssey both involve themes of craft and
 
 \noindent\textbf{Is Reference:} True
 
-
-
-\noindent
-\textbf{Annotator Scores}
+\paragraph{Annotator Scores}
 \begin{itemize}
-    \item \textbf{Annotator 1:} Evidence Quality: 3, Theoretical Alignment: 5, Internal Consistency: 5
-    \item \textbf{Annotator 2:} Evidence Quality: 3, Theoretical Alignment: 4, Internal Consistency: 5
+\item \textbf{Annotator 1:} Evidence Quality: 3, Theoretical Alignment: 5, Internal Consistency: 5
+\item \textbf{Annotator 2:} Evidence Quality: 3, Theoretical Alignment: 4, Internal Consistency: 5
 \end{itemize}
 
 \subsubsection{Comparative Analysis}
 
 This example demonstrates a fundamental difference between naive and expert prompting: the naive prompt did not mark the text pair as an intertextual relationship (\textit{is\_reference: false}), while the expert prompt identified it as a thematic transformation (\textit{is\_reference: true}).
 
-
-
-\noindent
-\textbf{Detection vs. Non-Detection}
+\paragraph{Detection vs. Non-Detection}
 
 The fundamental difference is binary: the naive prompt concluded there was ``no meaningful intertextual relationship,'' while the expert prompt identified a hypertextual transformation. Both analyses recognized the shared craftsmanship motif, but interpreted its significance differently.
 
-
-
-\noindent
-\textbf{Interpretive Framework Differences}
+\paragraph{Interpretive Framework Differences}
 
 The expert prompt's identification of this connection as a reference relied on recognizing:
 \begin{itemize}
-    \item The thematic parallel between Penelope's weaving and Lucrezia's hat-making
-    \item The transformation from ``strategic deception'' to ``emotional refuge and artistic expression''
-    \item The feminist reinterpretation of women's craft work
-    \item The shift from cunning to agency and creativity
+\item The thematic parallel between Penelope's weaving and Lucrezia's hat-making
+\item The transformation from ``strategic deception'' to ``emotional refuge and artistic expression''
+\item The feminist reinterpretation of women's craft work
+\item The shift from cunning to agency and creativity
 \end{itemize}
 
 The naive prompt, working without this interpretive framework, saw the same craftsmanship motif but concluded it was ``common in literature'' and therefore likely coincidental rather than intentional.
 
-
-
-\noindent
-\textbf{Score Patterns}
+\paragraph{Score Patterns}
 
 The naive analysis received higher evidence quality scores (4 vs. 3) despite missing the reference entirely, while the expert prompt achieved higher theoretical alignment scores (5/4 vs. 3/3). This pattern suggests:
 \begin{enumerate}
-    \item The naive prompt's conclusion was internally coherent and well-evidenced \textit{within its own framework}
-    \item The expert prompt's theoretical sophistication came from its interpretive lens rather than from identifying different textual evidence
-    \item Evidence quality assessment may be somewhat independent of whether the correct conclusion is reached
-    \item Both analyses had high internal consistency (4 vs. 5), indicating logical coherence regardless of interpretive framework
+\item The naive prompt's conclusion was internally coherent and well-evidenced \textit{within its own framework}
+\item The expert prompt's theoretical sophistication came from its interpretive lens rather than from identifying different textual evidence
+\item Evidence quality assessment may be somewhat independent of whether the correct conclusion is reached
+\item Both analyses had high internal consistency (4 vs. 5), indicating logical coherence regardless of interpretive framework
 \end{enumerate}
 
-
-
-\noindent
-\textbf{Implications}
- Both analyses identified the same basic thematic parallel (craftsmanship motifs), but reached opposite conclusions about intentionality. The expert prompt's recognition of this as a feminist transformation of Penelope's weaving -- shifting from deception to empowerment -- depends on an interpretive framework that sees such thematic parallels as potentially significant. The naive prompt dismissed the same parallel as coincidental, reflecting the assumption that ``common'' literary motifs are unlikely to represent intentional references. This suggests that some intertextual relationships, particularly those operating through thematic transformation rather than direct quotation, require not just detection of parallels but also an interpretive framework that can assess their potential significance.
-
+\paragraph{Implications}
+Both analyses identified the same basic thematic parallel (craftsmanship motifs), but reached opposite conclusions about intentionality. The expert prompt's recognition of this as a feminist transformation of Penelope's weaving -- shifting from deception to empowerment -- depends on an interpretive framework that sees such thematic parallels as potentially significant. The naive prompt dismissed the same parallel as coincidental, reflecting the assumption that ``common'' literary motifs are unlikely to represent intentional references. This suggests that some intertextual relationships, particularly those operating through thematic transformation rather than direct quotation, require not just detection of parallels but also an interpretive framework that can assess their potential significance.
 
 \subsection{Example 2: Death and Longing}
 \label{app:example-death}
 
 \subsubsection{Text Pair}
 
-
-
-\noindent
-\textbf{Mrs. Dalloway:}
+\paragraph{Mrs. Dalloway:}
 \begin{quote}
 They went on living (she would have to go back; the rooms were still crowded; people kept on coming). They (all day she had been thinking of Bourton, of Peter, of Sally), they would grow old. A thing there was that mattered; a thing, wreathed about with chatter, defaced, obscured in her own life, let drop every day in corruption, lies, chatter. This he had preserved. Death was defiance. Death was an attempt to communicate; people feeling the impossibility of reaching the centre which, mystically, evaded them; closeness drew apart; rapture faded, one was alone. There was an embrace in death. But this young man who had killed himself--had he plunged holding his treasure? ``If it were now to die, 'twere now to be most happy,'' she had said to herself once, coming down in white. Or there were the poets and thinkers. Suppose he had had that passion, and had gone to Sir William Bradshaw, a great doctor yet to her obscurely evil, without sex or lust, extremely polite to women, but capable of some indescribable outrage--forcing your soul, that was it--if this young man had gone to him, and Sir William had impressed him, like that, with his power, might he not then have said (indeed she felt it now), Life is made intolerable; they make life intolerable, men like that? Then (she had felt it only this morning) there was the terror; the overwhelming incapacity, one's parents giving it into one's hands, this life, to be lived to the end, to be walked with serenely; there was in the depths of her heart an awful fear.
 \end{quote}
 
-
-
-\noindent
-\textbf{The Odyssey:}
+\paragraph{The Odyssey:}
 \begin{quote}
 There he lies sorrowing and nurses his mighty grief, for long desire of thy return, and old age withal comes heavy upon him. Yea and even so did I too perish and meet my doom. It was not the archer goddess of the keen sight, who slew me in my halls with the visitation of her gentle shafts, nor did any sickness come upon me, such as chiefly with a sad wasting draws the spirit from the limbs; nay, it was my sore longing for thee, and for thy counsels, great Odysseus, and for thy loving-kindness, that reft me of sweet life. So spake she, and I mused in my heart and would fain have embraced the spirit of my mother dead. Thrice I sprang towards her, and was minded to embrace her; thrice she flitted from my hands as a shadow or even as a dream, and sharp grief arose ever at my heart. And uttering my voice I spake to her winged words: Mother mine, wherefore dost thou not abide me who am eager to clasp thee, that even in Hades we twain may cast our arms each about the other, and have our fill of chill lament? Is this but a phantom that the high goddess Persephone hath sent me, to the end that I may groan for more exceeding sorrow? So spake I, and my lady mother answered me anon: Ah me, my child, of all men most ill-fated, Persephone, the daughter of Zeus, doth in no wise deceive thee, but even on this wise it is with mortals when they die. For the sinews no more bind together the flesh and the bones, but the great force of burning fire abolishes these, so soon as the life hath left the white bones, and the spirit like a dream flies forth and hovers near. But haste with all thine heart toward the sunlight, and mark all this, that even hereafter thou mayest tell it to thy wife. Thus we twain held discourse together; and lo, the women came up, for the high goddess Persephone sent them forth, all they that had been the wives and daughters of mighty men. And they gathered and flocked about the black blood, and I took counsel how I might question them each one.
 \end{quote}
@@ -1934,30 +1793,21 @@ There he lies sorrowing and nurses his mighty grief, for long desire of thy retu
 
 \subsubsection{Naive Prompt Analysis}
 
-
-
-\noindent
-\textbf{Initial Observations}
+\paragraph{Initial Observations}
 Both passages explore themes of death, longing, and the inability to connect with loved ones. In Mrs. Dalloway, Clarissa reflects on death as a form of communication and defiance, while in The Odyssey, Odysseus experiences the sorrow of being unable to physically embrace his deceased mother. The semantic similarity score suggests a moderate level of thematic overlap, particularly in the exploration of death and the desire for connection.
 
-
-
-\noindent
-\textbf{Connection Identified}
+\paragraph{Connection Identified}
 
 \noindent\textbf{Connection: Death as a Barrier to Connection}
 \begin{itemize}
-    \item \textbf{Type:} Intertextual
-    \item \textbf{Odyssey Evidence:} ``Thrice I sprang towards her, and was minded to embrace her; thrice she flitted from my hands as a shadow or even as a dream, and sharp grief arose ever at my heart.''
-    \item \textbf{Mrs. Dalloway Evidence:} ``Death was an attempt to communicate; people feeling the impossibility of reaching the centre which, mystically, evaded them; closeness drew apart; rapture faded, one was alone.''
-    \item \textbf{Explanation:} Both passages explore the theme of death as a barrier to connection. In The Odyssey, Odysseus's inability to embrace his mother's spirit highlights the separation caused by death. Similarly, in Mrs. Dalloway, death is depicted as an attempt to communicate, yet it ultimately results in isolation and the fading of closeness. This thematic parallel suggests an implicit intertextual connection, where Woolf may be drawing on the Homeric theme of death as a barrier to connection.
-    \item \textbf{Confidence:} Medium
+\item \textbf{Type:} Intertextual
+\item \textbf{Odyssey Evidence:} ``Thrice I sprang towards her, and was minded to embrace her; thrice she flitted from my hands as a shadow or even as a dream, and sharp grief arose ever at my heart.''
+\item \textbf{Mrs. Dalloway Evidence:} ``Death was an attempt to communicate; people feeling the impossibility of reaching the centre which, mystically, evaded them; closeness drew apart; rapture faded, one was alone.''
+\item \textbf{Explanation:} Both passages explore the theme of death as a barrier to connection. In The Odyssey, Odysseus's inability to embrace his mother's spirit highlights the separation caused by death. Similarly, in Mrs. Dalloway, death is depicted as an attempt to communicate, yet it ultimately results in isolation and the fading of closeness. This thematic parallel suggests an implicit intertextual connection, where Woolf may be drawing on the Homeric theme of death as a barrier to connection.
+\item \textbf{Confidence:} Medium
 \end{itemize}
 
-
-
-\noindent
-\textbf{Evaluation}
+\paragraph{Evaluation}
 
 \noindent\textbf{Intentionality:} The thematic parallels between the passages suggest a possible intentional allusion by Woolf to The Odyssey, particularly in the exploration of death as a barrier to connection.
 
@@ -1971,50 +1821,38 @@ Both passages explore themes of death, longing, and the inability to connect wit
 
 \noindent\textbf{Is Reference:} True
 
-
-
-\noindent
-\textbf{Annotator Scores}
+\paragraph{Annotator Scores}
 \begin{itemize}
-    \item \textbf{Annotator 1:} Evidence Quality: 4, Theoretical Alignment: 4, Internal Consistency: 5
-    \item \textbf{Annotator 2:} Evidence Quality: 4, Theoretical Alignment: 4, Internal Consistency: 4
+\item \textbf{Annotator 1:} Evidence Quality: 4, Theoretical Alignment: 4, Internal Consistency: 5
+\item \textbf{Annotator 2:} Evidence Quality: 4, Theoretical Alignment: 4, Internal Consistency: 4
 \end{itemize}
 
 \subsubsection{Expert Prompt Analysis}
 
-
-
-\noindent
-\textbf{Initial Observations}
+\paragraph{Initial Observations}
 The passages from Mrs. Dalloway and The Odyssey both explore themes of death, longing, and the inability to fully connect with others. In Mrs. Dalloway, Clarissa reflects on death as a form of communication and defiance, while in The Odyssey, Odysseus encounters the spirit of his mother and experiences the sorrow of being unable to physically embrace her. Both texts convey a sense of isolation and the ephemeral nature of life and relationships.
 
-
-
-\noindent
-\textbf{Connections Identified}
+\paragraph{Connections Identified}
 
 \noindent\textbf{Connection 1: Death as Communication and Isolation}
 \begin{itemize}
-    \item \textbf{Type:} Intertextual
-    \item \textbf{Odyssey Evidence:} Odysseus's encounter with his mother's spirit, expressing longing and the inability to physically connect: ``Thrice I sprang towards her, and was minded to embrace her; thrice she flitted from my hands as a shadow or even as a dream.''
-    \item \textbf{Mrs. Dalloway Evidence:} Clarissa's reflection on death as an attempt to communicate and the isolation it brings: ``Death was an attempt to communicate; people feeling the impossibility of reaching the centre which, mystically, evaded them.''
-    \item \textbf{Explanation:} Both passages explore the theme of death as a form of communication and the isolation that results from the inability to connect with others. Woolf's text echoes the longing and ephemeral nature of relationships depicted in The Odyssey, suggesting an intertextual relationship through thematic resonance.
-    \item \textbf{Confidence:} High
+\item \textbf{Type:} Intertextual
+\item \textbf{Odyssey Evidence:} Odysseus's encounter with his mother's spirit, expressing longing and the inability to physically connect: ``Thrice I sprang towards her, and was minded to embrace her; thrice she flitted from my hands as a shadow or even as a dream.''
+\item \textbf{Mrs. Dalloway Evidence:} Clarissa's reflection on death as an attempt to communicate and the isolation it brings: ``Death was an attempt to communicate; people feeling the impossibility of reaching the centre which, mystically, evaded them.''
+\item \textbf{Explanation:} Both passages explore the theme of death as a form of communication and the isolation that results from the inability to connect with others. Woolf's text echoes the longing and ephemeral nature of relationships depicted in The Odyssey, suggesting an intertextual relationship through thematic resonance.
+\item \textbf{Confidence:} High
 \end{itemize}
 
 \noindent\textbf{Connection 2: Societal Pressures and Longing}
 \begin{itemize}
-    \item \textbf{Type:} Hypertextual
-    \item \textbf{Odyssey Evidence:} Odysseus's longing for his mother's embrace and the sorrow of separation: ``sharp grief arose ever at my heart.''
-    \item \textbf{Mrs. Dalloway Evidence:} Clarissa's reflection on the terror and incapacity of life, and the societal pressures imposed by figures like Sir William Bradshaw: ``Life is made intolerable; they make life intolerable, men like that.''
-    \item \textbf{Explanation:} Woolf transforms the classical theme of longing and separation into a modern context, focusing on the internal struggles and societal pressures faced by women. This hypertextual transformation critiques patriarchal structures and highlights the psychological impact of isolation and longing.
-    \item \textbf{Confidence:} Medium
+\item \textbf{Type:} Hypertextual
+\item \textbf{Odyssey Evidence:} Odysseus's longing for his mother's embrace and the sorrow of separation: ``sharp grief arose ever at my heart.''
+\item \textbf{Mrs. Dalloway Evidence:} Clarissa's reflection on the terror and incapacity of life, and the societal pressures imposed by figures like Sir William Bradshaw: ``Life is made intolerable; they make life intolerable, men like that.''
+\item \textbf{Explanation:} Woolf transforms the classical theme of longing and separation into a modern context, focusing on the internal struggles and societal pressures faced by women. This hypertextual transformation critiques patriarchal structures and highlights the psychological impact of isolation and longing.
+\item \textbf{Confidence:} Medium
 \end{itemize}
 
-
-
-\noindent
-\textbf{Evaluation}
+\paragraph{Evaluation}
 
 \noindent\textbf{Intentionality:} The thematic parallels and transformations suggest that Woolf may have intentionally engaged with classical themes from The Odyssey, reinterpreting them through a modern and feminist lens.
 
@@ -2028,62 +1866,41 @@ The passages from Mrs. Dalloway and The Odyssey both explore themes of death, lo
 
 \noindent\textbf{Is Reference:} True
 
-
-
-\noindent
-\textbf{Annotator Scores}
+\paragraph{Annotator Scores}
 \begin{itemize}
-    \item \textbf{Annotator 1:} Evidence Quality: 3, Theoretical Alignment: 5, Internal Consistency: 4
-    \item \textbf{Annotator 2:} Evidence Quality: 3, Theoretical Alignment: 4, Internal Consistency: 4
+\item \textbf{Annotator 1:} Evidence Quality: 3, Theoretical Alignment: 5, Internal Consistency: 4
+\item \textbf{Annotator 2:} Evidence Quality: 3, Theoretical Alignment: 4, Internal Consistency: 4
 \end{itemize}
 
 \subsubsection{Comparative Analysis}
 
 Unlike Example 1, both prompts identified this as an intertextual reference (\textit{is\_reference: true}), allowing comparison of analytical sophistication when the fundamental detection task succeeds.
 
-
-
-\noindent
-\textbf{Detection Convergence}
+\paragraph{Detection Convergence}
 
 Both the naive and expert prompts recognized the death/longing parallel as an intentional intertextual relationship. This convergence suggests that some thematic parallels are sufficiently clear that even naive prompting can detect them as meaningful references.
 
-
-
-\noindent
-\textbf{Depth of Analysis}
+\paragraph{Depth of Analysis}
 
 The expert prompt identified 2 connections while the naive prompt identified 1 connection, demonstrating how domain knowledge can enable recognition of additional layers of intertextual engagement. The expert prompt's second connection -- linking Odysseus's grief to Clarissa's critique of Sir William Bradshaw and patriarchal structures -- represents a more sophisticated reading that the naive prompt did not attempt.
 
-
-
-\noindent
-\textbf{Confidence and Theoretical Alignment}
+\paragraph{Confidence and Theoretical Alignment}
 
 The expert prompt demonstrated higher confidence (High vs. Medium) in its primary connection and achieved higher theoretical alignment scores (5/4 vs. 4/4 from annotators), reflecting its integration of interpretive frameworks about feminist reinterpretation and modern transformation of classical themes. However, the expert prompt received lower evidence quality scores (3 vs. 4), suggesting that the additional theoretical sophistication may have come at the cost of more speculative claims about textual evidence.
 
-
-
-\noindent
-\textbf{Score Patterns}
+\paragraph{Score Patterns}
 
 The score patterns reveal an interesting trade-off:
 \begin{itemize}
-    \item Naive: Higher evidence quality (4), moderate theoretical alignment (4), high internal consistency (5/4)
-    \item Expert: Lower evidence quality (3), higher theoretical alignment (5/4), high internal consistency (4)
+\item Naive: Higher evidence quality (4), moderate theoretical alignment (4), high internal consistency (5/4)
+\item Expert: Lower evidence quality (3), higher theoretical alignment (5/4), high internal consistency (4)
 \end{itemize}
 
 This suggests that the expert prompt's second connection (the hypertextual transformation involving Sir William Bradshaw) may have been viewed by annotators as more interpretively ambitious but less directly supported by textual evidence.
 
-
-
-\noindent
-\textbf{Implications}
+\paragraph{Implications}
 
 This example demonstrates that when both approaches successfully detect an intertextual relationship, domain knowledge primarily enhances analytical depth rather than enabling detection. The expert prompt's ability to identify a second, more complex connection -- transforming classical longing into a critique of patriarchal structures -- shows how interpretive frameworks enable recognition of multiple layers of intertextual engagement that naive prompting may miss.
-
-
-
 
 \subsection{Example 3: Emotional Surrender in Dissimilar Passages}
 \label{app:example-dissimilar}
@@ -2091,18 +1908,12 @@ This example demonstrates that when both approaches successfully detect an inter
 This example demonstrates a case where expert knowledge enabled the identification of an intertextual relationship in a text pair with \textit{low semantic similarity} (most dissimilar pair).
 \subsubsection{Text Pair}
 
-
-
-\noindent
-\textbf{Mrs. Dalloway:}
+\paragraph{Mrs. Dalloway:}
 \begin{quote}
 Filmer's daughter was expecting a baby. SHE could not grow old and have no children! She was very lonely, she was very unhappy! She cried for the first time since they were married. Far away he heard her sobbing; he heard it accurately, he noticed it distinctly; he compared it to a piston thumping. But he felt nothing. His wife was crying, and he felt nothing; only each time she sobbed in this profound, this silent, this hopeless way, he descended another step into the pit. At last, with a melodramatic gesture which he assumed mechanically and with complete consciousness of its insincerity, he dropped his head on his hands. Now he had surrendered; now other people must help him. People must be sent for. He gave in. Nothing could rouse him.
 \end{quote}
 
-
-
-\noindent
-\textbf{The Odyssey:}
+\paragraph{The Odyssey:}
 \begin{quote}
 Then Antinous, son of Eupeithes, answered him: ``Eurymachus, this shall not be so, and thou thyself too knowest it. For to-day the feast of the archer god is held in the land, a holy feast. Who at such a time would be bending bows? Nay, set it quietly by; what and if we should let the axes all stand as they are? None methinks will come to the hall of Odysseus, son of Laertes, and carry them away. Go to now, let the wine-bearer pour for libation into each cup in turn, that after the drink-offering we may set down the curved bow. And in the morning bid Melanthius, the goatherd, to lead hither the very best goats in all his herds, that we may lay pieces of the thighs on the altar of Apollo the archer, and assay the bow and make an end of the contest.'' So spake Antinous, and the saying pleased them well. Then the henchmen poured water on their hands, and pages crowned the mixing-bowls with drink, and served out the wine to all, when they had poured for libation into each cup in turn. But when they had poured forth and had drunken to their hearts' desire, Odysseus of many counsels spake among them out of a crafty heart, saying: ``Hear me, ye wooers of the renowned queen, that I may say that which my heart within me bids. And mainly to Eurymachus I make my prayer and to the godlike Antinous, forasmuch as he has spoken even this word aright, namely, that for this present ye cease from your archery and leave the issue to the gods; and in the morning the god will give the victory to whomsoever he will. Come therefore, give me the polished bow, that in your presence I may prove my hands and strength, whether I have yet any force such as once was in my supple limbs, or whether my wanderings and needy fare have even now destroyed it.''
 \end{quote}
@@ -2111,30 +1922,21 @@ Then Antinous, son of Eupeithes, answered him: ``Eurymachus, this shall not be s
 
 \subsubsection{Naive Prompt Analysis}
 
-
-
-\noindent
-\textbf{Initial Observations}
+\paragraph{Initial Observations}
 The passages from Mrs. Dalloway and The Odyssey appear to have different contexts and themes. The Mrs. Dalloway passage focuses on emotional despair and a sense of hopelessness, while The Odyssey passage involves a scene of feasting and a contest of archery. The semantic similarity score is moderate, suggesting some thematic or emotional parallels but not direct textual connections.
 
-
-
-\noindent
-\textbf{Connection Identified}
+\paragraph{Connection Identified}
 
 \noindent\textbf{Connection: No Meaningful Connection}
 \begin{itemize}
-    \item \textbf{Type:} None
-    \item \textbf{Odyssey Evidence:} The Odyssey passage involves a feast and a contest of archery, with themes of divine intervention and testing of strength.
-    \item \textbf{Mrs. Dalloway Evidence:} The Mrs. Dalloway passage focuses on emotional despair, loneliness, and a sense of surrender.
-    \item \textbf{Explanation:} The thematic elements of emotional despair and surrender in Mrs. Dalloway do not directly relate to the competitive and anticipatory themes in The Odyssey. The contexts and purposes of the passages are distinct, with no clear intertextual relationship.
-    \item \textbf{Confidence:} High
+\item \textbf{Type:} None
+\item \textbf{Odyssey Evidence:} The Odyssey passage involves a feast and a contest of archery, with themes of divine intervention and testing of strength.
+\item \textbf{Mrs. Dalloway Evidence:} The Mrs. Dalloway passage focuses on emotional despair, loneliness, and a sense of surrender.
+\item \textbf{Explanation:} The thematic elements of emotional despair and surrender in Mrs. Dalloway do not directly relate to the competitive and anticipatory themes in The Odyssey. The contexts and purposes of the passages are distinct, with no clear intertextual relationship.
+\item \textbf{Confidence:} High
 \end{itemize}
 
-
-
-\noindent
-\textbf{Evaluation}
+\paragraph{Evaluation}
 
 \noindent\textbf{Intentionality:} The connections between the passages appear coincidental rather than intentional. The themes of emotional despair and competition are common in literature but do not suggest a direct reference.
 
@@ -2148,41 +1950,29 @@ The passages from Mrs. Dalloway and The Odyssey appear to have different context
 
 \noindent\textbf{Is Reference:} False
 
-
-
-\noindent
-\textbf{Annotator Scores}
+\paragraph{Annotator Scores}
 \begin{itemize}
-    \item \textbf{Annotator 1:} Evidence Quality: 3, Theoretical Alignment: 3, Internal Consistency: 4
-    \item \textbf{Annotator 2:} Evidence Quality: 3, Theoretical Alignment: 3, Internal Consistency: 4
+\item \textbf{Annotator 1:} Evidence Quality: 3, Theoretical Alignment: 3, Internal Consistency: 4
+\item \textbf{Annotator 2:} Evidence Quality: 3, Theoretical Alignment: 3, Internal Consistency: 4
 \end{itemize}
 
 \subsubsection{Expert Prompt Analysis}
 
-
-
-\noindent
-\textbf{Initial Observations}
+\paragraph{Initial Observations}
 The passages from Mrs. Dalloway and The Odyssey both involve themes of emotional struggle and surrender, though they manifest in different contexts. The Mrs. Dalloway passage focuses on a character's internal emotional descent and surrender, while The Odyssey passage involves a strategic pause in a contest, with Odysseus preparing to reveal his strength. The similarity score suggests some thematic overlap, but the contexts and narrative functions differ significantly.
 
-
-
-\noindent
-\textbf{Connection Identified}
+\paragraph{Connection Identified}
 
 \noindent\textbf{Connection: Surrender and Descent}
 \begin{itemize}
-    \item \textbf{Type:} Hypertextual (transformation)
-    \item \textbf{Odyssey Evidence:} In The Odyssey, Antinous suggests pausing the contest and leaving the outcome to the gods, reflecting a strategic surrender to fate.
-    \item \textbf{Mrs. Dalloway Evidence:} In Mrs. Dalloway, the character experiences an emotional surrender, feeling nothing as his wife cries, and ultimately gives in, needing others to help him.
-    \item \textbf{Explanation:} Woolf transforms the theme of surrender from a strategic pause in a contest (The Odyssey) to an emotional surrender in a personal crisis (Mrs. Dalloway). This transformation shifts the focus from external, strategic struggles to internal, emotional struggles, reflecting Woolf's modernist focus on psychological depth and complexity.
-    \item \textbf{Confidence:} Medium
+\item \textbf{Type:} Hypertextual (transformation)
+\item \textbf{Odyssey Evidence:} In The Odyssey, Antinous suggests pausing the contest and leaving the outcome to the gods, reflecting a strategic surrender to fate.
+\item \textbf{Mrs. Dalloway Evidence:} In Mrs. Dalloway, the character experiences an emotional surrender, feeling nothing as his wife cries, and ultimately gives in, needing others to help him.
+\item \textbf{Explanation:} Woolf transforms the theme of surrender from a strategic pause in a contest (The Odyssey) to an emotional surrender in a personal crisis (Mrs. Dalloway). This transformation shifts the focus from external, strategic struggles to internal, emotional struggles, reflecting Woolf's modernist focus on psychological depth and complexity.
+\item \textbf{Confidence:} Medium
 \end{itemize}
 
-
-
-\noindent
-\textbf{Evaluation}
+\paragraph{Evaluation}
 
 \noindent\textbf{Intentionality:} The thematic transformation appears intentional, as Woolf often reinterprets classical themes to explore modern psychological and emotional landscapes.
 
@@ -2196,118 +1986,55 @@ The passages from Mrs. Dalloway and The Odyssey both involve themes of emotional
 
 \noindent\textbf{Is Reference:} True
 
-
-
-\noindent
-\textbf{Annotator Scores}
+\paragraph{Annotator Scores}
 \begin{itemize}
-    \item \textbf{Annotator 1:} Evidence Quality: 3, Theoretical Alignment: 5, Internal Consistency: 4
-    \item \textbf{Annotator 2:} Evidence Quality: 3, Theoretical Alignment: 4, Internal Consistency: 4
+\item \textbf{Annotator 1:} Evidence Quality: 3, Theoretical Alignment: 5, Internal Consistency: 4
+\item \textbf{Annotator 2:} Evidence Quality: 3, Theoretical Alignment: 4, Internal Consistency: 4
 \end{itemize}
 
 \subsubsection{Comparative Analysis}
 
-
-
-
-\noindent
-\textbf{Low Similarity, Divergent Detection}
+\paragraph{Low Similarity, Divergent Detection}
 
 With a similarity score of only 0.607 (most dissimilar pair), this represents a case where the two prompts reached opposite conclusions again (as in Example 1): the naive prompt concluded there was no meaningful intertextual relationship (\textit{is\_reference: false}), while the expert prompt identified a hypertextual transformation (\textit{is\_reference: true}).
 
-
-
-\noindent
-\textbf{Contrasting Interpretations}
+\paragraph{Contrasting Interpretations}
 
 Both analyses recognized similar thematic elements (surrender, emotional states), but interpreted their significance differently:
 \begin{itemize}
-    \item \textbf{Naive:} Identified themes of emotional despair versus competition as ``distinct, with no clear intertextual relationship,'' concluding the connections ``appear coincidental rather than intentional''
-    \item \textbf{Expert:} Recognized the same contrast but interpreted it as a transformation: ``Woolf transforms the theme of surrender from a strategic pause in a contest (The Odyssey) to an emotional surrender in a personal crisis (Mrs. Dalloway)''
+\item \textbf{Naive:} Identified themes of emotional despair versus competition as ``distinct, with no clear intertextual relationship,'' concluding the connections ``appear coincidental rather than intentional''
+\item \textbf{Expert:} Recognized the same contrast but interpreted it as a transformation: ``Woolf transforms the theme of surrender from a strategic pause in a contest (The Odyssey) to an emotional surrender in a personal crisis (Mrs. Dalloway)''
 \end{itemize}
 
-
-
-\noindent
-\textbf{Confidence Levels}
+\paragraph{Confidence Levels}
 
 Notably, the prompts showed contrasting confidence levels:
 \begin{itemize}
-    \item \textbf{Naive:} High confidence in the conclusion of no relationship
-    \item \textbf{Expert:} Medium confidence in identifying the transformation
+\item \textbf{Naive:} High confidence in the conclusion of no relationship
+\item \textbf{Expert:} Medium confidence in identifying the transformation
 \end{itemize}
 
 This pattern suggests that the naive prompt was certain about dismissing the connection, while the expert prompt, despite identifying a relationship, maintained appropriate epistemic humility about working at an abstract level of transformation.
 
-
-
-\noindent
-\textbf{Theoretical Alignment Gap}
+\paragraph{Theoretical Alignment Gap}
 
 The scoring pattern reveals a significant theoretical alignment gap:
 \begin{itemize}
-    \item \textbf{Naive:} Theoretical Alignment scores of 3 from both annotators
-    \item \textbf{Expert:} Theoretical Alignment scores of 5 and 4
+\item \textbf{Naive:} Theoretical Alignment scores of 3 from both annotators
+\item \textbf{Expert:} Theoretical Alignment scores of 5 and 4
 \end{itemize}
 
 This 2-point gap (3 vs. 5) reflects the expert prompt's ability to frame the connection within theoretical frameworks about Woolf's modernist transformation techniques, even when working with low-similarity passages. Both analyses received identical evidence quality scores (3), suggesting they worked with similar textual evidence but interpreted its significance differently.
 
-
-
-\noindent
-\textbf{Methodological Implications}
+\paragraph{Methodological Implications}
 
 This example raises important questions about the nature of intertextual analysis:
 \begin{enumerate}
-    \item The expert prompt's identification of a ``hypertextual transformation'' at this level of abstraction demonstrates how domain knowledge could enable recognition of connections that operate beyond surface-level textual features
-    \item The naive prompt's high-confidence dismissal of the connection suggests that without interpretive frameworks, abstract thematic transformations may be indistinguishable from coincidental overlap
-    \item the LLM analysis layer can potentially identify connections that semantic similarity alone cannot capture
+\item The expert prompt's identification of a ``hypertextual transformation'' at this level of abstraction demonstrates how domain knowledge could enable recognition of connections that operate beyond surface-level textual features
+\item The naive prompt's high-confidence dismissal of the connection suggests that without interpretive frameworks, abstract thematic transformations may be indistinguishable from coincidental overlap
+\item the LLM analysis layer can potentially identify connections that semantic similarity alone cannot capture
 \end{enumerate}
 
 However, this example also highlights challenges: the expert prompt's medium confidence and the abstract nature of the connection (``strategic surrender'' to ``emotional surrender'') suggest this represents a more speculative form of intertextual analysis compared to Examples 1 and 2.\clearpage{}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 \end{document}

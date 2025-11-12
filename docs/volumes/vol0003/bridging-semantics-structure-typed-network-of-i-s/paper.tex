@@ -1,59 +1,33 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-%\documentclass{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
-% ADD your own packages using \usepackage{}
 
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{Bridging Semantics and Structure: a Typed Prosopographical Network of Maximilian I's Court}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1]{Marcella Tambuscio}[
-  orcid=0000-0003-2097-1333
+orcid=0000-0003-2097-1333
 ]
 
 \author[1]{Georg Vogeler}[
-  orcid=0000-0002-1726-1712
+orcid=0000-0002-1726-1712
 ]
 
-
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 \affiliation{1}{Digital Humanities Department, University of Graz, Austria}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{network analysis, historical networks, digital humanities, prosopography, entropy}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
 \pagestart{114}
 \pageend{124}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/eWebTidsVFzV}  
+\doi{10.63744/eWebTidsVFzV}
 \paperorder{9}
-
 
 \addbibresource{bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
 
 \maketitle
@@ -81,10 +55,10 @@ The dataset presented in this paper is part of the ongoing Managing Maximilian p
 
 The data used for the present network are derived from a set of historical sources selected and processed as part of the Managing Maximilian project. Rather than relying on a single type of source, we combine information extracted from a variety of documents that shed light on the interpersonal dynamics at the imperial court. These include:
 \begin{itemize}
-    \item administrative records (e.g., payments, official appointments, account books),
-    \item correspondence and petitions addressed to or issued by Maximilian or his agents,
-    \item records of events (such as ceremonies, diets, marriages, court appearances),
-    \item and documents relating to artistic and literary production, such as commissions, dedications and printing contracts.
+\item administrative records (e.g., payments, official appointments, account books),
+\item correspondence and petitions addressed to or issued by Maximilian or his agents,
+\item records of events (such as ceremonies, diets, marriages, court appearances),
+\item and documents relating to artistic and literary production, such as commissions, dedications and printing contracts.
 \end{itemize}
 
 Chronologically, the dataset focuses on the period ca. 1480–1520, covering the active reign of Maximilian as king and later as emperor. The sources vary in granularity: while some offer precise dates and detailed participant lists, others contain indirect references or partial information, which we model with explicit uncertainty where necessary.
@@ -94,27 +68,25 @@ The dataset is still under active expansion, and we consider the current network
 One of the key features of our network is that edges are not generic links between individuals, but are explicitly typed according to the nature of the interaction they represent: each edge carries a categorical type attribute reflecting the nature of the interaction (e.g., “payment”, “order”, “co-create”, “participation in event”, “communication”, and others). These interaction types were defined through an iterative and collaborative process involving both historians and data modelers. While some categories emerged directly from the language of the sources (e.g., payment, order, gift-giving), others were formulated to capture recurring but more abstracted patterns of action (e.g., co-creation, participation in event, life events). The initial taxonomy was constructed bottom-up from the datasets contributed by different subprojects within Managing Maximilian, each of which focused on specific domains (e.g., Armouring, Creating, Contextualising, Depicting, Gendering, Singing, Writing). These local categories were then harmonized into a shared semantic scheme inspired by the event-centric modeling approach of the Austrian Prosopographical Information System (APIS) \cite{schlogl2017prosopographical}, itself rooted in the Factoid model \cite{bradley2005texts} and CIDOC-CRM ontology \cite{velios2021definition}. This model distinguishes between Entities (e.g., persons, families, offices, places) and Statements (events or interactions involving entities), and it allows us to model actions such as “co-authoring a poem”, “commissioning an artwork”, or “sending a gift” with high semantic granularity.
 Our aim was to strike a balance between specificity and abstraction: interaction types needed to be expressive enough to reflect the meaning of the historical action, yet abstract enough to allow for systematic comparison across datasets.
 
-For the present analysis, we extract a person-to-person network from the event layer by projecting interactions where at least two individuals are involved in the same historical action. 
-
+For the present analysis, we extract a person-to-person network from the event layer by projecting interactions where at least two individuals are involved in the same historical action.
 
 Each edge has a unique type but, since multiple interactions of different types can occur between the same individuals, the resulting structure is a multi-graph: a pair of nodes can be connected by several parallel edges, each with its own semantic classification.
 
-In addition to building a network of interacting individuals, this approach enables us to explore the distribution and function of specific action types within the broader social structure. 
+In addition to building a network of interacting individuals, this approach enables us to explore the distribution and function of specific action types within the broader social structure.
 Indeed, unlike traditional co-occurrence networks, which are typically based on joint mentions of names within textual units such as paragraphs or documents, our network is also extracted from textual sources, but through an interpretive layer of semantic modeling. Rather than relying on proximity, each edge in our network reflects a specific historically attested interaction, grounded in source-based event representations and explicitly categorized by action type.
 
 The semantic annotation of edges allows us to distinguish between different functional layers within the court (ceremonial, financial, artistic, diplomatic) which often coexist and overlap.  This richness enables us to ask more precise questions, such as: do communities of practice emerge along functional lines? Are some individuals involved in highly diverse interactions, while others are more specialized? And how does this diversity correlate with their structural position in the network?
 
 \begin{figure}[h]
-  \centering
-  \includegraphics[width=\linewidth]{figures/interaction_net_202507.png}
-  \caption{Interaction network (Maximilian excluded)}
-  \label{fig:interaction_net}
+\centering
+\includegraphics[width=\linewidth]{figures/interaction_net_202507.png}
+\caption{Interaction network (Maximilian excluded)}
+\label{fig:interaction_net}
 \end{figure}
 
 As the project is still in progress, the network analyzed in this paper is based on the data currently available: it consists of 377 nodes and 2,100 edges, of which 413 are multiple connections between the same pairs of nodes. A visual representation of the resulting multigraph is shown in \ref{fig:interaction_net}, where nodes represent individuals and edges colors correspond to different types of actions. In this graph, we intentionally removed Maximilian himself from the graph: as a central institutional figure, he appears in almost all interactions, acting as a superhub and potentially distorting both visual and structural analyses. His exclusion allows the structure of interpersonal connections within the court to emerge more clearly.
 
-The modeling phase is therefore not merely preparatory but interpretative: the choice of interaction types or the decision to collapse or preserve multiedges are all steps that influence what kind of historical insight can emerge from the network analysis. The resulting graph provides a structured lens through which we can explore Maximilian’s world not as a monolithic hierarchy but as a multiplex arena of actions. 
-
+The modeling phase is therefore not merely preparatory but interpretative: the choice of interaction types or the decision to collapse or preserve multiedges are all steps that influence what kind of historical insight can emerge from the network analysis. The resulting graph provides a structured lens through which we can explore Maximilian’s world not as a monolithic hierarchy but as a multiplex arena of actions.
 
 \section{Methods and Results}
 \subsection{Community detection}
@@ -123,35 +95,35 @@ We applied the Louvain modularity optimization algorithm to the aggregated, undi
 The Louvain algorithm identifies clusters of nodes with dense intra-cluster connections and relatively fewer inter-cluster connections, maximizing the \emph{modularity} in the network \cite{blondel2008fast,fortunato2016community}. Traditionally, these clusters (hereafter “communities”) serve as a proxy for identifying functional or social groupings within the network, without presupposing any historical categorization. Specifically, the algorithm assigns to each node an integer as community label (\texttt{community ID}): in our network 16 communities have been found (see Figure \ref{fig:community_net} ).
 
 \begin{figure}[h]
-  \centering
-  \includegraphics[width=0.8\linewidth]{figures/community_net_202507.png}
-  \caption{Community detection (Louvain algorithm): 16 communities have been identified.}
-  \label{fig:community_net}
+\centering
+\includegraphics[width=0.8\linewidth]{figures/community_net_202507.png}
+\caption{Community detection (Louvain algorithm): 16 communities have been identified.}
+\label{fig:community_net}
 \end{figure}
 
 In order to compare this community classification with the interaction type on the edges, we annotated each edge based on whether it connects individuals belonging to the same community (\emph{intra-community}) or to different communities (\emph{inter-community}). This resulted in an additional attribute \texttt{community\_edge}, set to the \texttt{community ID} if both endpoints share it, and to 0 if the edge spans across communities. This classification allows for examining the structural and semantic properties of edges in relation to modular organization.
 
 \subsection{Edge-level analysis: semantic of communities}
-Building on the typology of actions encoded during the modeling phase, we grouped edges by their type (“payment”, “order”, “communication”, “printing”, etc.). We then computed frequency distributions of interaction types both within and across communities. 
+Building on the typology of actions encoded during the modeling phase, we grouped edges by their type (“payment”, “order”, “communication”, “printing”, etc.). We then computed frequency distributions of interaction types both within and across communities.
 
 We visualized this in two ways:
 \begin{itemize}
-    \item  a heatmap showing, for each community, the proportion of internal interactions of each type (see Figure \ref{fig:heatmap});
-    \item a barplot comparing, for each interaction type, the proportion of inter-community vs. intra-community edges (see Figure \ref{fig:barplot}).
+\item  a heatmap showing, for each community, the proportion of internal interactions of each type (see Figure \ref{fig:heatmap});
+\item a barplot comparing, for each interaction type, the proportion of inter-community vs. intra-community edges (see Figure \ref{fig:barplot}).
 \end{itemize}
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=\linewidth]{figures/heatmap_inter.png}
-  \caption{Heatmap showing the distribution of interaction types within each community detected via Louvain modularity. Each cell indicates the number of intra-community edges of a given interaction type. Communities are sorted by ID along the vertical axis, and interaction types along the horizontal axis. The color intensity reflects frequency (only interactions with at least 10 occurrences are shown). This visualization reveals that some communities are strongly characterized by a dominant type (authorship), while others exhibit more diverse relational profiles.}
-  \label{fig:heatmap}
+\centering
+\includegraphics[width=\linewidth]{figures/heatmap_inter.png}
+\caption{Heatmap showing the distribution of interaction types within each community detected via Louvain modularity. Each cell indicates the number of intra-community edges of a given interaction type. Communities are sorted by ID along the vertical axis, and interaction types along the horizontal axis. The color intensity reflects frequency (only interactions with at least 10 occurrences are shown). This visualization reveals that some communities are strongly characterized by a dominant type (authorship), while others exhibit more diverse relational profiles.}
+\label{fig:heatmap}
 \end{figure}
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=\linewidth]{figures/barplot2.png}
-  \caption{Barplot comparing the distribution of interaction types across intra- and inter-community edges. For each type, the total number of occurrences is split between connections within the same community (intra) and those linking different communities (inter). Interaction types such as “payment” and “ownership transfer” appear predominantly within communities, while others—such as “printing” or “communication” have also a portion of inter-community links, suggesting their partial role as semantic bridges. We excluded “activity” from the plot because its frequency was much higher than the other types. }
-  \label{fig:barplot}
+\centering
+\includegraphics[width=\linewidth]{figures/barplot2.png}
+\caption{Barplot comparing the distribution of interaction types across intra- and inter-community edges. For each type, the total number of occurrences is split between connections within the same community (intra) and those linking different communities (inter). Interaction types such as “payment” and “ownership transfer” appear predominantly within communities, while others—such as “printing” or “communication” have also a portion of inter-community links, suggesting their partial role as semantic bridges. We excluded “activity” from the plot because its frequency was much higher than the other types. }
+\label{fig:barplot}
 \end{figure}
 
 These analyses allow us to observe that in general types of interaction tend to be functionally bounded (e.g. ownership transfers and orders mostly within clusters) while other types exhibith a significant portion of structurally transversal connections (e.g., printing or communication across groups). Notably, these types appear to serve as “semantic bridges” between otherwise disconnected communities.
@@ -159,29 +131,22 @@ These analyses allow us to observe that in general types of interaction tend to 
 We also tested whether the structural communities detected via Louvain align with the dominant semantic categories of the edges, providing a barplot showing the percentage of edges with different interaction types for each community (see Figure \ref{fig:semantic_composition}).  While there is some degree of overlap, the mismatch in other cases highlights the importance of retaining edge-level semantics rather than relying on purely structural partitions.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=\linewidth]{figures/semantic_composition.png}
-  \caption{Stacked barplot showing the semantic composition of each community based on intra-community interactions. For each community detected via Louvain clustering, the plot displays the proportion of interaction types among its internal edges. The distribution highlights different relational profiles: some communities are dominated by a single type (e.g., “printing”, “order”), while others exhibit a more balanced combination of action types. This suggests a functional specialization or thematic cohesion within certain groups.  }
-  \label{fig:semantic_composition}
+\centering
+\includegraphics[width=\linewidth]{figures/semantic_composition.png}
+\caption{Stacked barplot showing the semantic composition of each community based on intra-community interactions. For each community detected via Louvain clustering, the plot displays the proportion of interaction types among its internal edges. The distribution highlights different relational profiles: some communities are dominated by a single type (e.g., “printing”, “order”), while others exhibit a more balanced combination of action types. This suggests a functional specialization or thematic cohesion within certain groups.  }
+\label{fig:semantic_composition}
 \end{figure}
-
 
 \subsection{Node-level analysis: bridging and diversity}
 To complement the structural analysis, we computed node-level metrics capturing how individuals relate to community structure and semantic roles.
 
-
-
-\noindent
-\textbf{Inter-community edge ratio} For each node $i$, we computed the proportion of its incident edges that connect to nodes in other communities (i.e., edges labeled as inter-community). 
+\paragraph{Inter-community edge ratio} For each node $i$, we computed the proportion of its incident edges that connect to nodes in other communities (i.e., edges labeled as inter-community).
 
 $${ r_{\mathrm{inter}}(i) = \frac{e_{\mathrm{inter}}(i)}{k_i} } $$
 
-This simple ratio (number of inter-community edges ${e_{\mathrm{inter}}(i)}$ divided by total degree $k_i$) serves as a proxy for bridging capacity, i.e., its role in connecting otherwise separate social groups. However, this ratio is known to be unstable for low-degree nodes, as even a single edge can result in a high value. 
+This simple ratio (number of inter-community edges ${e_{\mathrm{inter}}(i)}$ divided by total degree $k_i$) serves as a proxy for bridging capacity, i.e., its role in connecting otherwise separate social groups. However, this ratio is known to be unstable for low-degree nodes, as even a single edge can result in a high value.
 
-
-
-\noindent
-\textbf{Semantic diversity (normalized entropy)}
+\paragraph{Semantic diversity (normalized entropy)}
 To better understand the functional roles of individuals, we computed a normalized Shannon entropy over the distribution of interaction types attached to each node. Shannon entropy \cite{rajaram2017advancing} is a classical information-theoretic measure that quantifies the unpredictability or heterogeneity of a distribution. In our context, it captures how evenly an individual’s interactions are distributed across different types: higher entropy indicates a more balanced and diversified engagement, while lower values reflect functional specialization.
 
 To capture the variety of interaction types used by each individual, we computed a normalized Shannon entropy over the distribution of interaction types across a node's incident edges.  For a node $i$, the normalized entropy is given by:
@@ -195,20 +160,20 @@ where $e_t$ is the fraction of edges of type $t$ connected to $i$, and $T_i$ is 
 To explore the interplay between structural position and interaction diversity, we plotted the nodes with degree higher than 10 in a two-dimensional space defined by $H_{\mathrm{norm}}(i)$ (semantic diversity) on the x axis and $r_{\mathrm{inter}}(i)$ (inter-community ratio) on the y axis. Based on threshold values (respectively, 0.75 and 0.2), we segmented the nodes into four interpretive categories:
 
 \begin{itemize}
-    \item \textbf{cross-community multitasking:} high diversity, high inter-community ratio.
-    \item \textbf{cross-community specialist:} low diversity, high inter-community ratio.
-    \item \textbf{intra-community multitasking:} high diversity, low inter-community ratio.
-    \item \textbf{intra-community specialist:} low diversity, low inter-community ratio.
+\item \textbf{cross-community multitasking:} high diversity, high inter-community ratio.
+\item \textbf{cross-community specialist:} low diversity, high inter-community ratio.
+\item \textbf{intra-community multitasking:} high diversity, low inter-community ratio.
+\item \textbf{intra-community specialist:} low diversity, low inter-community ratio.
 \end{itemize}
 
 This classification highlights different social roles within the network. Cross-community generalists may function as multi-skilled cross-community, while intra-community specialists appear as highly focused individuals embedded within a local context. We visualized representative nodes from each category to support qualitative interpretation and historical contextualization.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=\linewidth]{figures/scatterplot.png}
-  \caption{Scatterplot of nodes (with degree $k \ge 10$ positioned according to their semantic diversity (normalized entropy) on the x-axis and inter-community edge ratio on the y-axis. This two-dimensional representation allows for the classification of individuals into four interpretive categories.
- }
-  \label{fig:scatter_plot}
+\centering
+\includegraphics[width=\linewidth]{figures/scatterplot.png}
+\caption{Scatterplot of nodes (with degree $k \ge 10$ positioned according to their semantic diversity (normalized entropy) on the x-axis and inter-community edge ratio on the y-axis. This two-dimensional representation allows for the classification of individuals into four interpretive categories.
+}
+\label{fig:scatter_plot}
 \end{figure}
 
 The threshold values used to define the four interpretive categories in the scatterplot (e.g., 0.75 for semantic diversity and 0.2 for inter-community edge ratio) were chosen empirically, based on visual inspection of the distribution and exploratory testing. As the dataset is still incomplete, we opted for a pragmatic and transparent approach rather than a fixed statistical cutoff. In future work, once the network is more complete and stable, we plan to adopt more systematic classification methods, such as clustering algorithms, percentile-based segmentation or threshold optimization techniques based on role-specific validation.
@@ -222,10 +187,10 @@ Our quantitative analyses offer a nuanced view of how structured and semantic la
 Building a network with typed edges—rather than relying on simple co-occurrence allows us to anchor graph structure in meaningful historical semantics. Unlike co-occurrence models, which merely signal that two individuals appear in the same text segment, our prosopographical network encodes specific actions (e.g., “payment”, “communication”, “co-authoring”) represented as discrete edge types. Comparing the resulting community structure with the semantic nature of edges reveals how functional roles shape (and are shaped by) the modular structure of political and administrative relationships. As shown in Figures \ref{fig:barplot} and \ref{fig:heatmap}, certain communities are almost entirely defined by single function types (e.g., “authoring”), while others involve mixed-action profiles, offering deeper insight than purely structural partitions.
 
 \subsection{Linking quantitative and qualitative approaches}
-The integration of node-level metrics such as inter-community ratio and semantic diversity (normalized entropy) allows us to classify actors by their network roles (broker or insider, versatile or specialist). This quantitative classification invites targeted qualitative investigation. 
+The integration of node-level metrics such as inter-community ratio and semantic diversity (normalized entropy) allows us to classify actors by their network roles (broker or insider, versatile or specialist). This quantitative classification invites targeted qualitative investigation.
 
 While our historical analysis remains preliminary, several promising paths emerge. For instance Johannes Cuspinian emerges in the category of \emph{cross-community multitasking} (high diversity, high inter ratio): this aligns with his historical roles as a  humanist, scientist, historian and diplomat at Maximilian’s court. The network metric captures his versatility and broad connectivity, confirming historiographic interpretations.
-In the group of \emph{cross-community specialists} (low diversity, high inter ratio) we find Matthäus Lang (later Archbishop of Salzburg) and Jakob Wimpfeling. They maintained targeted relations across communities through religious or humanistic channels, reinforcing their status. 
+In the group of \emph{cross-community specialists} (low diversity, high inter ratio) we find Matthäus Lang (later Archbishop of Salzburg) and Jakob Wimpfeling. They maintained targeted relations across communities through religious or humanistic channels, reinforcing their status.
 
 These insights show that network analysis, when grounded in historical semantics, is not just a tool for visualization or data exploration—it offers a framework for generating and testing hypotheses about agency, role, and social positioning. In this sense, typed prosopographical networks act as interpretive devices, helping to trace patterns that might otherwise remain hidden or implicit in textual evidence.
 
@@ -235,17 +200,15 @@ This study shows how combining structural analysis with semantically typed edges
 
 This work opens several directions for future research. First, with a larger amount of data, the static projection used here could be extended into a temporal multilayer network, where interactions are ordered chronologically and layered by type. This would allow for the study of diachronic change, e.g., how the role of an individual shifts across time and functions. Second, while this study focused on node-level roles, future work could explore edge-level centralities (such as betweenness) or relational motifs to detect patterns of delegation, mediation or indirect influence. Third, we plan to further integrate qualitative historical interpretation by contextualizing network patterns through archival reading and source criticism, especially for key individuals that exhibit interesting or unexpected profiles in the classification space.
 
-Lastly, we intend to integrate these measures in the platform that will be released at the end of the project, enabling both reuse and methodological transparency. 
+Lastly, we intend to integrate these measures in the platform that will be released at the end of the project, enabling both reuse and methodological transparency.
 
 \section*{Acknowledgements}
 This research was conducted within the framework of the project \emph{Managing Maximilian}, funded by the FWF (Austrian Science Fund), project number SFB Project F9200 ManMAX: “Managing Maximilian (1493-1519). Persona, Politics, and Personnel through the Lens of Digital Prosopography” undertaken at the Institute of Medieval Studies (IMAFO) of the Austrian Academy of Sciences (Vienna, dir. PD Dr. Andreas Zajic). We would like to thank the members of the ManMax consortium for their contributions to data creation and interpretation.
 
 We also thank the anonymous reviewers of the CHR2025 conference for their constructive and insightful suggestions, which helped us improve the submitted version of this paper.
 
-
-% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
 \printbibliography
-% You can include an appendix using the following command
+
 \appendix
 \section{Technical Implementation and Reproducibility}
 All data processing, modeling, and analysis were carried out using the statistical programming language \texttt{R}, primarily through the packages \texttt{igraph} for network construction and metrics, \texttt{dplyr} for data wrangling and \texttt{ggplot2} and \texttt{plotly} for visualizations. Community detection was performed using the Louvain algorithm via the \texttt{cluster\_louvain()} function in \texttt{igraph}, applied to the giant component of the acion networks extracted by the current version of ManMax-APIS (July 2025).
@@ -257,8 +220,5 @@ To support reproducibility, we provide both the full codebase used for analysis 
 The full prosopographical network, currently under development, will be released at the end of the project as an interactive online platform designed for exploratory research.
 
 This commitment to openness reflects the project’s goal of contributing reusable tools and methods to the broader digital humanities community and to enable critical engagement with the modeling choices made.
-
-%\section{First Appendix Section} \label{appdx:first}
-%Appendix sections should be ordered by letters rather than numbers, and their contents do not count towards the paper's length limit. Appendix sections may also contain additional tables and figures.  
 
 \end{document}

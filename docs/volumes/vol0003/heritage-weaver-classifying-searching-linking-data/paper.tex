@@ -1,123 +1,92 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-%\documentclass{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
-% ADD your own packages using \usepackage{}
 
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{Heritage Weaver: Classifying, Searching, and Linking Museum Data with Multimodal AI}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1]{Kaspar Beelen}[
-  orcid=0000-0001-7331-1174
+orcid=0000-0001-7331-1174
 ]
 
 \author[2]{Natasha Kitcher}[
-  orcid=0000-0003-4300-3589
+orcid=0000-0003-4300-3589
 ]
 
-% While we encourage including ORCID-IDs for all authors, you can
-% include authors that do not have one by definining an empty ID.
-%\author[2]{Author Three}[
-%  orcid=
-%]
-
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 \affiliation{1}{School of Advanced Study, University of London, London, United Kingdom}
 \affiliation{2}{The National Archives, London, United Kingdom}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{multimodal, digital heritage, data linking}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
 \pagestart{263}
 \pageend{279}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/txxUt12DJeT7}  
+\doi{10.63744/txxUt12DJeT7}
 \paperorder{18}
-
 
 \addbibresource{bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
+
 \maketitle
 \begin{abstract}
 Heritage Weaver investigates the use of multimodal AI to link and explore museum data across collections. Through a series of experiments, from zero-shot learning and information retrieval to record linking, we demonstrate the value of fine-tuning multimodal models on digital heritage. The paper elaborates on various evaluation strategies, leveraging existing metadata or using expert annotations, to measure improvements in the model's ``understanding'' of often complex and messy historical materials.
 \end{abstract}
 
-\section{Introduction} 
+\section{Introduction}
 
-
-Increasingly, museums and other GLAM institutions are digitising their holdings, producing digital metadata and images (or transcriptions) of their objects. 
+Increasingly, museums and other GLAM institutions are digitising their holdings, producing digital metadata and images (or transcriptions) of their objects.
 These efforts enable novel ways of exploring and searching GLAM collections.
 But while the amount of digital information has undoubtedly grown, the datafication of heritage has remained all too often locked within institutional silos, creating a landscape that is patchy and disconnected.
 How can we break out of these silos, build meaningful bridges between data islands, and explore connections between collections? These questions were central to the \textit{Towards a National Collection} (TaNC) initiative, funded by \textit{UK Research and Innovation}’s \textit{Arts and Humanities Research Council}, in which this research took place as part of the \textit{Congruence Engine} (CE) Project.\footnote{\url{https://www.sciencemuseumgroup.org.uk/projects/the-congruence-engine}} TaNC aimed to break ``down the barriers that exist between the UK’s outstanding cultural heritage''\footnote{\url{https://www.nationalcollection.org.uk/}} with CE focusing specifically on heritage related to the industrial past.
 
 Previous attempts at linking museum data often framed the challenge as a linked-open-data (LOD) problem, which required fitting (heterogeneous) data into preconceived ontologies and/or vocabularies to encode relations between collection records \cite{dutia2021heritage}.\footnote{See for example: \url{https://www.sciencemuseumgroup.org.uk/projects/heritage-connector}}
-%Such an approach results in a top-down imposition of uniform schemas and categories that mould disparate objects into a structured knowledge graph.
+
 While LOD has its merits for harmonising data, Heritage Weaver pursues a different strategy. We developed methods that harness specialised multimodal AI to navigate and connect digital heritage.
 More specifically, this paper presents experiments that evaluate the impact of model fine-tuning on zero-shot classification, searching, and linking museum data \textit{across collections}. These methods enable a flexible, bottom-up approach to exploring connections across institutional silos, using both image and text to forge links across otherwise isolated information containers.
 
-Recently, multiple papers in computational humanities investigated the application of multimodality to heritage collections  \cite{smits2021towards, arnold2024automated,arnold2024explainable}. 
-However, researchers often rely on ``off-the-shelf'' models without adapting them to the particularities of the historical data. 
-%Such attempts scrutinise how well contemporary AI extrapolates to historical images and objects, which were likely absent from the training data.
-This paper, however, investigates what we can gain from adapting multimodal models to digital heritage, especially in the context of exploring GLAM data across collections. 
+Recently, multiple papers in computational humanities investigated the application of multimodality to heritage collections  \cite{smits2021towards, arnold2024automated,arnold2024explainable}.
+However, researchers often rely on ``off-the-shelf'' models without adapting them to the particularities of the historical data.
+
+This paper, however, investigates what we can gain from adapting multimodal models to digital heritage, especially in the context of exploring GLAM data across collections.
 In short, this paper probes the following questions:
 \begin{itemize}
-  \item Does model fine-tuning improve the classification, searching, and linking of museum data taken from different institutions?
-  \item  How can we evaluate this? 
+\item Does model fine-tuning improve the classification, searching, and linking of museum data taken from different institutions?
+\item  How can we evaluate this?
 \end{itemize}
 
-While not pretending to provide definite answers, in this article we will share practical recommendations that help both scholars and GLAM professionals employ multimodal AI in their research data or collections. In the following sections, we firstly explain the content of our data and the models. Secondly, we outline the design of our experiments. Finally, we will discuss the results from both a quantitative and qualitative perspective.\footnote{\url{For code and updates see: https://github.com/congruence-engine/heritage-weaver}} 
+While not pretending to provide definite answers, in this article we will share practical recommendations that help both scholars and GLAM professionals employ multimodal AI in their research data or collections. In the following sections, we firstly explain the content of our data and the models. Secondly, we outline the design of our experiments. Finally, we will discuss the results from both a quantitative and qualitative perspective.\footnote{\url{For code and updates see: https://github.com/congruence-engine/heritage-weaver}}
 
 \section{Research Context}
 
-While originally focused on text, the digital and computational humanities have undergone subsequent visual \cite{wevers2020visual} and multimodal turns \cite{smits2023multimodal}. The recent arrival of CLIP \cite{radford2021learning} and other vision-language models has led to an increased emphasis on multimodal (as opposed to monomodal) approaches. In \cite{smits2023multimodal} Smits and Wevers, the authors demonstrate the value of zero-shot classification in the context of heritage data. They demonstrate how CLIP provides a meaningful helping hand when labeling data, which they apply to magic lanterns and children's literature. Moreover, they point to the (historical) biases present in these models, which arise from the composition of the training data \cite{beelen2023bias}. 
+While originally focused on text, the digital and computational humanities have undergone subsequent visual \cite{wevers2020visual} and multimodal turns \cite{smits2023multimodal}. The recent arrival of CLIP \cite{radford2021learning} and other vision-language models has led to an increased emphasis on multimodal (as opposed to monomodal) approaches. In \cite{smits2023multimodal} Smits and Wevers, the authors demonstrate the value of zero-shot classification in the context of heritage data. They demonstrate how CLIP provides a meaningful helping hand when labeling data, which they apply to magic lanterns and children's literature. Moreover, they point to the (historical) biases present in these models, which arise from the composition of the training data \cite{beelen2023bias}.
 One problem with CLIP models, when used off-the-shelf, is that training data may not be aligned with research materials and applications.
 We therefore explore how fine-tuning multimodal models on museum collections might make them more  reliable tools for exploring and processing digital heritage. Instead of using off-the-shelf models or relying on very large but closed models, we demonstrate that researchers and curators can gain a lot from adapting small or mid-sized models to their collections. Our results reproduce (on a smaller scale, but applied to digital heritage) the recent findings by \cite{ramachandran2025well}. They benchmark popular foundation models (including \textit{gpt-4o}, \textit{gemini 1.5}, \textit{claude 3.5 sonnet}, and more) on various tasks, demonstrating that these large multimodal models are not competitive for specialised tasks, but perform respectably when looking for a more generic solution. While large models are dominating AI research, their findings suggest there is still value in fine-tuning smaller, open-source models, especially for tasks such as image classification. Especially for computational humanities and GLAM, where researchers and curators often rely on AI to analyse, navigate and explore specific (historical) datasets, we need specialist instead of generalist models.
 
-In the context of Computational Humanities Research, a few recent papers explored the potential of multimodality cultural heritage. In \cite{smits2021towards}, Smits and Kestemont demonstrate how CLIP achieve respectable accuracy when applied to nineteenth-century magic lanterns in a zero-shot setting. However, it was still outperformed by a vision model specifically fine-tuned for the task.  Another important source for multimodal analysis are historical maps, which combine visual and textual features. \cite{mahowald2024integrating} highlight the potential of multimodal search for historical maps, using text and visual inputs (or both). They also introduce a dataset for fine-tuning multimodal models containing more than 10,000 map-caption pairs. In ``Reading maps at a distance'', \cite{mcdonough2024reading} explores the combined analysis of text labels and visual features on Ordnance Survey maps, to understand different types of ``railspace'' in nineteenth-century Britain. 
-Other types of cultural heritage collections have also been analyzed from a multimodal perspective. For example, \cite{maksimova2024viability} investigated the viability of zero-shot learning and search outside of the English language. They applied CLIP and SigLIP to a collection of historical photos derived from Ajapaik, a crowd-sourced photo archive that comprises images related to Estonia or its neighboring countries. A paper by \cite{roald2024visual} looked closely at opportunities of multimodality for book collections. They presented a proof-of-concept image-search tool to explore the pre-1900 collections of the National Library of Norway. They found that, for image retrieval and classification, SigLIP performed slightly better than CLIP or ViT. Lastly, \cite{arnold2024explainable} proposed using advanced multimodal large language models (LLMs) to build an open-ended, interpretable interface for exploring visual collections. Their approach demonstrated how such models can power innovative clustering and recommendation mechanisms while overcoming typical limitations associated with techniques that rely solely on visual embeddings. 
+In the context of Computational Humanities Research, a few recent papers explored the potential of multimodality cultural heritage. In \cite{smits2021towards}, Smits and Kestemont demonstrate how CLIP achieve respectable accuracy when applied to nineteenth-century magic lanterns in a zero-shot setting. However, it was still outperformed by a vision model specifically fine-tuned for the task.  Another important source for multimodal analysis are historical maps, which combine visual and textual features. \cite{mahowald2024integrating} highlight the potential of multimodal search for historical maps, using text and visual inputs (or both). They also introduce a dataset for fine-tuning multimodal models containing more than 10,000 map-caption pairs. In ``Reading maps at a distance'', \cite{mcdonough2024reading} explores the combined analysis of text labels and visual features on Ordnance Survey maps, to understand different types of ``railspace'' in nineteenth-century Britain.
+Other types of cultural heritage collections have also been analyzed from a multimodal perspective. For example, \cite{maksimova2024viability} investigated the viability of zero-shot learning and search outside of the English language. They applied CLIP and SigLIP to a collection of historical photos derived from Ajapaik, a crowd-sourced photo archive that comprises images related to Estonia or its neighboring countries. A paper by \cite{roald2024visual} looked closely at opportunities of multimodality for book collections. They presented a proof-of-concept image-search tool to explore the pre-1900 collections of the National Library of Norway. They found that, for image retrieval and classification, SigLIP performed slightly better than CLIP or ViT. Lastly, \cite{arnold2024explainable} proposed using advanced multimodal large language models (LLMs) to build an open-ended, interpretable interface for exploring visual collections. Their approach demonstrated how such models can power innovative clustering and recommendation mechanisms while overcoming typical limitations associated with techniques that rely solely on visual embeddings.
 
 This research also took inspiration from recent waves of ``historical'' language models (LM). Using the collection of British Library books, \cite{hosseini2021neural} released a variety of historical BERT models fine-tuned on specific temporal segments of the collection. MacBERTh can serve as another example, introduced in \cite{manjavacas2021macberth} as an LM pre-trained on historical English (1450-1950). While researchers have adapted and ``historicised'' LMs using transfer learning \cite{howard2018universal},\footnote{or sometimes pre-training from scratch} this paradigm seems less prevalent in multimodal computational humanities. By demonstrating the benefits of historical adaptation of multimodal AI, this research hopes to change this.
- 
+
 \section{Data}
 
-In the Heritage Weaver project, we investigated two collections: the Science Museum Group (SMG) and National Museums Scotland (NMS). 
-Our data selection was guided by the Congruence Engine's emphasis on industrial heritage, and we focused on records related to three main themes of the project: communications, energy, and textiles. 
+In the Heritage Weaver project, we investigated two collections: the Science Museum Group (SMG) and National Museums Scotland (NMS).
+Our data selection was guided by the Congruence Engine's emphasis on industrial heritage, and we focused on records related to three main themes of the project: communications, energy, and textiles.
 We obtained all records related to these themes, based on the existing taxonomy terms in the catalogues, selected by domain experts in collaboration with the collection curators.
 In total, we collected 21,871 records: 20,889 from SMG and 982 from NMS. Metadata and images were supplied by the relevant partner institutions. After retrieval, we converted the data to a minimal, uniform format. We described each object with the following metadata fields:
 
 \begin{itemize}
-    \item \textbf{record\_id:} the original object identifier taken from the museum catalogue
-    \item  \textbf{name:} the name mentioned in the catalogue ( ``object\_name'' in the NMS metadata, and value for the ``name'' key in SMG).
-    \item  \textbf{img\_url:} a link to where the image is hosted online. 
-    \item \textbf{description:} a free-text description of the object. In the original metadata, this is the ``description'' column in NMS. For the SMG collection, we concatenated the values under the ``title'' and ``description'' fields.
-    
+\item \textbf{record\_id:} the original object identifier taken from the museum catalogue
+\item  \textbf{name:} the name mentioned in the catalogue ( ``object\_name'' in the NMS metadata, and value for the ``name'' key in SMG).
+\item  \textbf{img\_url:} a link to where the image is hosted online.
+\item \textbf{description:} a free-text description of the object. In the original metadata, this is the ``description'' column in NMS. For the SMG collection, we concatenated the values under the ``title'' and ``description'' fields.
+
 \end{itemize}
 
-We stored this information in a vector database,\footnote{Using the chromadb API in Python: \url{https://www.trychroma.com/}} together with an embedding of text (name and description) and the image. The database forms the infrastructural backbone for our experiments below. 
+We stored this information in a vector database,\footnote{Using the chromadb API in Python: \url{https://www.trychroma.com/}} together with an embedding of text (name and description) and the image. The database forms the infrastructural backbone for our experiments below.
 
 \section{Models}
 
@@ -133,44 +102,38 @@ We included \textit{ft-last} in our analysis to understand the risks (and impact
 
 To better contextualise the value of fine-tuning smaller models, we compared some results to \textit{gpt-4o} and \textit{gpt-4o-mini}.\footnote{See classification experiments} When presenting this work on earlier occasions, we were often asked why we focused on SigLIP, and did not ``simply'' use ChatGPT (or similarly powerful closed models with multimodal capabilities).
 
-Firstly, our investigation aimed to give pragmatic guidance to museums (and other institutions) on how AI can assist them with preserving and curating large heritage collections. This implies that we needed to take into account the resources and skills available to these organisations, as well as legal constraints. Given that museums are unlikely to possess large compute clusters or budgets to integrate commercial LLMs, we investigated whether improving cheaper and smaller models is a more fruitful avenue. These models can be fine-tuned and deployed with minimal cost and empower institutions to retain control of their data and their tools.\footnote{Something which is not always guaranteed when partnering up with commercial companies relying on selling services built on closed models.} When relying on external APIs, LLMs are convenient to implement and excellent for prototyping. However, when working with large collections and building tools for production, they saddle users with high costs.\footnote{For more details, please consult a recent report written by Kaspar Beelen, published by Jisc, on ``Small Language Models for libraries and computational humanities.'' \url{https://repository.jisc.ac.uk/10293/1/small-language-models-for-libraries-and-computational-humanities-18-sept-2025.pdf}} 
+Firstly, our investigation aimed to give pragmatic guidance to museums (and other institutions) on how AI can assist them with preserving and curating large heritage collections. This implies that we needed to take into account the resources and skills available to these organisations, as well as legal constraints. Given that museums are unlikely to possess large compute clusters or budgets to integrate commercial LLMs, we investigated whether improving cheaper and smaller models is a more fruitful avenue. These models can be fine-tuned and deployed with minimal cost and empower institutions to retain control of their data and their tools.\footnote{Something which is not always guaranteed when partnering up with commercial companies relying on selling services built on closed models.} When relying on external APIs, LLMs are convenient to implement and excellent for prototyping. However, when working with large collections and building tools for production, they saddle users with high costs.\footnote{For more details, please consult a recent report written by Kaspar Beelen, published by Jisc, on ``Small Language Models for libraries and computational humanities.'' \url{https://repository.jisc.ac.uk/10293/1/small-language-models-for-libraries-and-computational-humanities-18-sept-2025.pdf}}
 Secondly, Heritage Weaver aimed to create tools that work well for specific collections and historical data. Do we need models that contain billions of parameters to improve the exploration of such heritage collections?  Thirdly, for reasons of privacy, legal and environmental concerns, handing over collections to large corporations might carry significant risks that we were not willing to take.
 
 \section{Experiment Design}
 
 \subsection{Background}
-This paper presents multiple experiments to evaluate the potential benefits of using fine-tuned multimodal AI to explore museum data and digital heritage across collections. 
-%This research was conducted as part of the Heritage Weaver investigation, which explored how multimodal models can offer new ways to uncover and interpret connections within museum collections. 
+This paper presents multiple experiments to evaluate the potential benefits of using fine-tuned multimodal AI to explore museum data and digital heritage across collections.
+
 In Heritage Weaver, we initially focused on the representations or embeddings produced by multimodal models, and established to what extent these can serve as instruments for finding meaningful links (i.e. ``weaving connections'') within and across collections. Using representations extracted from SigLIP, we can compute similarity based on textual and visual data. But how and when do these similarities translate to something meaningful? What models and modalities provide more reliable embeddings and a better understanding of connections in our heritage materials?
 
 Figure \ref{fig:compare_ft_best} visualises part of the problem. It compares all records in SMG (y-axis) to NMS (x-axis) based on their embeddings. Each point contains a cosine similarity, and highly similar record pairs are marked by black dots,\footnote{These record pairs have a similarity scores that range in the 97.5th percentile.} the rest by white dots. We repeated this operation for different modalities: text-to-text (left), image-to-image (centre) and image-to-text (right). What becomes apparent is the divergence between these plots: which records are perceived as similar by the model depends on the modality through which they are compared. Moreover, it also depends on the model. Figure \ref{fig:diff_ft_best} highlights \textit{differences} between \textit{ft\_best} and \textit{base} for each modality. Black dots indicate pairs on which the models disagree in their similarity assessment. We observe that different regions light up; in this case, the models seem to disagree, especially in their cross-modal comparison of records (image-to-text plot at the right).
-
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=1.0\textwidth]{figures/compare_ft_best.png}
 \caption{Visualising similar items across collections for different modalities (using \textit{ft\_best} model) Black dots indicate highly similar records.\label{fig:compare_ft_best}}
-  \label{fig:diff_ft_best}
 \end{figure}
-
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=1.0\textwidth]{figures/diff_ft_best_base.png}
-\caption{Visualising how models differ in their similarity assessment (\textit{ft\_best} vs. \textit{base}). Black dots indicate disagreement.}
-  \label{table:sampledatazeroshot}
+\caption{Visualising how models differ in their similarity assessment (\textit{ft\_best} vs. \textit{base}). Black dots indicate disagreement.\label{fig:diff_ft_best}}
 \end{figure}
 
 To establish when multimodal AI ``makes sense'' we designed a set of targeted experiments. All experiments comprise a comparison between model outputs and a ``ground truth'' derived from catalogue metadata or expert annotations.
-In this section we explain the design of our experiments on classification, retrieval and linking. 
+In this section we explain the design of our experiments on classification, retrieval and linking.
 The evaluation of these experiments is described in the next section.
-
-%\subsection{Metadata}
 
 \subsection{Classification}
 
 We designed an automated experiment to evaluate the zero-shot classification abilities of the original and fine-tuned models. The goal of this experiment was to understand how well different models captured what the image represented by assigning meaningful labels. Zero-shot classification provides an efficient method for exploring connections between collections based on flexible label sets designed by the curator or the researcher.
-For it to work, however, the model needed to successful recognise what is in a given image. We used the original name of an object record (or the name's root noun\footnote{We use SpaCy to determine the root noun, selected the token with dependency tag ``ROOT'' and part-of-speech tag ``NOUN'' or ``PROPN''}) as the ground truth and randomly add \textit{n} other labels as candidates. We presented the model with a set of labels and asked it to guess the original name (i.e. the name derived from the original record). In some cases, the automatically generated ground truth may be wrong or uninformative. But as emphasised earlier, we are primarily interested in \textit{relative} improvements to the base model.\footnote{Also, the likelihood that one of the randomly selected labels is actually a better candidate than the one distilled from record metadata remains small.} 
+For it to work, however, the model needed to successful recognise what is in a given image. We used the original name of an object record (or the name's root noun\footnote{We use SpaCy to determine the root noun, selected the token with dependency tag ``ROOT'' and part-of-speech tag ``NOUN'' or ``PROPN''}) as the ground truth and randomly add \textit{n} other labels as candidates. We presented the model with a set of labels and asked it to guess the original name (i.e. the name derived from the original record). In some cases, the automatically generated ground truth may be wrong or uninformative. But as emphasised earlier, we are primarily interested in \textit{relative} improvements to the base model.\footnote{Also, the likelihood that one of the randomly selected labels is actually a better candidate than the one distilled from record metadata remains small.}
 
 This experiment simulates, to some extent, whether a model ``understands'' an image. By repeatedly asking it to select the correct label from a set of candidates, we can measure if fine-tuning improves the overall alignment between visual and textual concepts. We should again emphasise that images used for evaluation were not part of the training data.
 Table \ref{table:sampledatazeroshot} shows a sample of the data used for zero-shot classification using nouns as labels. It shows the original names and extracted root nouns. The candidate labels include the original noun and randomly selected nouns from other records. The information in \textit{candidate\_nouns} is presented to the model for classification. In the experiment report below, we apply zero-shot classification to names and nouns, and increase the difficulty of the task by expanding the number of candidates from five to ten. We also apply these tasks to subsets of the data, indicated by the \textit{data} column.
@@ -189,41 +152,35 @@ pay check &      check &     [check, horseshoe, cable, representation, cup] \\
 \bottomrule
 \end{tabular}
 \caption{Example of data used for evaluating the zero-shot capabilities of original and fine-tuned models. In this case, we test if the model can guess the root noun present in the record name.}
-  \label{fig:link}
+\label{table:sampledatazeroshot}
 \end{center}
 \end{table}
-
 
 \subsection{Search}
 
 The second automated experiment simulated the influence of model fine-tuning on search and information retrieval, testing performance within and across modalities. For each record $r$ in the evaluation data,  we used the image $r_{img}$ as a query, and retrieved $n$ most similar entries in the vector database, based on either their image (image-to-image retrieval) or text (image-to-text retrieval) embeddings.
 
-To evaluate if the retrieved candidates were relevant to the query, we embed the name of the query $r_{name}$ (which is \textit{not} included in the search) and those of the retrieved records. We computed the cosine similarity between  $r_{name}$ and $e_{i_{name}}$ for each retrieved item $e_{i}$.\footnote{For embedding names, we used the all-MiniLM-L6-v2 model with the Sentence Transformers library.} Figure \ref{fig:exampleimg} shows an example of this setup: the query is an image with the name ``battery''. We searched the database for similar images and computed the similarity between the vector representations of the names (i.e. sim(``battery'', ``accumulator'') and sim(``battery'', ``lamp battery'')) to score the relevance of the retrieved candidates. By comparing the names, we have some way of automatically assessing if the retrieved images are relevant to the query. 
+To evaluate if the retrieved candidates were relevant to the query, we embed the name of the query $r_{name}$ (which is \textit{not} included in the search) and those of the retrieved records. We computed the cosine similarity between  $r_{name}$ and $e_{i_{name}}$ for each retrieved item $e_{i}$.\footnote{For embedding names, we used the all-MiniLM-L6-v2 model with the Sentence Transformers library.} Figure \ref{fig:exampleimg} shows an example of this setup: the query is an image with the name ``battery''. We searched the database for similar images and computed the similarity between the vector representations of the names (i.e. sim(``battery'', ``accumulator'') and sim(``battery'', ``lamp battery'')) to score the relevance of the retrieved candidates. By comparing the names, we have some way of automatically assessing if the retrieved images are relevant to the query.
 Because Heritage Weaver is specifically concerned with building bridges across collections, we repeated this experiment, but this time we focused on \textit{cross-collection search}: i.e. if the image is produced by SMG, we assessed the extent to which we could retrieve relevant records from NMS (and vice versa). The results for collection-agnostic (top) and cross-collection (bottom) search are reported in Table \ref{table:searchimgtoimg}.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.5\textwidth]{figures/example_search.jpg}
 \caption{Example of image-to-image search.}
-  \label{fig:exampleimg}
-%
 
+\label{fig:exampleimg}
 \end{figure}
-
 
 To gauge improvements in multimodal search, we experimented with text-to-image search, in which object descriptions serve as queries for image retrieval. Put differently: Can we find relevant images based solely on textual descriptions?  Also, here, we used the names of the objects to evaluate the quality of the found records. For cross-modal search, we also evaluate if the original record associated with the description was retrieved.
 
-
-%\subsection{Expert Annotations}
 \subsection{Linking}
 
-The automated experiments elucidate how model fine-tuning contributes to downstream tasks such as classification and information retrieval. 
-To assess if GLAM professionals might benefit from tailored multimodal models for bridging information silos, we set up an annotation experiment that mimics linking and exploring heritage data across collections. 
-We evaluated these experiments both quantitatively and qualitatively. 
+The automated experiments elucidate how model fine-tuning contributes to downstream tasks such as classification and information retrieval.
+To assess if GLAM professionals might benefit from tailored multimodal models for bridging information silos, we set up an annotation experiment that mimics linking and exploring heritage data across collections.
+We evaluated these experiments both quantitatively and qualitatively.
 We recruited historians and curators to annotate, including curators from National Museum Scotland, researchers from the Congruence Engine project, a museum professional from the Discovery Museum in Newcastle, and a historian of Science and Technology. The goal was to have a diverse group of researchers and museum professionals, with different levels of expertise, familiarity with the collection, but united by a common understanding of industrial heritage objects.
 
 The annotation session took place online. We used a LabelStudio\footnote{\url{https://labelstud.io/}} instance hosted on HuggingFace Spaces\footnote{\url{https://huggingface.co/spaces}} as the annotation interface. We introduced the project, tasks and explained the labels, to make sure everyone was equally informed. Each annotator was provided a different subset for each task. Afterwards, the annotators were asked to share their thoughts and opinions. We used these as a form of \textit{qualitative} evaluation, but also let these observations inform decisions for \textit{quantitative} evaluation.
-
 
 \begin{figure}[h]
 \centering
@@ -232,10 +189,9 @@ The annotation session took place online. We used a LabelStudio\footnote{\url{ht
 \label{fig:link}
 \end{figure}
 
-To evaluate the impact of model fine-tuning, we followed a specific sampling strategy. We sampled record pairs where each item is from a different collection (i.e. each pair links SMG to NMS). Figure \ref{fig:link} shows an example of a record pair that annotators were asked to label. Because of the wealth of possible combinations, randomly sampling record pairs would yield mostly unrelated items. Therefore, we focused on object pairs whose embeddings were highly similar.\footnote{In the 99th percentile bracket} 
-%The question here is: does ``vector similarity'' correspond to meaningful connections that can help scholars and curators to link objects across collections? 
-Then, we zoomed in on occurrences where models diverged in their assessments, e.g. record pairs that a fine-tuned model recognises as similar while an off-the-shelf SigLIP model did not (or vice versa). Table \ref{table:sampling_strategy} provides an overview of the procedure used for sampling record pairs. The first row covers images where all models agreed on their image similarity (i.e. the similarity was above a set threshold for all models). The texts \textit{might} be similar, but this was not a criterion for selection (therefore marked by 0/1). The second row points to pairs of images which the \textit{base} model considers similar, but the fine-tuned model disagrees.
+To evaluate the impact of model fine-tuning, we followed a specific sampling strategy. We sampled record pairs where each item is from a different collection (i.e. each pair links SMG to NMS). Figure \ref{fig:link} shows an example of a record pair that annotators were asked to label. Because of the wealth of possible combinations, randomly sampling record pairs would yield mostly unrelated items. Therefore, we focused on object pairs whose embeddings were highly similar.\footnote{In the 99th percentile bracket}
 
+Then, we zoomed in on occurrences where models diverged in their assessments, e.g. record pairs that a fine-tuned model recognises as similar while an off-the-shelf SigLIP model did not (or vice versa). Table \ref{table:sampling_strategy} provides an overview of the procedure used for sampling record pairs. The first row covers images where all models agreed on their image similarity (i.e. the similarity was above a set threshold for all models). The texts \textit{might} be similar, but this was not a criterion for selection (therefore marked by 0/1). The second row points to pairs of images which the \textit{base} model considers similar, but the fine-tuned model disagrees.
 
 \begin{table}
 \begin{center}
@@ -254,58 +210,33 @@ image & text &  base & ft\_best & ft\_last \\
 
 \end{tabular}
 \caption{Overview of sampling strategies for record pairs.\label{table:sampling_strategy}}
-  \label{fig:retrieval}
 \end{center}
 \end{table}
 
-
-Annotators were tasked with labelling these sampled record pairs. We should stress that we did not disclose to the annotators the sampling method, meaning that they didn't know which model or modality produced the examples they were labelling. They, therefore, couldn't be biased by our research question. Each annotator was presented with 100 pairs to annotate, choosing to assign each pair as either ``same object'', ``similar object'', ``same category'', and ``unrelated''. 
+Annotators were tasked with labelling these sampled record pairs. We should stress that we did not disclose to the annotators the sampling method, meaning that they didn't know which model or modality produced the examples they were labelling. They, therefore, couldn't be biased by our research question. Each annotator was presented with 100 pairs to annotate, choosing to assign each pair as either ``same object'', ``similar object'', ``same category'', and ``unrelated''.
 
 \begin{itemize}
-    \item \textbf{Same object}: A rare annotation used for when the object is identical. For example, two 700 series telephones, two gas lamps, or two Jacquard looms.
-    \item \textbf{Similar object}: Objects which are highly similar but not the same, for example, two telephones, two light bulbs, two looms.
-    \item \textbf{Same category}: Denotes when two objects have similar uses, perhaps they would be assigned to the same category within a CMS, but they are different ‘things’. This is probably the loosest and most subjective form of linkage.
-    \item \textbf{Unrelated}: These objects are not the same, similar, or used for similar purposes. They have no meaningful connection.
+\item \textbf{Same object}: A rare annotation used for when the object is identical. For example, two 700 series telephones, two gas lamps, or two Jacquard looms.
+\item \textbf{Similar object}: Objects which are highly similar but not the same, for example, two telephones, two light bulbs, two looms.
+\item \textbf{Same category}: Denotes when two objects have similar uses, perhaps they would be assigned to the same category within a CMS, but they are different ‘things’. This is probably the loosest and most subjective form of linkage.
+\item \textbf{Unrelated}: These objects are not the same, similar, or used for similar purposes. They have no meaningful connection.
 
 \end{itemize}
 
-We did not compute inter-annotator agreement, as our main goal was \textit{not} to create a gold standard, but to establish which aspects (i.e. modalities and models) yielded results useful to these particular experts.\footnote{Also, we gave annotators different pairs to label, maximizing the number of different observation, but making computing agreement impossible.} 
-
-%\subsubsection{Image Ranking}
-
-%In this experiment, we mimiced text-to-image search by presenting our annotators with a keyword query and three sets of images (vertically arranged as rows), each containing four thumbnails (horizontally arranged). Figure \ref{fig:retrieval} shows the example for the query ``An image of a coherer''. 
-
-
-%At the outset of the session, annotators were given two prompts, asking them to choose a specific set of images.
-%\begin{figure}[h]
-%\caption{Example a ranked images for the query ``a coherer'' }
-  \label{table:zs}
-%\centering
-%\includegraphics[width=0.75\textwidth]{figures/a coherer_16.jpg}
-
-%\end{figure}
-
-
-%\begin{itemize}
-%    \item \textbf{Prompt 1}: You are a curator evaluating an information retrieval system that returns four images for a given keyword search. Which of the series of images is most useful to you?
-%    \item \textbf{Prompt 2}: You are a researcher evaluating an information retrieval system that returns four images for a given keyword search. Which of the series of images is most interesting to you?
-%\end{itemize}
-
-%This exercise helps us understand which models are optimal to explore visual collections based on text prompts. 
+We did not compute inter-annotator agreement, as our main goal was \textit{not} to create a gold standard, but to establish which aspects (i.e. modalities and models) yielded results useful to these particular experts.\footnote{Also, we gave annotators different pairs to label, maximizing the number of different observation, but making computing agreement impossible.}
 
 \section{Results}
 
 \subsection{Classification}
 
-To evaluate the zero-shot classification capabilities, we measured if the SigLIP models can accurately guess the correct label for an image from a set of candidates. The target or correct label is the name associated with the image in the metadata, to which we randomly added other names from the catalogue.  
+To evaluate the zero-shot classification capabilities, we measured if the SigLIP models can accurately guess the correct label for an image from a set of candidates. The target or correct label is the name associated with the image in the metadata, to which we randomly added other names from the catalogue.
 We varied the experiments slightly to better understand the robustness of our findings:
 \begin{itemize}
-    \item we changed the number of candidates 
-    \item we used the original name of the object or the root noun (both as target label and other candidates)
+\item we changed the number of candidates
+\item we used the original name of the object or the root noun (both as target label and other candidates)
 \end{itemize}
 
 In Table \ref{table:zs} the \textit{target} column indicates whether we classified names or nouns; \textit{n\_candidates} points to the number of candidates (either 5 or 10). Other columns show the overall accuracy and the weighted precision and f1 scores for each experiment. We first applied zero-shot classification to the complete test set, which is indicated by the \textit{all} value in the \textit{data} column.
-
 
 \begin{table}
 \begin{center}
@@ -313,18 +244,18 @@ In Table \ref{table:zs} the \textit{target} column indicates whether we classifi
 \toprule
 data & model & target &  n\_cand &  accuracy &  precision &     f1 \\
 \midrule
- all & base    &  noun &             5 &     0.721 &      0.829 &  0.751 \\
- all & ft-last &  noun &             5 &     0.876 &      0.910 &  0.884 \\
- all & ft-best &  noun &             5 &     \textbf{0.892} &      \textbf{0.920} &  \textbf{0.898} \\
+all & base    &  noun &             5 &     0.721 &      0.829 &  0.751 \\
+all & ft-last &  noun &             5 &     0.876 &      0.910 &  0.884 \\
+all & ft-best &  noun &             5 &     \textbf{0.892} &      \textbf{0.920} &  \textbf{0.898} \\
 \midrule
- all & base    &  noun &            10 &     0.625 &      0.764 &  0.658 \\
- all &  ft-last &  noun &            10 &     0.805 &      \textbf{0.849} &  0.816 \\
- all & ft-best &  noun &            10 &     \textbf{0.814} &      0.848 &  \textbf{0.821} \\
+all & base    &  noun &            10 &     0.625 &      0.764 &  0.658 \\
+all &  ft-last &  noun &            10 &     0.805 &      \textbf{0.849} &  0.816 \\
+all & ft-best &  noun &            10 &     \textbf{0.814} &      0.848 &  \textbf{0.821} \\
 \midrule
- all & base    &       name &             5 &     0.793 &      0.854 &  0.809 \\
+all & base    &       name &             5 &     0.793 &      0.854 &  0.809 \\
 all & ft-last &       name &             5 &     0.935 &      \textbf{0.955} &  0.941 \\
- all & ft-best &       name &             5 &     \textbf{0.939} &      0.953 &  \textbf{0.941} \\
- \midrule
+all & ft-best &       name &             5 &     \textbf{0.939} &      0.953 &  \textbf{0.941} \\
+\midrule
 all & base    &       name &            10 &     0.716 &      0.794 &  0.735 \\
 all & ft-last &       name &            10 &     0.902 &      \textbf{0.934} &  0.911 \\
 all & ft-best &       name &            10 &     \textbf{0.907} &      0.927 &  \textbf{0.912} \\
@@ -345,40 +276,39 @@ sample & chatgpt-4o & noun & 10 & 0.770 & 0.801 & 0.771 \\
 \bottomrule
 
 \end{tabular}
-\caption{Zero-shot classification results.}
-  \label{fig:acc_diff}
+\caption{Zero-shot classification results.\label{table:zs}}
 \end{center}
 
 \end{table}
 
-Across all experiments, the fine-tuned models substantially improved upon the off-the-shelf base model. Overall, we observed an increase in accuracy scores between 15\% to 20\%. When expanding the candidates, these numbers slightly drop, as the task gets more difficult, but the gap between the original and fine-tuned models persists.  For example, SigLIP \textit{base} obtains an accuracy of 0.721 for zero-shot classification with five candidates. When asked to pick the right label from a set of ten, the accuracy declines to 0.625. The best fine-tuned models achieve a score of 0.892, respectively 0.814. 
-Names seem somewhat easier to classify compared to the more abstract and generic nouns: the scores climb and the fine-tuned models outperform SigLIP \textit{base} by a margin of more than 10\%. %\textit{ft-best} manages to obtain an accuracy of 0.939 when asked to pick the correct label from a set of five.
+Across all experiments, the fine-tuned models substantially improved upon the off-the-shelf base model. Overall, we observed an increase in accuracy scores between 15\% to 20\%. When expanding the candidates, these numbers slightly drop, as the task gets more difficult, but the gap between the original and fine-tuned models persists.  For example, SigLIP \textit{base} obtains an accuracy of 0.721 for zero-shot classification with five candidates. When asked to pick the right label from a set of ten, the accuracy declines to 0.625. The best fine-tuned models achieve a score of 0.892, respectively 0.814.
+Names seem somewhat easier to classify compared to the more abstract and generic nouns: the scores climb and the fine-tuned models outperform SigLIP \textit{base} by a margin of more than 10\%.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=1.0\textwidth]{figures/accuracy_by_object.png}
 \caption{Difference in accuracy compared to \textit{base} SigLIP model.}
-  \label{table:searchimgtoimg}
+\label{fig:acc_diff}
 \end{figure}
 
-To understand divergence between original and fine-tuned models, we calculated the difference in accuracy for each object type (in this case, the head noun in the object name).\footnote{These numbers are based on the first experiment, zero-shot classification for all the data with five different labels} We compared the fine-tuned models to SigLIP \textit{base} disaggregating the scores by noun; scores above zero indicate better performance of \textit{ft-last} or \textit{ft-best} for this noun, negative numbers point to objects where the fine-tuning might harm performance. 
-The results for the most common objects are reported in \ref{fig:acc_diff}. Inspecting these results more closely shows that part of the performance difference stems from the naming conventions in museum catalogues. For example, fine-tuned models excel for the categories ``specimen'', ``model'', or ``sample''. In this sense, one could argue that adapting models does not necessarily improve their ability to understand what is represented in these (historical) images, but tailors them to curatorial practices and conventions. 
+To understand divergence between original and fine-tuned models, we calculated the difference in accuracy for each object type (in this case, the head noun in the object name).\footnote{These numbers are based on the first experiment, zero-shot classification for all the data with five different labels} We compared the fine-tuned models to SigLIP \textit{base} disaggregating the scores by noun; scores above zero indicate better performance of \textit{ft-last} or \textit{ft-best} for this noun, negative numbers point to objects where the fine-tuning might harm performance.
+The results for the most common objects are reported in \ref{fig:acc_diff}. Inspecting these results more closely shows that part of the performance difference stems from the naming conventions in museum catalogues. For example, fine-tuned models excel for the categories ``specimen'', ``model'', or ``sample''. In this sense, one could argue that adapting models does not necessarily improve their ability to understand what is represented in these (historical) images, but tailors them to curatorial practices and conventions.
 However, we reran these experiments, leaving out the records where the name does not describe the object but characterises the type of representation (``model'', ``specimen'', ``sample'', etc.). These experiments are marked by \textit{filter} in the \textit{data} column. While zooming in on the ``objective'' names changes the accuracy somewhat, it does not alter the core of our findings: the gaps in performance persist and the adapted models score better than the base models, with margins of around 15\% or more. Also in this scenario, \textit{ft-best} leaves all others behind.
 
 Lastly, we compared the performance of our historical, adapted models to the popular and powerful ChatGPT. To keep the costs down, we restricted this experiment to a subsample of 200 records. We instructed ChatGPT as follows:
 
- \begin{itemize}
-     \item System Prompt: You are a helpful assistant that classifies images into specific categories.
-     \item  User Prompt: Classify this image into one of these labels: \{\{labels\}\} Respond only with the label.
- \end{itemize}
+\begin{itemize}
+\item System Prompt: You are a helpful assistant that classifies images into specific categories.
+\item  User Prompt: Classify this image into one of these labels: \{\{labels\}\} Respond only with the label.
+\end{itemize}
 
 Lastly, we ensured that all responses could be mapped to at least one of the classes, with the only exception when ChatGPT replied that ``none of the labels applied''. This was considered to be an incorrect answer, or failure.
 Interestingly, even an immensely large model as \textit{gpt-4o}—which admittedly hasn't been trained on our museum data, at least as far as we know—performs considerably worse than our small (but fine-tuned) models. While \textit{gpt-4o} does better than SigLIP \textit{base}, its accuracy is still 5\% below \textit{ft-best}. Moreover, ChatGPT took around 5 minutes to process 200 records, while SigLIP completed the task in about 1 minute on a MacBook Pro \textit{without} GPU acceleration. It suffices to say that, based on these findings, museums and other heritage institutions, better prioritise small and customizable AI instead of relying on expensive, commercial LLMs.
- 
+
 \subsection{Search}
 
 The search experiments simulate various content retrieval scenarios: how does fine-tuning change the ranking of records based on their intra-modal (i.e. image-to-image) or cross-model (text-to-image) similarity? Table \ref{table:searchimgtoimg} reports scores for image-to-image search. The first set of results is based on collection agnostic search (we search the whole database), the second set shows performance for cross-collection document retrieval (i.e. we use records from SMG to find information in NMS and vice versa).
-Query records were not part of the training data. Therefore, for each image in the test set, we evaluated the relevance of the retrieved records by comparing the average similarity between the name of the query image and the names of the retrieved images. If the similarity between the names was above 0.95 we coded this pair as one\footnote{This value is somewhat arbitrary, from the previous experiments with sentence embeddings we found that scores around or above 0.95 likely indicate similarity in meaning.}, otherwise as zero.  The scores in Table \ref{table:searchimgtoimg} should be read as follows: a \textit{relevance} score of 2.005 for $n$=3, indicates that, on average, two out of three retrieved images have record names whose cosine similarity is above 0.95 (to the query image name). the \textit{sd.} column shows the standard deviation of these relevance scores across all searches. 
+Query records were not part of the training data. Therefore, for each image in the test set, we evaluated the relevance of the retrieved records by comparing the average similarity between the name of the query image and the names of the retrieved images. If the similarity between the names was above 0.95 we coded this pair as one\footnote{This value is somewhat arbitrary, from the previous experiments with sentence embeddings we found that scores around or above 0.95 likely indicate similarity in meaning.}, otherwise as zero.  The scores in Table \ref{table:searchimgtoimg} should be read as follows: a \textit{relevance} score of 2.005 for $n$=3, indicates that, on average, two out of three retrieved images have record names whose cosine similarity is above 0.95 (to the query image name). the \textit{sd.} column shows the standard deviation of these relevance scores across all searches.
 
 \begin{table}
 \begin{center}
@@ -395,8 +325,7 @@ ft-last & 3 &  0.033 &  0.225 & 10 &  0.109 &  0.696 & 20 & 0.180 &  1.116  \\
 ft-best & 3 & \textbf{0.035} & 0.220  & 10 & \textbf{0.111} & 0.659 & 20 & \textbf{0.189} & 1.116 \\
 \bottomrule
 \end{tabular}
-\caption{Average similarity (for image-to-image search) between names of the query record and retrieved records. The first set of results is collection agnostic; the second set shows results for cross-collection search.}
-  \label{table:searchother}
+\caption{Average similarity (for image-to-image search) between names of the query record and retrieved records. The first set of results is collection agnostic; the second set shows results for cross-collection search.\label{table:searchimgtoimg}}
 \end{center}
 \end{table}
 
@@ -413,38 +342,34 @@ ft-last & 10 & text-image & \textbf{4.639} &   \textbf{0.307} & image-text & \te
 ft-best & 10 & text-image & 4.225 & 0.288 & image-text & 3.327 & 0.054 \\
 \bottomrule
 \end{tabular}
-\caption{Average similarity between the name of the query record and retrieved records for image-to-text and text-to-image search.}
-  \label{fig:link_label}
+\caption{Average similarity between the name of the query record and retrieved records for image-to-text and text-to-image search.\label{table:searchother}}
 \end{center}
 \end{table}
 
 Table \ref{table:searchother} tests the cross-modal search capabilities: we use a description to search for images (or vice versa, use images to search descriptions). Similar to \ref{table:searchimgtoimg}, the \textit{relevance} column compares the name of the query record to the retrieved items. The \textit{found} columns indicate to what extent we could find the original record across all searches, e.g. whether we could fetch the correct image based on its descriptions. The values in this column range between zero (never) and one (always). The former indicates that we could not retrieve the original records in any of the searches; the latter that all cross-modal queries managed to return the original record (i.e. the original record was found among the top $n$ retrieved items).
 
-The scores for text-to-image search are generally higher than image-to-text search. Interestingly, the performance gap between base and fine-tuned models tends to widen when looking at the \textit{relevance} scores. In these cases, the model trained for more epochs achieved better results. 
-%The difference between \textit{ft-last} and \textit{base} for image-to-text is approximately two relevant records for ten results. For image-to-text search, this difference is around 1.5. 
+The scores for text-to-image search are generally higher than image-to-text search. Interestingly, the performance gap between base and fine-tuned models tends to widen when looking at the \textit{relevance} scores. In these cases, the model trained for more epochs achieved better results.
+
 However, the numbers reported in the \textit{found} column deviate somewhat from the patterns observed in previous experiments. \textit{ft-last} managed to retrieve the original image based on the description in around 30\% of the searches (meaning that the original record appeared in the top ten results). This drops to around 11\% when searching the other way. In this case, we have evidence that fine-tuning might hurt performance, as both \textit{ft-last} and \textit{ft-best} fare worse than \textit{base}. At the moment, we can only speculate about reasons, but this will be part of future research.
 
 \subsection{Linking}
 
-So far, we have relied on metadata as proxies of ground truth. However, to establish how experts read and interpret the results returned by our models, we designed an annotation experiment. 
-%While the above results shed light on where fine-tuning models might be beneficial in rather abstract terms, 
-The following experiment established where experts might actually experience benefits from using fine-tuned multimodal AI for connecting records across museum collections. With this linking experiment, we gauged how similarity, measured in terms of model representations (or embeddings), translates to meaningful connections between historical objects (as perceived by experts). As discussed above, each of the sampled pairs connected objects between SMG and NMS, and scored high with respect to their cosine similarity. 
-%We asked the annotators to label each pair as ``same object'', ``similar object'', ``same category'' or ``unrelated''. 
+So far, we have relied on metadata as proxies of ground truth. However, to establish how experts read and interpret the results returned by our models, we designed an annotation experiment.
+
+The following experiment established where experts might actually experience benefits from using fine-tuned multimodal AI for connecting records across museum collections. With this linking experiment, we gauged how similarity, measured in terms of model representations (or embeddings), translates to meaningful connections between historical objects (as perceived by experts). As discussed above, each of the sampled pairs connected objects between SMG and NMS, and scored high with respect to their cosine similarity.
 
 \subsubsection{Quantitative Evaluation}
 
-Overall, we collected around 551 annotations, for which Figure \ref{fig:link_label} shows the distribution. The majority category (46\%) is ``unrelated'', which points to the fact that even high vector similarity does not equate to a meaningful connection. However, in most cases (54\%), these pairs do exhibit a valuable relationship between objects, though the strength of this relationship varies, from ``same object'' (1\%) over ``similar object'' (30\%), to ``same category'' (23\%). 
-
+Overall, we collected around 551 annotations, for which Figure \ref{fig:link_label} shows the distribution. The majority category (46\%) is ``unrelated'', which points to the fact that even high vector similarity does not equate to a meaningful connection. However, in most cases (54\%), these pairs do exhibit a valuable relationship between objects, though the strength of this relationship varies, from ``same object'' (1\%) over ``similar object'' (30\%), to ``same category'' (23\%).
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.5\textwidth]{figures/link_labels.png}
 \caption{Label distribution of link annotations}
-  \label{table:reg1}
+\label{fig:link_label}
 \end{figure}
 
-The principal question, however, was to establish if fine-tuning models provided \textit{better} candidates for record linking across collections. We analysed the annotations as a function of the models and modalities (i.e. as a function of the sampling strategy). We binarised the dependent variable as 0 (``unrelated'') or 1 (for the other categories). Our independent variables are the models, \textit{base}, \textit{ft-last} and \textit{ft-best}. Each observation was then dummy-coded: e.g. [1,0] would indicate that a record pair was similar for \textit{base} but not the \textit{ft-last}. We then performed a logistic regression and reported the coefficients with their standard errors.  We tested the performance of each of the fine-tuned models against the base model in separate regressions (\textit{base} vs \textit{ft-last} and \textit{base} vs \textit{ft-best}). In both regressions (see Table \ref{table:reg1}), the fine-tuned models appear to contribute to the likelihood of a positive link. We observe the largest and most significant effect for \textit{ft-best} with a z-score of 3.654 and a p-value smaller than 0.001. 
-
+The principal question, however, was to establish if fine-tuning models provided \textit{better} candidates for record linking across collections. We analysed the annotations as a function of the models and modalities (i.e. as a function of the sampling strategy). We binarised the dependent variable as 0 (``unrelated'') or 1 (for the other categories). Our independent variables are the models, \textit{base}, \textit{ft-last} and \textit{ft-best}. Each observation was then dummy-coded: e.g. [1,0] would indicate that a record pair was similar for \textit{base} but not the \textit{ft-last}. We then performed a logistic regression and reported the coefficients with their standard errors.  We tested the performance of each of the fine-tuned models against the base model in separate regressions (\textit{base} vs \textit{ft-last} and \textit{base} vs \textit{ft-best}). In both regressions (see Table \ref{table:reg1}), the fine-tuned models appear to contribute to the likelihood of a positive link. We observe the largest and most significant effect for \textit{ft-best} with a z-score of 3.654 and a p-value smaller than 0.001.
 
 \begin{table}
 \begin{center}
@@ -460,13 +385,9 @@ base &   -0.2392  &   0.148 &  -1.613  &   0.107 &  -0.530 &  0.051 \\
 ft-best &  \textbf{0.4543} &  0.124 &  3.654 &  \textbf{0.000}  &  0.211 &  0.698 \\
 \bottomrule
 \end{tabular}
-\caption{Logistic regression that predict the effect of the model selection on link annotation.}
-  \label{table:reg2}
+\caption{Logistic regression that predict the effect of the model selection on link annotation.\label{table:reg1}}
 \end{center}
 \end{table}
-
-
-
 
 \begin{table}
 \begin{center}
@@ -482,61 +403,39 @@ txt\_ft-best & 0.1870 & 0.223 & 0.837 & 0.403 & -0.251 & 0.625 \\
 \midrule
 img\_base & 0.0006 & 0.197 & 0.003 & 0.998 & -0.386 & 0.388 \\
 img\_ft-last & \textbf{0.3630} & 0.184 & 1.974 & \textbf{0.048} & 0.003 & 0.723 \\
-txt\_base & -0.1583 & 0.212 & -0.745 & 0.456 & -0.575 & 0.258 \\ 
+txt\_base & -0.1583 & 0.212 & -0.745 & 0.456 & -0.575 & 0.258 \\
 txt\_ft-last & 0.0606 & 0.202 & 0.301 & 0.764 & -0.334 & 0.456 \\
 \bottomrule
 \end{tabular}
-\caption{Logistic Regression that estimates the effect of modality and model on link annotation.}
-  \label{fig:annotation_label}
+\caption{Logistic Regression that estimates the effect of modality and model on link annotation.\label{table:reg2}}
 \end{center}
 \end{table}
 
-To get a more precise estimate of how different modalities contribute to linking, we broke down the predictors to \textit{modality\_model} variables, e.g. \textit{image\_base} indicates that image embeddings for the \textit{base} SigLIP model obtained a high cosine similarity; \textit{text\_ft-best} in turn means that the text embeddings for the \textit{ft-best} model were very similar, etc. We then reran the regression using the expanded set of independent variables. While the effects remained weak and only marginally significant, we observed that improvements in linking came primarily through visual modality. Again, this finding is consistent across fine-tuned models, with the largest effect of 0.3919 observed for \textit{ft-best} (p-value > 0.1), followed by \textit{img\_ft-last} (with a coefficient of 0.3630 and p-value > 0.05). These results not only underline the value of fine-tuning models on heritage data, but they also point towards the importance of multimodality for exploring and linking museum collections. The improvements of fine-tuning seem to be located at the visual level, rather than the textual. 
-
-%\subsection{Image Ranking}
-
-%\begin{figure}[h]
-%\caption{Label distribution of retrieval annotations by model }
-%\centering
-%\includegraphics[width=0.5\textwidth]{figures/retrieval_annotations.png}
-%\end{figure}
-
-%The last annotation experiment required the experts to determine which set of ranked images was more relevant to a given keyword query. Each ranking showed the four most similar images to the query as seen by different models. Each choice by the annotators can be understand as a ``vote'' for the model that produced the ranking. The distribution of these votes is shown in Figure \ref{fig:annotation_label} aligns with previous findings that fine-tuned multimodal models can make a difference when exploring museum data: \textit{ft-best} generated the most interesting image rankings, closely followed by \textit{ft-last}. For this experiment, we obtained 48 labels, meaning that on average, we would expect each model to obtain 16 votes (if there were no improvements from model adaptation). We performed a two-way chi-square test comparing both \textit{ft-best} and \textit{ft-last} to \textit{base} model. Only the former comparison yields a somewhat significant result, with a statistic of 0.333 and a p-value of 0.067. Given the low number of annotations, the effects remain weak. While the initial results seem promising, future research will need to collect more data and annotations to confirm these findings.
+To get a more precise estimate of how different modalities contribute to linking, we broke down the predictors to \textit{modality\_model} variables, e.g. \textit{image\_base} indicates that image embeddings for the \textit{base} SigLIP model obtained a high cosine similarity; \textit{text\_ft-best} in turn means that the text embeddings for the \textit{ft-best} model were very similar, etc. We then reran the regression using the expanded set of independent variables. While the effects remained weak and only marginally significant, we observed that improvements in linking came primarily through visual modality. Again, this finding is consistent across fine-tuned models, with the largest effect of 0.3919 observed for \textit{ft-best} (p-value > 0.1), followed by \textit{img\_ft-last} (with a coefficient of 0.3630 and p-value > 0.05). These results not only underline the value of fine-tuning models on heritage data, but they also point towards the importance of multimodality for exploring and linking museum collections. The improvements of fine-tuning seem to be located at the visual level, rather than the textual.
 
 \subsubsection{Qualitative Evaluation: Experts' Reflections on Linking}
 
-The preceding evaluation scrutinised the annotations from a statistical angle. 
-%However, we were also interested in how model adaptation contributed to the choices experts made (even though this information was hidden from them, so it could not bias their behaviour). 
+The preceding evaluation scrutinised the annotations from a statistical angle.
+
 However, we were also interested in how the experts experienced the annotation session; how they approached the tasks and what made it meaningful for them.
-%Besides looking at their annotations, we were curious to understand how they experienced the task and what aspects they found meaningful or interesting. 
+
 After the session, the participants were invited to note down their reflections, which we collected and analysed to inform both the quantitative evaluation and the future development of multimodal tools linking records across collections.
 
-Curators who knew their objects were keen to have more specific ways to link objects, i.e. more refined categories. Curators less familiar with the data reflected that this level of specificity would be overwhelming to those who lacked relevant specialist knowledge. This curator, alongside the other participants who were all researchers and academics, felt that more categories would be confusing as they lacked the necessary domain expertise. They felt they were able to infer with reasonable confidence what linked and did not link, but could not go into more detail. This informed our decision to binarise the labels for evaluating the link annotations. All participants reflected they were more inclined to look at the object images than the text when categorising the object pairs, which may partly explain why image similarity proved a good predictor linking record pairs (see Table \ref{table:reg2}). Participants noted that resemblances picked up by the models only contribute meaningfully to a curator's or historian's work when a human partakes in the pipeline. While helpful, multimodality is meaningless until a human has corroborated the results. 
+Curators who knew their objects were keen to have more specific ways to link objects, i.e. more refined categories. Curators less familiar with the data reflected that this level of specificity would be overwhelming to those who lacked relevant specialist knowledge. This curator, alongside the other participants who were all researchers and academics, felt that more categories would be confusing as they lacked the necessary domain expertise. They felt they were able to infer with reasonable confidence what linked and did not link, but could not go into more detail. This informed our decision to binarise the labels for evaluating the link annotations. All participants reflected they were more inclined to look at the object images than the text when categorising the object pairs, which may partly explain why image similarity proved a good predictor linking record pairs (see Table \ref{table:reg2}). Participants noted that resemblances picked up by the models only contribute meaningfully to a curator's or historian's work when a human partakes in the pipeline. While helpful, multimodality is meaningless until a human has corroborated the results.
 
-The ``human'' and ``expert'' aspects of the linking experiment revealed that participants perceived different priorities and pursued varying strategies. These must be taken into account when developing tools for labelling and developing record linkage for future applications in the GLAM context.  Curators, who were inspecting their own collections, required more fine-grained, precise functionalities. Their interaction with objects is a more precise and objective endeavour compared to how researchers and historians explore these collections. 
-%Curators may need to find an alternative object in their collection to display, or they may be looking for images that exactly display the object they are writing about. 
-Researchers were more likely to engage in the pursuit of exploration, and in the process made more creative associations between objects that are particular to their interests. For example, they'd link a series of telephones because they appear to have similar components, which enables a historian to investigate material culture in relation to the history of technology. 
+The ``human'' and ``expert'' aspects of the linking experiment revealed that participants perceived different priorities and pursued varying strategies. These must be taken into account when developing tools for labelling and developing record linkage for future applications in the GLAM context.  Curators, who were inspecting their own collections, required more fine-grained, precise functionalities. Their interaction with objects is a more precise and objective endeavour compared to how researchers and historians explore these collections.
+
+Researchers were more likely to engage in the pursuit of exploration, and in the process made more creative associations between objects that are particular to their interests. For example, they'd link a series of telephones because they appear to have similar components, which enables a historian to investigate material culture in relation to the history of technology.
 
 \section{Conclusion}
 
 This paper argued for the value of ``specialist'' models when analysing digital heritage collections. We demonstrated the value of fine-tuning multimodal models on text and images derived from museum data, focusing on records pertaining to the industrial past. We have shown how adapting SigLIP improved its overall capabilities for zero-shot classification and information retrieval. When classifying images, it even outperformed much larger models such as \textit{gpt-4o}. Fine-tuning seems especially powerful to improve cross-modal capabilities of these models (image-to-text and vice versa).
-Moreover, this paper explored a wide range of evaluation strategies: from using metadata as proxy-labels to expert annotations. We found that experts preferred the fine-tuned models for linking (even though they were not aware which models produced which results). Interestingly, experts relied to a large extent on visual cues when annotating the data, even though textual information was also crucial for many examples. This observation also emphasises the importance of multimodal approaches. 
+Moreover, this paper explored a wide range of evaluation strategies: from using metadata as proxy-labels to expert annotations. We found that experts preferred the fine-tuned models for linking (even though they were not aware which models produced which results). Interestingly, experts relied to a large extent on visual cues when annotating the data, even though textual information was also crucial for many examples. This observation also emphasises the importance of multimodal approaches.
 
-While LLMs are dominating public and scientific discourse, this paper argues that museums and other GLAM institutions have other options at their disposal. Fine-tuning a small or mid-sized open-source model might be a more effective and accurate strategy for making collections more accessible and navigable. 
+While LLMs are dominating public and scientific discourse, this paper argues that museums and other GLAM institutions have other options at their disposal. Fine-tuning a small or mid-sized open-source model might be a more effective and accurate strategy for making collections more accessible and navigable.
 
-
-%\section*{Acknowledgements}
-
-%This unnumbered section should be blank when submitting your paper. After review, you may include lists of people and organizations who supported the work.
-
-% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
 \printbibliography
 
-% You can include an appendix using the following command
 \appendix
-
-%\section{First Appendix Section} \label{appdx:first}
-
-%Appendix sections should be ordered by letters rather than numbers, and their contents do not count towards the paper's length limit. Appendix sections may also contain additional tables and figures.  
 
 \end{document}

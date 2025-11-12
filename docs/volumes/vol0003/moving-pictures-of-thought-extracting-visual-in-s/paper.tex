@@ -1,14 +1,7 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-%\documentclass[final]{anthology-ch} % for the final version
-\documentclass[final]{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
 \usepackage[backend=biber, style=numeric]{biblatex}
 
-% LOAD LaTeX PACKAGES
-% ADD your own packages using \usepackage{}
 \usepackage{fontspec}
 \setmainfont{Tinos}
 \usepackage{booktabs}
@@ -18,54 +11,37 @@
 \usepackage{silence}
 \WarningFilter{hyperref}{Ignoring empty anchor}
 
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{Moving Pictures of Thought: Extracting Visual Knowledge in Charles S. Peirce's Manuscripts with Vision-Language Models}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1]{Carlo Teo Pedretti}[
-  orcid=0000-0002-4115-0078
+orcid=0000-0002-4115-0078
 ]
 
 \author[2]{Davide Picca}[
-  orcid=0000-0003-2014-0855
+orcid=0000-0003-2014-0855
 ]
 
 \author[3]{Dario Rodighiero}[
-  orcid=0000-0002-1405-7062
+orcid=0000-0002-1405-7062
 ]
 
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 \affiliation{1}{Department of Classics, University Sapienza of Rome, Rome, Italy}
 \affiliation{2}{Department of Language and Communication Sciences, University of Lausanne, Lausanne, Switzerland}
 \affiliation{3}{Campus Fryslân, University of Groningen, Groningen, The Netherlands}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{visual language models, diagrams, IIIF, semantic web, visual semiotics}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
-\pagestart{1434}
-\pageend{1447}
+\pagestart{1439}
+\pageend{1452}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/fkFGJ6wSzDPV} 
+\doi{10.63744/fkFGJ6wSzDPV}
 \paperorder{90}
 
 \addbibresource{bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
 
 \maketitle
@@ -83,15 +59,15 @@ This idea finds material expression in Peirce’s manuscripts, where textual con
 Building on recent advances in the textual analysis of Peirce’s manuscript \textit{Prolegomena to an Apology for Pragmaticism} (PAP)~\cite{picca2023peirce}, we extend the investigation to his visual thinking. This exploratory study investigates the extent to which Vision Language Models (VLMs) can engage with diagrams as operative semiotic forms. To address this question, we propose a flexible and interoperable workflow for extracting structured knowledge from multimodal documents that supports integration within Linked Open Data (LOD) environments. Our modular workflow begins with the segmentation of page layouts to isolate diagrams, which are then linked IIIF annotations. These fragments are submitted to a VLM via prompt-based interactions informed by Peirce’s semiotic theory, with the aim of generating structured descriptions of diagrammatic content. The resulting outputs were then serialized in RDF, enabling machine-readable representations of visual reasoning within complex multimodal sources.
 
 \begin{figure}[htbp]
-  \centering
-  \includegraphics[height=0.55\linewidth]{figures/klee.jpg}
-  \caption{Paul Klee's Theory of Pictorial Configuration as a diagram. Zentrum Paul Klee, Bern, Inv.Nr. BG A/030. Photo: Zentrum Paul Klee.}\label{fig:klee_diagram}
+\centering
+\includegraphics[height=0.55\linewidth]{figures/klee.jpg}
+\caption{Paul Klee's Theory of Pictorial Configuration as a diagram. Zentrum Paul Klee, Bern, Inv.Nr. BG A/030. Photo: Zentrum Paul Klee.}\label{fig:klee_diagram}
 \end{figure}
 
 \begin{figure}[htbp]
-  \centering
-  \includegraphics[height=0.65\linewidth]{figures/triptych.jpg}
-  \caption{An example of diagram in religious art taken from \cite{hamburger2019devotion}: Alton Towers Triptych, Cologne (?), ca. 1150. London, Victoria \& Albert Museum, inv. no. 4757-1858. Photo: © Victoria \& Albert Museum.}\label{fig:triptych_diagram}
+\centering
+\includegraphics[height=0.65\linewidth]{figures/triptych.jpg}
+\caption{An example of diagram in religious art taken from \cite{hamburger2019devotion}: Alton Towers Triptych, Cologne (?), ca. 1150. London, Victoria \& Albert Museum, inv. no. 4757-1858. Photo: © Victoria \& Albert Museum.}\label{fig:triptych_diagram}
 \end{figure}
 
 \section{Background and Related Works}
@@ -103,7 +79,7 @@ These limitations also highlight the need for approaches that combine visual seg
 
 In recent years, the intersection of computer vision and art history has seen a growing integration of visual and textual modalities, driven by the availability of large art collections of digitized images and the development of multimodal machine learning techniques. This has led to substantial interest in tasks such as visual link retrieval, multimodal classification, iconographic captioning~\cite{cetinic2021iconclass}, and visual question answering (VQA)~\cite{garcia2018readings}, particularly in domains such as cultural heritage, where image content is often accompanied by curatorial or scholarly metadata. Although multimodal models can describe visual elements, they often struggle to understand the logical or spatial relationships among them. This limitation has been highlighted in recent studies that show how VLMs tend to rely on background knowledge rather than analyzing the internal structure of diagrams~\cite{hou2024vlmvisual}. To overcome this, some approaches combine image segmentation and structured prompting. For example, the chain-of-regions method decomposes diagrams into meaningful areas before interpreting them, improving the model’s reasoning about spatial relations~\cite{zhang2024improvevisionlanguagemodel}. Other studies have applied VLMs to structured visual domains, such as UML diagrams or flowcharts, using modular reasoning pipelines to achieve more accurate results~\cite{liang2024flowlearn}. However, to the best of the authors' knowledge, no existing study has specifically addressed the use of VLMs for identifying or interpreting diagrammatic content in historical sources. In this context, applying similar strategies to Peirce’s existential graphs means using layout segmentation to isolate diagram regions and then prompting VLMs with questions informed by Peirce’s semiotics. This structured workflow helps models provide more accurate interpretations of diagrammatic reasoning.
 
-\section{Methods} 
+\section{Methods}
 
 \subsection{Corpus Description and Preprocessing}
 
@@ -154,7 +130,7 @@ Annotations are generated from the detection outputs and can be embedded in IIIF
 
 Peirce’s semiotic theory offers a framework to understand the structure and function of signs, which we use as a basis to design VLMs prompts. We define three analytical categories for prompt engineering that operationalize aspects of Peirce's semiotic theory for computational analysis. These categories are designed for VLM prompting rather than direct applications of his icon-index-symbol trichotomy. The morphological level addresses the basic visual elements that constitute a diagram, such as lines, shapes, and symbols. This corresponds broadly to the iconic mode of representation and relates to Peirce's category of Firstness. The indexical level concerns the relationships between these elements, identifying connections, dependencies, or structural links. This reflects aspects of Peirce's notion of Secondness. The symbolic level explores the logical operations encoded in the diagram. At this stage, we provide the VLM with minimal instructions on how to interpret visual conventions (e.g., enclosure, juxtaposition, lines of identity), prompting the model to reconstruct the inferential logic underlying the structure. This aligns with Peirce's category of Thirdness. Table~\ref{tab:vlm-question-templates} shows the specific question templates for each category.
 
-Finally, we defined three classes extending the MLAO data model (\texttt{pip:MorphologicalLevel}, \texttt{pip:IndexicalLevel}, and \texttt{pip:SymbolicLevel}) to represent the semiotic categories described earlier. The VLM-generated responses, along with metadata about the model and prompt, were re-injected as annotations into the IIIF-compliant JSON-LD structure. Each annotation targets a specific region of the IIIF canvas and references the full manuscript page via its persistent URI. 
+Finally, we defined three classes extending the MLAO data model (\texttt{pip:MorphologicalLevel}, \texttt{pip:IndexicalLevel}, and \texttt{pip:SymbolicLevel}) to represent the semiotic categories described earlier. The VLM-generated responses, along with metadata about the model and prompt, were re-injected as annotations into the IIIF-compliant JSON-LD structure. Each annotation targets a specific region of the IIIF canvas and references the full manuscript page via its persistent URI.
 
 \begin{table}[ht]
 \centering
@@ -164,7 +140,7 @@ Finally, we defined three classes extending the MLAO data model (\texttt{pip:Mor
 \midrule
 \textbf{Morphological} & How many and what kind of elements (e.g., words, lines, arcs, nodes, shapes, etc.) are present in the image? \\
 \textbf{Indexical} & Is there a relationship between the elements present in the image? Which elements are connected to each other? \\
-\textbf{Symbolic} & In Peirce’s diagrammatic logic, a closed curve called a \textit{cut} represents logical negation. 
+\textbf{Symbolic} & In Peirce’s diagrammatic logic, a closed curve called a \textit{cut} represents logical negation.
 Elements inside the same region are interpreted conjunctively (i.e., asserted together).
 Elements placed directly on the background (the Sheet of Assertion) are considered true.
 A cut around propositions denies them. Nested cuts represent nested negation.
@@ -202,9 +178,9 @@ Diagram (2) & 0.9040 & 0.9496 & 0.9262 & 119 \\
 \end{table}
 
 \begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.9\textwidth]{figures/piecharts_300dpi_DR.png}
-    \caption{Pie charts show text and diagrams distribution within three categories.}\label{fig:diagram-vs-text}
+\centering
+\includegraphics[width=0.9\textwidth]{figures/piecharts_300dpi_DR.png}
+\caption{Pie charts show text and diagrams distribution within three categories.}\label{fig:diagram-vs-text}
 \end{figure}
 
 \begin{table}[ht]
@@ -230,9 +206,9 @@ Confusion (FN) & 3 & 23 & – \\
 On the validation set (111 pages), the fine-tuned YOLOv8m model achieved a mean Average Precision at IoU 0.5 (mAP@0.5) of \textbf{0.981}, with a class-specific score of \textbf{0.992} for \texttt{diagram} and \textbf{0.970} for \texttt{text\_block}. The precision, recall, and F1 scores are reported in Table~\ref{tab:metrics}. A sample prediction with annotations is shown in Figure~\ref{fig:annotated-peirce}.\footnote{The models and the scripts used for the preprocessing and evaluation are available at: \url{https://anonymous.4open.science/r/PIP-Manuscripts-Processor-0147/}.}
 
 \begin{figure}[hbtp]
-  \centering
-  \includegraphics[width=0.73\linewidth]{figures/D._Logic__hou02614c00458__seq625.jpg}
-  \caption{Output of the fine-tuned YOLOv8m model on autograph manuscript dated 1902. MS Am 1632 (430), Box 29, Folder 28, Series I. Manuscripts, D. Logic. Houghton Library, Harvard University, USA. Photo: © Houghton Library. Persistent URL: \url{http://nrs.harvard.edu/urn-3:FHCL.HOUGH:12491033}. The model correctly identifies and segments 'diagram' (blue) and 'text\_block' (light blue) regions, providing the structured data used for subsequent annotation and VLM analysis.}\label{fig:annotated-peirce}
+\centering
+\includegraphics[width=0.73\linewidth]{figures/D._Logic__hou02614c00458__seq625.jpg}
+\caption{Output of the fine-tuned YOLOv8m model on autograph manuscript dated 1902. MS Am 1632 (430), Box 29, Folder 28, Series I. Manuscripts, D. Logic. Houghton Library, Harvard University, USA. Photo: © Houghton Library. Persistent URL: \url{http://nrs.harvard.edu/urn-3:FHCL.HOUGH:12491033}. The model correctly identifies and segments 'diagram' (blue) and 'text\_block' (light blue) regions, providing the structured data used for subsequent annotation and VLM analysis.}\label{fig:annotated-peirce}
 \end{figure}
 
 \subsection{Preliminary VLM Evaluation}
@@ -271,26 +247,22 @@ MiniGPT-4      & 0                     & 0                  & 0                 
 \end{table}
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=0.4\linewidth]{figures/D._Logic__hou02614c00458__seq613_cls0_0.jpg}
-  \caption{Example diagram from Peirce's \emph{Logic} manuscripts, used for evaluating the interpretative capacity of VLMs.}
-  \label{fig:peirce-diagram-example}
+\centering
+\includegraphics[width=0.4\linewidth]{figures/D._Logic__hou02614c00458__seq613_cls0_0.jpg}
+\caption{Example diagram from Peirce's \emph{Logic} manuscripts, used for evaluating the interpretative capacity of VLMs.}
+\label{fig:peirce-diagram-example}
 \end{figure}
 
 The high concentration of diagrams in Peirce's manuscripts offers a quantitative overview of the importance of visual representations as working instruments during reasoning itself, aligning with the philosopher pragmatic maxim that concepts acquire meaning through their operational use rather than from correspondence to abstract or \textit{a priori} definitions. In other words, Peirce recurred to diagrammatic reasoning on paper as a privileged way to develop his arguments and to enable the manipulation of relational structures. Through this perspective, this exploratory analysis reveals Peirce's philosophy as an embodied practice where "moving pictures of thought" and linear writing operate in a continuous exchange, underlining at the same time the importance of intermediality in such heterogeneous manuscripts, supporting the arguments raised by \textcite{keeler2020a_hidden}. Our preliminary VLM evaluation serves as a pilot study. Expanding the dataset would enable systematic investigation of how Peirce's model of semiosis relates to how VLMs process diagrammatic content, and whether studying these models can in turn clarify what diagrammatic reasoning requires. The workflow presented here makes such evaluation feasible across the full corpus.
 
 \section{Conclusion}
 
-This preliminary work presents a modular pipeline for analyzing heterogeneous manuscript collections, combining layout classification, object detection, and semantic annotation within IIIF and LOD frameworks. The workflow extends WADM through MLAO and introduces a qualitative VLM evaluation method structured around analytical categories derived from Peirce's semiotic theory. Applied to Peirce's manuscripts, the analysis reveals the quantitative distribution shows that visual reasoning is concentrated in specific philosophical domains, with Logic manuscripts containing 10.5\% diagrams versus 5.1\% in Pragmatism. This shows that diagrammatic practice was functionally integrated into Peirce's work on formal systems. Second, VLM evaluation reveals that GPT-4o can approximate logical interpretation when appropriately prompted (25/30 points), while smaller models underperform. The differential performance across morphological, indexical, and symbolic questions validates these as functionally distinct analytical operations. 
+This preliminary work presents a modular pipeline for analyzing heterogeneous manuscript collections, combining layout classification, object detection, and semantic annotation within IIIF and LOD frameworks. The workflow extends WADM through MLAO and introduces a qualitative VLM evaluation method structured around analytical categories derived from Peirce's semiotic theory. Applied to Peirce's manuscripts, the analysis reveals the quantitative distribution shows that visual reasoning is concentrated in specific philosophical domains, with Logic manuscripts containing 10.5\% diagrams versus 5.1\% in Pragmatism. This shows that diagrammatic practice was functionally integrated into Peirce's work on formal systems. Second, VLM evaluation reveals that GPT-4o can approximate logical interpretation when appropriately prompted (25/30 points), while smaller models underperform. The differential performance across morphological, indexical, and symbolic questions validates these as functionally distinct analytical operations.
 
 The methodological pattern extends beyond Peirce studies. Any manuscript collection combining text and visual elements can adapt this workflow by substituting domain-appropriate theoretical frameworks, retraining segmentation models, and adjusting prompts to specific research questions. Moreover, the workflow can be integrated into semantic digital editions based on digital facsimiles. Textual content can be transcribed using HTR, while annotations contextualize visual elements at multiple scales. The annotations generated through this process can automatically enrich knowledge graphs. Finally, by treating annotations as digital traces of interpretation, the system aligns with Peirce's pragmatist view of semiosis as an ongoing process.
 
-% \section*{Acknowledgements}
-
-% Print the biblography at the end. Keep this line after the main text of your paper and before the appendix. 
 \printbibliography
 
-% You can include an appendix using the following command
 \appendix
 
 \section{Model Comparison for Page Classification}
@@ -320,12 +292,11 @@ HOG & k-NN (k=5) & 0.6659 & 0.6974 & 0.5889 & 0.6212 \\
 \bottomrule
 \end{tabular}
 \caption{Performance summary of all models across features. Best values are in bold.}
-  \label{tab:confusion-matrix-appendix}
 \end{table}
 
 \begin{table}[ht]
 \centering
-
+\label{tab:confusion-matrix-appendix}
 \begin{tabular}{lccc}
 \toprule
 \textbf{True / Predicted} & Cover & Text & Diagram\_mixed \\

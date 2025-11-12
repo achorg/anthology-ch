@@ -1,75 +1,48 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-%\documentclass{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
-% ADD your own packages using \usepackage{}
 
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{Vision Language Models for Novel Art Therapy Evaluation in Schizophrenia}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1,2]{Ivan Nenchev}[
-  orcid=0000-0002-9860-3250
+orcid=0000-0002-9860-3250
 ]
 
 \author[3]{Karin Dannecker}[
-  orcid=0009-0003-3031-5484
+orcid=0009-0003-3031-5484
 ]
 
-% While we encourage including ORCID-IDs for all authors, you can
-% include authors that do not have one by definining an empty ID.
 \author[1]{Maren Rabe}[
-  orcid=
+orcid=
 ]
 
 \author[4]{Marie Jeschke}[
-  orcid=
+orcid=
 ]
 
 \author[1]{Christiane Montag}[
-  orcid=0000-0002-3307-276X
+orcid=0000-0002-3307-276X
 ]
 
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 \affiliation{1}{Department of Psychiatry and Psychotherapy, Charité at St. Hedwig Hospital, Charité – Universitätsmedizin Berlin, Berlin, Germany}
 \affiliation{2}{Berlin Institute of Health at Charité – Universitätsmedizin Berlin, Berlin, Germany}
 \affiliation{3}{Weißensee Kunsthochschule Berlin MA Art Therapy Programme, Berlin, Germany}
 \affiliation{4}{Galerie ART CRU Berlin, Berlin, Germany}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{art therapy, schizophrenia, CLIP embeddings, vision language models, semantic analysis, longitudinal assessment}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
 \pagestart{310}
 \pageend{321}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/sttzqxdNWsq1}  
+\doi{10.63744/sttzqxdNWsq1}
 \paperorder{21}
-
 
 \addbibresource{bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
 
 \maketitle
@@ -78,24 +51,24 @@
 Traditional methodologies for evaluating visual artistic output in art therapy remain rare and time-intensive, creating barriers to systematic assessment of therapeutic progress. This study presents the first application of multimodal dense embeddings for longitudinal evaluation of art therapy outcomes in individuals with schizophrenia. We analyzed 168 art therapy images produced by 14 participants with schizophrenia using CLIP (Contrastive Language-Image Pretraining) embeddings. CLIP embeddings successfully captured meaningful semantic patterns, with real images showing significantly greater semantic dispersion than spatially randomized controls. Longitudinal analysis revealed progressive semantic diversification over time, with significant increases in semantic distance between consecutive images ($\beta= 0.284$, $p = 0.001$) and cumulative semantic drift from first images ($\beta = 0.336$, $p < 0.001$). Individual differences analysis showed high variability in volume metrics spanning several orders of magnitude (M = 1.13 × 10¹¹, SD = 2.05 × 10¹¹), indicating highly individual semantic exploration patterns. Vision language models provide a novel and objective methodology for evaluating the progression of art therapy that reveals systematic patterns of semantic evolution during treatment. The progressive semantic diversification observed suggests that art therapy facilitates expanding creative expression and psychological exploration over time. The substantial individual differences in semantic exploration patterns indicate potential for personalized treatment approaches based on creative trajectory analysis. This methodology offers promising applications for systematic art therapy assessment, treatment monitoring, and personalized intervention strategies in clinical practice.
 \end{abstract}
 
-\section{Introduction} 
+\section{Introduction}
 
 Art therapy (AT) is the therapeutic use of visual art. Through drawing, painting, sculpting, and other media, visual works are created and processes are initiated that serve as symbolic equivalents of experiences, emotions, thoughts, and fantasies \cite{dannecker_psyche_2021}. These artworks help patients to perceive, understand, and communicate their conscious and unconscious conflicts and difficulties \cite{dannecker_why_2024}. The aesthetic-therapeutic process activates a person’s imaginative, cognitive, integrative, and motor capacities. AT supports emotional expression, stimulates thought processes and the ability to organize experience, and deepens empathy, introspection, relational capacities, and communication skills. The tangible and enduring nature of artistic works are particularly effective therapeutic factors, as they help patients develop a stronger sense of identity, autonomy, self-efficacy, and self-worth. As a therapeutic modality, AT serves as a valuable complement to traditional biological and psychological treatments and is implemented across a broad range of patients with psychiatric \cite{hu_art_2021} and somatic conditions \cite{zhou_effects_2023}.
 
-Growing empirical evidence supports AT's clinical efficacy across diverse populations and conditions. A systematic review and meta-analysis of randomized clinical trials found that visual AT was associated with therapeutic benefits across several outcomes, though methodological quality varied among studies \cite{joschko_active_2024}. Specific populations have demonstrated particularly promising results. Meta-analyses have shown beneficial effects for individuals with post-traumatic stress disorder \cite{wang_colors_2025}, large effect sizes for group art therapy interventions among children and adolescents \cite{kong_meta-analysis_2024}, and significant reductions in anxiety symptoms in pediatric populations \cite{zhou_effects_2023}. For individuals with schizophrenia, the evidence presents a more nuanced picture. While the NICE Guidelines indicate that arts therapies are effective in reducing negative symptoms compared to control conditions \cite{noauthor_overview_2014}, and several studies suggest positive effects \cite{montag_pilot_2014, montag_neglected_2017}, the overall evidence base remains inconclusive \cite{attard_art_2016}. 
+Growing empirical evidence supports AT's clinical efficacy across diverse populations and conditions. A systematic review and meta-analysis of randomized clinical trials found that visual AT was associated with therapeutic benefits across several outcomes, though methodological quality varied among studies \cite{joschko_active_2024}. Specific populations have demonstrated particularly promising results. Meta-analyses have shown beneficial effects for individuals with post-traumatic stress disorder \cite{wang_colors_2025}, large effect sizes for group art therapy interventions among children and adolescents \cite{kong_meta-analysis_2024}, and significant reductions in anxiety symptoms in pediatric populations \cite{zhou_effects_2023}. For individuals with schizophrenia, the evidence presents a more nuanced picture. While the NICE Guidelines indicate that arts therapies are effective in reducing negative symptoms compared to control conditions \cite{noauthor_overview_2014}, and several studies suggest positive effects \cite{montag_pilot_2014, montag_neglected_2017}, the overall evidence base remains inconclusive \cite{attard_art_2016}.
 
-AT has been increasingly influenced by growing digitization \cite{zubala_art_2021}, presenting both opportunities and challenges for practitioners and clients. While digital technologies can enhance client involvement and broaden creative boundaries, they also introduce risks of exclusion due to reduced access and varying levels of digital competence among participants. The potential roles of artificial intelligence (AI) in AT are rapidly evolving and multifaceted. A recent survey by Jütte et al. \cite{jutte_perspectives_2024} of 56 art therapists found that 30\% frequently or occasionally use AI in their practice with patients. AI's therapeutic role exists on a spectrum, ranging from partner in co-creative processes \cite{schmutz_integrating_2024, du_deepthink_2024} to curator of personalized visuals with therapeutic intent \cite{yilma_ai-therapist_nodate}. This spectrum also encompasses varying levels of autonomy, from supportive tools that augment human creativity to autonomous agents capable of independent therapeutic decision-making \cite{zubala_art_2025}. Interestingly, AI approaches for the evaluation of AT imagery have not been explored yet. While most AI research in AT has concentrated on enhancing the therapeutic process itself, AI approaches for evaluating artwork have remained largely unexplored. We believe that AI methods hold significant potential for advancing imagery assessment. 
+AT has been increasingly influenced by growing digitization \cite{zubala_art_2021}, presenting both opportunities and challenges for practitioners and clients. While digital technologies can enhance client involvement and broaden creative boundaries, they also introduce risks of exclusion due to reduced access and varying levels of digital competence among participants. The potential roles of artificial intelligence (AI) in AT are rapidly evolving and multifaceted. A recent survey by Jütte et al. \cite{jutte_perspectives_2024} of 56 art therapists found that 30\% frequently or occasionally use AI in their practice with patients. AI's therapeutic role exists on a spectrum, ranging from partner in co-creative processes \cite{schmutz_integrating_2024, du_deepthink_2024} to curator of personalized visuals with therapeutic intent \cite{yilma_ai-therapist_nodate}. This spectrum also encompasses varying levels of autonomy, from supportive tools that augment human creativity to autonomous agents capable of independent therapeutic decision-making \cite{zubala_art_2025}. Interestingly, AI approaches for the evaluation of AT imagery have not been explored yet. While most AI research in AT has concentrated on enhancing the therapeutic process itself, AI approaches for evaluating artwork have remained largely unexplored. We believe that AI methods hold significant potential for advancing imagery assessment.
 
 \subsection{Evaluation of art therapy process}
 
-The exploration of the artworks and creative processes provides the art therapist with valuable diagnostic insights and guides the formulation of therapeutic goals and the ongoing conduct of therapy. Nevertheless, traditional methodologies for the standardized evaluation of the visual artistic output in AT \cite{schoch_measuring_2017, cohen_diagnostic_1988, elbing_reliabilitat_2009, hacking_descriptive_1996} focus on rating the articistic output on several predefined scales. These approaches remain rare and are often time-intensive, creating barriers to systematic assessment of therapeutic progress. In addition to this, several attempts have been made to develop approaches for automatic assessment. For example, Gengenbach et al. \cite{gengenbach_artificial_2022} demonstrated that a convolutional neural network could match human ratings of artworks. More recently, Kim et al. \cite{kim_exploring_2024} employed a ResNet model to successfully classify between healthy controls and individuals with anxiety, depression, and schizophrenia based on their mandala drawings. 
+The exploration of the artworks and creative processes provides the art therapist with valuable diagnostic insights and guides the formulation of therapeutic goals and the ongoing conduct of therapy. Nevertheless, traditional methodologies for the standardized evaluation of the visual artistic output in AT \cite{schoch_measuring_2017, cohen_diagnostic_1988, elbing_reliabilitat_2009, hacking_descriptive_1996} focus on rating the articistic output on several predefined scales. These approaches remain rare and are often time-intensive, creating barriers to systematic assessment of therapeutic progress. In addition to this, several attempts have been made to develop approaches for automatic assessment. For example, Gengenbach et al. \cite{gengenbach_artificial_2022} demonstrated that a convolutional neural network could match human ratings of artworks. More recently, Kim et al. \cite{kim_exploring_2024} employed a ResNet model to successfully classify between healthy controls and individuals with anxiety, depression, and schizophrenia based on their mandala drawings.
 
 Contemporary computer vision and multimodal vision-language models present novel methodologies for image evaluation that could revolutionize art therapy assessment. CLIP (Contrastive Language–Image Pretraining), trained on 400 million image-text pairs from publicly available internet sources, employs contrastive learning to associate images with corresponding text \cite{radford_learning_2021}. This approach makes CLIP general-purpose and zero-shot capable across diverse downstream tasks, including aesthetic evaluation \cite{hentschel_clip_2022}. In this paper, we propose a novel method to evaluate the images produced by patients during AT using a longitudinal analysis based on multimodal embeddings. To our knowledge, this represents the first application of multimodal embeddings for evaluating images produced during art therapy sessions. This study addresses the following research questions:
 
 \begin{enumerate}
-    \item To what extent do CLIP embeddings capture meaningful semantic content in AT imagery?
-    \item How does semantic similarity between consecutive artworks change over the course of AT sessions?
-    \item How do individual participants differ in their exploration and occupation of the visual semantic space?
+\item To what extent do CLIP embeddings capture meaningful semantic content in AT imagery?
+\item How does semantic similarity between consecutive artworks change over the course of AT sessions?
+\item How do individual participants differ in their exploration and occupation of the visual semantic space?
 \end{enumerate}
 
 \section{Materials and methods}
@@ -106,12 +79,11 @@ The study is based on a secondary analysis of visual material produced during a 
 \subsection{Participants}
 Of the 16 participants who completed the intervention, 2 were excluded from the reanalysis because they primarily used clay, producing three-dimensional works that could not be reliably captured through two-dimensional photographs. The remaining 14 participants (female, n = 8; male, n = 6, 12 diagnosed with paranoid schizophrenia (ICD-10 F20.0), one diagnosed with schizoaffective disorder (F25.2) and one with acute polymorphic psychotic disorder (F23.0)) produced a total of 164 artworks during the intervention (mean = 11.7, SD = 7.5). Due to the non-directive approach and the allowance for participants to work at their own pace, there was considerable variation in productivity, ranging from 3 to 30 pieces per individual. The basic sociodemographic and clinical characteristics of the sample are summarized in Table-\ref{tab:summary_stats}.
 
-
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrrrrr}
 \toprule
-  & Mean & Std & Min & 25\% & 50\% & 75\% & Max \\
+& Mean & Std & Min & 25\% & 50\% & 75\% & Max \\
 \midrule
 Age (years) & 36.69 & 10.83 & 24.96 & 28.78 & 33.44 & 42.16 & 58.29 \\
 Duration of illness (years) & 11.19 & 10.59 & 0.13 & 5.32 & 8.28 & 14.47 & 40.29 \\
@@ -131,73 +103,69 @@ For the formal analysis of the artwork images, feature extraction was performed 
 
 Since artworks from people with schizophrenia have not yet been evaluated with CLIP embeddings, we employed a permutation-based validation framework to assess whether these embeddings capture meaningful semantic patterns beyond low-level visual features such as color and texture. We calculated the empirical coherence of the embedding space as the mean cosine distance from individual image embeddings to the group centroid. To test whether observed clustering patterns reflected genuine semantic content rather than superficial visual similarities, we generated a null distribution through 1,000 permutation iterations. In each iteration, we spatially altered the original images by randomly shuffling pixel values while preserving the overall color distribution, then re-encoded these spatially randomized images through the CLIP model. If CLIP embeddings primarily captured color or texture information, "scrambled" images would yield similar coherence values to the originals. Conversely, if embeddings captured higher-order semantic features, pixel-permuted images would show significantly different (typically higher) coherence values, indicating loss of meaningful structure. Statistical significance was assessed by comparing observed coherence against the null distribution. To visualize the embedding space structure, we performed t-distributed Stochastic Neighbor Embedding (t-SNE) dimensionality reduction on the 512-dimensional CLIP embeddings and plotted the resulting two-dimensional representation with actual images positioned at their corresponding coordinates. This visualization approach allowed for qualitative assessment of whether semantically similar images clustered together in the reduced space, providing complementary evidence to the quantitative permutation test that subsequent analyses were based on semantic content rather than confounding low-level visual features.
 
-To quantify intra- and interindividual variation in image embeddings, we computed pairwise cosine distances between all embeddings using sklearn.metrics.pairwise.cosine\_distances \cite{scikit-learn}. Each embedding was labeled by participant ID. We then categorized distances as either within-subject or between-subject and compared these groups using one-way ANOVA and variance ratio analysis. 
+To quantify intra- and interindividual variation in image embeddings, we computed pairwise cosine distances between all embeddings using sklearn.metrics.pairwise.cosine\_distances \cite{scikit-learn}. Each embedding was labeled by participant ID. We then categorized distances as either within-subject or between-subject and compared these groups using one-way ANOVA and variance ratio analysis.
 
 To examine longitudinal trends in visual semantic change, we computed two sets of cosine distance scores based on the CLIP embeddings for each participant. The first set captured the similarity between the participant’s first image and each of their subsequent images, providing a measure of cumulative semantic drift over time. Each \( d_j \) captures the semantic distance between image \( j \) and image \( j+1 \), enabling longitudinal modeling or step-wise analysis rather than aggregating over the entire sequence.
 \[
 Distance\ to\ next\ image = 1 - \frac{x_j \cdot x_{j+1}}{\|x_j\| \, \|x_{j+1}\|}, \quad \text{for } j = 1, \dots, n-1
-\] The second set measured the similarity between each image and the one immediately following it, reflecting local semantic continuity across sessions. 
+\] The second set measured the similarity between each image and the one immediately following it, reflecting local semantic continuity across sessions.
 \[
 Distance\ form\ first\ image = 1 - \frac{x_1 \cdot x_{j+1}}{\|x_1\| \, \|x_{j+1}\|}, \quad \text{for } j = 1, \dots, n-1
 \] These similarity scores $\{d_1, d_2, \dots, d_{n-1}\}$ served as outcome variables in two separate linear mixed-effects models. In both models, image position in the sequence was included as a fixed effect to estimate change over time, while participant identity was modeled as a random intercept to account for inter-individual variability.
 
-
-In a final exploratory analysis, we aimed to estimate how individual participants behave within the abstract visual semantic space defined by their embeddings. To capture individual-level differences in how semantically broad or narrow these representational spaces are, we characterized the spread and volume of each participant's embeddings. Unlike measures such as mean cosine similarity, which assess semantic coherence by quantifying directional alignment between vectors, this approach focused on distributional dispersion—i.e., how widely embeddings are spatially distributed—using metrics that are sensitive to both direction and magnitude. To facilitate interpretability and reduce computational complexity, high-dimensional embeddings were first projected into a lower-dimensional space using Principal Component Analysis (PCA). For each participant, we then extracted their PCA-reduced vectors and computed two complementary diversity metrics: spread, defined as the sum of standard deviations across all PCA dimensions, and volume, calculated as the product of the peak-to-peak (max–min) ranges along each axis, estimating the size of the hyperrectangle enclosing the embedding distribution. Together, these metrics provide a scale-sensitive characterization of individual variability in semantic space exploration. All computations were performed using the Python libraries scikit-learn and statsmodels \cite{scikit-learn, seabold2010statsmodels}. 
+In a final exploratory analysis, we aimed to estimate how individual participants behave within the abstract visual semantic space defined by their embeddings. To capture individual-level differences in how semantically broad or narrow these representational spaces are, we characterized the spread and volume of each participant's embeddings. Unlike measures such as mean cosine similarity, which assess semantic coherence by quantifying directional alignment between vectors, this approach focused on distributional dispersion—i.e., how widely embeddings are spatially distributed—using metrics that are sensitive to both direction and magnitude. To facilitate interpretability and reduce computational complexity, high-dimensional embeddings were first projected into a lower-dimensional space using Principal Component Analysis (PCA). For each participant, we then extracted their PCA-reduced vectors and computed two complementary diversity metrics: spread, defined as the sum of standard deviations across all PCA dimensions, and volume, calculated as the product of the peak-to-peak (max–min) ranges along each axis, estimating the size of the hyperrectangle enclosing the embedding distribution. Together, these metrics provide a scale-sensitive characterization of individual variability in semantic space exploration. All computations were performed using the Python libraries scikit-learn and statsmodels \cite{scikit-learn, seabold2010statsmodels}.
 
 \section{Results}
 
 \subsection{CLIP Embedding Validation}
 
-To validate that CLIP embeddings capture meaningful semantic patterns rather than superficial visual features in the dataset of AT images produced by people with schizophrenia, we conducted a permutation-based statistical analysis. The observed coherence of real images in CLIP embedding space was 0.2290 (mean cosine distance to centroid), significantly higher than the null distribution generated from spatially scrambled images (mean = 0.0896, SD = 0.0010; p = 0.0099). This significant difference demonstrates that randomly altered images clustered much more tightly in embedding space than semantically intact images. In addition to this, the t-SNE dimensionality reduction visualization of the 512-dimensional CLIP embeddings corroborated the quantitative findings. Real images were distributed across distinct regions of the two-dimensional space, with semantically similar images (e.g., landscapes, portraits, abstract expressions, flowers and plants) forming loose clusters. This spatial organization in the reduced dimensional space provided qualitative confirmation that CLIP embeddings successfully captured meaningful semantic relationships within the AT image collection. 
+To validate that CLIP embeddings capture meaningful semantic patterns rather than superficial visual features in the dataset of AT images produced by people with schizophrenia, we conducted a permutation-based statistical analysis. The observed coherence of real images in CLIP embedding space was 0.2290 (mean cosine distance to centroid), significantly higher than the null distribution generated from spatially scrambled images (mean = 0.0896, SD = 0.0010; p = 0.0099). This significant difference demonstrates that randomly altered images clustered much more tightly in embedding space than semantically intact images. In addition to this, the t-SNE dimensionality reduction visualization of the 512-dimensional CLIP embeddings corroborated the quantitative findings. Real images were distributed across distinct regions of the two-dimensional space, with semantically similar images (e.g., landscapes, portraits, abstract expressions, flowers and plants) forming loose clusters. This spatial organization in the reduced dimensional space provided qualitative confirmation that CLIP embeddings successfully captured meaningful semantic relationships within the AT image collection.
 
 We observed a highly significant effect of subject identity on embedding similarity: within-subject distances were significantly lower than between-subject distances (ANOVA: $F(1,9739) = 271.24$, $p < 0.00001)$. However, the variance of within-subject distances was similar to that of between-subject distances (variance ratio = 0.96), suggesting that while embeddings are reliably more similar within individuals, the dispersion of distances is comparable across both groups.
 
-
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.8\linewidth]{figures/all.png} %{images/all.png}
-  \caption{t-SNE visualization of the dataset.}
-  \label{fig:t-sne}
+\centering
+\includegraphics[width=0.8\linewidth]{figures/all.png}
+\caption{t-SNE visualization of the dataset.}
+\label{fig:t-sne}
 \end{figure}
-
 
 \subsection{Longitudinal Analysis of Visual Semantic Evolution}
 
 We computed the semantic distance between consecutive images for each participant by calculating the cosine distance between pairs of embeddings, which were sorted by participant ID and image sequence number, and missing values for the last image in each sequence were handled appropriately. Both the predictor (image position) and outcome (cosine distance) variables were standardized using z-score normalization prior to modeling.
 
-A linear mixed-effects model was then fitted, predicting standardized semantic distance between two consecutive embeddings from standardized image position, with participant included as a random intercept. The model showed a significant positive association between image position and semantic distance ($\beta = 0.284$, $SE = 0.085$, $z = 3.33$, $p = 0.001$), indicating that the semantic difference between consecutive images increased as the intervention progressed. Random intercept variance ($\sigma^2 = 0.310$) reflected moderate variability between participants. 
+A linear mixed-effects model was then fitted, predicting standardized semantic distance between two consecutive embeddings from standardized image position, with participant included as a random intercept. The model showed a significant positive association between image position and semantic distance ($\beta = 0.284$, $SE = 0.085$, $z = 3.33$, $p = 0.001$), indicating that the semantic difference between consecutive images increased as the intervention progressed. Random intercept variance ($\sigma^2 = 0.310$) reflected moderate variability between participants.
 
-To examine broader semantic drift over time, we calculated the cosine distance between each image and the participant’s first image. Embeddings were standardized, and a linear mixed-effects model was fitted with image position as a fixed effect and participant as a random intercept. The model revealed a significant positive effect of image position on semantic distance from the first image ($\beta = 0.336$, $SE = 0.080$, $z = 4.19$, $p < 0.001$), suggesting a cumulative increase in visual-semantic deviation as the intervention progressed. The intercept was not significant ($\beta = 0.115$, $p = 0.499$). Between-participant variance was estimated at 0.315, indicating moderate inter-individual variability in the degree of semantic change. 
+To examine broader semantic drift over time, we calculated the cosine distance between each image and the participant’s first image. Embeddings were standardized, and a linear mixed-effects model was fitted with image position as a fixed effect and participant as a random intercept. The model revealed a significant positive effect of image position on semantic distance from the first image ($\beta = 0.336$, $SE = 0.080$, $z = 4.19$, $p < 0.001$), suggesting a cumulative increase in visual-semantic deviation as the intervention progressed. The intercept was not significant ($\beta = 0.115$, $p = 0.499$). Between-participant variance was estimated at 0.315, indicating moderate inter-individual variability in the degree of semantic change.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.4\linewidth]{figures/sem_dist_next.png}
-  \includegraphics[width=0.4\linewidth]{figures/sem_dist_first.png}
-  \caption{Semantic distance patterns in artwork over the course of art therapy intervention.}
-  \label{fig:example_bigger}
+\centering
+\includegraphics[width=0.4\linewidth]{figures/sem_dist_next.png}
+\includegraphics[width=0.4\linewidth]{figures/sem_dist_first.png}
+\caption{Semantic distance patterns in artwork over the course of art therapy intervention.}
+\label{fig:example_bigger}
 \end{figure}
 
 \subsection{Semantic Space Exploration}
 
 Analysis of participants' exploration within the CLIP embedding space revealed substantial individual differences in both the breadth and scope of semantic territories covered. The spread metric, which quantifies the distributional dispersion of embeddings across PCA dimensions, showed relatively consistent values across participants ($M = 34.7$, $SD = 4.1$, $range = 28.1-41.4$). This suggests that while participants varied in the specific semantic content they explored, the overall extent of their exploration within the reduced dimensional space was fairly uniform.
 
-In contrast, the volume metric---representing the size of the hyperrectangle enclosing each participant's embedding distribution---demonstrated much greater variability ($M = 1.13 \times 10^{11}$, $SD = 2.05 \times 10^{11}$). The volume scores spanned several orders of magnitude, from $9.41 \times 10^7$ to $7.36 \times 10^{11}$, indicating dramatic differences in the semantic space occupied by different participants. Figure \ref{fig:example_3x2} shows barplots for spread and volume of semantic space exploration across all participants (panels A-B), alongside t-SNE visualizations of image sequences for four exemplary participants (panels C-F). These examples illustrate contrasting patterns of semantic exploration: participants 42 and 33 demonstrate extensive semantic territory exploration with images distributed across large volumes of semantic space, while participants 21 and 35 show more constrained exploration with images remaining relatively tightly clustered within smaller semantic territories. Each point represents an individual artwork, with connecting lines indicating temporal sequence progression through the therapeutic intervention. 
+In contrast, the volume metric---representing the size of the hyperrectangle enclosing each participant's embedding distribution---demonstrated much greater variability ($M = 1.13 \times 10^{11}$, $SD = 2.05 \times 10^{11}$). The volume scores spanned several orders of magnitude, from $9.41 \times 10^7$ to $7.36 \times 10^{11}$, indicating dramatic differences in the semantic space occupied by different participants. Figure \ref{fig:example_3x2} shows barplots for spread and volume of semantic space exploration across all participants (panels A-B), alongside t-SNE visualizations of image sequences for four exemplary participants (panels C-F). These examples illustrate contrasting patterns of semantic exploration: participants 42 and 33 demonstrate extensive semantic territory exploration with images distributed across large volumes of semantic space, while participants 21 and 35 show more constrained exploration with images remaining relatively tightly clustered within smaller semantic territories. Each point represents an individual artwork, with connecting lines indicating temporal sequence progression through the therapeutic intervention.
 
 \begin{figure}[t!]
-  \centering
-  % Row 1
-  \includegraphics[width=0.4\linewidth]{figures/diversity_spread.png}
-  \includegraphics[width=0.4\linewidth]{figures/diversity_volume.png}\\[0.5em]
-  % Row 2
-  \includegraphics[width=0.4\linewidth]{figures/t-SNE_Art_Therapy_Trajectory_Participant_42.png}
-  \includegraphics[width=0.4\linewidth]{figures/t-SNE_Art_Therapy_Trajectory_Participant_33.png}\\[0.5em]
-  % Row 3
-  \includegraphics[width=0.4\linewidth]{figures/t-SNE_Art_Therapy_Trajectory_Participant_21.png}
-  \includegraphics[width=0.4\linewidth]{figures/t-SNE_Art_Therapy_Trajectory_Participant_35.png}
-  \caption{\textbf{Individual differences in semantic space exploration during art therapy.}}
-  \label{fig:example_3x2}
-\end{figure}
+\centering
 
+\includegraphics[width=0.4\linewidth]{figures/diversity_spread.png}
+\includegraphics[width=0.4\linewidth]{figures/diversity_volume.png}\\[0.5em]
+
+\includegraphics[width=0.4\linewidth]{figures/t-SNE_Art_Therapy_Trajectory_Participant_42.png}
+\includegraphics[width=0.4\linewidth]{figures/t-SNE_Art_Therapy_Trajectory_Participant_33.png}\\[0.5em]
+
+\includegraphics[width=0.4\linewidth]{figures/t-SNE_Art_Therapy_Trajectory_Participant_21.png}
+\includegraphics[width=0.4\linewidth]{figures/t-SNE_Art_Therapy_Trajectory_Participant_35.png}
+\caption{\textbf{Individual differences in semantic space exploration during art therapy.}}
+\label{fig:example_3x2}
+\end{figure}
 
 \section{Discussion}
 
@@ -213,9 +181,7 @@ This expanding creativity may reflect the therapeutic process as patients become
 
 We also examined how participants occupy abstract visual semantic space throughout their therapeutic journey. The contrasting patterns between spread and volume metrics suggest that participants differed primarily in the range extremes of their semantic exploration rather than in overall distributional characteristics. While most participants showed similar patterns of dispersion around their central semantic tendencies (as indicated by consistent spread values), a subset demonstrated markedly expanded exploration boundaries (as captured by the highly variable volume metric). This finding indicates that individual differences in art therapy may be characterized less by different styles of exploration and more by differences in the boundaries of semantic territories accessed during the therapeutic process.
 
-
-CLIP embeddings offer significant advantages over traditional evaluation methods by providing objective, scalable, and reproducible measures of artistic expression without requiring extensive training or subjective interpretation. This could facilitate systematic documentation of therapeutic progress, enable larger-scale research studies, and support real-time treatment monitoring. 
-
+CLIP embeddings offer significant advantages over traditional evaluation methods by providing objective, scalable, and reproducible measures of artistic expression without requiring extensive training or subjective interpretation. This could facilitate systematic documentation of therapeutic progress, enable larger-scale research studies, and support real-time treatment monitoring.
 
 Our findings may hold particular relevance for schizophrenia treatment, a domain in which cognitive flexibility and self-expression are often impaired. The progressive semantic diversification observed in participants’ artwork may indicate therapeutic gains, such as enhanced cognitive flexibility, greater expressive range, and improved adaptive functioning. However, it remains to be established how changes in CLIP ratings relate to variations in psychopathological symptoms or cognitive performance. At this stage of research, it cannot yet be determined whether these changes correspond to clinical improvement or deterioration. Longitudinal studies integrating standardized clinical and cognitive assessments are needed to elucidate the relationship between semantic variability in artwork and therapeutic outcomes.
 
@@ -225,14 +191,12 @@ This work opens several promising directions for future research and clinical ap
 This study demonstrates that multimodal embeddings provide a powerful new methodology for evaluating artistic expression in AT. The progressive semantic diversification observed in participants' artwork provides objective evidence for therapeutic change and creative growth over time. The substantial individual differences in semantic exploration patterns suggest opportunities for personalized treatment approaches based on creative trajectory analysis. These findings establish a foundation for more systematic, objective, and scalable evaluation of art therapy interventions, with potential applications across diverse clinical populations and therapeutic settings.
 
 \section{Limitations}
-This study has several limitations. First, the dataset is relatively small, which may constrain the generalizability and robustness of the findings. Second, the sample consists exclusively of participants diagnosed with psychotic disorders, limiting the applicability of results to other clinical or non-clinical populations. Third, the study lacked a control group, making it difficult to disentangle the effects of AT from other factors such as spontaneous symptom fluctuation or nonspecific therapeutic influences. Additionally, while we demonstrated significant semantic changes over time, we did not directly correlate these changes with clinical outcomes or symptom measures. Future research should examine whether semantic trajectory patterns predict treatment response or clinical improvement. Finally, the analysis was based on a single model (CLIP-ViT-B/32); future research should compare the performance of alternative vision–language models to assess consistency and potential model-specific biases. 
+This study has several limitations. First, the dataset is relatively small, which may constrain the generalizability and robustness of the findings. Second, the sample consists exclusively of participants diagnosed with psychotic disorders, limiting the applicability of results to other clinical or non-clinical populations. Third, the study lacked a control group, making it difficult to disentangle the effects of AT from other factors such as spontaneous symptom fluctuation or nonspecific therapeutic influences. Additionally, while we demonstrated significant semantic changes over time, we did not directly correlate these changes with clinical outcomes or symptom measures. Future research should examine whether semantic trajectory patterns predict treatment response or clinical improvement. Finally, the analysis was based on a single model (CLIP-ViT-B/32); future research should compare the performance of alternative vision–language models to assess consistency and potential model-specific biases.
 
 \section{Acknowledgments}
 I.N. is a participant in the BIH Charité Digital Clinician Scientist Program funded by the Charité – Universitätsmedizin Berlin and the Berlin Institute of Health at Charité (BIH). The authors acknowledge the Scientific Computing of the IT Division at the Charité - Universitätsmedizin Berlin for providing computational resources
 that have contributed to the research results reported in this paper.
 
-
 \printbibliography
-
 
 \end{document}

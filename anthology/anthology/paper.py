@@ -806,7 +806,7 @@ class Paper:
             volume=self.volume_meta["pubvolume"],
             authors=[x["name"] for x in pmeta["authors"]],
             year=self.volume_meta["pubyear"],
-            journal="Anthology for Computers and the Humanities",
+            journal="Anthology of Computers and the Humanities",
             editors=self.volume_meta["conferenceeditors"],
             pages=f"{pmeta['publication_info']['pagestart']}--{pmeta['publication_info']['pageend']}",
             doi=doi,
@@ -846,9 +846,9 @@ class Paper:
         # Also fix adjustbox command syntax to environment syntax
         paper_file = self.output_dir / "paper.tex"
         paper_content = paper_file.read_text()
-        paper_content = fix_adjustbox_syntax(paper_content)
-        paper_content = fix_table_figure_labels(paper_content)
-        paper_file.write_text(paper_content)
+        #paper_content = fix_adjustbox_syntax(paper_content)
+        #paper_content = fix_table_figure_labels(paper_content)
+        #paper_file.write_text(paper_content)
 
         pmeta = self.get_latex_metadata()
         doi = pmeta.get("publication_info", {}).get("doi", "")

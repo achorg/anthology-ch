@@ -1,67 +1,42 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-%\documentclass[final]{anthology-ch} % for the final version
-\documentclass[final]{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage{todonotes}
-% ADD your own packages using \usepackage{}
+
 \newcommand{\fakesc}[1]{\addfontfeatures{RawFeature={+onum}}{\small\MakeUppercase{#1}}}
 
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{More Sound, More Soundness? Improving Authorship Attribution with Phonemes}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1]{Simon Gabay}[
-  orcid=0000-0001-9094-4475
+orcid=0000-0001-9094-4475
 ]
 
-% While we encourage including ORCID-IDs for all authors, you can
-% include authors that do not have one by definining an empty ID.
 \author[2]{Florian Cafiero}[
-  orcid=0000-0002-1951-6942
+orcid=0000-0002-1951-6942
 ]
 
 \author[1]{Jean-Luc Falcone}[
-  orcid=0000-0003-0748-6069
+orcid=0000-0003-0748-6069
 ]
 
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 \affiliation{1}{Université de Genève, Geneva, Switzerland}
 \affiliation{2}{École nationale des chartes | Paris Sciences Lettres, Paris, France}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{Stylometry, Phonetics, Stylistics, Authorship attribution}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
-\pagestart{1117}
-\pageend{1127}
+\pagestart{1121}
+\pageend{1131}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/JsYBzks5UCwg}  
+\doi{10.63744/JsYBzks5UCwg}
 \paperorder{66}
 
 \addbibresource{bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
 
 \maketitle
@@ -84,8 +59,6 @@ To explore this hypothesis, we turn to a concrete case study: Rimbaud's \textit{
 
 \section{Case Study: Rimbaud's \textit{Illuminations}}
 
-%Arthur Rimbaud, born in 1854, and Germain Nouveau, born in 1851, are almost the same age: they met in 1873 in Paris and were sufficiently sympathetic to leave for London together the following year, approximately at the time of the writing of \textit{Illuminations} (the exact dating of which remains uncertain, see, for example, \cite{chadwick_date_1958}). On his return from England, we know that Rimbaud went to Stuttgart in February 1875 to meet Verlaine, recently released from prison after the ``Brussels tragedy'', and gave his former lover a manuscript that was said to be that of \textit{Illuminations}, asking that he pass it on to Germain Nouveau. This could have been done, if we are to believe a letter dated May 1, 1875, to Ernest Delahaye, in which Verlaine says he sent a package (the contents of which are not specified) to the author of \textit{Valentines}\footnote{\textit{Importants livres anciens, livres d'artistes et manuscrits}, Christie's sale of November 29, 2011, Paris, lot 138. \url{https://www.christies.com/en/lot/lot-5509554}.}. If a manuscript was sent, it was not Rimbaud's original, however; Verlaine lent it to Charles de Sivry, who would not return it to its owner until 1885, finally allowing publication in 1886, while Rimbaud was on an adventure in Africa.
-
 Breuil's theory\footnote{This idea is not entirely new: Jacques Lovichi \cite{lovichi_germain_1975} attempted to demonstrate that Nouveau contributed to the \textit{Illuminations}.} is simple: the author of the \textit{Illuminations} would be Germain Nouveau, and Rimbaud would have only served as the copyist of the poems. To persuade his readers, Breuil conducts a thorough historical-literary investigation, drawing on biographical facts (Rimbaud, often short of money, was a copyist to earn a living), philological evidence (the manuscript, although in Rimbaud's handwriting, contains copying errors), and literary traits (for example, the association of summer with unhappiness, typical of Nouveau's poetry, rather than with happiness as in Rimbaud's).
 
 Clearly invalidating such a seductive demonstration is particularly problematic for several reasons, notably three. First, the literary qualities of Germain Nouveau, which are in no way in doubt, do not allow us to exclude \textit{a priori} that he might be the author of these poems: this is not a question of attributing the \textit{Illuminations} to an unknown author. Second, although questionable, Breuil's observations make sense: for example, \textit{baou} is indeed an Occitan word that more plausibly belongs to the lexicon of the Varois Nouveau than to that of the Ardennais Rimbaud. Third, the recurrent association between the two poets by readers as discerning as Aragon and Breton implies a certain poetic proximity between our two \textit{poètes maudits}. One could nevertheless object that proximity is not identity, that Rimbaud could very well have borrowed a word heard from a friend he often met, and that Nouveau's talent in no way proves that he could be the author of the poems in question.
@@ -96,29 +69,24 @@ Unfortunately, E. Breuil did not conduct any stylometric analysis to substantiat
 
 Given the computational nature of stylometry, much research has focused on algorithmic aspects such as distance functions and clustering methods, etc. \cite{evert_understanding_2017,nagy_bootstrap_2024}. However, the nature of the data being analysed is equally important. Research on stylometric features has therefore received considerable attention, resulting in a variety of more or less effective solutions. Proposed features include function words \cite{kestemont_function_2014}, \textit{n}-grams \cite{keselji_ngram_2003}, affixes \cite{sapkota_character_2015}, syntactic patterns (also called \textit{motifs}) \cite{legallois_balance_2018}, rhymes \cite{kestemont2012robust}, a combination of lexicological and morpho-syntactic data \cite{gabay_beyond_2021, cafiero2019moliere, juola2015rowling}, among others.
 
-Among stylometric features, phonemes have drawn special interest because they sit below the word level and are less tied to topic. Deng et al.\ \cite{deng2016stochastic} model how often phonemes occur by examining the rank--frequency curve. They show that this curve is well captured by a Dirichlet model. In their setup, the model has a single \emph{shape parameter} \(\beta\) that controls how even or spiky the distribution is: larger \(\beta\) implies more uniform phoneme usage, whereas smaller \(\beta\) implies that a few phonemes dominate. Fitting \(\beta\) to 48 English novels, they report two patterns: (i) the estimated \(\beta\) values cluster by author (books by the same writer tend to have similar \(\beta\)); and (ii) when comparing entire phoneme profiles (full vectors of phoneme frequencies), within-author distances are consistently smaller than between-author distances---even after removing all words shared across the texts, indicating that the effect is not driven by overlapping vocabulary or genre. Works by Iryna Khomytska and colleagues \cite{khomytska2020multifactor} have built upon their ``multifactor method'' of authorship attribution to use it with phonemes. 
+Among stylometric features, phonemes have drawn special interest because they sit below the word level and are less tied to topic. Deng et al.\ \cite{deng2016stochastic} model how often phonemes occur by examining the rank--frequency curve. They show that this curve is well captured by a Dirichlet model. In their setup, the model has a single \emph{shape parameter} \(\beta\) that controls how even or spiky the distribution is: larger \(\beta\) implies more uniform phoneme usage, whereas smaller \(\beta\) implies that a few phonemes dominate. Fitting \(\beta\) to 48 English novels, they report two patterns: (i) the estimated \(\beta\) values cluster by author (books by the same writer tend to have similar \(\beta\)); and (ii) when comparing entire phoneme profiles (full vectors of phoneme frequencies), within-author distances are consistently smaller than between-author distances---even after removing all words shared across the texts, indicating that the effect is not driven by overlapping vocabulary or genre. Works by Iryna Khomytska and colleagues \cite{khomytska2020multifactor} have built upon their ``multifactor method'' of authorship attribution to use it with phonemes.
 
-
-Adjacent disciplines have also informed research on phonetic features. Because they often work with audio recordings, forensic linguists and phoneticians \cite{hollien2013acoustics} have exploited phonetic-prosodic clues, but primarily for author profiling rather than direct authorship attribution. For instance, Harris et al. \cite{harris2014prosody} combine vowel-duration metrics, pitch movement and intensity patterns in mixed-effects and random-forest models to distinguish bilingual from monolingual Spanish speakers and discriminate English, Spanish, and Portuguese with 94\,\% accuracy. 
+Adjacent disciplines have also informed research on phonetic features. Because they often work with audio recordings, forensic linguists and phoneticians \cite{hollien2013acoustics} have exploited phonetic-prosodic clues, but primarily for author profiling rather than direct authorship attribution. For instance, Harris et al. \cite{harris2014prosody} combine vowel-duration metrics, pitch movement and intensity patterns in mixed-effects and random-forest models to distinguish bilingual from monolingual Spanish speakers and discriminate English, Spanish, and Portuguese with 94\,\% accuracy.
 
 While the use of phonemes in computational stylistics is already uncommon, attempts to engage with the sound of language are even rarer within the Humanities, except perhaps from a pedagogical perspective \cite{mousavishirazi_structure_2020}. We have already mentioned the work of Haug \cite{haug_musikalische_2004} and Stock \cite{stock_trios_2016}, as well as our own recent stylometric study on the \textit{Illuminations} \cite{gabay_rien_2025}, which highlights the importance of the phonic dimension of character trigrams in Rimbaud's poetry. This scarcity of studies is likely due both to the difficulty of deriving a clear hermeneutic yield from phonetic analyses of language and to the technical challenges of performing such analyses on large corpora without computational tools.
 
 Since no author writes using the phonetic alphabet, orthographic texts must first be converted into phonetic transcriptions. This task has long been the subject of numerous studies \cite{divay_grapheme_1977,derouault_probabilistic_1985}. Although text-to-speech synthesis poses significant challenges for machines, the transcription process itself is relatively straightforward, as a limited set of rules is generally sufficient \cite{catach_automatic_1986}. Recently, neural network-based approaches attempting to combine grapheme-to-phoneme and lexical post-processing (particularly for \textit{liaisons}) have demonstrated their effectiveness; however, the scarcity of training data still prevents the development of fully operational systems \cite{lee_two_2024}.
 
-%Concerning the phonic dimension of the language, linguists have thoroughly studied the complexity of the (ortho)graphic practice and its relation with speech or orality in synchrony \cite{stark_oral_2015} and diachrony \cite{parussa_enregistrer_2017}, but without a literary perspective. Reversely, in literature, the bulk of production is mainly concerned with the stylistic rendering of orality \cite{mahrer_phonographie_2017}, but not with the phonic value of the text in general. In general, stylistics or textometry \cite{pincemin_textometrie_2020} are more concerned by words and their context.
-%Stylistics, on the other hand, is traditionally interested in sound effects (alliterations, assonance, paronomasia, homeoteleuton, etc.) or visual effects (rhyme for the eye, etc.), but only in a short textual space (a few sentences, sometimes a bit more). Only the aforementioned stylometric study on Rimbaud has approached the literary value of potentially sublexical units from a phonic point of view
-
-
 \section{Data}
 
 First, we compile a training corpus comprising texts from the two putative authors, Rimbaud and Nouveau, along with several additional writers serving as distractors. We select four other prominent poets active during the same period (the latter third of the 19th century) and in the same place (Paris), since both time and location may carry linguistic traces detectable in statistical analyses. Two of them--Paul Verlaine (1844–1896) and Charles Cros (1842–1888)--are poetically close to Rimbaud and Nouveau and belong to the circle of the \textit{poètes maudits}. The other two--François Coppée (1842–1908) and Léon Dierx (1838–1912)--stand somewhat further apart stylistically. Most of the poems date from the 1860s and 1870s and are drawn from the following collections:
 \begin{itemize}
-    \item Arthur Rimbaud: \textit{Les Premiers vers} (circa 1870-1871) as published by P. Berrichon in 1912, some of the early poems rejected as an appendix by Berrichon but retained in the 1895 edition of \textit{Poésies}, and finally \textit{Les Vers nouveaux};
-    \item Germain Nouveau: \textit{Les Valentines et autres vers} (1922 edition, but whose proofs date from the 1880s) and the first part of \textit{Les Poésies d'Humilis et vers inédits} (1924), i.e. only Les \textit{Poésies d'Humilis} (probably written before 1880);
-    \item Paul Verlaine: \textit{Les Poèmes saturniens} (1866), \textit{Les Fêtes galantes} (1891 edition, dating from 1869), \textit{La Bonne Chanson} (1891 edition, dated 1870), and \textit{Romances sans paroles} (1891 edition, dated 1874);
-    \item François Coppée: \textit{Poèmes divers} (1885 edition, dated 1869) and \textit{Poèmes modernes} (1885 edition, dated 1869);
-    \item Léon Dierx: \textit{Poèmes et poésies} (1861);
-    \item Charles Cros: \textit{Le Coffret de Santal} (1879).
+\item Arthur Rimbaud: \textit{Les Premiers vers} (circa 1870-1871) as published by P. Berrichon in 1912, some of the early poems rejected as an appendix by Berrichon but retained in the 1895 edition of \textit{Poésies}, and finally \textit{Les Vers nouveaux};
+\item Germain Nouveau: \textit{Les Valentines et autres vers} (1922 edition, but whose proofs date from the 1880s) and the first part of \textit{Les Poésies d'Humilis et vers inédits} (1924), i.e. only Les \textit{Poésies d'Humilis} (probably written before 1880);
+\item Paul Verlaine: \textit{Les Poèmes saturniens} (1866), \textit{Les Fêtes galantes} (1891 edition, dating from 1869), \textit{La Bonne Chanson} (1891 edition, dated 1870), and \textit{Romances sans paroles} (1891 edition, dated 1874);
+\item François Coppée: \textit{Poèmes divers} (1885 edition, dated 1869) and \textit{Poèmes modernes} (1885 edition, dated 1869);
+\item Léon Dierx: \textit{Poèmes et poésies} (1861);
+\item Charles Cros: \textit{Le Coffret de Santal} (1879).
 \end{itemize}
 
 \section{Methods}
@@ -126,66 +94,55 @@ First, we compile a training corpus comprising texts from the two putative autho
 \subsection{Features}
 
 To recreate the ``the linguistic sound layer'', all texts are transcribed into a phonetic alphabet using a one-to-one correspondence between symbols and phonemes, enabling them to be processed as ordinary characters. We use a modification of X-SAMPA, the extension of the Speech Assessment Methods Phonetic Alphabet (SAMPA) notation \cite{wells_sampa_2000}. SAMPA provides a keyboard-compatible encoding for the full set of IPA symbols covered by the 1993 IPA Chart, including diacritics and tone marks, and was proposed as a standard means of transmitting IPA-transcribed data. In our system, symbols originally encoded as two characters (\textbackslash{}o\textasciitilde\textbackslash) were replaced with single-character variants (\textbackslash{}\~{o}\textbackslash).
-%For instance, the nasals are represented with a diacritic tilde, similar to IPA notation.
 
 We designed a novel phonetic transcription pipeline leveraging data from \textit{Morphalou 3.1} data \cite{atilf_morphalou_2023}, a comprehensive French lexicon containing the inflected forms of 159\,271 lemmas together with their phonetic transcriptions. To ensure efficient performance, the complete lexicon was loaded into an embedded SQLite database, enabling rapid queries. The resource was supplemented with an \textit{ad hoc} dictionary, to account for a few missing entries, such as the poetic spelling \textit{encor} (\textit{encore}, en. ``again'', ``still''), and to exclude irrelevant tokens such as Roman numerals (\textit{iii}, \textit{VI}, etc.). Before phonetic transcription itself, the texts are processed with \textit{Pie extended} \cite{clerice_pie_2022} and models specialized for modern French \cite{gabay_standardizing_2020}, which ensures accurate tokenization and part-of-speech annotation. At this stage, all proper nouns, may they be toponyms (\textit{Angoulême}, \textit{Rome}\dots) or anthroponyms (\textit{Paul}\dots), are removed.
 
 The texts may undergo three types of processing, which can be applied selectively or in combination to produce five distinct versions, as detailed in Table~\ref{tab:processings}.
-
-
-\noindent
-\textbf{Phonetic transcription.} This grapheme-to-phoneme task is applied independently to each token to generate a phonetic transcription. The following protocol is followed while performing this task:
+\paragraph{Phonetic transcription.} This grapheme-to-phoneme task is applied independently to each token to generate a phonetic transcription. The following protocol is followed while performing this task:
 \begin{enumerate}
-    \item each token is first checked against the manual dictionary;
-    \item if not found, a lookup is performed in Morphalou to retrieve all possible transcriptions:
-    \begin{itemize}
-    \item if more than one possible transcription is available, the part-of-speech tag is used to select the most plausible form -- for instance the verb \textit{est} (\textbackslash E\textbackslash, en. ``is'') vs. the noun \textit{est} (\textbackslash Est\textbackslash, en. ``east'');
-    \item if no match is found, the word is ignored but recorded in a log file for subsequent inspection.
+\item each token is first checked against the manual dictionary;
+\item if not found, a lookup is performed in Morphalou to retrieve all possible transcriptions:
+\begin{itemize}
+\item if more than one possible transcription is available, the part-of-speech tag is used to select the most plausible form -- for instance the verb \textit{est} (\textbackslash E\textbackslash, en. ``is'') vs. the noun \textit{est} (\textbackslash Est\textbackslash, en. ``east'');
+\item if no match is found, the word is ignored but recorded in a log file for subsequent inspection.
 \end{itemize}
 \end{enumerate}
 
+\paragraph{Synthetic tokens.} Simili-prosodic units are created by concatenating the phonetic transcriptions of successive tokens into a single synthetic token, except at verse boundaries or where punctuation occurs. A blank space is then inserted as an artificial proxy for prosodic pauses, intended to approximate the natural grouping of words in speech.
 
+\paragraph{French \textit{liaisons}.} We incorporate basic French \textit{liaisons} (linking consonants), applied depending on the scenario either at the end of the first token in a pair (e.g., \textit{Les Illuminations} $\to$ \textbackslash lez ilyminasj\~O\textbackslash{} with \textbackslash z\textbackslash{} representing the \textit{liaison}) or directly within synthetic tokens (e.g., \textit{Les Illuminations} $\to$ \textbackslash lezilyminasj\~O\textbackslash{}). The system of French \textit{liaisons} is notoriously complex, even for native speakers, as it varies considerably across periods, regions, and registers. Consequently, although most \textit{liaisons} occur in poetry, we choose to implement only the so-called ``mandatory \textit{liaisons}'' to avoid introducing prosodically or stylistically implausible forms.
 
-\noindent
-\textbf{Synthetic tokens.} Simili-prosodic units are created by concatenating the phonetic transcriptions of successive tokens into a single synthetic token, except at verse boundaries or where punctuation occurs. A blank space is then inserted as an artificial proxy for prosodic pauses, intended to approximate the natural grouping of words in speech.
-
-
-
-\noindent
-\textbf{French \textit{liaisons}.} We incorporate basic French \textit{liaisons} (linking consonants), applied depending on the scenario either at the end of the first token in a pair (e.g., \textit{Les Illuminations} $\to$ \textbackslash lez ilyminasj\~O\textbackslash{} with \textbackslash z\textbackslash{} representing the \textit{liaison}) or directly within synthetic tokens (e.g., \textit{Les Illuminations} $\to$ \textbackslash lezilyminasj\~O\textbackslash{}). The system of French \textit{liaisons} is notoriously complex, even for native speakers, as it varies considerably across periods, regions, and registers. Consequently, although most \textit{liaisons} occur in poetry, we choose to implement only the so-called ``mandatory \textit{liaisons}'' to avoid introducing prosodically or stylistically implausible forms.
-%This is a clear limitation of this early work, but since the same processing was performed for all texts, the comparisons are still valid.
 A \textit{liaison} is introduced between any pair of words that meets the following conditions:
 \begin{itemize}
-    \item the first word ends with a consonant letter, but a vowel phoneme;
-    \item the second word begins with a vowel phoneme; 
-    \item there is no punctuation between the words, and they belong to the same verse;
-    \item at least one of the following condition is met:
-    \begin{itemize}
-        \item the first word is a determiner, a preposition of a pronoun;
-        \item the second word is the postpositive pronoun \textit{-y} or \textit{-en};
-        \item both words form a pair noun-adjective or adjective-noun pair;
-        \item the first word is an adverb and the second is a preposition;
-    \end{itemize}
-    \item the second word does not start with an aspirated \textit{h}\footnote{In French, the initial \textit{h} is aspirated if the word has a non-Latin or non-Greek etymology, such as those of Germanic (\textit{harangue}) or Arabic (\textit{hasard}) origin. A comprehensive list of such words was used as a lookup table after the lemmatization with Morphalou 3.1.}.
- \end{itemize}
+\item the first word ends with a consonant letter, but a vowel phoneme;
+\item the second word begins with a vowel phoneme;
+\item there is no punctuation between the words, and they belong to the same verse;
+\item at least one of the following condition is met:
+\begin{itemize}
+\item the first word is a determiner, a preposition of a pronoun;
+\item the second word is the postpositive pronoun \textit{-y} or \textit{-en};
+\item both words form a pair noun-adjective or adjective-noun pair;
+\item the first word is an adverb and the second is a preposition;
+\end{itemize}
+\item the second word does not start with an aspirated \textit{h}\footnote{In French, the initial \textit{h} is aspirated if the word has a non-Latin or non-Greek etymology, such as those of Germanic (\textit{harangue}) or Arabic (\textit{hasard}) origin. A comprehensive list of such words was used as a lookup table after the lemmatization with Morphalou 3.1.}.
+\end{itemize}
 
-    \begin{table}[htp]
-        \centering
-        \begin{tabular}{l|l}
-            \toprule
-            Version & Text \\
-            \midrule
-            Orthographic & aux abattoirs, dans les cirques,\\
-            Phonetic & o abatwaR dã le siRk@ \\
-            Phonetic-synthetic & oabatwaR dãlesiRk@\\
-            Phonetic with \textit{liaisons} & oz abatwaR dã le siRk@ \\
-            Phonetic-synthetic, with \textit{liaisons} & ozabatwaR dãlesiRk@ \\
-            \bottomrule
-        \end{tabular}
-        \caption{Different processings of short extract from the poem \textit{Après le déluge} in the \textit{Illuminations}.}
-        \label{tab:processings}
-    \end{table}
-
+\begin{table}[htp]
+\centering
+\begin{tabular}{l|l}
+\toprule
+Version & Text \\
+\midrule
+Orthographic & aux abattoirs, dans les cirques,\\
+Phonetic & o abatwaR dã le siRk@ \\
+Phonetic-synthetic & oabatwaR dãlesiRk@\\
+Phonetic with \textit{liaisons} & oz abatwaR dã le siRk@ \\
+Phonetic-synthetic, with \textit{liaisons} & ozabatwaR dãlesiRk@ \\
+\bottomrule
+\end{tabular}
+\caption{Different processings of short extract from the poem \textit{Après le déluge} in the \textit{Illuminations}.}
+\label{tab:processings}
+\end{table}
 
 \subsection{Classification}
 
@@ -202,131 +159,125 @@ Empirical evaluation indicates that the best-performing configurations consisten
 Among the various configurations, the use of synthetic tokens improves the SVM accuracy, particularly when combined with \textit{liaisons} (F-score: 94\%). Our results indicate that \textit{liaisons} contribute the largest performance gain and, notably, achieve even higher accuracy when applied without synthetic tokens (95\%). Among all the writers, Dierx and Nouveau are consistently the best recognised, which is noteworthy given that Nouveau is one of the two putative authors of the \textit{Illuminations}. In contrast, Rimbaud's poetry consistently proves the most difficult to identify, regardless of the experimental setup.
 
 \begin{table}[htp]
-    \centering \scriptsize
-    \begin{subtable}[t]{0.48\textwidth}
-        \begin{tabular}{l|ccccc}
-            \toprule
-                         & Precision & Recall & F-score & Support \\
-            \midrule
-            Coppée       & 0.83      & 0.56   & 0.67    & 9     \\
-            Cros         & 0.83	     & 1.00   & 0.91    & 10    \\
-            Dierx        & 1.00      & 1.00   & 1.00    & 10    \\
-            Nouveau      & 1.00      & 1.00   & 1.00    & 9     \\
-            Rimbaud      & 0.78      & 0.78   & 0.78    & 9     \\
-            Verlaine     & 0.89      & 1.00   & 0.94    & 8     \\
-            \midrule
-            Accuracy     &           &        & 0.89    & 55    \\
-            Macro avg    & 0.89      & 0.89   & 0.88    & 55    \\
-            weighted avg  & 0.89     & 0.89   & 0.88    & 55    \\
-            \bottomrule
-        \end{tabular}
-        \caption{Results of the SVM on the orthographic version of the text, 7\,750-characters sample, k=10, penalised model, downsampling and a linear kernel.}
-        \label{tab:orthographic}
-    \end{subtable}
-    \hspace{\fill}
-    \begin{subtable}[t]{0.48\textwidth}
-        \begin{tabular}{l|ccccc}
-            \toprule
-                         & Precision & Recall & F-score & Support \\
-            \midrule
-            Coppée       & 1.00      & 0.44   & 0.62    & 9     \\
-            Cros         & 0.91	     & 1.00   & 0.95    & 10    \\
-            Dierx        & 1.00      & 1.00   & 1.00    & 10    \\
-            Nouveau      & 1.00      & 1.00   & 1.00    & 10    \\
-            Rimbaud      & 0.67      & 0.89   & 0.76    & 9     \\
-            Verlaine     & 0.89      & 1.00   & 0.94    & 8     \\
-            \midrule
-            Accuracy     &           &        & 0.89    & 56    \\
-            Macro avg    & 0.91      & 0.89   & 0.88    & 56    \\
-            weighted avg  & 0.91     & 0.89   & 0.88    & 56    \\
-            \bottomrule
-        \end{tabular}
-        \caption{Results of the SVM on the phonetic version of the text, 6\,000-characters sample, k=10, penalised model, downsampling and a sigmoid kernel.}
-        \label{tab:phonetic}
-    \end{subtable}
+\centering \scriptsize
+\begin{subtable}[t]{0.48\textwidth}
+\begin{tabular}{l|ccccc}
+\toprule
+& Precision & Recall & F-score & Support \\
+\midrule
+Coppée       & 0.83      & 0.56   & 0.67    & 9     \\
+Cros         & 0.83	     & 1.00   & 0.91    & 10    \\
+Dierx        & 1.00      & 1.00   & 1.00    & 10    \\
+Nouveau      & 1.00      & 1.00   & 1.00    & 9     \\
+Rimbaud      & 0.78      & 0.78   & 0.78    & 9     \\
+Verlaine     & 0.89      & 1.00   & 0.94    & 8     \\
+\midrule
+Accuracy     &           &        & 0.89    & 55    \\
+Macro avg    & 0.89      & 0.89   & 0.88    & 55    \\
+weighted avg  & 0.89     & 0.89   & 0.88    & 55    \\
+\bottomrule
+\end{tabular}
+\caption{Results of the SVM on the orthographic version of the text, 7\,750-characters sample, k=10, penalised model, downsampling and a linear kernel.}
+\label{tab:orthographic}
+\end{subtable}
+\hspace{\fill}
+\begin{subtable}[t]{0.48\textwidth}
+\begin{tabular}{l|ccccc}
+\toprule
+& Precision & Recall & F-score & Support \\
+\midrule
+Coppée       & 1.00      & 0.44   & 0.62    & 9     \\
+Cros         & 0.91	     & 1.00   & 0.95    & 10    \\
+Dierx        & 1.00      & 1.00   & 1.00    & 10    \\
+Nouveau      & 1.00      & 1.00   & 1.00    & 10    \\
+Rimbaud      & 0.67      & 0.89   & 0.76    & 9     \\
+Verlaine     & 0.89      & 1.00   & 0.94    & 8     \\
+\midrule
+Accuracy     &           &        & 0.89    & 56    \\
+Macro avg    & 0.91      & 0.89   & 0.88    & 56    \\
+weighted avg  & 0.91     & 0.89   & 0.88    & 56    \\
+\bottomrule
+\end{tabular}
+\caption{Results of the SVM on the phonetic version of the text, 6\,000-characters sample, k=10, penalised model, downsampling and a sigmoid kernel.}
+\label{tab:phonetic}
+\end{subtable}
 
-    \bigskip 
-    \begin{subtable}[t]{0.48\textwidth}
-        \begin{tabular}{l|ccccc}
-            \toprule
-                         & Precision & Recall & F-score & Support \\
-            \midrule
-            Coppée       & 1.00      & 0.67   & 0.80    & 9     \\
-            Cros         & 1.00	     & 1.00   & 1.00    & 10    \\
-            Dierx        & 1.00      & 1.00   & 1.00    & 10    \\
-            Nouveau      & 1.00      & 1.00   & 1.00    & 9     \\
-            Rimbaud      & 0.73      & 0.89   & 0.80    & 9     \\
-            Verlaine     & 0.75      & 0.86   & 0.80    & 7     \\
-            \midrule
-            Accuracy     &           &        & 0.91    & 54    \\
-            Macro avg    & 0.91      & 0.90   & 0.90    & 54    \\
-            weighted avg  & 0.92     & 0.91   & 0.91    & 54    \\
-            \bottomrule
-        \end{tabular}
-        \caption{Results of the SVM on the phonetic version of the text with synthetic tokens, 5\,000-characters sample, k=10, penalised model, downsampling and a linear kernel.}
-        \label{tab:synthetic}
-    \end{subtable}
-    \hspace{\fill}
-    \begin{subtable}[t]{0.48\textwidth}
-        \begin{tabular}{l|ccccc}
-            \toprule
-                         & Precision & Recall & F-score & Support \\
-            \midrule
-            Coppée       & 0.83      & 1.00   & 0.91    & 5     \\
-            Cros         & 0.86	     & 1.00   & 0.92    & 6     \\
-            Dierx        & 1.00      & 1.00   & 1.00    & 6     \\
-            Nouveau      & 1.00      & 1.00   & 1.00    & 5     \\
-            Rimbaud      & 1.00      & 0.60   & 0.75    & 5     \\
-            Verlaine     & 1.00      & 1.00   & 1.00    & 5     \\
-            \midrule
-            Accuracy     &           &        & 0.94    & 32    \\
-            Macro avg    & 0.95      & 0.93   & 0.93    & 32    \\
-            weighted avg  & 0.95     & 0.94   & 0.93    & 32    \\
-            \bottomrule
-        \end{tabular}
-        \caption{Results of the SVM on the phonetic version of the text with synthetic tokens and \textit{liaisons}, 6\,000-characters sample, k=10, penalised model, PCA reduction, downsampling and a linear kernel.}
-        \label{tab:synthetic_liaisons}
-    \end{subtable}
+\bigskip
+\begin{subtable}[t]{0.48\textwidth}
+\begin{tabular}{l|ccccc}
+\toprule
+& Precision & Recall & F-score & Support \\
+\midrule
+Coppée       & 1.00      & 0.67   & 0.80    & 9     \\
+Cros         & 1.00	     & 1.00   & 1.00    & 10    \\
+Dierx        & 1.00      & 1.00   & 1.00    & 10    \\
+Nouveau      & 1.00      & 1.00   & 1.00    & 9     \\
+Rimbaud      & 0.73      & 0.89   & 0.80    & 9     \\
+Verlaine     & 0.75      & 0.86   & 0.80    & 7     \\
+\midrule
+Accuracy     &           &        & 0.91    & 54    \\
+Macro avg    & 0.91      & 0.90   & 0.90    & 54    \\
+weighted avg  & 0.92     & 0.91   & 0.91    & 54    \\
+\bottomrule
+\end{tabular}
+\caption{Results of the SVM on the phonetic version of the text with synthetic tokens, 5\,000-characters sample, k=10, penalised model, downsampling and a linear kernel.}
+\label{tab:synthetic}
+\end{subtable}
+\hspace{\fill}
+\begin{subtable}[t]{0.48\textwidth}
+\begin{tabular}{l|ccccc}
+\toprule
+& Precision & Recall & F-score & Support \\
+\midrule
+Coppée       & 0.83      & 1.00   & 0.91    & 5     \\
+Cros         & 0.86	     & 1.00   & 0.92    & 6     \\
+Dierx        & 1.00      & 1.00   & 1.00    & 6     \\
+Nouveau      & 1.00      & 1.00   & 1.00    & 5     \\
+Rimbaud      & 1.00      & 0.60   & 0.75    & 5     \\
+Verlaine     & 1.00      & 1.00   & 1.00    & 5     \\
+\midrule
+Accuracy     &           &        & 0.94    & 32    \\
+Macro avg    & 0.95      & 0.93   & 0.93    & 32    \\
+weighted avg  & 0.95     & 0.94   & 0.93    & 32    \\
+\bottomrule
+\end{tabular}
+\caption{Results of the SVM on the phonetic version of the text with synthetic tokens and \textit{liaisons}, 6\,000-characters sample, k=10, penalised model, PCA reduction, downsampling and a linear kernel.}
+\label{tab:synthetic_liaisons}
+\end{subtable}
 
-    \bigskip 
+\bigskip
 
-    \begin{subtable}[t]{0.48\textwidth}
-        \begin{tabular}{l|ccccc}
-            \toprule
-                         & Precision & Recall & F-score & Support \\
-            \midrule
-            Coppée       & 0.85      & 1.00   & 0.92    & 11     \\
-            Cros         & 1.00	     & 1.00   & 1.00    & 7     \\
-            Dierx        & 1.00      & 1.00   & 1.00    & 7     \\
-            Nouveau      & 1.00      & 1.00   & 1.00    & 6     \\
-            Rimbaud      & 1.00      & 0.80   & 0.89    & 5     \\
-            Verlaine     & 1.00      & 0.83   & 0.91    & 6     \\
-            \midrule
-            Accuracy     &           &        & 0.95    & 42    \\
-            Macro avg    & 0.97      & 0.94   & 0.95    & 42    \\
-            weighted avg  & 0.96     & 0.95   & 0.95    & 42    \\
-            \bottomrule
-        \end{tabular}
-        \caption{Results of the SVM on the phonetic version of the text with \textit{liaisons}, 9\,000-characters sample, k=10, penalised model, downsampling and a linear kernel.}
-        \label{tab:liaisons}
-    \end{subtable}
-    \caption{Best-performing SVM results for each feature set. Details of all parameters for each experiment are given in the table caption.}
-    \label{tab:results}
+\begin{subtable}[t]{0.48\textwidth}
+\begin{tabular}{l|ccccc}
+\toprule
+& Precision & Recall & F-score & Support \\
+\midrule
+Coppée       & 0.85      & 1.00   & 0.92    & 11     \\
+Cros         & 1.00	     & 1.00   & 1.00    & 7     \\
+Dierx        & 1.00      & 1.00   & 1.00    & 7     \\
+Nouveau      & 1.00      & 1.00   & 1.00    & 6     \\
+Rimbaud      & 1.00      & 0.80   & 0.89    & 5     \\
+Verlaine     & 1.00      & 0.83   & 0.91    & 6     \\
+\midrule
+Accuracy     &           &        & 0.95    & 42    \\
+Macro avg    & 0.97      & 0.94   & 0.95    & 42    \\
+weighted avg  & 0.96     & 0.95   & 0.95    & 42    \\
+\bottomrule
+\end{tabular}
+\caption{Results of the SVM on the phonetic version of the text with \textit{liaisons}, 9\,000-characters sample, k=10, penalised model, downsampling and a linear kernel.}
+\label{tab:liaisons}
+\end{subtable}
+\caption{Best-performing SVM results for each feature set. Details of all parameters for each experiment are given in the table caption.}
+\label{tab:results}
 \end{table}
 
 We employ the optimal configuration to perform a rolling analysis with a step size of 100 characters, resulting in a total of 271 overlapping text segments. None of these segments is attributed to Nouveau, who can therefore be excluded as a potential author of the \textit{Illuminations}. However, only 28\% of the segments are attributed to Rimbaud, while the remaining 72\% are assigned to Verlaine.
 
 \section{Discussion}
 
+\paragraph{The Rimbaud case.} The fact that a large majority of the \textit{Illuminations} is attributed to Verlaine is unexpected, though not entirely surprising, as it corroborates—albeit with much greater strength—previous findings obtained through traditional stylometric methods \cite{gabay_rien_2025}. A plausible explanation for this attribution is not that Verlaine authored the \textit{Illuminations}, but rather that several of Rimbaud's poems used to train the SVM were copied by Verlaine \cite{pierrot_verlaine_1987}. This is, for instance, the case with \textit{Les Effarés}, for which our base edition uses the version copied by Verlaine\footnote{In our version \textit{grogne} (eng. ``growl'') rather than ``chante'' (eng. ``sing''), ``Et que leur chemise tremblote'' (eng. ``And may their shirt tremble'') rather than \textit{Et que leur lange blanc tremblote} (eng. ``And may their white swaddling cloth tremble''), etc.}. As a result, these texts may carry traces of his authorial signal \cite[p. 109]{ischi_rimbaud_2011}, which could bias the model's attribution.
 
-
-\noindent
-\textbf{The Rimbaud case.} The fact that a large majority of the \textit{Illuminations} is attributed to Verlaine is unexpected, though not entirely surprising, as it corroborates—albeit with much greater strength—previous findings obtained through traditional stylometric methods \cite{gabay_rien_2025}. A plausible explanation for this attribution is not that Verlaine authored the \textit{Illuminations}, but rather that several of Rimbaud's poems used to train the SVM were copied by Verlaine \cite{pierrot_verlaine_1987}. This is, for instance, the case with \textit{Les Effarés}, for which our base edition uses the version copied by Verlaine\footnote{In our version \textit{grogne} (eng. ``growl'') rather than ``chante'' (eng. ``sing''), ``Et que leur chemise tremblote'' (eng. ``And may their shirt tremble'') rather than \textit{Et que leur lange blanc tremblote} (eng. ``And may their white swaddling cloth tremble''), etc.}. As a result, these texts may carry traces of his authorial signal \cite[p. 109]{ischi_rimbaud_2011}, which could bias the model's attribution.
-
-
-
-\noindent
-\textbf{The phonetic case.} This study set out to determine whether bringing the text closer to the phonetic signal—through automatic phonetic transcription and minimal prosodic enrichment—rather than using its orthographic form could enhance stylometric attribution in late-nineteenth-century French poetry. Three main findings emerge.
+\paragraph{The phonetic case.} This study set out to determine whether bringing the text closer to the phonetic signal—through automatic phonetic transcription and minimal prosodic enrichment—rather than using its orthographic form could enhance stylometric attribution in late-nineteenth-century French poetry. Three main findings emerge.
 
 First, replacing the orthographic signal with an enriched phonetic representation systematically improves the decision margin of the SVM classifier. Classification accuracy rises from 0.89 to 0.95 under comparable conditions. This finding suggests that a substantial portion of the confusion observed in orthodox stylometric analysis originates from orthographic artefacts that obscure the genuine distribution of linguistic units under an author’s control.
 
@@ -334,24 +285,14 @@ Second, grouping consecutive phoneme strings into pseudo-prosodic units and, mor
 
 Third, the phonetic pipeline markedly reduced between-author confusion without inflating within-author variance. This result aligns with previous evidence that phoneme-level representations capture author-specific preferences that persist even after lexical pruning.
 
-
-
-\noindent
-\textbf{Limitations.} This study presents several methodological limitations. First, out-of-vocabulary tokens—most notably neologisms and archaisms typical of \textit{fin-de-siècle} symbolism—were excluded from processing, which may have introduced biases in the delineation of class boundaries. Second, \textit{liaison} modeling was restricted to so-called ``mandatory'' cases, while other \textit{liaisons} were disregarded, although such phenomena may contribute to author-specific phonostylistic patterns. The results for the \textit{Illuminations} should therefore be interpreted with great caution, especially given the surprising strength of Verlaine's signal detected in Rimbaud's text, which must absolutely be confirmed.
+\paragraph{Limitations.} This study presents several methodological limitations. First, out-of-vocabulary tokens—most notably neologisms and archaisms typical of \textit{fin-de-siècle} symbolism—were excluded from processing, which may have introduced biases in the delineation of class boundaries. Second, \textit{liaison} modeling was restricted to so-called ``mandatory'' cases, while other \textit{liaisons} were disregarded, although such phenomena may contribute to author-specific phonostylistic patterns. The results for the \textit{Illuminations} should therefore be interpreted with great caution, especially given the surprising strength of Verlaine's signal detected in Rimbaud's text, which must absolutely be confirmed.
 
 Despite these limitations, the incremental yet consistent gains achieved through the use of phonetic features with prosodic enrichment suggest that addressing the ``linguistic sound layer'' \cite{haug_musikalische_2004} represents a genuinely promising avenue not only for literary studies, but also for future stylometric research.
-
-%\begin{acknowledgments}
-%Errors remain our own.
-%\end{acknowledgments}
-
 
 \section*{Code and data}
 
 The code and data supporting this study are openly accessible at: \url{https://gitlab.unige.ch/dh/fonetik} and \url{https://gitlab.unige.ch/dh/megastyl}.
 
-% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
 \printbibliography
-% You can include an appendix using the following command
 
 \end{document}

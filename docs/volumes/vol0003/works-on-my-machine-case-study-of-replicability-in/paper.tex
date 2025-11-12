@@ -1,63 +1,35 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-% \documentclass{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
-% ADD your own packages using \usepackage{}
 
-
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{``Works on My Machine'': A Case Study of Replicability Challenges in Computational Humanities Research}
 
-
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1]{Viktor J. Illmer}[
-  orcid=0000-0002-7334-781X
+orcid=0000-0002-7334-781X
 ]
 
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 \affiliation{1}{EXC 2020 \textit{Temporal Communities}, Freie Universität Berlin, Germany}
-% \affiliation{2}{Another Department, Another University, Another City, Another Country}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{replicability, reproducibility, open science}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
 \pagestart{125}
 \pageend{131}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/iAqEoznkfKuz}  
+\doi{10.63744/iAqEoznkfKuz}
 \paperorder{10}
-
 
 \addbibresource{bibliography.bib}
 
-% remove url access dates
-\AtEveryBibitem{%
-  \clearfield{urlyear}
+\AtEveryBibitem{
+\clearfield{urlyear}
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
+
 \maketitle
 \begin{abstract}
 The replicability of computational research is often stated as a key concern in digital humanities scholarship, yet its practical realisation frequently encounters limitations.
@@ -66,119 +38,104 @@ A survey was conducted to determine the stated availability of source code, the 
 The results show that
 a majority of contributions were not able to make their source code available.
 Among those that did provide code, many supplied insufficient information on software dependencies to reproduce their computational environments.
-This circumstance sheds light on infrastructural challenges 
+
+This circumstance sheds light on infrastructural challenges
 that complicate
 the replication of results and, by extension, the review and reuse of these works.
 \end{abstract}
 
+\section{Introduction}
 
-\section{Introduction} 
-
-The replicability of computational research has become a central concern in digital humanities scholarship, yet its practical realisation often encounters significant limitations. 
-This issue is part of the broader so-called \textit{reproducibility crisis} that gained significant attention in academia around 2015 \cite{schoch_repetitive_2023} and in public discourse in 2019 \cite{ries_reproducibility_2024}. 
+The replicability of computational research has become a central concern in digital humanities scholarship, yet its practical realisation often encounters significant limitations.
+This issue is part of the broader so-called \textit{reproducibility crisis} that gained significant attention in academia around 2015 \cite{schoch_repetitive_2023} and in public discourse in 2019 \cite{ries_reproducibility_2024}.
 While this crisis typically refers to the inability to corroborate published research findings based on newly collected data, the present contribution focuses on the narrower concept of \textit{replicability} and its technical requirements in computational humanities research.
 
-To investigate replicability practices, this paper examines research contributions published in the proceedings of the 2024 \textit{Computational Humanities Research} (CHR) conference, one of the largest venues dedicated to computational work in the humanities. 
-It asks whether code artefacts are made available, and whether the computational environments used are specified in sufficient detail to allow for their reproduction. 
+To investigate replicability practices, this paper examines research contributions published in the proceedings of the 2024 \textit{Computational Humanities Research} (CHR) conference, one of the largest venues dedicated to computational work in the humanities.
+It asks whether code artefacts are made available, and whether the computational environments used are specified in sufficient detail to allow for their reproduction.
 In doing so, it aims to assess the state of replicability practices in the field and to identify both common patterns and persistent shortcomings in current workflows.
 The study investigates some of the key preconditions to replicability, namely source code availability and the reproducibility of the computational environment’s software dependencies. Through a systematic analysis of 78 CHR 2024 contributions, this work provides insight into the current state of replicability practices in computational humanities research.
 
-
 \section{Replicability and Reproducibility}
-% Begriffsklärung
-% The so-called \textit{reproducibility crisis} gained significant attention in academia around 2015 \cite{schoch_repetitive_2023} and in public discourse in 2019 \cite{ries_reproducibility_2024}. 
-% It typically refers to the inability to corroborate published research findings based on newly collected data.
-% While this paper is situated within that broader conversation, it focuses on the narrower concept of \textit{replicability} and its technical requirements.
 
-The terms reproducibility and replicability are used differently across and within fields, and sometimes even interchangeably. 
+The terms reproducibility and replicability are used differently across and within fields, and sometimes even interchangeably.
 As \citeauthor{patil_statistical_2016} put it,
 “Everyone agrees that scientific studies should be reproducible and replicable. The problem is almost no one agrees upon what those terms mean” \cite{patil_statistical_2016}.
-In his terminological work on \textit{repetitive research},  \citeauthor{schoch_repetitive_2023} proposes a set of definitions from the perspective of the digital humanities along three core dimensions: 
-the research question, the dataset, and the method \cite{schoch_repetitive_2023}. 
-In this conceptual space, the case where all of these are (virtually) identical to the original study is termed \textit{replication}, and the degree to which this can be achieved \textit{replicability}. 
+In his terminological work on \textit{repetitive research},  \citeauthor{schoch_repetitive_2023} proposes a set of definitions from the perspective of the digital humanities along three core dimensions:
+the research question, the dataset, and the method \cite{schoch_repetitive_2023}.
+In this conceptual space, the case where all of these are (virtually) identical to the original study is termed \textit{replication}, and the degree to which this can be achieved \textit{replicability}.
 
-Replication as a practice is characterised as quality control, as it ensures that research workflows produce the expected results and that no manipulation has taken place. 
+Replication as a practice is characterised as quality control, as it ensures that research workflows produce the expected results and that no manipulation has taken place.
 As Schöch points out, replication is explicitly not concerned with generating new knowledge, but rather with its validation.
-In the case of computational research, the availability of source code has been positioned as “one of the most critical factors” in aiding replicability \cite{arvan_reproducibility_2022}, with the added effect that replicable computational research artefacts also lend themselves more easily to re-use and adaptation. 
-However, as Arvan et~al. point out in their in-depth survey of contributions to major computational linguistics conferences, while source code availability is a necessary condition for the replication of computational research, it is by no means sufficient \cite{arvan_reproducibility_2022}. 
+In the case of computational research, the availability of source code has been positioned as “one of the most critical factors” in aiding replicability \cite{arvan_reproducibility_2022}, with the added effect that replicable computational research artefacts also lend themselves more easily to re-use and adaptation.
+However, as Arvan et~al. point out in their in-depth survey of contributions to major computational linguistics conferences, while source code availability is a necessary condition for the replication of computational research, it is by no means sufficient \cite{arvan_reproducibility_2022}.
 
 Achieving replicability in computational research comes with a set of technical requirements, or, in other words, projects must be developed with replicability in mind.
 In addition, these projects must necessarily concern themselves with the question of sustainability, as software, and software libraries especially, may change over time and the stability of their interfaces or functionality is typically not guaranteed \cite{schoch_repetitive_2023}.
 Projects which do not precisely describe their computational environment may therefore cease to function in the near future, complicating attempts at replicating their findings.
 
 Building on Schöch’s conception of replicability,
-in this contribution, I aim to investigate some of the preconditions to replicability, namely source code availability and the reproducibility of the computational environment’s software dependencies. 
-For the purposes of this paper, practices that aim to control for these challenges by providing information on the original software environment are understood as aiding the 
-\textit{reproducibility} of the computational environment. 
+in this contribution, I aim to investigate some of the preconditions to replicability, namely source code availability and the reproducibility of the computational environment’s software dependencies.
+For the purposes of this paper, practices that aim to control for these challenges by providing information on the original software environment are understood as aiding the
+\textit{reproducibility} of the computational environment.
 For one, this allows for a distinction between the \textit{replicability} of a study and the \textit{reproducibility} of its computational environment.
-% as a precondition. 
-In addition, this term aligns more closely with the underlying technical mechanisms, as commonly used dependency management systems evaluate, fetch, and collate remote artefacts to re-produce the desired configuration from its constituent components. 
+
+In addition, this term aligns more closely with the underlying technical mechanisms, as commonly used dependency management systems evaluate, fetch, and collate remote artefacts to re-produce the desired configuration from its constituent components.
 Finally, it relates to the concept of \textit{reproducible builds} in open-source software development, though this is specifically concerned with deterministic, bit-perfect reproductions \cite{lamb_reproducible_2022}.
-For the purposes of this paper, reproduction of computational environments is understood more loosely, in terms of its functional equivalence, as bit-for-bit identical reproduction of environments is either 
+For the purposes of this paper, reproduction of computational environments is understood more loosely, in terms of its functional equivalence, as bit-for-bit identical reproduction of environments is either
 unviable or unattainable
 across operating systems.
-
-
-
-
 
 \section{Method}
 All published papers were retrieved from the CHR 2024 proceedings page (\url{https://ceur-ws.org/Vol-3834/}). Titles and author names were extracted from the HTML of the proceedings page using Python, and the corresponding PDFs were downloaded programmatically for a total of 78 cases.
 
-% Scope and eligibility 
 As this study is concerned with the replicability of computational workflows, only papers addressing empirical or methodological questions through code-based analysis were included.
-Contributions that primarily introduced tools or software 
+Contributions that primarily introduced tools or software
 without their computational evaluation itself being the object of the study were excluded.
 This excludes, for instance, papers which discuss the development of new computational tools to aid in research, because, even though they may make their source code available, there may be no research question to answer or findings to replicate.
-% If, however, the object of the study is, for example, the benchmarking of a new tool or method, thereby producing source code and findings whose replicability can be investigated, it becomes eligible.
+
 However, if the study’s focus is, for example, the evaluation or benchmarking of a newly developed tool or method, resulting in both source code and empirical findings that can be assessed for replicability, then such a contribution qualifies for inclusion.
 
-An initial scan for mentions of source code availability was conducted by searching each paper for the keywords “code” and “scripts”. 
+An initial scan for mentions of source code availability was conducted by searching each paper for the keywords “code” and “scripts”.
 Subsequently, each paper was manually inspected and annotated for the following variables: \textit{Source code availability}, \textit{Git URL}, \textit{repository URL}, \textit{programming language(s)},  \textit{dependency management schemes}, and \textit{additional dependency management features}.
 This annotation scheme was developed inductively based on the features encountered as the annotation work progressed.
 
-% Source code availability
 \textit{Source code availability}, was categorized into six classes: \textit{Yes}, \textit{No}, \textit{Unfulfilled / No location}, \textit{Unfulfilled / Empty}, \textit{Data only}, and \textit{Not applicable}.
-The \textit{Yes} and \textit{No} categories indicate, respectively, whether a functioning code repository was clearly linked and accessible, or absent altogether. 
+The \textit{Yes} and \textit{No} categories indicate, respectively, whether a functioning code repository was clearly linked and accessible, or absent altogether.
 \textit{Data only} refers to cases where only datasets were made available, despite the apparent presence or necessity of source code based on the contributions’ descriptions.
-Finally, the two \textit{Unfulfilled} categories were used when authors indicated an intention to share code, but none could be identified. 
-\textit{Unfulfilled / No location} was used when no specific identifier or access point for the resource was provided (e.g. no URL, DOI, or repository name), 
+Finally, the two \textit{Unfulfilled} categories were used when authors indicated an intention to share code, but none could be identified.
+\textit{Unfulfilled / No location} was used when no specific identifier or access point for the resource was provided (e.g. no URL, DOI, or repository name),
 while \textit{Unfulfilled / Empty} was applied when the referenced location (e.g. a GitHub repository) existed but did not contain the relevant source code.
 Finally, where the availability of source code was stated, but not properly linked, an attempt was made to identify the correct location using a web search and included in the analysis where successful.
 
-% Repository contents
 The project’s URLs in open-access repositories (e.g. Zenodo) and/or Git-based code forges (e.g. GitHub) were recorded.
 Where applicable, the projects’ repositories were reviewed using their platforms’ web interfaces. In cases where this was impractical, files were downloaded and inspected locally.
 For GitHub-hosted repositories, the platform’s language analysis was used to inform annotation of the main programming language \cite{github_about_2025}.
 
-One of the main variables of interest was the presence and form of dependency management features. 
-Given the centrality of dependency versioning for replicability, seeing as library APIs may change considerably between versions, each project’s repository was inspected for mechanisms used to specify dependencies. 
+One of the main variables of interest was the presence and form of dependency management features.
+Given the centrality of dependency versioning for replicability, seeing as library APIs may change considerably between versions, each project’s repository was inspected for mechanisms used to specify dependencies.
 As with the other categories, rather than starting from a fixed set,
-they were developed inductively over the course of the annotation. 
-% These included, for example, cases where dependencies were listed informally in comments, referenced through installation commands, or managed dependency definition files or external tools. 
-These included a number of different approaches: from informal methods like dependencies listed in code comments or referenced through basic installation commands, such as \textit{pip install} in a README file or a Jupyter notebook cell, to more structured approaches such as Python’s \textit{requirements.txt} files, and, for more robust version control, the use of lockfiles including hashes, such as 
-\textit{poetry.lock} in Python or 
+they were developed inductively over the course of the annotation.
+
+These included a number of different approaches: from informal methods like dependencies listed in code comments or referenced through basic installation commands, such as \textit{pip install} in a README file or a Jupyter notebook cell, to more structured approaches such as Python’s \textit{requirements.txt} files, and, for more robust version control, the use of lockfiles including hashes, such as
+\textit{poetry.lock} in Python or
 \textit{renv.lock} in R.
 The use of external tools for declarative environment configuration, such as Nix, was also recorded.
 
-In addition to identifying specific dependency management schemes, each project was evaluated in terms of the reproducibility of its dependency specifications. 
+In addition to identifying specific dependency management schemes, each project was evaluated in terms of the reproducibility of its dependency specifications.
 This judgment does not necessarily follow from the dependency scheme used, as some schemes may provide insufficient details to infer the original environment.
-A project’s dependencies were marked as reproducible only if the versions of all declared dependencies were explicitly and unambiguously specified. 
-This makes this category rather fragile: 
+A project’s dependencies were marked as reproducible only if the versions of all declared dependencies were explicitly and unambiguously specified.
+This makes this category rather fragile:
 Even a single undeclared version, such as a line in a requirements file lacking a version constraint, was sufficient for the project to be marked as non-reproducible.
 
-% This conservative classification reflects common pitfalls in real-world dependency handling. In particular, requirements.txt files were often found to contain a mix of pinned and unpinned packages, likely due to workflows where an initial pip freeze is manually edited later without regenerating the file. This aspect is discussed further below.
-
-
 \section{Findings}
-% Source ode availablility
+
 The most immediate variable concerns the availability of source code, as this forms the basis for further analysis.
-For this, an almost equal split could be observed among projects (\autoref{tab:available}). 
+For this, an almost equal split could be observed among projects (\autoref{tab:available}).
 Out of the 78 annotated projects, 33 (42\%) made their source code available, while 40 (roughly half) did not,
-although some expressed an (“unfulfilled”) intention to do so: 
+although some expressed an (“unfulfilled”) intention to do so:
 in seven cases, no location was provided, and in 3, the linked repository was empty.
 The most common reasons for this were issues with the published PDFs, where text was marked as a hyperlink, but no link was actually encoded, as well as leftover anonymisation placeholders from the peer review process as required by CHR \cite{computational_humanities_research_call_2024}, such as “github.com/xxxx”.
-In four cases, only data was shared. 
+In four cases, only data was shared.
 For five projects, code availability was deemed not applicable due to the nature of the work.
 
 \begin{table}[htbp]
@@ -199,10 +156,8 @@ Not applicable & 5 & 6 \\
 \label{tab:available}
 \end{table}
 
-
-% Programming languages
-The most commonly used programming language across the annotated projects was Python (\autoref{tab:langs}). 
-It appeared in 18 projects’ source files (55\%), and in 18 projects in the form of Jupyter notebooks. 
+The most commonly used programming language across the annotated projects was Python (\autoref{tab:langs}).
+It appeared in 18 projects’ source files (55\%), and in 18 projects in the form of Jupyter notebooks.
 There is substantial overlap between these two categories, as many projects combined Python utility scripts with notebook-based analysis workflows.
 
 \begin{table}[htbp]
@@ -227,11 +182,8 @@ Other languages appeared far less frequently: R was used in 5 projects (15\%), w
 Given the prominence of Python, this section will also discuss language-specific practices where applicable.
 That said, the analysis is not concerned with language or tool choice per se, but with how precisely dependencies are declared and managed in general.
 
-
-% Dependency management features
-
-Across the corpus, dependency management practices varied widely in both structure and reproducibility (\autoref{tab:schemes}). 
-Of the 33 projects with available source code, only seven (about 20\%) specified all dependencies with clearly defined version constraints and were thus classified as having reproducible dependency specifications. 
+Across the corpus, dependency management practices varied widely in both structure and reproducibility (\autoref{tab:schemes}).
+Of the 33 projects with available source code, only seven (about 20\%) specified all dependencies with clearly defined version constraints and were thus classified as having reproducible dependency specifications.
 The remaining 26 projects lacked sufficient versioning information to allow for a faithful reconstruction of the original software environment.
 
 \begin{table}[htbp]
@@ -252,80 +204,62 @@ In comment & 1 & 3 \\
 \label{tab:schemes}
 \end{table}
 
-The most common pattern among projects with non-reproducible dependencies was the absence of any structured dependency specification beyond the code itself. 
+The most common pattern among projects with non-reproducible dependencies was the absence of any structured dependency specification beyond the code itself.
 In 19 projects,
-% —around 52\% of all projects, and over 70\% of those lacking reproducible dependencies— % update numbers if needed
+
 dependencies could only be inferred from import statements or equivalent constructs. While these indicate which packages are used, they provide no versioning information and offer no guarantees for replicability.
-Some projects attempted more structured approaches, but still fell short of full reproducibility. 
-Eight % 8
-projects included a requirements file (e.g. requirements.txt for Python), but only half of these fully pinned all versions. 
+Some projects attempted more structured approaches, but still fell short of full reproducibility.
+Eight
+projects included a requirements file (e.g. requirements.txt for Python), but only half of these fully pinned all versions.
 In the other half, some packages were listed without version constraints, presumably in part as a result of inconsistent editing after an initial pip freeze. This practice was a relatively frequent obstacle to dependency reproducibility, suggesting that even the use of standard tooling does not reliably translate into reproducible results.
-% lockfiles
-Three projects included proper lockfiles with both version and hash information, allowing for high-fidelity reproduction (or at least verifiable reproduction, depending on availability) of their dependencies. 
-Among these projects, one used PDM, a more recent Python-specific package manager \cite{pdm_contributors_pdm_2025}. 
+
+Three projects included proper lockfiles with both version and hash information, allowing for high-fidelity reproduction (or at least verifiable reproduction, depending on availability) of their dependencies.
+Among these projects, one used PDM, a more recent Python-specific package manager \cite{pdm_contributors_pdm_2025}.
 Another employed the Nix package manager, which enables the declarative configuration of software and its dependencies \cite{nixos_contributors_nix_2025}.
-% informal/unconventional
-A handful of projects relied on more informal or unconventional methods: 
+
+A handful of projects relied on more informal or unconventional methods:
 One project included a “pip install” command in their README file, another included a “!pip install” shell command as the top-most cell in their Jupyter notebook.
 Unfortunately, while technically possible, neither specified the version numbers of their dependencies, meaning that the package manager will resolve the latest releases as it sees fit, leading to potential breakage.
-One R-based project included package names and version numbers in a comment at the top of their script. 
-% Two projects made use of third-party command-line tools without specifying versions.
+One R-based project included package names and version numbers in a comment at the top of their script.
 
-Additionally, only some of these dependency management schemes are machine-actionable, that is to say that they are properly structured and interpretable by package management software in order to reproduce the correct environment. 
-As noted with dependency definition files such as requirements.txt, manual editing can compromise their version pinning guarantees. 
+Additionally, only some of these dependency management schemes are machine-actionable, that is to say that they are properly structured and interpretable by package management software in order to reproduce the correct environment.
+As noted with dependency definition files such as requirements.txt, manual editing can compromise their version pinning guarantees.
 Specifically, only seven projects’ dependencies could be considered reproducible as well as machine-actionable, four of which used a requirements file as their highest-fidelity dependency pinning scheme.
 In fact, while requirements files were the most common dependency management scheme encountered, they only achieved full version pinning in four out of eight cases.
 
-A single project offered an Open Container Initiative (OCI)/Docker image of their computational environment in addition to reproducible version definitions. 
+A single project offered an Open Container Initiative (OCI)/Docker image of their computational environment in addition to reproducible version definitions.
 These images are a special case, as they already include all the programs and dependencies required for replicating findings, and are termed self-contained and self-executable research artefacts \cite{arvan_reproducibility_2022}.
-It is, therefore, less appropriate to speak of \textit{reproducing} the computational environment, as there is nothing to be evaluated, fetched, or built: Instead, the original environment itself has already been built and compressed, ready to be loaded on a new machine. 
+It is, therefore, less appropriate to speak of \textit{reproducing} the computational environment, as there is nothing to be evaluated, fetched, or built: Instead, the original environment itself has already been built and compressed, ready to be loaded on a new machine.
 OCI images offer high fidelity with respect to the original environment and are expected to be quite resilient, as they are self-contained and do not rely on external sources when properly crafted \cite{arvan_reproducibility_2022}.
 In fact, encouraging the use of executable self-contained research artefacts is one of the main recommendations made by Arvan et~al. following their extensive survey of replicability practices in computational linguistics \cite{arvan_reproducibility_2022}.
 
 \section{Conclusion}
 
-Overall, while some form of dependency declaration was present in most projects, careful and consistent versioning remained the exception. 
+Overall, while some form of dependency declaration was present in most projects, careful and consistent versioning remained the exception.
 The analysis shows that even when tooling is available and ostensibly used, reproducibility often breaks down in the details.
 This aligns with \citeauthor{arvan_reproducibility_2022}’s observations, based on both their own and earlier studies, that many released artefacts still fall short of reproducibility standards, despite recent progress \cite{arvan_reproducibility_2022}.
 
-% While this contribution has focused on programming library dependencies, this is, really, one of the low-hanging fruits in computational reproducibility: 
-% After all, well-established procedures and standard mechanisms exist in all the encountered programming languages to make dependency management both more user-friendly and reproducible. 
-While this contribution has focused on programming library dependencies, these are, arguably, the low-hanging fruit of computational reproducibility: 
-standardised tooling exists, and most programming languages offer support for dependency specification. 
+While this contribution has focused on programming library dependencies, these are, arguably, the low-hanging fruit of computational reproducibility:
+standardised tooling exists, and most programming languages offer support for dependency specification.
 Yet even here, versioning practices remain inconsistent, and critical details are often missing.
-Importantly, this study did not attempt to execute the published research artefacts. 
+Importantly, this study did not attempt to execute the published research artefacts.
 Actual replicability rates may therefore be lower than the data suggests, as dependency specifications may be incomplete, code may be erroneous, or factors like hardware differences and hard-coded paths may further impede replicability.
 
-% Though often, and in research especially, dependencies take many forms:
-% Almost all the contributions examined in this work are based on other datasets, which can be considered dependencies in their own right. 
-% These, however, fall outside the purview of most common dependency management systems.
-% In order to aim for a more holistic approach to replicability, these should be part of dependency management schemes: 
-% The FAIR Principles already lay the groundwork for this in their recommendation of stably addressable and machine-readable data publishing. 
-% Moreover, this case study has already observed projects mixing various programming languages and command-line tools, the version orchestration of which proves to be complicated, as package management is often specialised in specific language ecosystems.
-
-Beyond package dependencies, research workflows often involve further components: datasets, language models, command-line utilities, and orchestration across mixed-language toolchains. 
-These fall outside the purview of programming language’s regular dependency managers and are rarely versioned. 
-As such, a more holistic approach is needed to treat data and auxiliary tools as first-class dependencies. 
+Beyond package dependencies, research workflows often involve further components: datasets, language models, command-line utilities, and orchestration across mixed-language toolchains.
+These fall outside the purview of programming language’s regular dependency managers and are rarely versioned.
+As such, a more holistic approach is needed to treat data and auxiliary tools as first-class dependencies.
 The FAIR Principles already lay the groundwork for this in their recommendation of stably addressable and machine-retrievable datasets \cite{go_fair_initiative_fair_2025}.
-Future research could investigate barriers that prevent researchers from adopting such practices. 
+Future research could investigate barriers that prevent researchers from adopting such practices.
 For instance, interviews with authors might reveal time constraints, lack of infrastructure, or uncertainty around best practices as common obstacles.
-Further, authors may lack the incentive to invest in replicability practices when these are often neither required nor reviewed: 
-While many conferences encourage the publication of source code, including CHR, they rarely require it, in part to reduce reviewer burden \cite{arvan_reproducibility_2022}. 
+Further, authors may lack the incentive to invest in replicability practices when these are often neither required nor reviewed:
+While many conferences encourage the publication of source code, including CHR, they rarely require it, in part to reduce reviewer burden \cite{arvan_reproducibility_2022}.
 For CHR specifically, to ensure double-blindness during the double-blind peer review phase, repository URLs must be either anonymised using appropriate tools, or redacted, which effectively excludes code from the review entirely \cite{computational_humanities_research_call_2024}.
 Together, these factors may represent considerable challenges for advancing replicability practices within the community.
 
-
-
-
-
-% concluding paragraph
 More is needed to make findings truly replicable, and while reproducible computational environments are a considerable prerequisite in achieving this, they are not the full picture.
-% In particular, coding practices must bear in mind execution circumstances which are temporally, spatially, and architecturally different from their originals. % lol
-% In other words, researchers must be enabled to write code that works in the future, executed by users other than themselves, and possibly on systems that are unlike their own.
-Coding practices need to account for execution contexts that differ from the original in terms of time, people and systems. 
+
+Coding practices need to account for execution contexts that differ from the original in terms of time, people and systems.
 In other words, researchers should be enabled to write code that still works in the future, for users other than themselves, and on machines unlike their own.
-
-
 
 \section*{Code and Data Availability}
 Source code and data for this contribution are available on GitHub at \url{https://github.com/v-ji/chr2025-works-on-my-machine}.
@@ -333,7 +267,6 @@ Source code and data for this contribution are available on GitHub at \url{https
 \section*{Funding Statement}
 This work was funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) under Germany’s Excellence Strategy in the context of the Cluster of Excellence \textit{Temporal Communities: Doing Literature in a Global Perspective} – EXC 2020 – Project ID 390608380.
 
-% \newpage
 \printbibliography
 
 \end{document}

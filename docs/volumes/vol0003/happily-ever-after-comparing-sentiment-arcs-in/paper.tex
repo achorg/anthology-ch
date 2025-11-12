@@ -1,69 +1,43 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-%\documentclass[final]{anthology-ch} % for the final version
-\documentclass[final]{anthology-ch}         % for the submission
-% LOAD LaTeX PACKAGES
+\documentclass[final]{anthology-ch}
+
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{subcaption}
-% \userpackage{amssymb}
-%\usepackage{natbib}
-% ADD your own packages using \usepackage{}
 
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{Happily Ever After: Comparing Sentiment Arcs in Emotionally-Inflected Fanfiction Genres Across Fandoms}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1]{Julia Neugarten}[
-  orcid=0000-0003-3314-9445
+orcid=0000-0003-3314-9445
 ]
 
 \author[2]{Pascale Feldkamp}[
-  orcid=0000-0002-2434-4268
+orcid=0000-0002-2434-4268
 ]
 
-
 \author[2]{Mia Jacobsen}[
-  orcid=0009-0003-3720-3418
+orcid=0009-0003-3720-3418
 ]
 
 \author[2]{Yuri Bizzoni}[
-  orcid=0000-0002-6981-7903
+orcid=0000-0002-6981-7903
 ]
 
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 \affiliation{1}{Department of Arts and Culture Studies, Radboud University, Nijmegen, The Netherlands}
 \affiliation{2}{Center for Humanities Computing, Aarhus University, Aarhus, Denmark}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{fanfiction, genre, sentiment arcs, happy endings, fandom}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
-\pagestart{752}
-\pageend{774}
+\pagestart{756}
+\pageend{778}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/vimmV7M89Fq9}  
+\doi{10.63744/vimmV7M89Fq9}
 \paperorder{46}
 \addbibresource{bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
 
 \maketitle
@@ -72,33 +46,28 @@
 This paper uses sentiment arcs to compare three different genres of fanfiction -- \textit{Angst, Fluff} and \textit{Hurt/comfort} -- each characterized by particular emotionally-inflected content. We examine whether these arcs and arc development throughout stories reveal differences between the three genres. We also compare sentiment arcs across four fandoms: \textit{Ancient Greek Religion and Lore, Harry Potter, Lord of the Rings}, and \textit{Percy Jackson}. When using two different Sentiment Analysis methods -- a BERT-model and the Syuzhet package \cite{jockers2015syuzhet} -- mean sentiment differs significantly between two of the three genres. Additionally, four detectable clusters of sentiment arcs are dominated by particular genres in each case, conforming to expected patterns. Additionally, we find an ending effect -- a tendency for stories' endings to be more positive than their beginning -- in most stories regardless of genre. This suggests the therapeutic potential of fanfiction, as even the gloomiest stories tend to progress towards happiness or positivity in their sentiment. Finally, we also find that each fandom has its own emotional ``bandwidth'' with stories in the \textit{Lord of the Rings} fandom consistently displaying the most positive sentiments while stories in the \textit{Percy Jackson} fandom consistently display the most negative sentiments, regardless of genre.
 \end{abstract}
 
-\section{Introduction} 
+\section{Introduction}
 
-Fanfiction -- stories written by and for fans of existing stories, inspired by these stories and often published for free online -- has been evocatively described as ``emotional landscapes of reading'' \cite{samutinaEmotionalLandscapesReading2016}. This description highlights the central role of emotions in fanfiction, both intradiegetically, as fictional characters experience them and as they often function to propel the plot forward, and extradiegetically, as readers seek emotional experiences in their reading choices. To navigate this immense emotional landscape of reading that fanfiction offers,\footnote{At the time of writing, Archive of Our Own (AO3) hosts over 16 million works. It is one of the largest English-language fanfiction platforms and the source of the datasets used in this paper.} fans use various paratextual clues, including recommendations from fellow fans, metadata provided by platforms, and information about the reader reception of fanfiction through comments and hits. 
+Fanfiction -- stories written by and for fans of existing stories, inspired by these stories and often published for free online -- has been evocatively described as ``emotional landscapes of reading'' \cite{samutinaEmotionalLandscapesReading2016}. This description highlights the central role of emotions in fanfiction, both intradiegetically, as fictional characters experience them and as they often function to propel the plot forward, and extradiegetically, as readers seek emotional experiences in their reading choices. To navigate this immense emotional landscape of reading that fanfiction offers,\footnote{At the time of writing, Archive of Our Own (AO3) hosts over 16 million works. It is one of the largest English-language fanfiction platforms and the source of the datasets used in this paper.} fans use various paratextual clues, including recommendations from fellow fans, metadata provided by platforms, and information about the reader reception of fanfiction through comments and hits.
 
 The central role of emotion in fanfiction, which in early scholarly work on fan culture was termed the ``affective sensibility of fandom'' \cite{grossbergThereFanHouse1992} even extends to the existence of particular genres defined by stories’ emotional content and their intended emotional impact on readers. This paper examines three of these genres: \textit{Angst}, \textit{Fluff}, and \textit{Hurt/comfort}. The \textit{Angst}-genre denotes ``writing which dwells on emotional problems, tortured minds and unconsummated relationships, and enjoys them immensely'' \cite[242]{pughDemocraticGenreFan2005}. Conversely, \textit{Fluff}-stories ``lack emotional difficulties'' \cite[207]{neugartenDeliciousAngstToothrotting2023}, focusing instead on (romantic) happiness and cuteness. Finally, \textit{Hurt/comfort} encompasses stories where one character is hurt mentally or physically, and another character comforts or heals them. \textit{Hurt/comfort} thus ``combines elements from \textit{Angst} and \textit{Fluff}: the genre uses both emotional pain and its amelioration or absence to create narrative and emotional tension'' \cite[207]{neugartenDeliciousAngstToothrotting2023}. \textit{Hurt/comfort} therefore often progresses from \textit{Angst} to \textit{Fluff}.
 
 These genre-categories can be understood as emotionally-inflected and communally negotiated clues that help readers navigate the vast array of fanfiction available. Thus, they may function similarly to recommendations and metadata provided by other reading platforms, especially if stories exhibit within-genre similarity in sentiment dynamics -- also across fandoms. If this is the case, based on these definitions, we expect the three genres to display differing patterns when it comes to valence, the "positiveness–negativeness/pleasure–displeasure" \cite[p. 174]{mohammad-2018-obtaining} associated with a word or sentence. In this paper, we use sentiment arcs, a method of mapping the emotional trajectories of stories through their valence (positive/negative) calculated at the sentence level, to investigate three research questions about these three emotionally-inflected fanfiction genres:
 
 \begin{itemize}
-  \item \textbf{RQ 1:} Do sentiment arcs differ significantly between the genres \textit{Angst, Fluff}, and \textit{Hurt/comfort}? 
-  \begin{itemize}
-        \item \textbf{Hypothesis:}  We expect to find more negative sentiment in \textit{Angst} and more positive sentiment in \textit{Fluff}, with \textit{Hurt/comfort} showing a development from negative to positive sentiment on the scale of individual stories.
-    \end{itemize}
-  \item \textbf{RQ 2:} How do sentiment arcs develop over the course of the stories within genres?   
-    \begin{itemize}
-        \item \textbf{Hypothesis:}  We expect sentiments to be relatively stable in \textit{Angst} and \textit{Fluff}, so that an \textit{Angst}-story is sad throughout while a \textit{Fluff}-story is happy throughout, accounting for consistent differences between genres. We also expect the order of the sentiments to influence genre categorization. Research shows that the valence of a story's ending impacts its reception \cite{muller2019all}, so we expect \textit{Fluff} to end particularly positively while \textit{Angst} ends especially negatively. We also expect \textit{Hurt/comfort} stories to develop from negative to positive sentiment, as their protagonists progress from being hurt to being comforted. 
-    \end{itemize}
-  \item \textbf{RQ 3:} How do the sentiment arcs associated with the different genres compare across different fandoms?
-        \begin{itemize}
-            \item \textbf{Hypothesis:} Previous research has shown similarity in sentiment arcs between three fandoms \cite{jacobsen2024patterns}, but this analysis did not take within-fandom genre differences into account. The same paper identified stylistic differences between fandoms, so we have no strong hypothesis for this question. 
-        \end{itemize}
-       % \item compare to fanfiction overall?
-       % \begin{itemize}
-            %\item \textbf{Hypothesis:} Because of the emphasis on emotion of the genres under analysis, we expect their sentiment arcs to differ from fanfiction not categorized as either \textit{Angst, Fluff} or \textit{Hurt/comfort}.
-        %\end{itemize}
-        %\item to sentiment arcs in published literature? \textbf{(Optional)}
-    %\end{itemize}
+\item \textbf{RQ 1:} Do sentiment arcs differ significantly between the genres \textit{Angst, Fluff}, and \textit{Hurt/comfort}?
+\begin{itemize}
+\item \textbf{Hypothesis:}  We expect to find more negative sentiment in \textit{Angst} and more positive sentiment in \textit{Fluff}, with \textit{Hurt/comfort} showing a development from negative to positive sentiment on the scale of individual stories.
+\end{itemize}
+\item \textbf{RQ 2:} How do sentiment arcs develop over the course of the stories within genres?
+\begin{itemize}
+\item \textbf{Hypothesis:}  We expect sentiments to be relatively stable in \textit{Angst} and \textit{Fluff}, so that an \textit{Angst}-story is sad throughout while a \textit{Fluff}-story is happy throughout, accounting for consistent differences between genres. We also expect the order of the sentiments to influence genre categorization. Research shows that the valence of a story's ending impacts its reception \cite{muller2019all}, so we expect \textit{Fluff} to end particularly positively while \textit{Angst} ends especially negatively. We also expect \textit{Hurt/comfort} stories to develop from negative to positive sentiment, as their protagonists progress from being hurt to being comforted.
+\end{itemize}
+\item \textbf{RQ 3:} How do the sentiment arcs associated with the different genres compare across different fandoms?
+\begin{itemize}
+\item \textbf{Hypothesis:} Previous research has shown similarity in sentiment arcs between three fandoms \cite{jacobsen2024patterns}, but this analysis did not take within-fandom genre differences into account. The same paper identified stylistic differences between fandoms, so we have no strong hypothesis for this question.
+\end{itemize}
+
 \end{itemize}
 
 \section{Genres and Sentiment in Fanfiction} \label{sec:litreview}
@@ -117,49 +86,33 @@ Specifically for sentiment analysis, previous scholarship has examined the persi
 \section{Data}
 
 \begin{table}[]
-    \small
-    \centering
-    \begin{tabular}{p{0.23\linewidth} r r r | r r r r r} %fixed overflowing
-    \toprule
-    \textbf{Fandom} & \textbf{Fics} & \textbf{Sentences} & \textbf{Words} & Other & Fluff & Angst & H/C \\
-    \midrule
-    \textit{Ancient Greek Religion and Lore (AGRL)} &  3,584 & 1,932,084 & 25,168,026 & 2,940 & 268 & 290 & 86 \\
-    \textit{Percy Jackson and \newline the Olympians (PJ)} & 2,877 & 2,155,399 & 25,793,730 & 1,984 & 531 & 263 & 99 \\
-    \textit{Harry Potter \newline (HP)} & 2,886 & 2,886,189 & 38,269,933 & 2,194 & 347 & 265 & 80 \\
-    \textit{Lord of the Rings \newline (LOTR)} & 2,772 & 2,466,164 & 34,657,528 & 2,186 & 218 & 237 & 131 \\
-    \midrule
-    Total & 12,119 & 9,439,836 & 123,889,217 & 9,304 & 1,364 & 1,055 & 396\\
-    \bottomrule
-    \end{tabular}
-    \caption{Dataset description: All fanfiction of over 50 sentences, divided by fandom. \underline{From left to right}: number of stories in each fandom, number of sentences, and number of words. \underline{On the righthand side}: number of stories in the category  ``Other'' and in the three relevant genres per fandom. Note that as we applied sentiment models on the sentence-level, the number of sentences also corresponds to the final number of datapoints in our analyses (i.e., $n=9,439,836$).}
-    \label{tab:dataset}
+\small
+\centering
+\begin{tabular}{p{0.23\linewidth} r r r | r r r r r}
+\toprule
+\textbf{Fandom} & \textbf{Fics} & \textbf{Sentences} & \textbf{Words} & Other & Fluff & Angst & H/C \\
+\midrule
+\textit{Ancient Greek Religion and Lore (AGRL)} &  3,584 & 1,932,084 & 25,168,026 & 2,940 & 268 & 290 & 86 \\
+\textit{Percy Jackson and \newline the Olympians (PJ)} & 2,877 & 2,155,399 & 25,793,730 & 1,984 & 531 & 263 & 99 \\
+\textit{Harry Potter \newline (HP)} & 2,886 & 2,886,189 & 38,269,933 & 2,194 & 347 & 265 & 80 \\
+\textit{Lord of the Rings \newline (LOTR)} & 2,772 & 2,466,164 & 34,657,528 & 2,186 & 218 & 237 & 131 \\
+\midrule
+Total & 12,119 & 9,439,836 & 123,889,217 & 9,304 & 1,364 & 1,055 & 396\\
+\bottomrule
+\end{tabular}
+\caption{Dataset description: All fanfiction of over 50 sentences, divided by fandom. \underline{From left to right}: number of stories in each fandom, number of sentences, and number of words. \underline{On the righthand side}: number of stories in the category  ``Other'' and in the three relevant genres per fandom. Note that as we applied sentiment models on the sentence-level, the number of sentences also corresponds to the final number of datapoints in our analyses (i.e., $n=9,439,836$).}
+\label{tab:dataset}
 \end{table}
-
-
-% \begin{table}[]
-%     \centering
-%     \begin{tabular}{c | c c}
-%          Genre & Before removal & After \\
-%          \midrule
-%          \textit{Angst} &  1776 & 801\\
-%          \textit{Fluff} & 1959 & 1152\\
-%          \textit{Hurt/comfort} & 909 & 322\\
-%     \end{tabular}
-%     \caption{Number of fanfics in each genre category before and after the removal of overlapping / ambiguous tags. Summed across cateogories for only PJ, HP, and LOTR.}
-  \label{tab:placeholder}
-%     
-% \end{table}
 
 We use two datasets of fanfiction from four different fandoms. All fanfiction was collected from popular fanfiction-platform \textit{Archive of Our Own} (AO3) in accordance with their terms of service.\footnote{\url{https://archiveofourown.org/tos}} All subsets contain only fanfiction written in English. Crossover stories tagged with more than one fandom were excluded. The fandoms are \textit{Ancient Greek Religion and Lore} (AGRL), \textit{Percy Jackson and the Olympians} (PJ), \textit{Harry Potter} (HP) and \textit{Lord of the Rings} (LOTR). The AGRL dataset contains around 5,000 stories published in that fandom on AO3 at the time of data collection (2022). This dataset was previously described by Neugarten \cite{neugarten2024mythfic}. The fanfiction from PJ, HP, and LOTR in this study constitutes a subset of 3,000 texts from each group available on AO3. This corpus was first described in Jacobsen et al. \cite{jacobsen2024patterns}. Its texts were published between January 2002 and December 2023, and collected in the beginning of 2024.
 
 Stylistic features, including the aforementioned Hurst exponent of sentiment arcs, have been compared before for the datasets taken from HP, PJ, and LOTR fandoms \cite{jacobsen2024patterns}. In this paper, we build on that analysis by examining the effect of genre-labels on sentiment arcs. Additionally, by expanding our analysis to fanfiction about Greek mythology, a fan community without clearly circumscribed source material, we increase the generalizability of our findings to other fandoms. This combination of datasets also potentially helps us understand the influence of a source material's cultural prestige in the fanfiction it inspires, since Greek mythology is traditionally more associated with prestige than young adult or fantasy fiction. In her analysis of the relationship between social class and Classics, Edith Hall observes that "education in the ancient Latin and Greek languages has always been an exclusive practice, used to define membership in an elite" \cite[386]{hall2008putting}. Consequently, Classics -- and the associated domain of Greek myth -- have traditionally been associated with academic prestige. Conversely, the "tradition of fantasy literature (...) has generally defined itself by its distance from the high-cultural (...) canon" \cite[60]{eatough2021they}. The differing levels of literary prestige associated with these fandoms may impact the fanfictions' sentiment arcs. Additionally, including fanfiction not based on contemporary fantasy literature may also reveal characteristics of fanfiction that exist independently from the genre or era of publication of the material being rewritten.
 
-From each fandom, we selected only stories tagged in AO3’s user-driven tagging system with ‘Angst’ or ‘Fluff’ or ‘Hurt/Comfort’. To avoid interpretive confusion and ensure we were measuring textual characteristics specific to each genre, stories with more than one of these tags, or with tags indicating a blend or combination, such as ``Angst and Fluff” or ``Flangst'', were discarded. This led to the exclusion of between 35\% and 55\% of stories per genre. Descriptive statistics for the resulting datasets are listed in \autoref{tab:dataset}. Additionally, as a control group, we used the remaining fanfiction not included in any of the three genre groups -- listed in \autoref{tab:dataset} under `Other'. 
+From each fandom, we selected only stories tagged in AO3’s user-driven tagging system with ‘Angst’ or ‘Fluff’ or ‘Hurt/Comfort’. To avoid interpretive confusion and ensure we were measuring textual characteristics specific to each genre, stories with more than one of these tags, or with tags indicating a blend or combination, such as ``Angst and Fluff” or ``Flangst'', were discarded. This led to the exclusion of between 35\% and 55\% of stories per genre. Descriptive statistics for the resulting datasets are listed in \autoref{tab:dataset}. Additionally, as a control group, we used the remaining fanfiction not included in any of the three genre groups -- listed in \autoref{tab:dataset} under `Other'.
 
 \section{Method}
 
 To measure differences in the "sentimental palette" of different genres and across several fandoms, we use Sentiment Analysis to retrieve both the mean and the standard deviation of sentiment scores for each story's sentiment arc calculated at the sentence level (\autoref{sec:sentiment_retrieval}), as well as to extract the raw and detrended versions of the stories' sentiment arcs. To observe whether there are significant differences in sentiment's mean and std between fandoms and genres, we use linear mixed-effects models (\autoref{sec:stats_section}). To check whether some sentimental trajectories are prevalent, overall or in specific subgroups, we use techniques of interpolation and clustering (\autoref{sec:arcs_section}).
-
 
 \subsection{Measuring Sentiment Arcs}
 \label{sec:sentiment_retrieval}
@@ -168,34 +121,32 @@ In computational literary studies, Sentiment Analysis has become a popular metho
 
 To retrieve the raw sentiment scores, we tested 4 different measures scoring sentences for sentiment (see \autoref{tab:sentiment_results} in Appendix \ref{appdx:Transformer_SA}). We chose the dictionary method performing best on our test datasets -- \texttt{Syzhet} \cite{jockers2015syuzhet} -- and the best-performing transformer-based method -- \texttt{xlm-roberta-base-sentiment-multilingual}\footnote{\url{https://huggingface.co/cardiffnlp/xlm-roberta-base-sentiment-multilingual} We use the shorthand \texttt{xlm-roberta}. For full model names see \autoref{tab:modelnames} in \autoref{appdx:Transformer_SA}.} -- here. We chose both methods, considering that dictionary-based tools have the advantage of staying closer to a human-like distribution overall, while transformer-based scores tend to ``overestimate'' scores to form distributions underlining extremes \cite{feldkamp_comparing_2024}.
 
-\subsubsection{Detrending} 
+\subsubsection{Detrending}
 As arcs based on valences are inherently noisy and nonlinear, studies typically apply some technique for detrending the arcs to reduce noise and extract global narrative trends -- from a simple moving average window to more complex noise reduction techniques \cite{chun_sentimentarcs_2021, jockers2015syuzhet, bizzoni2021sentiment, gao2016multiscale}. As wavelet approaches typically used for noise reduction are not ideal for nonlinear series, \cite{gao_denoising_2010} proposed an adaptive filtering technique for nonlinear series. The usefulness of adaptive filtering applied to sentiment arcs has been demonstrated, especially in the context of estimating the dynamics of sentiment arcs \cite{hu2021dynamic, bizzoni_nobels}, which is why we use it here (for a visual example of denoised arcs, see Figure \ref{fig:arcs_example}).\footnote{All code for sentiment score retrieval and detrending is available at: \url{https://github.com/centre-for-humanities-computing/fanfic_sentiment}.}
 
 \begin{figure}
-    \centering
-    \includegraphics[width=.9\linewidth]{figures/test_picture_arcs.png}
-    \caption{Example of 3 detrended \texttt{Syuzhet} arcs from \textit{Lord of the Rings (LOTR)}, \textit{Percy Jackson (PJ)}, and \textit{Ancient Greek Religion and Lore (AGRL).} Arcs are detrended using adaptive filtering.}
-    \label{fig:arcs_example}
+\centering
+\includegraphics[width=.9\linewidth]{figures/test_picture_arcs.png}
+\caption{Example of 3 detrended \texttt{Syuzhet} arcs from \textit{Lord of the Rings (LOTR)}, \textit{Percy Jackson (PJ)}, and \textit{Ancient Greek Religion and Lore (AGRL).} Arcs are detrended using adaptive filtering.}
+\label{fig:arcs_example}
 \end{figure}
-
 
 \subsection{Statistical Analysis of Sentiment Arcs}
 \label{sec:stats_section}
 
-To test for differences between fandoms and genres in their sentiment arcs, we used linear mixed effects models. These models are useful in this context, as they produce robust results even when dealing with imbalanced data. Additionally, they let us explicitly model the fact that one author may be in the data multiple times, if they have written multiple stories that fit the search criteria. 
+To test for differences between fandoms and genres in their sentiment arcs, we used linear mixed effects models. These models are useful in this context, as they produce robust results even when dealing with imbalanced data. Additionally, they let us explicitly model the fact that one author may be in the data multiple times, if they have written multiple stories that fit the search criteria.
 
-We created two linear mixed effects models to investigate the difference in sentiment arcs across fandoms and genres. The first model seeks to predict the mean of the sentiment arc for each work of fanfiction, based on an interaction between fandom and genre. This analysis shows whether some genres or fandoms are more positive or negative than others (\textbf{RQ 1}), and whether specific genres are written with different levels of sentiment in different fandoms (\textbf{RQ 3}). 
+We created two linear mixed effects models to investigate the difference in sentiment arcs across fandoms and genres. The first model seeks to predict the mean of the sentiment arc for each work of fanfiction, based on an interaction between fandom and genre. This analysis shows whether some genres or fandoms are more positive or negative than others (\textbf{RQ 1}), and whether specific genres are written with different levels of sentiment in different fandoms (\textbf{RQ 3}).
 
-The second model seeks to predict the standard deviation of the sentiment arc for each work of fanfiction, based on an interaction between fandom and genre. This analysis indicates how stable these arcs in specific groups are, based on which genres or fandoms have the greatest variation in sentiment over the course of the texts (\textbf{RQ 2} and \textbf{3}). Again, we are interested in both genre and fandom main effects, as well as the possibility of fandom-specific effects on the sentiment in different genres. 
+The second model seeks to predict the standard deviation of the sentiment arc for each work of fanfiction, based on an interaction between fandom and genre. This analysis indicates how stable these arcs in specific groups are, based on which genres or fandoms have the greatest variation in sentiment over the course of the texts (\textbf{RQ 2} and \textbf{3}). Again, we are interested in both genre and fandom main effects, as well as the possibility of fandom-specific effects on the sentiment in different genres.
 
 We added publishing date and word count to control for any confounding effect they might have. Since fanfiction is dynamic and published on an ongoing basis, it is appropriate to assume both time and length will have an effect on sentiment that we wish to control for. Additionally, we added a random intercept for author to control for repeating authors. To aid model convergence, word count was scaled. The specific model formulations can be seen below.
 \begin{equation}
-  Mean\ Sentiment \sim genre * fandom + published\ date + word\ count +(1 | author)
+Mean\ Sentiment \sim genre * fandom + published\ date + word\ count +(1 | author)
 \end{equation}
 \begin{equation}
-  SD\ Sentiment \sim genre * fandom + published\ date + word\ count +(1 | author)
+SD\ Sentiment \sim genre * fandom + published\ date + word\ count +(1 | author)
 \end{equation}
-
 
 \subsection{Arc Shapes' Analysis}
 \label{sec:arcs_section}
@@ -203,56 +154,52 @@ We added publishing date and word count to control for any confounding effect th
 To analyze the shapes of sentiment arcs, we represented each narrative by a univariate time-series capturing the detrended sentiment score at successive narrative positions. Because the underlying fanfiction narratives differ in length, direct comparison required resampling every trajectory to a common temporal grid. Let $\mathbf{s} = (s\_1, \dots , s\_n)$ denote the original sentiment arc of length $n$. A piece-wise linear interpolant $f : [0, n{-}1] \to \mathbb{R}$ was constructed.\footnote{Using \texttt{SciPy}'s \texttt{interp1d} (method \texttt{kind="linear"})} The interpolant was then evaluated at $L = 50$ equidistant points,
 
 $$
-  t_j = (j-1)\,\frac{n-1}{L-1}, \qquad j = 1, \dots , L ,
+t_j = (j-1)\,\frac{n-1}{L-1}, \qquad j = 1, \dots , L ,
 $$
 
 producing the length--normalized trajectory $\mathbf{s}' \in \mathbb{R}^{50}$. We selected linear interpolation for its robustness to outliers and its preservation of monotonic segments; empirical inspection showed negligible benefit from higher-order kernels.
 We applied the procedure to both sets of sentiment estimates (\texttt{Syuzhet} and \texttt{xlm-roberta}), yielding two matrices $\mathbf{X}*{\text{Syuzhet}}, \mathbf{X}*{\text{XLM}} \in \mathbb{R}^{N \times 50}$, where $N$ is the number of texts.
 
-We then performed unsupervised clustering with the K-means algorithm as implemented in \texttt{scikit-learn v.1.4.2}. %(\verb|sklearn.cluster.KMeans|).
+We then performed unsupervised clustering with the K-means algorithm as implemented in \texttt{scikit-learn v.1.4.2}.
 The algorithm minimizes the within-cluster sum of squared Euclidean distances:
 
 $$
-  \underset{\{C_k\}_{k=1}^K}{\arg\min} \sum_{k=1}^{K} \sum_{\mathbf{x}_i \in C_k} \lVert \mathbf{x}_i - \boldsymbol{\mu}_k \rVert_2^{2},
+\underset{\{C_k\}_{k=1}^K}{\arg\min} \sum_{k=1}^{K} \sum_{\mathbf{x}_i \in C_k} \lVert \mathbf{x}_i - \boldsymbol{\mu}_k \rVert_2^{2},
 $$
 
 where $\boldsymbol{\mu}\_k$ is the centroid of cluster $C\_k$.\footnote{We used fixed parameters to \texttt{init="k-means++"}, \texttt{n\_init=10}, \texttt{max\_iter=300}, and \texttt{random\_state=42} to ensure replicability while mitigating sensitivity to initialization.}
 
-
-We identified the appropriate number of clusters, $K$, through the mean silhouette coefficient \cite{rousseeuw1987silhouettes}. We chose silhouette analysis to determine both the optimal number and the coherence of clusters, as it quantifies both intra-cluster cohesion and inter-cluster separation, which allows to assess how distinct and consistent each cluster is. 
-
-%All analyses were conducted in \texttt{Python~~3.10} on an AMD Ryzen~~7\~5800X CPU; run time for the full grid-search never exceeded \$30\$,s.
+We identified the appropriate number of clusters, $K$, through the mean silhouette coefficient \cite{rousseeuw1987silhouettes}. We chose silhouette analysis to determine both the optimal number and the coherence of clusters, as it quantifies both intra-cluster cohesion and inter-cluster separation, which allows to assess how distinct and consistent each cluster is.
 
 \section{Results}
 \subsection{Statistical Models}
-With AGRL and \textit{Other} as baseline conditions, results are in Tables \ref{tab:model_one_outputs} and \ref{tab:model_two_outputs}.\footnote{For conciseness, we included only fandom and genre main effects in the table plus any significant interaction effects. See Appendix \ref{model_outputs} for full model outputs.} For mean of the sentiment arc, we find -- across sentiment methods -- that \textit{Angst} has lower mean sentiment and \textit{Fluff} has higher mean sentiment than the set of non-genre works, \textit{Other}. We find no effect for \textit{Hurt/comfort}, meaning it displays no significant difference with regards to mean sentiment from \textit{Other}. We find that LOTR fanfiction has higher mean sentiment than AGRL, but there is no effect for HP. For PJ, when using \texttt{xlm-roberta}, we find lower mean sentiment compared to AGRL, and both methods (\texttt{Syuzhet/xlm-roberta} show an interaction effect for PJ \textit{Angst} fanfiction. This means that works of PJ fanfiction in general have lower sentiment, and that \textit{Angst} stories in that fandom also have lower mean sentiment compared to \textit{Angst} stories from other groups. 
+With AGRL and \textit{Other} as baseline conditions, results are in Tables \ref{tab:model_one_outputs} and \ref{tab:model_two_outputs}.\footnote{For conciseness, we included only fandom and genre main effects in the table plus any significant interaction effects. See Appendix \ref{model_outputs} for full model outputs.} For mean of the sentiment arc, we find -- across sentiment methods -- that \textit{Angst} has lower mean sentiment and \textit{Fluff} has higher mean sentiment than the set of non-genre works, \textit{Other}. We find no effect for \textit{Hurt/comfort}, meaning it displays no significant difference with regards to mean sentiment from \textit{Other}. We find that LOTR fanfiction has higher mean sentiment than AGRL, but there is no effect for HP. For PJ, when using \texttt{xlm-roberta}, we find lower mean sentiment compared to AGRL, and both methods (\texttt{Syuzhet/xlm-roberta} show an interaction effect for PJ \textit{Angst} fanfiction. This means that works of PJ fanfiction in general have lower sentiment, and that \textit{Angst} stories in that fandom also have lower mean sentiment compared to \textit{Angst} stories from other groups.
 
 \begin{table}[!htbp]
 \centering
-%\begin{tabular}{ l c c c c c }
-%\begin{tabular}{ l r r r r r }
+
 \begin{tabular}{@{}lrrrrr@{}}
 \toprule
- Mean \texttt{Syuzhet} &  & $\beta$ & SE & t-value & p-value \\ 
-  \midrule
- & Angst & -0.062& 0.01& -5.97& <0.001* \\ 
- & Fluff & 0.11& 0.011& 10.03& <0.001* \\
- & Hurt/comfort & -0.022& 0.0185& -1.17& 0.24 \\
- & HP & 0.00094& 0.0053& .177& 0.86 \\
- & LOTR & 0.044 & 0.0056& 7.91&  <0.001* \\
- & PJ & -0.0074& 0.00559& -1.32& .19 \\
- & PJ:Angst & -0.032& 0.015& -2.06& <0.05* \\
- \midrule
- Mean \texttt{xlm-roberta} &  & $\beta$ & SE & t-value & p-value \\ 
-  \midrule
- & Angst & -0.041& 0.0066& -6.28& <0.001*\\ 
- & Fluff & 0.0688& 0.0068& 10.12& <0.001* \\
- & Hurt/comfort & -0.012& 0.012& -1.08& 0.28 \\
- & HP & -0.0053& 0.0034& -1.56& 0.11 \\
- & LOTR & 0.0097 & 0.0035& 2.73&  <0.01* \\
- & PJ & -0.0075& 0.0035& -2.13& <0.05* \\
- & PJ:Angst & -0.029& 0.0096& -3.02& <0.01* \\
- \bottomrule
+Mean \texttt{Syuzhet} &  & $\beta$ & SE & t-value & p-value \\
+\midrule
+& Angst & -0.062& 0.01& -5.97& <0.001* \\
+& Fluff & 0.11& 0.011& 10.03& <0.001* \\
+& Hurt/comfort & -0.022& 0.0185& -1.17& 0.24 \\
+& HP & 0.00094& 0.0053& .177& 0.86 \\
+& LOTR & 0.044 & 0.0056& 7.91&  <0.001* \\
+& PJ & -0.0074& 0.00559& -1.32& .19 \\
+& PJ:Angst & -0.032& 0.015& -2.06& <0.05* \\
+\midrule
+Mean \texttt{xlm-roberta} &  & $\beta$ & SE & t-value & p-value \\
+\midrule
+& Angst & -0.041& 0.0066& -6.28& <0.001*\\
+& Fluff & 0.0688& 0.0068& 10.12& <0.001* \\
+& Hurt/comfort & -0.012& 0.012& -1.08& 0.28 \\
+& HP & -0.0053& 0.0034& -1.56& 0.11 \\
+& LOTR & 0.0097 & 0.0035& 2.73&  <0.01* \\
+& PJ & -0.0075& 0.0035& -2.13& <0.05* \\
+& PJ:Angst & -0.029& 0.0096& -3.02& <0.01* \\
+\bottomrule
 \end{tabular}
 \caption{Estimates for model (1) for each sentiment analysis method (\texttt{Syuzhet/xlm-roberta}).}
 \label{tab:model_one_outputs}
@@ -260,63 +207,56 @@ With AGRL and \textit{Other} as baseline conditions, results are in Tables \ref{
 
 \begin{table}[!htbp]
 \centering
-%\begin{tabular}{ l c c c c c }
+
 \begin{tabular}{@{}lrrrrr@{}}
 \toprule
- SD \texttt{Syuzhet} &  & $\beta$ & SE & t-value & p-value \\ 
-  \midrule
- & Angst & 0.025& 0.0090& 2.77& <0.01* \\ 
- & Fluff & -0.016& 0.0092& -1.75& 0.08 \\
- & Hurt/comfort & -0.0019& 0.015& -0.12& 0.90 \\
- & HP & -0.041& 0.0051& -8.0& <0.001*\\
- & LOTR & 0.024 & 0.0055& 4.38&  <0.001* \\
- & PJ & -0.074& 0.0054& -13.68& <0.001* \\
- \midrule
- SD \texttt{xlm-roberta} &  & $\beta$ & SE & t-value & p-value \\ 
-  \midrule
- & Angst & 0.0054& 0.0027& 2.0& <0.05* \\ 
- & Fluff & 0.0053& 0.0028& 1.89& 0.059\\
- & Hurt/comfort & 0.0019& 0.0048& 0.41& 0.68 \\
- & HP & -0.019& 0.0014& -12.98& <0.001* \\
- & LOTR & -0.010& 0.0015& -6.77&  <0.001* \\
- & PJ & -0.018& 0.0015& -11.65& <0.001* \\ 
- \bottomrule
+SD \texttt{Syuzhet} &  & $\beta$ & SE & t-value & p-value \\
+\midrule
+& Angst & 0.025& 0.0090& 2.77& <0.01* \\
+& Fluff & -0.016& 0.0092& -1.75& 0.08 \\
+& Hurt/comfort & -0.0019& 0.015& -0.12& 0.90 \\
+& HP & -0.041& 0.0051& -8.0& <0.001*\\
+& LOTR & 0.024 & 0.0055& 4.38&  <0.001* \\
+& PJ & -0.074& 0.0054& -13.68& <0.001* \\
+\midrule
+SD \texttt{xlm-roberta} &  & $\beta$ & SE & t-value & p-value \\
+\midrule
+& Angst & 0.0054& 0.0027& 2.0& <0.05* \\
+& Fluff & 0.0053& 0.0028& 1.89& 0.059\\
+& Hurt/comfort & 0.0019& 0.0048& 0.41& 0.68 \\
+& HP & -0.019& 0.0014& -12.98& <0.001* \\
+& LOTR & -0.010& 0.0015& -6.77&  <0.001* \\
+& PJ & -0.018& 0.0015& -11.65& <0.001* \\
+\bottomrule
 \end{tabular}
 \caption{Estimates for model (2) for each sentiment analysis method (\texttt{Syuzhet/xlm-roberta}).}
 \label{tab:model_two_outputs}
 \end{table}
 
-
-
-The lack of other interaction effects indicates that for \textit{Fluff} and \textit{Hurt/comfort}, there are no fandom effects, meaning the size of the difference in sentiment between \textit{Other} and \textit{Fluff} and between \textit{Other} and \textit{Hurt/comfort} is similar across fandoms. There is also no difference between HP fanfiction and AGRL fanfiction when it comes to mean sentiment. This suggests that rather than differing from fandoms with a more recent and circumscribed source material, fanfiction about Greek myth is similar to other, prominent contemporary fandoms.  
+The lack of other interaction effects indicates that for \textit{Fluff} and \textit{Hurt/comfort}, there are no fandom effects, meaning the size of the difference in sentiment between \textit{Other} and \textit{Fluff} and between \textit{Other} and \textit{Hurt/comfort} is similar across fandoms. There is also no difference between HP fanfiction and AGRL fanfiction when it comes to mean sentiment. This suggests that rather than differing from fandoms with a more recent and circumscribed source material, fanfiction about Greek myth is similar to other, prominent contemporary fandoms.
 
 The lack of interaction effects means that these genres are similar across groups. In other words, the intercepts (fandom effect) are different for each group but the slopes (genre effect) are similar. We show these findings in \autoref{fig:mean_sent}. These visualizations show that each fandom has its own emotional ``bandwidth''; in each fandom, \textit{Fluff} has a more positive mean sentiment than \textit{Angst} -- the genre effect is the same in each group. This conforms to our expectations for \textbf{RQ 1}. However, the fandoms show up on these plots in the same general order (from most positive to most negative): LOTR, AGRL, HP, PJ. It thus seems that each fandom has its own baseline for sentiments -- the fandom effects differ between groups. This difference between fandoms provides some insight into \textbf{RQ 3}. We hypothesize that these differences may be due to differing fandom demographics, with the \textit{Percy Jackson} fandom skewing younger than the participants in the other fandoms.
 
-For standard deviation (SD) of the sentiment arcs, the results are more method-dependent. Both methods find that only \textit{Angst} has a significantly different sentiment SD compared to \textit{Other} stories. The positive effect indicates that sentiment arcs for \textit{Angst} display a greater variation than other fanfiction genres. The sentiment arcs for \textit{Angst}-fanfiction are more varied than for the other groups -- a partial answer to \textbf{RQ 2}. For HP and PJ, both methods find a negative effect, meaning compared to AGRL, HP and PJ fanfics have less variation in their sentiment arcs overall. For LOTR, \texttt{Syuzhet} finds a positive effect, meaning more variation, whereas \texttt{Roberta} finds a negative effect. This discrepancy might arise because \texttt{Syuzhet} is a continuous measure, while \texttt{Roberta} is categorical, meaning some confounding effects are potentially influencing the results. Because the specific effects as seen in Table \ref{tab:model_two_outputs} are rather small, further research is needed to cement these findings. 
-
+For standard deviation (SD) of the sentiment arcs, the results are more method-dependent. Both methods find that only \textit{Angst} has a significantly different sentiment SD compared to \textit{Other} stories. The positive effect indicates that sentiment arcs for \textit{Angst} display a greater variation than other fanfiction genres. The sentiment arcs for \textit{Angst}-fanfiction are more varied than for the other groups -- a partial answer to \textbf{RQ 2}. For HP and PJ, both methods find a negative effect, meaning compared to AGRL, HP and PJ fanfics have less variation in their sentiment arcs overall. For LOTR, \texttt{Syuzhet} finds a positive effect, meaning more variation, whereas \texttt{Roberta} finds a negative effect. This discrepancy might arise because \texttt{Syuzhet} is a continuous measure, while \texttt{Roberta} is categorical, meaning some confounding effects are potentially influencing the results. Because the specific effects as seen in Table \ref{tab:model_two_outputs} are rather small, further research is needed to cement these findings.
 
 \begin{figure}[!h]
-    \centering
-    \includegraphics[width=1\textwidth]{figures/sentiment_arc_plot1_new.png}
-    \caption{The mean and standard deviation for the sentiment arcs, across genres, fandoms, and sentiment methods. The boxplot indicates the 25th quantile, median, and 75th quantile for the fandom. The black dot shows the mean for the whole genre group.}
-    \label{fig:mean_sent}
+\centering
+\includegraphics[width=1\textwidth]{figures/sentiment_arc_plot1_new.png}
+\caption{The mean and standard deviation for the sentiment arcs, across genres, fandoms, and sentiment methods. The boxplot indicates the 25th quantile, median, and 75th quantile for the fandom. The black dot shows the mean for the whole genre group.}
+\label{fig:mean_sent}
 \end{figure}
-
 
 \subsection{Arcs' Shapes}
-Using cluster analysis, we can observe whether stories belonging to particular genres tend to replicate specific shapes in their sentiment arcs (\textbf{RQ 2}). Through silhouette analysis \cite{rousseeuw1987silhouettes} we determine that the arcs, independently from the genres they belong to, create 2 to 4 meaningful clusters, with the strongest separation between two macro-clusters. 
+Using cluster analysis, we can observe whether stories belonging to particular genres tend to replicate specific shapes in their sentiment arcs (\textbf{RQ 2}). Through silhouette analysis \cite{rousseeuw1987silhouettes} we determine that the arcs, independently from the genres they belong to, create 2 to 4 meaningful clusters, with the strongest separation between two macro-clusters.
 
 \begin{figure}[!h]
-    \centering
-    \includegraphics[width=0.5\textwidth]{figures/4basicshapes.png}
-    \caption{Abstracted shapes of the four main narrative clusters. Clusters 0 and 1 are the most distinct. All but Cluster 2 end ``better'' -- meaning more positively -- than they started. Cluster  1 has most \textit{Fluff}, Cluster 2 has most \textit{Angst},  Cluster 3 has most \textit{Hurt/comfort}.}
-    \label{fig:4saheps}
+\centering
+\includegraphics[width=0.5\textwidth]{figures/4basicshapes.png}
+\caption{Abstracted shapes of the four main narrative clusters. Clusters 0 and 1 are the most distinct. All but Cluster 2 end ``better'' -- meaning more positively -- than they started. Cluster  1 has most \textit{Fluff}, Cluster 2 has most \textit{Angst},  Cluster 3 has most \textit{Hurt/comfort}.}
+\label{fig:4saheps}
 \end{figure}
 
-
-As visualized in \autoref{fig:4saheps}, most of these narrative shapes result in an ``end point" that is more positive than their ``starting point" even if this is not always the highest point of the story. 
-
-
+As visualized in \autoref{fig:4saheps}, most of these narrative shapes result in an ``end point" that is more positive than their ``starting point" even if this is not always the highest point of the story.
 
 \begin{table}[h]
 \centering
@@ -337,12 +277,7 @@ Other & 2161 (23.2\%) & 2388 (25.7\%) & 2549 (\textbf{27.4\%}) & 2206 (23.7\%) &
 \label{tab:clustergenre}
 \end{table}
 
-
-
-
-
-
-Table \ref{tab:clustergenre} describes the distribution of these four clusters across genres. Notably, the cluster with the highest percentage of \textit{Angst} is also the only cluster displaying an overall downwards-bound shape (Cluster 2), while the cluster with the highest percentage of \textit{Hurt/comfort} features the most distinctly ``rags to riches" narrative path (Cluster 3), meaning an upward trajectory. Finally, the most frequent shape in \textit{Fluff} includes a long central stretch of low feelings, but guarantees an extremely happy ending (Cluster 1). 
+Table \ref{tab:clustergenre} describes the distribution of these four clusters across genres. Notably, the cluster with the highest percentage of \textit{Angst} is also the only cluster displaying an overall downwards-bound shape (Cluster 2), while the cluster with the highest percentage of \textit{Hurt/comfort} features the most distinctly ``rags to riches" narrative path (Cluster 3), meaning an upward trajectory. Finally, the most frequent shape in \textit{Fluff} includes a long central stretch of low feelings, but guarantees an extremely happy ending (Cluster 1).
 
 In other words, the most frequent clusters in \textit{Fluff} and \textit{Hurt/Comfort} contain very "low lows" - especially in Cluster 1 - but end on a much more positive note, with respect to both their beginning and their average valence, than the \textit{Angst}-related Cluster 2.
 
@@ -366,11 +301,10 @@ Other & 4,872 (52.4\%) & 2,516 (27.0\%) & 1,916 (20.6\%) & 9,304 \\
 \label{tab:ending_sentiment}
 \end{table}
 
-
 Despite these differences, as shown in Table \ref{tab:ending_sentiment}, all genres display a consistent majority of ``happy endings''.\footnote{We computed these happy endings as arcs where the final 5\% is at least 0.15 degrees higher than its first 5\%. We defined these parameters to represent the beginning and ending of a story and a sentiment shift distinct enough to constitute a significant variation, but different parameters return similar results. See Appendix \ref{appx:arcparameters} for different ranges.}
-The upward direction in narrative sentiments is preferred across all genres, holding the smallest proportion in \textit{Angst}, where it represents half of the population. 
-Thus, the dramatic \textit{Angst} genre appears associated with negativity mainly in a relative sense, having the largest subset of tragic structures. The steepest and most frequent positive inclines characterize the \textit{Hurt/comfort} genre, followed by \textit{Fluff}. Meanwhile, on average, \textit{Fluff} has the most positive peaks. %Although, as we already hypothesized, \textit{Hurt/comfort} seems to center on improvement or progress towards positive sentiment more than the other genres, \textit{Fluff} is characterized by the highest highs. 
-These findings again indicate the relevance of the stories' shape and ending to their assigned genre category (see also Table \ref{tab:comprehensive_genre_analysis}). 
+The upward direction in narrative sentiments is preferred across all genres, holding the smallest proportion in \textit{Angst}, where it represents half of the population.
+Thus, the dramatic \textit{Angst} genre appears associated with negativity mainly in a relative sense, having the largest subset of tragic structures. The steepest and most frequent positive inclines characterize the \textit{Hurt/comfort} genre, followed by \textit{Fluff}. Meanwhile, on average, \textit{Fluff} has the most positive peaks.
+These findings again indicate the relevance of the stories' shape and ending to their assigned genre category (see also Table \ref{tab:comprehensive_genre_analysis}).
 The fact that the upward direction or happy ending remains the single dominant structure throughout all of these clusters suggests that the authors have a marked tendency to provide emotional satisfaction -- through a happy ending -- for readers. This aligns with previous research suggesting that within the controllable and familiar environment of fanfiction communities, readers read about unpleasant or negative feelings to "resolve their own potentially overwhelming emotional states" \cite[15]{bruns2021stinging}. Our findings thus suggest that fanfiction, both on the production and consumption side, prefers happy endings for their capacity to ameliorate or work through difficult emotional trajectories. We call this fanfiction's therapeutic potential.
 
 \begin{table}[h]
@@ -381,26 +315,25 @@ The fact that the upward direction or happy ending remains the single dominant s
 \textbf{Genre} & \textbf{Method} & \textbf{Ending Avg} & \textbf{Begin→End} & \textbf{Overall→End} & \textbf{Max Positivity} \\
 \midrule
 Angst & \texttt{Syuzhet} & 0.044 & 0.083 & 0.062 & 0.092 \\
- & \texttt{xlm-roberta} & 0.064 & 0.193 & 0.136 & 0.100 \\
+& \texttt{xlm-roberta} & 0.064 & 0.193 & 0.136 & 0.100 \\
 \midrule
 Fluff & \texttt{Syuzhet} & 0.060 & 0.117 & 0.109 & 0.113 \\
- & \texttt{xlm-roberta} & 0.102 & 0.256 & 0.178 & 0.145 \\
+& \texttt{xlm-roberta} & 0.102 & 0.256 & 0.178 & 0.145 \\
 \midrule
 Hurt/Comfort & \texttt{Syuzhet} & 0.164 & 0.298 & 0.180 & 0.056 \\
- & \texttt{xlm-roberta} & 0.164 & 0.394 & 0.243 & 0.035 \\
+& \texttt{xlm-roberta} & 0.164 & 0.394 & 0.243 & 0.035 \\
 \midrule
 Other & \texttt{Syuzhet} & 0.036 & 0.062 & 0.068 & 0.126 \\
- & \texttt{xlm-roberta} & 0.075 & 0.192 & 0.138 & 0.120 \\
+& \texttt{xlm-roberta} & 0.075 & 0.192 & 0.138 & 0.120 \\
 \bottomrule
 \end{tabular}
 \caption{Sentiment Arcs' average ending, incline, and point of highest positivity}
 \label{tab:comprehensive_genre_analysis}
 \end{table}
 
-Finally, the distribution of stories from different fandoms over the four clusters (Table \ref{tab:fandom_syuzhet_clusters}) generates some insight into the interplay between sentiments and fandoms (\textbf{RQ 3}) -- particularly, the potential impact of the source material on the sentiment arcs of fanfiction. The AGRL and HP fandoms appear to have a relative preference for the ``tragic shape'' (Cluster 2). It intuitively makes sense that fanfiction in the AGRL fandom (stories rewriting Greek myth) is most prevalent in the cluster we call ``tragic'' here (Cluster 2). Simultaneously, this suggests fanfiction about AGRL may be replicating rather than transforming the sentiment arcs of its -- admittedly quite diverse and diffuse -- source material, for example by rewriting the tragic narrative of Achilles death in battle or Persephone's kidnapping at the hands of Hades. 
+Finally, the distribution of stories from different fandoms over the four clusters (Table \ref{tab:fandom_syuzhet_clusters}) generates some insight into the interplay between sentiments and fandoms (\textbf{RQ 3}) -- particularly, the potential impact of the source material on the sentiment arcs of fanfiction. The AGRL and HP fandoms appear to have a relative preference for the ``tragic shape'' (Cluster 2). It intuitively makes sense that fanfiction in the AGRL fandom (stories rewriting Greek myth) is most prevalent in the cluster we call ``tragic'' here (Cluster 2). Simultaneously, this suggests fanfiction about AGRL may be replicating rather than transforming the sentiment arcs of its -- admittedly quite diverse and diffuse -- source material, for example by rewriting the tragic narrative of Achilles death in battle or Persephone's kidnapping at the hands of Hades.
 
 Looking at the distribution of the sentiment arc clusters across fandoms, stories from the PJ and LOTR fandoms most often have happy ending arcs (Cluster 1), although differences between fandoms are small. This is especially striking since PJ and LOTR were more or less polar opposites in the comparison of mean sentiment above, with LOTR characterized by the most positive sentiment range or bandwidth and PJ by the most negative one. Nonetheless, here we find that these two fandoms tend towards similar sentiment arc shapes, those characterized by happy endings. This cluster intuitively makes sense for LOTR, which had the highest mean sentiment, but is surprising for PJ, where works in general have lower sentiment and \textit{Angst} stories were most characterized by negative sentiment out of all groups. We conclude that negative sentiment in a story does not necessarily indicate an unhappy ending. In future work, the differences between fandoms could be analyzed further by comparing the sentiment arcs of fanfiction to those of its source material.
-
 
 \begin{table}[h]
 \centering
@@ -418,7 +351,6 @@ LOTR & 2772 & 596 (21.5\%) & 749 (\textbf{27.0\%}) & 719 (25.9\%) & 708 (25.5\%)
 \label{tab:fandom_syuzhet_clusters}
 \end{table}
 
-
 \section{Conclusion}
 What does the statistical analysis and clustering of sentiment arcs reveal about the workings of emotionally-inflected fanfiction genres? Firstly, genre differences between the arcs (\textbf{RQ 1}) can be clearly detected for \textit{Angst}, which has a significantly lower mean sentiment, and \textit{Fluff}, which has a significantly higher mean sentiment. No such effect was found for \textit{Hurt/Comfort}. Additionally, \textit{Angst} was relatively more associated with negative sentiments, since it was the largest subset of stories with a downfalling or tragic sentiment arc. In terms of the development of arcs (\textbf{RQ 2}), \textit{Hurt/comfort} also conformed to expected patterns, since it was the largest subset in the cluster characterized by a development from negative to positive sentiments. Finally, \textit{Fluff} was characterized by extremely happy endings. These findings all conform to our existing understanding of the genres.
 
@@ -430,7 +362,7 @@ To conclude: fandoms can be distinctly characterized by their sentiment setpoint
 
 \section{Limitations}
 
-One limitation of this research is that the subset of \textit{Hurt/comfort} stories was relatively small, which may have influenced results. Since we were interested in pure genre effects, we designated texts with multiple genre-tags as \textit{Other}. This probably led to an artificially small subset of \textit{Hurt/comfort}. As mentioned previously, \textit{Hurt/comfort} can be understood as stories going from \textit{Angst} to \textit{Fluff}, and fans might therefore decide to add these additional genres tags along with \textit{Hurt/comfort}. As studies of genre are limited within fanfiction research, this controlled corpus was necessary here. The lack of ``pure'' \textit{Hurt/comfort} and the overlapping use of genre-tags lends itself well to future work on these genres and their interaction with style and content. 
+One limitation of this research is that the subset of \textit{Hurt/comfort} stories was relatively small, which may have influenced results. Since we were interested in pure genre effects, we designated texts with multiple genre-tags as \textit{Other}. This probably led to an artificially small subset of \textit{Hurt/comfort}. As mentioned previously, \textit{Hurt/comfort} can be understood as stories going from \textit{Angst} to \textit{Fluff}, and fans might therefore decide to add these additional genres tags along with \textit{Hurt/comfort}. As studies of genre are limited within fanfiction research, this controlled corpus was necessary here. The lack of ``pure'' \textit{Hurt/comfort} and the overlapping use of genre-tags lends itself well to future work on these genres and their interaction with style and content.
 
 The method of sentiment analysis also has limitations. Sentiment can be measured in various ways -- both via different technical means, such as model types, and via different conceptual routes, such as polarity, intensity, etc. \cite{hutto2014vader} -- each with its own advantages and disadvantages. In this paper, we used two different methods: \texttt{Syuzhet} and \texttt{xlm-roberta} for continuous valence scoring. We show that these tools align most closely with human ratings (\autoref{appdx:Transformer_SA}).\footnote{For the persistently good performance of \texttt{Syuzhet}, also when detrending arcs, see \cite{bizzoni_comparing_2023}.} Still, it is worth questioning to what extent machine-annotations can approximate the complexity of reader experiences \cite{bootContextNarrativeWe2024}. Additionally, we have made the interpretive leap of connecting sentiment-scores to the level of happiness or sadness in stories. The fact that many of our findings confirm the difference between the typically sad genre of \textit{Angst} and the typically happy genre of \textit{Fluff} supports this decision. Nonetheless, sentiment analysis methods are still only one possible operationalization of a single aspect of a complex set of reader-text interactions.
 
@@ -438,11 +370,7 @@ The method of sentiment analysis also has limitations. Sentiment can be measured
 
 Part of this research was supported by the Dutch ministry of Education, Culture and Science (OCW) through the Dutch Research Council (NWO), as part of the Anchoring Innovation Gravitation Grant research agenda of OIKOS, the National Research School in Classical Studies, the Netherlands (project number 024.003.012). Part of this research was supported by a Christine Mohrmann Stipend awarded by Radboud University.
 
-% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
 \printbibliography
-
-% You can include an appendix using the following command
-
 
 \appendix
 
@@ -455,18 +383,16 @@ These were tested against human ratings on a dataset of fiction -- \textit{Ficti
 Models tried were:
 
 \begin{table}[h]
-    \centering
-    \small
-    \begin{tabular}{l|r}
-        Transformer-based $\downarrow$ &  \texttt{twitter-xlm} \cite{barbieri_xlm-t_2022}\\
-         & \texttt{xlm-roberta} \cite{barbieri_xlm-t_2022} \\
-         \midrule
-         Dictionary-based $\downarrow$ & \texttt{VADER} \cite{hutto2014vader} \\
-         & \texttt{Syuzhet} \cite{jockers2015syuzhet}
-    \end{tabular}
-    %\caption{Caption}
-  \label{tab:my_label}
-%
+\centering
+\small
+\begin{tabular}{l|r}
+Transformer-based $\downarrow$ &  \texttt{twitter-xlm} \cite{barbieri_xlm-t_2022}\\
+& \texttt{xlm-roberta} \cite{barbieri_xlm-t_2022} \\
+\midrule
+Dictionary-based $\downarrow$ & \texttt{VADER} \cite{hutto2014vader} \\
+& \texttt{Syuzhet} \cite{jockers2015syuzhet}
+\end{tabular}
+
 \end{table}
 
 For the full transformer-model names, see Table \ref{tab:modelnames}.
@@ -478,10 +404,10 @@ Result of the model comparisons can be found in Table \ref{tab:sentiment_results
 \small
 \begin{tabular}{l|cc|cccc}
 \toprule
-%& Fiction4 & EmoBank \\
+
 & \multicolumn{2}{c|}{\textbf{Fiction4}} & \multicolumn{4}{c}{\textbf{EmoBank}} \\
 \cmidrule(lr){2-3} \cmidrule(lr){4-7}
- & \textbf{Multilingual} & \textbf{English texts} & \textbf{Overall} & \textbf{Blog} & \textbf{Newspaper} & \textbf{Fiction} \\
+& \textbf{Multilingual} & \textbf{English texts} & \textbf{Overall} & \textbf{Blog} & \textbf{Newspaper} & \textbf{Fiction} \\
 \midrule
 \textbf{Publication dates} & \textit{1798-1965} & \textit{1952-1965} & \textit{1990-2008} & \textit{1990-2008} &\textit{1990-2008} &\textit{1990-2008}\\
 \textbf{N. sentences} & 6,300 & 3,500 & 8,870 & 1,378 &1,381 & 2,893 \\
@@ -496,36 +422,34 @@ Result of the model comparisons can be found in Table \ref{tab:sentiment_results
 \texttt{xlm-roberta} & \textbf{0.60} &  \textbf{0.61} & \textbf{0.65} & \textbf{0.65} & \textbf{0.65} & 0.56 \\
 \bottomrule
 \end{tabular}
-\caption{Spearman correlations of sentiment models' scores with a human gold standard on the \textit{Fiction4} (left) and \textit{EmoBank} (right) datasets. 
+\caption{Spearman correlations of sentiment models' scores with a human gold standard on the \textit{Fiction4} (left) and \textit{EmoBank} (right) datasets.
 At the top, information on each set (years \& number of sentences), as well as Inter Rater Reliability (IRR)(measured in Krippendorff's $\alpha$) per set. Columns from left to right:  Overall evaluation on Multilingual (Danish and English) \texttt{Fiction4Sentiment} sentences ($n=6,300$), evaluation of the exclusively English set of sentences ($n=3,500$). Evaluation on overall \textit{EmoBank} ($n=8,870$) and 3 subgenres. The best model performance per Dataset setting is in bold. Note: All p-values $< 0.01$.}
 \label{tab:sentiment_results}
 \end{table*}
 
-
 \begin{table}[ht]
-    \footnotesize
-    \centering
-    \begin{tabular}{llr}
-    \textbf{Type} & & \textbf{Shorthand, Modelname \& URLs} \\
-    \toprule
-      & Shorthand & twitter-xlm \\
-      & Name & \texttt{cardiffnlp/twitter-xlm-roberta-base-sentiment-multilingual} \\ 
-      & URL & \textcolor{blue}{https://huggingface.co/cardiffnlp/twitter-xlm-roberta-base-sentiment-multilingual} \\
-      \midrule
-      & Shorthand & xlm-roberta \\
-     & Name &   \texttt{cardiffnlp/xlm-roberta-base-sentiment-multilingual} \\
-     & URL &   \textcolor{blue}{https://huggingface.co/cardiffnlp/xlm-roberta-base-sentiment-multilingual} \\
-        \bottomrule
-    \end{tabular}
-    \caption{Full model names \& details.}
-    \label{tab:modelnames}
+\footnotesize
+\centering
+\begin{tabular}{llr}
+\textbf{Type} & & \textbf{Shorthand, Modelname \& URLs} \\
+\toprule
+& Shorthand & twitter-xlm \\
+& Name & \texttt{cardiffnlp/twitter-xlm-roberta-base-sentiment-multilingual} \\
+& URL & \textcolor{blue}{https://huggingface.co/cardiffnlp/twitter-xlm-roberta-base-sentiment-multilingual} \\
+\midrule
+& Shorthand & xlm-roberta \\
+& Name &   \texttt{cardiffnlp/xlm-roberta-base-sentiment-multilingual} \\
+& URL &   \textcolor{blue}{https://huggingface.co/cardiffnlp/xlm-roberta-base-sentiment-multilingual} \\
+\bottomrule
+\end{tabular}
+\caption{Full model names \& details.}
+\label{tab:modelnames}
 \end{table}
 
 \subsection{Transformer-based Sentiment}
 \subsubsection{Continuous scale sentiment from transformer-predictions}
 
-As \autocite{bizzoni_comparing_2023, feldkamp_comparing_2024} have shown, converting discrete predictions to continuous scores via model confidence values tends to outperform dictionary-based sentiment tools with continuous output when doing SA for literary texts. In this paper, following the same method, standard three-way transformer output (positive, neutral, negative) was mapped to a continuous scale by using the model’s confidence as a proxy for intensity: a sentence classified as \textit{positive} with a confidence of 0.67 is converted to +0.67, and similarly for \textit{negative} predictions. \textit{Neutral} outputs were assigned a value of 0, in line with the observation that most human annotations tend to cluster near the neutral midpoint (see \cite{feldkamp_comparing_2024}). %% ADD HISTOGRAM OF OVERALL SCORE DISTRIBUTION to also refer to
-
+As \autocite{bizzoni_comparing_2023, feldkamp_comparing_2024} have shown, converting discrete predictions to continuous scores via model confidence values tends to outperform dictionary-based sentiment tools with continuous output when doing SA for literary texts. In this paper, following the same method, standard three-way transformer output (positive, neutral, negative) was mapped to a continuous scale by using the model’s confidence as a proxy for intensity: a sentence classified as \textit{positive} with a confidence of 0.67 is converted to +0.67, and similarly for \textit{negative} predictions. \textit{Neutral} outputs were assigned a value of 0, in line with the observation that most human annotations tend to cluster near the neutral midpoint (see \cite{feldkamp_comparing_2024}).
 
 \subsubsection{Truncation}
 To ensure compatibility with different transformer architectures, our script retrieved maximum input length dynamically from the tokenizer for the model via \texttt{tokenizer.model\_max\_length}.\footnote{Note, if this value is unrealistically high (e.g., $>20,000$), it is capped the common standard of 514 tokens to avoid inefficient behavior.} For the \texttt{xlm-roberta} model, max input length was 514. Note that very few sentences were actually truncated, i.e., $<0.02\%$, where the majority (>90\%) were split into only 2 chunks.
@@ -541,16 +465,16 @@ If we imagine that this would exceed the token limit, it would be split into chu
 
 \begin{itemize}
 \footnotesize
-  \item \textbf{Chunk 1}: \texttt{This book is brilliant}
-  \item \textbf{Chunk 2}: \texttt{but the pacing is terrible.}
+\item \textbf{Chunk 1}: \texttt{This book is brilliant}
+\item \textbf{Chunk 2}: \texttt{but the pacing is terrible.}
 \end{itemize}
 
 Each chunk is passed to the sentiment model. Suppose it returns:
 
 \begin{itemize}
 \footnotesize
-  \item \textbf{Chunk 1}: \texttt{label = positive} \& \texttt{confidence score = 0.9} $\rightarrow$ $+0.9$
-  \item \textbf{Chunk 2}: \texttt{label = negative} \& \texttt{confidence score = 0.8} $\rightarrow$ $-0.8$
+\item \textbf{Chunk 1}: \texttt{label = positive} \& \texttt{confidence score = 0.9} $\rightarrow$ $+0.9$
+\item \textbf{Chunk 2}: \texttt{label = negative} \& \texttt{confidence score = 0.8} $\rightarrow$ $-0.8$
 \end{itemize}
 
 The overall sentence score is then computed as the mean of the chunk scores:
@@ -558,7 +482,6 @@ The overall sentence score is then computed as the mean of the chunk scores:
 \[
 \text{Sentiment} = \frac{(+0.9) + (-0.8)}{2} = 0.05
 \]
-
 
 \newpage
 
@@ -584,8 +507,6 @@ Other                & 2,100 (22.6\%)         & 2,400 (25.8\%)         & \textbf
 \label{tab:clustergenre_varied3}
 \end{table}
 
-
-%Appendix sections should be ordered by letters rather than numbers, and their contents do not count towards the paper's length limit. Appendix sections may also contain additional tables and figures.  
 \newpage
 \section{Model Outputs}
 \label{model_outputs}
@@ -593,145 +514,138 @@ Other                & 2,100 (22.6\%)         & 2,400 (25.8\%)         & \textbf
 \centering
 \begin{tabular}{ l c c c c c }
 \toprule
- Mean \texttt{Syuzhet} &  & $\beta$ & SE & t-value & p-value \\ 
-  \midrule
- & Angst & -0.062& 0.01& -5.97& <0.001* \\ 
- & Fluff & 0.11& 0.011& 10.03& <0.001* \\
- & Hurt/comfort & -0.022& 0.0185& -1.17& 0.24 \\
- & HP & 0.00094& 0.0053& .177& 0.86 \\
- & LOTR & 0.044 & 0.0056& 7.91&  <0.001* \\
- & PJ & -0.0074& 0.00559& -1.32& .19 \\
- & Published & 0.0000012 & 0.0000012 & 0.97 &   0.33 \\
- & Word Count & -0.00012 & 0.0016 & -0.074 &  0.94 \\
- & HP:Angst &-0.012 & 0.015 & -0.77 & 0.44 \\  
- & LOTR:Angst & 0.010 & 0.016 &  0.66 & 0.51 \\  
- & PJ:Angst & -0.032& 0.015& -2.06& <0.05* \\
- & HP:Fluff &-0.018& 0.015 &  -1.25 & 0.21\\    
- & LOTR:Fluff & -0.0018 & 0.016 & -0.11 & 0.91 \\    
- & PJ:Fluff & -0.017 & 0.014 & -1.26 & 0.21 \\  
- & HP:Hurt/comfort & -0.017 & 0.027 & -0.62 &  0.54 \\
- & LOTR:Hurt/comfort & -0.023& 0.024 & -0.967 & 0.33 \\
- & PJ:Hurt/comfort  & -0.042 & 0.025 & -1.65 & 0.099 \\
- \midrule
- Mean \texttt{xlm-roberta} &  & $\beta$ & SE & t-value & p-value \\ 
-  \midrule
- & Angst & -0.041& 0.0066& -6.28& <0.001*\\ 
- & Fluff & 0.0688& 0.0068& 10.12& <0.001* \\
- & Hurt/comfort & -0.012& 0.012& -1.08& 0.28 \\
- & HP & -0.0053& 0.0034& -1.56& 0.11 \\
- & LOTR & 0.0097 & 0.0035& 2.73&  <0.01* \\
- & PJ & -0.0075& 0.0035& -2.13& <0.05* \\
- & Published & 0.000001 & 0.00000076 & 1.32 &   0.19 \\   
- & Word Count &-0.00049 &0.001 & -0.49 & 0.62 \\
- & HP:Angst & -0.011&0.0096 & -1.17 & 0.24 \\   
- & LOTR:Angst & 0.0081&0.0099 & 0.82 & 0.41 \\ 
- & PJ:Angst & -0.029& 0.0096& -3.02& <0.01* \\
- & HP:Fluff &-0.0071 & 0.0092 & -0.77 & 0.44 \\  & LOTR:Fluff &-0.0065& 0.010- & -0.64 & 0.52 \\ 
- & PJ:Fluff & -0.012&0.0086& -1.39 & 0.17 \\
- & HP:Hurt/comfort & -0.000085 & 0.017 & -0.005 & 0.99 \\
- & LOTR:Hurt/comfort & -0.0087 & 0.015 & -0.58 & 0.56 \\    
- & PJ:Hurt/comfort & -0.018 & 0.016 & -1.12 & 0.26 \\    
- \bottomrule
+Mean \texttt{Syuzhet} &  & $\beta$ & SE & t-value & p-value \\
+\midrule
+& Angst & -0.062& 0.01& -5.97& <0.001* \\
+& Fluff & 0.11& 0.011& 10.03& <0.001* \\
+& Hurt/comfort & -0.022& 0.0185& -1.17& 0.24 \\
+& HP & 0.00094& 0.0053& .177& 0.86 \\
+& LOTR & 0.044 & 0.0056& 7.91&  <0.001* \\
+& PJ & -0.0074& 0.00559& -1.32& .19 \\
+& Published & 0.0000012 & 0.0000012 & 0.97 &   0.33 \\
+& Word Count & -0.00012 & 0.0016 & -0.074 &  0.94 \\
+& HP:Angst &-0.012 & 0.015 & -0.77 & 0.44 \\
+& LOTR:Angst & 0.010 & 0.016 &  0.66 & 0.51 \\
+& PJ:Angst & -0.032& 0.015& -2.06& <0.05* \\
+& HP:Fluff &-0.018& 0.015 &  -1.25 & 0.21\\
+& LOTR:Fluff & -0.0018 & 0.016 & -0.11 & 0.91 \\
+& PJ:Fluff & -0.017 & 0.014 & -1.26 & 0.21 \\
+& HP:Hurt/comfort & -0.017 & 0.027 & -0.62 &  0.54 \\
+& LOTR:Hurt/comfort & -0.023& 0.024 & -0.967 & 0.33 \\
+& PJ:Hurt/comfort  & -0.042 & 0.025 & -1.65 & 0.099 \\
+\midrule
+Mean \texttt{xlm-roberta} &  & $\beta$ & SE & t-value & p-value \\
+\midrule
+& Angst & -0.041& 0.0066& -6.28& <0.001*\\
+& Fluff & 0.0688& 0.0068& 10.12& <0.001* \\
+& Hurt/comfort & -0.012& 0.012& -1.08& 0.28 \\
+& HP & -0.0053& 0.0034& -1.56& 0.11 \\
+& LOTR & 0.0097 & 0.0035& 2.73&  <0.01* \\
+& PJ & -0.0075& 0.0035& -2.13& <0.05* \\
+& Published & 0.000001 & 0.00000076 & 1.32 &   0.19 \\
+& Word Count &-0.00049 &0.001 & -0.49 & 0.62 \\
+& HP:Angst & -0.011&0.0096 & -1.17 & 0.24 \\
+& LOTR:Angst & 0.0081&0.0099 & 0.82 & 0.41 \\
+& PJ:Angst & -0.029& 0.0096& -3.02& <0.01* \\
+& HP:Fluff &-0.0071 & 0.0092 & -0.77 & 0.44 \\  & LOTR:Fluff &-0.0065& 0.010- & -0.64 & 0.52 \\
+& PJ:Fluff & -0.012&0.0086& -1.39 & 0.17 \\
+& HP:Hurt/comfort & -0.000085 & 0.017 & -0.005 & 0.99 \\
+& LOTR:Hurt/comfort & -0.0087 & 0.015 & -0.58 & 0.56 \\
+& PJ:Hurt/comfort & -0.018 & 0.016 & -1.12 & 0.26 \\
+\bottomrule
 \end{tabular}
 \caption{All estimates for model (1) for each sentiment analysis method (\texttt{Syuzhet/xlm-roberta})}
-  \label{appx:arcparameters}
 \end{table}
 
 \begin{table}[!htbp]
 \centering
 \begin{tabular}{ l c c c c c }
-%\begin{tabular}{ l r r r r r }
+
 \toprule
- SD \texttt{Syuzhet} &  & $\beta$ & SE & t-value & p-value \\ 
-  \midrule
- & Angst & 0.025& 0.0090& 2.77& <0.01* \\ 
- & Fluff & -0.016& 0.0092& -1.75& 0.08 \\
- & Hurt/comfort & -0.0019& 0.015& -0.12& 0.90 \\
- & HP & -0.041& 0.0051& -8.0& <0.001*\\
- & LOTR & 0.024 & 0.0055& 4.38&  <0.001* \\
- & PJ & -0.074& 0.0054& -13.68& <0.001* \\
- & Published & 0.0000018 & 0.0000011 & 1.55 & 0.12 \\    
- & Word Count & 0.0018 & 0.0014 & 1.25 & 0.21 \\    
- & HP:Angst & -0.010 & 0.014 & -0.74 & 0.46 \\    
- & LOTR:Angst & -0.010 & 0.014 & -0.74 & 0.46 \\    
- & PJ:Angst & -0.016 & 0.013 & -1.19 & 0.23 \\    
- & HP:Fluff & -0.0046 & 0.013 & -0.36 & 0.72 \\    
- & LOTR:Fluff & 0.011 & 0.014 & 0.80 & 0.42 \\    
- & PJ:Fluff & -0.0035 & 0.012 & -0.30 & 0.76 \\    
- & HP:Hurt/comfort & -0.0041 & 0.024 & -0.18 & 0.86 \\    
- & LOTR:Hurt/comfort & 0.0099 & 0.020 & 0.48 & 0.63 \\    
- & PJ:Hurt/comfort &  0.0062 & 0.022 & 0.29 & 0.78 \\    
- \midrule
- SD \texttt{xlm-roberta} &  & $\beta$ & SE & t-value & p-value \\ 
-  \midrule
- & Angst & 0.0054& 0.0027& 2.0& <0.05* \\ 
- & Fluff & 0.0053& 0.0028& 1.89& 0.059\\
- & Hurt/comfort & 0.0019& 0.0048& 0.41& 0.68 \\
- & HP & -0.019& 0.0014& -12.98& <0.001* \\
- & LOTR & -0.010& 0.0015& -6.77&  <0.001* \\
- & PJ & -0.018& 0.0015& -11.65& <0.001* \\ 
- & Published & 0.00000097 & 0.0000032 & 3.03 & <0.01* \\
- & Word count & 0.000090 & 0.00042 & 0.21 & 0.83 \\    
- & HP:Angst & -0.0040 & 0.0040 & -0.99 & 0.32 \\    
- & LOTR:Angst & 0.0020 & 0.0041 & 0.49 & 0.62 \\    
- & PJ:Angst & -0.0049 & 0.0040 & -1.24 & 0.21 \\    
- & HP:Fluff & 0.0020 & 0.0038 & 0.52 & 0.61 \\    
- & LOTR:Fluff & 0.0011 & 0.0042 & 0.27 & 0.79 \\    
- & PJ:Fluff & -0.0040 & 0.0036 & -1.13 & 0.26 \\    
- & HP:Hurt/comfort & 0.0021 & 0.0070 & 0.30 & 0.77\\    
- & LOTR:Hurt/comfort & -0.0025 & 0.0062 &-0.40 & 0.69\\    
- & PJ:Hurt/comfort & 0.0017 & 0.0066 & 0.26 & 0.80\\    
- \bottomrule
+SD \texttt{Syuzhet} &  & $\beta$ & SE & t-value & p-value \\
+\midrule
+& Angst & 0.025& 0.0090& 2.77& <0.01* \\
+& Fluff & -0.016& 0.0092& -1.75& 0.08 \\
+& Hurt/comfort & -0.0019& 0.015& -0.12& 0.90 \\
+& HP & -0.041& 0.0051& -8.0& <0.001*\\
+& LOTR & 0.024 & 0.0055& 4.38&  <0.001* \\
+& PJ & -0.074& 0.0054& -13.68& <0.001* \\
+& Published & 0.0000018 & 0.0000011 & 1.55 & 0.12 \\
+& Word Count & 0.0018 & 0.0014 & 1.25 & 0.21 \\
+& HP:Angst & -0.010 & 0.014 & -0.74 & 0.46 \\
+& LOTR:Angst & -0.010 & 0.014 & -0.74 & 0.46 \\
+& PJ:Angst & -0.016 & 0.013 & -1.19 & 0.23 \\
+& HP:Fluff & -0.0046 & 0.013 & -0.36 & 0.72 \\
+& LOTR:Fluff & 0.011 & 0.014 & 0.80 & 0.42 \\
+& PJ:Fluff & -0.0035 & 0.012 & -0.30 & 0.76 \\
+& HP:Hurt/comfort & -0.0041 & 0.024 & -0.18 & 0.86 \\
+& LOTR:Hurt/comfort & 0.0099 & 0.020 & 0.48 & 0.63 \\
+& PJ:Hurt/comfort &  0.0062 & 0.022 & 0.29 & 0.78 \\
+\midrule
+SD \texttt{xlm-roberta} &  & $\beta$ & SE & t-value & p-value \\
+\midrule
+& Angst & 0.0054& 0.0027& 2.0& <0.05* \\
+& Fluff & 0.0053& 0.0028& 1.89& 0.059\\
+& Hurt/comfort & 0.0019& 0.0048& 0.41& 0.68 \\
+& HP & -0.019& 0.0014& -12.98& <0.001* \\
+& LOTR & -0.010& 0.0015& -6.77&  <0.001* \\
+& PJ & -0.018& 0.0015& -11.65& <0.001* \\
+& Published & 0.00000097 & 0.0000032 & 3.03 & <0.01* \\
+& Word count & 0.000090 & 0.00042 & 0.21 & 0.83 \\
+& HP:Angst & -0.0040 & 0.0040 & -0.99 & 0.32 \\
+& LOTR:Angst & 0.0020 & 0.0041 & 0.49 & 0.62 \\
+& PJ:Angst & -0.0049 & 0.0040 & -1.24 & 0.21 \\
+& HP:Fluff & 0.0020 & 0.0038 & 0.52 & 0.61 \\
+& LOTR:Fluff & 0.0011 & 0.0042 & 0.27 & 0.79 \\
+& PJ:Fluff & -0.0040 & 0.0036 & -1.13 & 0.26 \\
+& HP:Hurt/comfort & 0.0021 & 0.0070 & 0.30 & 0.77\\
+& LOTR:Hurt/comfort & -0.0025 & 0.0062 &-0.40 & 0.69\\
+& PJ:Hurt/comfort & 0.0017 & 0.0066 & 0.26 & 0.80\\
+\bottomrule
 \end{tabular}
 \caption{All estimates for model (2) for each sentiment analysis method (\texttt{Syuzhet/xlm-roberta})}
-  \label{fig:angst-params}
 \end{table}
-
 
 \newpage
 \section{Uprising versus Downfalling Arc Categories per Genre Across Parameters}
-
-
+\label{appx:arcparameters}
 
 \begin{figure}[htbp]
-  \centering
-  \begin{subfigure}[b]{0.48\textwidth}
-    \includegraphics[width=\textwidth]{figures/angst_plot.png}
-    \caption{Angst}
-  \label{fig:fluff-params}
+\centering
+\begin{subfigure}[b]{0.48\textwidth}
+\includegraphics[width=\textwidth]{figures/angst_plot.png}
+\caption{Angst}
+\label{fig:angst-params}
 \end{subfigure}
-  \hfill
-  \begin{subfigure}[b]{0.48\textwidth}
-    \includegraphics[width=\textwidth]{figures/fluff_plot.png}
-    \caption{Fluff}
-    
-  \end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.48\textwidth}
+\includegraphics[width=\textwidth]{figures/fluff_plot.png}
+\caption{Fluff}
+\label{fig:fluff-params}
+\end{subfigure}
 
-  \vspace{1em}
+\vspace{1em}
 
-  \begin{subfigure}[b]{0.48\textwidth}
-    \includegraphics[width=\textwidth]{figures/other_plot.png}
-    \caption{Other}
-    \label{fig:other-params}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}[b]{0.48\textwidth}
-    \includegraphics[width=\textwidth]{figures/hurt_comfort_plot.png}
-    \caption{Hurt/Comfort}
-    \label{fig:hc-params}
-  \end{subfigure}
+\begin{subfigure}[b]{0.48\textwidth}
+\includegraphics[width=\textwidth]{figures/other_plot.png}
+\caption{Other}
+\label{fig:other-params}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.48\textwidth}
+\includegraphics[width=\textwidth]{figures/hurt_comfort_plot.png}
+\caption{Hurt/Comfort}
+\label{fig:hc-params}
+\end{subfigure}
 
-  \caption[Parameter sensitivity across genres]{%
-    Proportions of Uprising, Downfalling, and Neutral trajectories under different parameter settings for the four genres.
-    Each line corresponds to one \(\langle\)window\%, threshold\(\rangle\) combination, showing how
-    genre-level classification shares shift depending on the sampling window (first/last \(\alpha\) of story)
-    and the threshold \(T\). 
-    As can be seen, changing the parameters does not change the percentage of classes, although in most cases accepting a too large window has the Neutral class rise (as larger windows will include different sections of the story, more likely to have important fluctuations: it is relatively difficult to have a constantly increasing/decreasing sentiment line). %
-  }
-  \label{fig:appendix-param-sensitivity}
+\caption[Parameter sensitivity across genres]{
+Proportions of Uprising, Downfalling, and Neutral trajectories under different parameter settings for the four genres.
+Each line corresponds to one \(\langle\)window\%, threshold\(\rangle\) combination, showing how
+genre‐level classification shares shift depending on the sampling window (first/last \(\alpha\) of story)
+and the threshold \(T\).
+As can be seen, changing the parameters does not change the percentage of classes, although in most cases accepting a too large window has the Neutral class rise (as larger windows will include different sections of the story, more likely to have important fluctuations: it is relatively difficult to have a constantly increasing/decreasing sentiment line).
+}
+\label{fig:appendix-param-sensitivity}
 \end{figure}
-
-
-
 
 \end{document}

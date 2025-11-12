@@ -1,50 +1,27 @@
+\documentclass[final]{anthology-ch}
 
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER.
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-%\documentclass{anthology-ch} % for the submission
-
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
-% ADD your own packages using \usepackage{}
+
 \usepackage{cleveref}
 \usepackage{enumitem}
 
-
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{Classifying Name-Date and Year Figures in Mixtec Codices}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations
-% (next section) and ORCID-ID for each author.
 \author{Girish Salunke} [
-  orcid=0009-0005-3472-7720
+orcid=0009-0005-3472-7720
 ]
 
-\author[1]{Christopher Driggers-Ellis}[ % Christopher
-  orcid=0009-0006-8063-7571
+\author[1]{Christopher Driggers-Ellis}[
+orcid=0009-0006-8063-7571
 ]
 
-\author[1]{Christan Grant}[ % Dr. Grant
-  orcid=0000-0002-6684-3620
+\author[1]{Christan Grant}[
+orcid=0000-0002-6684-3620
 ]
-
-
-
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors.
 
 \affiliation{1}{Computer \& Information Science \& Engineering, University of Florida, Gainesville, FL, USA}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{Mixtec Codices,
 Vision Transformers,
 Semasiography,
@@ -57,21 +34,17 @@ Semasiographic
 Manuscripts,
 Pictographic Writing}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
-\pagestart{1191}
-\pageend{1199}
+\pagestart{1195}
+\pageend{1203}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
 \doi{10.63744/eNge3Gj1LSHb}
 \paperorder{71}
 
-\addbibresource{bibliography.bib} 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
+\addbibresource{bibliography.bib}
+
 \begin{document}
 
 \maketitle
@@ -101,51 +74,51 @@ These name-dates serve as proper names for historical figures, gods, or ancestor
 Similarly, years are marked using a combination of a number (1--13) and one of four year signs (Rabbit, Reed, House, Flint), forming a 52-year Calendar Round used for historical chronology \cite{boone2000stories,williams2013complete}.
 
 Visually, name-dates and year symbols share structural similarities, typically consisting of a numeric prefix depicted as a series of small ``beads''—paired with a pictorial glyph. However, their \textit{semantic roles} differ: name-dates identify individuals (typically based on the calendar day of birth), while year symbols serve as chronological anchors for historical events. The presence of the \textit{year AO glyph} is used to disambiguate these cases in several codices, including the Zouche-Nuttall.\footnote{The ``AO'' year sign, also known as the \textit{annus obitus} or ``year-of'' glyph, is a conventional Mixtec symbol that marks a calendrical expression as a reference to a year rather than a personal name.
-It often appears as a stylized circle or cartouche enclosing the year symbol \cite{boone2000stories,williams2013complete}.} 
+It often appears as a stylized circle or cartouche enclosing the year symbol \cite{boone2000stories,williams2013complete}.}
 \Cref{fig:codex} visually illustrates this distinction, with name-dates highlighted using red squares and year symbols marked in green.
 Importantly, the term \textit{name-date} also applies to instances where a specific calendar day (e.g., ``8 Deer'') is appended to a year (e.g., ``3 Flint'') to record the exact date of a historical event. In such cases, the name-date functions not as a personal identifier but as a temporal marker within the 52-year calendar round.
 \begin{figure}[t!]
-    \centering
-    \includegraphics[width=0.35\linewidth]{figures/MixtecCodex.png}
-    \caption{Red squares highlight name-dates, which identify individuals through a combination of a day sign and number. The green square highlights a year symbol, which serves as a chronological marker within the narrative. Provided courtesy of the British Museum.}
-    \label{fig:codex}
+\centering
+\includegraphics[width=0.35\linewidth]{figures/MixtecCodex.png}
+\caption{Red squares highlight name-dates, which identify individuals through a combination of a day sign and number. The green square highlights a year symbol, which serves as a chronological marker within the narrative. Provided courtesy of the British Museum.}
+\label{fig:codex}
 \end{figure}
 Both types of symbols draw from the same visual inventory of calendrical signs and follow a similar structural format. This shared design creates considerable visual ambiguity, especially when the presence of the AO glyph is faint, damaged, or omitted. As a result, distinguishing between name-dates and year symbols is not only essential for determining \textit{who is depicted} and \textit{when an event occurred}, but also a non-trivial classification challenge that requires careful symbolic analysis~\cite{boone2000stories,williams2013complete}.
 
 \begin{figure}[t!]
-    \centering
-    \includegraphics[width=0.95\linewidth]{figures/name-date-vs-year.png}
-    \caption{
-    Visual comparison of a \textbf{name-date} and a \textbf{year symbol with AO marker}. Both include a numerical prefix (beads) and a glyph (e.g., Rabbit or Reed), but the year symbol includes the AO marker, distinguishing it as a chronological reference rather than a personal identifier. Cropped from original images provided courtesy of the British Museum.
-    }
-    \label{fig:name-vs-year}
+\centering
+\includegraphics[width=0.95\linewidth]{figures/name-date-vs-year.png}
+\caption{
+Visual comparison of a \textbf{name-date} and a \textbf{year symbol with AO marker}. Both include a numerical prefix (beads) and a glyph (e.g., Rabbit or Reed), but the year symbol includes the AO marker, distinguishing it as a chronological reference rather than a personal identifier. Cropped from original images provided courtesy of the British Museum.
+}
+\label{fig:name-vs-year}
 \end{figure}
 
 To address this challenge, we propose a image classification sequence using ViTs. Figure \ref{fig:images-to-classifiers} illustrates this  using an example:
 \begin{itemize}[noitemsep,nolistsep]
-    \item The \textbf{name-date/year classifier} distinguishes between name-dates and year symbols;
-    \item The \textbf{symbol classifier} identifies the calendrical glyph;
-    \item The \textbf{bead counter} module extracts the numerical prefix.
+\item The \textbf{name-date/year classifier} distinguishes between name-dates and year symbols;
+\item The \textbf{symbol classifier} identifies the calendrical glyph;
+\item The \textbf{bead counter} module extracts the numerical prefix.
 \end{itemize}
-%This work demonstrates the potential of transformer-based vision models in the decoding of semasiographic scripts and contributes to the broader goal of applying AI to the preservation of cultural heritage.
+
 Our approach leverages transfer learning and data augmentation to address the limited size of the annotated corpus.
-This study contributes to the growing body of research at the intersection of machine learning and cultural heritage, demonstrating how transformer-based architectures can assist in interpreting symbolic, non-phonetic writing ~\cite{zora265462, muther2023querying, FIORUCCI2020102}. 
+This study contributes to the growing body of research at the intersection of machine learning and cultural heritage, demonstrating how transformer-based architectures can assist in interpreting symbolic, non-phonetic writing ~\cite{zora265462, muther2023querying, FIORUCCI2020102}.
 
 \section{Related Work}
 Machine-based interpretation of historical manuscripts has long been an interdisciplinary challenge, at the intersection of computer vision, anthropology, and linguistics. Although considerable progress has been made in the analysis of phonetic scripts using OCR and handwriting recognition ~\cite{ocrhindi2013}, semasiographic systems, such as those found in Mesoamerican codices, require different approaches due to their non-linear structure and reliance on symbolic imagery.
 
 Studies on Mesoamerican writing systems show that these codices follow strict conventions to depict years, dates, names, and individuals \cite{jansen1988mesoamerican,boone2000stories}. The Mixtec codices, in particular, use calendrical and genealogical references through symbols rather than phonetic text, making visual classification crucial for decipherment. Foundational ethnographic and iconographic analyses laid the groundwork for understanding how meaning is encoded through symbolic combinations of numbers and day or year glyphs \cite{boone2000stories,smith1973picturewriting}.
 
-Recent computational work has begun to operationalize these iconographic insights. 
+Recent computational work has begun to operationalize these iconographic insights.
 One related work introduces a dataset of segmented figures from three Mixtec codices, Zouche-Nuttall, Selden, and Vindobonensis, and apply deep learning models (VGG-16 and ViT-B/16) to two binary classification tasks: gender and pose \cite{webber-etal-2024-analyzing}. Their experiments demonstrate that fine-tuned Vision Transformers outperform CNNs, particularly at higher learning rates, and that attention map analyses reveal alignment between model predictions and expert heuristics (e.g., visual cues like loincloths or skirts). Our work validates the feasibility deep learning approaches to low-resource cultural heritage datasets.
 
 Name-dates function as identifiers usually assigned at birth according to the 260-day ritual calendar, while year symbols locate events within a 52-year cycle. Name-dates are essential for understanding who is involved and when an event occurred in the codices, bridging the gap between image analysis and historical understanding.
-Related work explores attributes such as pose and gender to help identify individual figures \cite{webber-etal-2024-analyzing}. 
+Related work explores attributes such as pose and gender to help identify individual figures \cite{webber-etal-2024-analyzing}.
 In contrast, our classifiers interpret the temporal and referential structures that form the manuscript's narrative backbone.
 
-Beyond Mixtec codices, other work in historical document analysis has applied deep learning to ancient Egyptian hieroglyphs~\cite{egptHeiroDL} and Mayan glyphs~\cite{Can2018HowTT}. However, these efforts often rely on large labeled datasets or exploit textual regularities not present in Mixtec imagery. Our use of Vision Transformers demonstrates the potential of transformer-based architectures for low-resource, symbolic domains like semasiographic scripts. 
+Beyond Mixtec codices, other work in historical document analysis has applied deep learning to ancient Egyptian hieroglyphs~\cite{egptHeiroDL} and Mayan glyphs~\cite{Can2018HowTT}. However, these efforts often rely on large labeled datasets or exploit textual regularities not present in Mixtec imagery. Our use of Vision Transformers demonstrates the potential of transformer-based architectures for low-resource, symbolic domains like semasiographic scripts.
 
-Particularly, our approach leverages Vision Transformers (ViTs) to offer a promising view of global visual context—particularly in cases where symbols are semantically rich but structurally ambiguous. 
+Particularly, our approach leverages Vision Transformers (ViTs) to offer a promising view of global visual context—particularly in cases where symbols are semantically rich but structurally ambiguous.
 We decode symbolic elements in Mixtec codices by classifying their relevant semantic components including glyph type, identity, and number using ViTs fine-tuned via transfer learning (\Cref{fig:images-to-classifiers}).
 
 \section{Methodology}
@@ -164,10 +137,10 @@ The input to our system is a cropped image segment from annotated Mixtec codices
 Our classification pipeline is designed to decode calendrical symbols found in the Mixtec codices by identifying their type, symbolic content, and associated number. The input to this system consists of cropped image segments containing annotated name-date and year symbols, taken from the dataset introduced in~\cite{webber-etal-2024-analyzing}. This data set includes high-resolution scans of three Mixtec codices: Codex Zouche-Nuttall, Codex Selden, and Codex Vindobonensis Mexicanus I, and was initially annotated for figure-level classification tasks such as gender and pose. We extend this work by labeling symbolic units corresponding to Mixtec calendrical representations.
 
 \begin{figure}[t!]
-    \centering
-    \includegraphics[width=0.8\linewidth]{figures/classifier_pipeline_figure.png}
-    \caption{Proposed classification pipeline: Input images are fed into independent classifiers: a Name-Date/Year Classifier determines the symbol's type, a Symbol Classifier identifies the calendrical glyph (e.g., Reed or House), and a Bead Counter extracts the associated numerical value. The outputs are then combined to form the complete calendrical interpretation, such as ``Name-Date Year 12 Reed'' or ``Year 9 House.''}
-    \label{fig:images-to-classifiers}
+\centering
+\includegraphics[width=0.8\linewidth]{figures/classifier_pipeline_figure.png}
+\caption{Proposed classification pipeline: Input images are fed into independent classifiers: a Name-Date/Year Classifier determines the symbol's type, a Symbol Classifier identifies the calendrical glyph (e.g., Reed or House), and a Bead Counter extracts the associated numerical value. The outputs are then combined to form the complete calendrical interpretation, such as ``Name-Date Year 12 Reed'' or ``Year 9 House.''}
+\label{fig:images-to-classifiers}
 \end{figure}
 
 \Cref{fig:images-to-classifiers} illustrates the proposed classification pipeline. Images are processed by three classifiers: the Name-Date/Year Classifier, the Symbol Classifier, and the Bead Counter. The Name-Date/Year Classifier determines whether the symbol represents a name-date or a year. Both categories share a common structure: a pictographic glyph accompanied by one or more small circular marks or ``beads'' representing a numerical value of 1 to 13, but differ in their semantic roles. To classify an input as a year, the model must detect the presence of the AO symbol. The Symbol Classifier identifies the glyph itself. For year symbols, the classifier classifies the glyph as one of four canonical symbols: Rabbit, Reed, House, or Flint—associated with the 365-day solar calendar. For name-dates, the classifier selects from a set of 20 day signs used in the 260-day ritual calendar (e.g., Deer, Jaguar, Rain, Flower)~\cite{williams2013complete}.
@@ -177,41 +150,34 @@ The Bead Counter, which counts the number of beads depicted alongside the glyph.
 We implement each component in the pipeline using a fine-tuned Vision Transformer (ViT-B/16) model~\cite{dosovitskiy2021an} trained on task-specific subsets of the annotated symbol dataset.
 
 \subsection{Vision Transformer Architecture}
-We fine-tune a Vision Transformer (ViT-B/16) model~\cite{dosovitskiy2021an} for each of the classification tasks described in our pipeline. 
-%The ViT-B/16 architecture, introduced by, divides each input image into non-overlapping 16$\times$16 patches, which are then linearly embedded and fed into a standard Transformer encoder. 
+We fine-tune a Vision Transformer (ViT-B/16) model~\cite{dosovitskiy2021an} for each of the classification tasks described in our pipeline.
+
 This architecture is particularly effective in capturing both local and global visual dependencies, making it suitable for distinguishing the subtle symbolic differences present in Mixtec codices.
 
 We initialize our ViT-B/16 models with default weights from the \texttt{torchvision.models} module. For each classification task—type identification (name-date vs year), glyph classification, and bead counting, we replace the original classification head with a task-specific linear layer. The backbone of the pre-trained ViT is frozen to preserve general visual features, while we train the classification head on our Mixtec symbol dataset.
 
-
 We adopt cross-entropy loss and the Adam optimizer with a learning rate of 0.001. To enhance reproducibility, we fix random seeds and use the automated image pre-processing pipeline associated with the pre-trained ViT weights, including resizing, normalization, and color adjustments.
 
-We perform fine-tuning using a single A100 GPU, with a batch size of 32 and up to 16 parallel data-loading workers. We trained each classifier for 10 epochs, as visual inspection of the loss curves in \Cref{fig:training-loss} indicated plateaus in training and test loss.%, with training loss largely plateaued and test loss showing signs of stabilization. 
+We perform fine-tuning using a single A100 GPU, with a batch size of 32 and up to 16 parallel data-loading workers. We trained each classifier for 10 epochs, as visual inspection of the loss curves in \Cref{fig:training-loss} indicated plateaus in training and test loss.
 
-Given the limited size of our dataset, we employ transfer learning to leverage the representational power of ViTs pre-trained on large-scale natural image corpora. 
+Given the limited size of our dataset, we employ transfer learning to leverage the representational power of ViTs pre-trained on large-scale natural image corpora.
 
 \begin{figure}
-    \centering
-    \includegraphics[width=1\linewidth]{figures/loss_curves.png}
-    \caption{Loss Curves for ViT Classifiers - (a) Namedate-year, (b) Symbol Classifier, and (c) Bead Counter. Each subplot illustrates the progression of both training and testing loss over 10 epochs.}
-    \label{fig:training-loss}
+\centering
+\includegraphics[width=1\linewidth]{figures/loss_curves.png}
+\caption{Loss Curves for ViT Classifiers - (a) Namedate-year, (b) Symbol Classifier, and (c) Bead Counter. Each subplot illustrates the progression of both training and testing loss over 10 epochs.}
+\label{fig:training-loss}
 \end{figure}
-
-%\subsection{Transfer Learning and Fine-Tuning}
-%We freeze all the layers except the last layer of the model to retain general visual features and fine-tune only the final layer and classification head for each of the three classifiers.
-
 
 \subsection{Data Augmentation}
 
 To enhance model generalization and mitigate overfitting due to limited training data, we apply four data augmentation techniques to the Mixtec symbol images. The dataset is partitioned into training and test sets in a 70:30 ratio, yielding 48,742 training images and 20,889 test images. Data augmentation is applied iteratively, with each augmentation technique performed sequentially. After each augmentation step, the augmented images are added to the existing dataset, progressively increasing the total number of images.
 
- 
 \begin{description}[noitemsep,nolistsep]
-    \item [{Random Rotation:}] Images are rotated at varying angles to simulate the diverse orientations in which symbols may appear across different codices.
-    \item \textbf{Color Jittering:} Controlled adjustments to brightness, contrast, and hue are applied to account for visual inconsistencies such as faded ink, aged parchment, and scanning artifacts.
-    \item [{Random Masking:}] Portions of the symbols are randomly occluded to encourage the model to learn discriminative features from partial inputs and improve resilience to damage or incomplete glyphs.
-    \item [{Oversampling of Underrepresented Classes:}] Classes with fewer examples (especially rarer day or year symbols) are augmented more heavily to balance the class distribution within the dataset.
-
+\item [{Random Rotation:}] Images are rotated at varying angles to simulate the diverse orientations in which symbols may appear across different codices.
+\item \textbf{Color Jittering:} Controlled adjustments to brightness, contrast, and hue are applied to account for visual inconsistencies such as faded ink, aged parchment, and scanning artifacts.
+\item [{Random Masking:}] Portions of the symbols are randomly occluded to encourage the model to learn discriminative features from partial inputs and improve resilience to damage or incomplete glyphs.
+\item [{Oversampling of Underrepresented Classes:}] Classes with fewer examples (especially rarer day or year symbols) are augmented more heavily to balance the class distribution within the dataset.
 
 \end{description}
 
@@ -222,21 +188,21 @@ These augmentations, improving the robustness of the classifiers to visual noise
 \Cref{tab:accuracy-summary} shows the test results after 10 epochs of training.
 The \textit{type classifier} and \textit{symbol classifier} achieve better performance than \textit{bead counter}. The binary \textit{type classifier} achieves an F1 score >.90, and \textit{symbol classifier} achieves F1 score of 0.74 despite the complexity of classifying 20 visually similar glyphs. In contrast, \textit{bead counter} shows a >.50 gap between training and test accuracy, suggesting that Vision Transformers are ineffective for counting repetitive visual elements.
 
-Vision Transformers (ViTs), while effective at symbolic classification, performed poorly in  \textit{bead counter} tests, with an F1 score of 0.22. The beads in the Mixtec codices are small, repetitive, and closely spaced, conditions that challenge ViTs, which lack the local spatial biases that convolutional networks naturally possess~\cite{d2021convit}. %These results suggest that object-detection- or localization-based models may be more appropriate for counting tasks in this domain.
+Vision Transformers (ViTs), while effective at symbolic classification, performed poorly in  \textit{bead counter} tests, with an F1 score of 0.22. The beads in the Mixtec codices are small, repetitive, and closely spaced, conditions that challenge ViTs, which lack the local spatial biases that convolutional networks naturally possess~\cite{d2021convit}.
 
 \begin{table}[ht]
-  \centering
-  \begin{tabular}{cccccc} 
-    \toprule
-    \textbf{Classifier} & \textbf{Train Accuracy} & \textbf{Test Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
-    \midrule
-    Type Classifier & 0.9892 & 0.9795 & 0.9697  & 0.9209 & 0.9436  \\
-    Symbol Classifier & 0.9773 & 0.8562 & 0.7491 & 0.7318 & 0.7367 \\
-    Bead Counter & 0.7748 & 0.2589 &  0.2372 & 0.2201 & 0.2283  \\ 
-    \bottomrule
-  \end{tabular}
-  \caption{Training accuracy and test accuracy, precision, recall and F1 score for each classifier after 10 epochs.}
-  \label{tab:accuracy-summary}
+\centering
+\begin{tabular}{cccccc}
+\toprule
+\textbf{Classifier} & \textbf{Train Accuracy} & \textbf{Test Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
+\midrule
+Type Classifier & 0.9892 & 0.9795 & 0.9697  & 0.9209 & 0.9436  \\
+Symbol Classifier & 0.9773 & 0.8562 & 0.7491 & 0.7318 & 0.7367 \\
+Bead Counter & 0.7748 & 0.2589 &  0.2372 & 0.2201 & 0.2283  \\
+\bottomrule
+\end{tabular}
+\caption{Training accuracy and test accuracy, precision, recall and F1 score for each classifier after 10 epochs.}
+\label{tab:accuracy-summary}
 \end{table}
 
 \section{Discussion}
@@ -248,8 +214,6 @@ However, ViTs performed poorly on the bead counting task, with an F1 score aroun
 \section{Future Work}
 
 The classifiers developed in this work—focused on identifying name-dates, year symbols, and their numeric prefixes serve as foundational components for building a machine interpreter capable of analyzing Mixtec codices at scale. When integrated with other visual classifiers, these modules can support more comprehensive semantic parsing of codical scenes.
-
-%In particular, our classifiers address the calendrical dimension of Mixtec narratives, which is critical for determining when an event occurred and who was involved. This complements visual scene interpretation pipelines and offers a clear path toward a full machine-based interpretation of semasiographic manuscripts.
 
 Our current results are promising for symbolic classification; future work must explore more suitable models for tasks requiring fine-grained spatial reasoning, such as bead counting.
 Object detection or segmentation-based architectures (e.g., YOLO, Mask R-CNN) may offer greater accuracy for localizing and enumerating repeated visual units like beads. Incorporating such models would strengthen the pipeline’s ability to extract structured temporal data from codices.
@@ -266,45 +230,6 @@ Furthermore, our model does not incorporate context. Symbols are classified in i
 
 Finally, we have not integrated feedback loops with domain experts or stakeholders in the Mixtec community but we hope this work will spur these necessary collaborations.
 
-% \section*{Acknowledgments}
-
-
-
-% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix.
 \printbibliography
 
-% You can include an appendix using the following command
-% You can include an appendix using the following command
-% \appendix
-
-% \section{Model Training Curves} \label{appdx:first}
-
-% % --- Figures for the appendix, placed directly after the section heading ---
-% % Removed float specifiers to try and force "here" placement.
-% % If they still float, the package 'float' with [H] would be the next step,
-% % but template guidelines suggest avoiding extra packages.
-
-% \begin{figure}[h] % No float specifier to force placement
-%     \centering
-%     \includegraphics[width=0.5\linewidth]{namedate-year (2).png}
-%     \caption{Accuracy and loss curves for the \textbf{Name-Date/Year Type Classifier}. The model converges well and shows minimal overfitting.}
-  \label{fig:type-classifier}
-%     
-% \end{figure}
-
-% \begin{figure}[h]
-%     \centering
-%     \includegraphics[width=0.5\linewidth]{symbol (1).png}
-%     \caption{Performance curves for the \textbf{Symbol Classifier}. The model generalizes well across glyph types.}
-  \label{fig:symbol-classifier}
-%     
-% \end{figure}
-
-% \begin{figure}[h] 
-%     \centering
-%     \includegraphics[width=0.5\linewidth]{year (1).png}
-%     \caption{Training and test curves for the \textbf{Bead Counter}. The model struggles to generalize, reflecting limitations in counting tasks.}
-  \label{fig:bead-counter}
-%     
-% \end{figure}
 \end{document}

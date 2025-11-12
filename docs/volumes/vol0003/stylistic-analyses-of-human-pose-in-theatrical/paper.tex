@@ -1,59 +1,38 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-%\documentclass{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{makecell}
 \usepackage{subcaption}
-% ADD your own packages using \usepackage{}
+
 \usepackage{longtable}
 \usepackage{multirow}
 \usepackage{multicol}
 \usepackage{float}
 
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{Stylistic Analyses of Human Pose in Theatrical Performances: Computational and Historical Frameworks}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1]{Peter Broadwell}[
-  orcid=0000-0003-4371-9472
+orcid=0000-0003-4371-9472
 ]
 
 \author[2]{Michael Rau}[
-  orcid=0000-0002-2087-1386
+orcid=0000-0002-2087-1386
 ]
 
 \author[1]{Simon Wiles}[
-  orcid=0000-0001-5321-289X
+orcid=0000-0001-5321-289X
 ]
 
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 \affiliation{1}{Research Data Services, Stanford University, Stanford, USA}
 \affiliation{2}{Theater and Performance Studies, Stanford University, Stanford, USA}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{pose estimation, theater studies, semantic embeddings}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
-\pagestart{1462}
-\pageend{1473}
+\pagestart{1467}
+\pageend{1478}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
 \doi{10.63744/GxQbSDPPyqvL}
@@ -61,8 +40,6 @@
 
 \addbibresource{bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
 
 \maketitle
@@ -71,7 +48,7 @@
 This research project employs machine learning and computer vision to analyze directorial styles and other aspects of theater performances through the lens of pose and action recognition. By applying these techniques to video recordings of theatrical performances, we compare multiple performances per director to identify distinctive patterns in choreography and staging. Our approach combines distant and close viewing methodologies, allowing for a nuanced understanding of theatrical gestures and movements. By comparing different directors' uses of pose, we aim to quantify aspects of the elusive concept of directorial style. This interdisciplinary project bridges gaps between performing arts, computer science and digital humanities, offering computational insights into theatrical analysis and refining our understanding of directorial signatures in live performance.
 \end{abstract}
 
-\section{Introduction} 
+\section{Introduction}
 
 In theater studies, pose is so fundamental that it is often taken for granted, yet together with staging, it lies at the intersection of authorial intent and directorial vision. An actor's posture and gestures are affected by design choices of the costumes, set and lights and mediated by the performer's body, but directors, performers and audiences intuitively understand the power of well-crafted tableaux or precisely choreographed movement sequences. Certain iconic poses define productions: Brecht's silent scream choreography in \textit{Mother Courage and Her Children}, Bob Fosse's shoulder rolls and arm pops in \textit{The Pajama Game}, or the ensemble poses in \textit{A Chorus Line}. These indelible poses make works memorable and also serve as a shorthand for identifying directorial style.
 
@@ -104,36 +81,36 @@ A relevant prior inquiry involving the stylometric analysis of biomechanical dat
 Our initial tests involved building leave-one-out classifiers based upon per-director averages of particular feature vectors across every pose of the directors' oeuvres (excepting the held-out work). These were then compared to the average feature vector from the held-out performance via cosine similarity. These tests indicated that the 16-element view-invariant pose embeddings and 60-element action embeddings were most effective at assigning the held-out performance to the correct director.
 
 \begin{table}[t]
-  \centering 
-  \begin{tabular}{c|cccc}
-    \toprule
-    & \makecell{Motion \& \\ distance} & \makecell{Pose \\ embeddings} & \makecell{3D global \\ coordinates} & \makecell{Action \\ embeddings} \\
-    \midrule
-    LOO cosine similarity & \makecell{51.61\% \\ (16/31)} & \makecell{77.42\% \\ (24/31)} & \makecell{74.19\% \\ (23/31)} & \makecell{80.65\% \\ (25/31)} \\
-    \midrule
-    10-fold Random Forest & \makecell{57.5\% \\ stdev: 37.4\%} & \makecell{66.6\% \\ stdev: 33.7\%} & \makecell{66.6\% \\ stdev: 33.7\%} & \makecell{68.3\% \\ stdev: 31.3\%} \\
-    \midrule
-    10-fold Gaussian NB & \makecell{76.7\% \\ stdev: 26.0\%} & \makecell{75.3\% \\ stdev: 25.5\%} & \makecell{72.1\% \\ stdev: 25.3\%} & \makecell{76.9\% \\ stdev: 24.5\%} \\
-    \bottomrule
-  \end{tabular}
-  \caption{Accuracies of the specified classification approaches given different pose-related features; statistics from the Random Forest and Gaussian Naive Bayes-based classifiers reflect 10-fold cross validation. Approximately 33\% accuracy would be expected by chance.}
-  \label{tab:classification}
+\centering
+\begin{tabular}{c|cccc}
+\toprule
+& \makecell{Motion \& \\ distance} & \makecell{Pose \\ embeddings} & \makecell{3D global \\ coordinates} & \makecell{Action \\ embeddings} \\
+\midrule
+LOO cosine similarity & \makecell{51.61\% \\ (16/31)} & \makecell{77.42\% \\ (24/31)} & \makecell{74.19\% \\ (23/31)} & \makecell{80.65\% \\ (25/31)} \\
+\midrule
+10-fold Random Forest & \makecell{57.5\% \\ stdev: 37.4\%} & \makecell{66.6\% \\ stdev: 33.7\%} & \makecell{66.6\% \\ stdev: 33.7\%} & \makecell{68.3\% \\ stdev: 31.3\%} \\
+\midrule
+10-fold Gaussian NB & \makecell{76.7\% \\ stdev: 26.0\%} & \makecell{75.3\% \\ stdev: 25.5\%} & \makecell{72.1\% \\ stdev: 25.3\%} & \makecell{76.9\% \\ stdev: 24.5\%} \\
+\bottomrule
+\end{tabular}
+\caption{Accuracies of the specified classification approaches given different pose-related features; statistics from the Random Forest and Gaussian Naive Bayes-based classifiers reflect 10-fold cross validation. Approximately 33\% accuracy would be expected by chance.}
+\label{tab:classification}
 \end{table}
 
 Classifications based upon the normalized 3D body keypoints of the poses and motion and distance features within the performances at first seemed to be more responsive to genre than to each director's style. The features included average average in-place motion and sidereal (relative to the background) motion and the average distance between figures in populated frames. These features initially were only strongly proficient at differentiating the works directed by Bill T. Jones, a primarily choreographic director, from those of Romeo Castellucci and Kryztof Warlikowski, who tend to direct operas and other stage plays with less dynamic motion and poses. Subsequent classification tests involving 10-fold cross-validation with Random Forest- and Gaussian Naive Bayes-based classifiers using the same features, however, found that in some cases the averaged motion and distance features and 3D global keypoint coordinates were nearly as effective at assigning held-out performances to the proper director (Table \ref{tab:classification}).
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.9\linewidth]{figures/feature_importances_rf.png}
-  \caption{Directorial classification importances among motion and distance features calculated via mean decrease in accuracy when those elements are excluded during Random Forest classifier tests.}
-  \label{fig:disance_importances_rf}
+\centering
+\includegraphics[width=0.9\linewidth]{figures/feature_importances_rf.png}
+\caption{Directorial classification importances among motion and distance features calculated via mean decrease in accuracy when those elements are excluded during Random Forest classifier tests.}
+\label{fig:disance_importances_rf}
 \end{figure}
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.9\linewidth]{figures/feature_collinearity.png}
-  \caption{Feature collinearity among motion and distance features of directors' performances.}
-  \label{fig:disance_collinearity_rf}
+\centering
+\includegraphics[width=0.9\linewidth]{figures/feature_collinearity.png}
+\caption{Feature collinearity among motion and distance features of directors' performances.}
+\label{fig:disance_collinearity_rf}
 \end{figure}
 
 Feature importance tests among the motion and distance features based upon mean decrease in accuracy when particular features are excluded gave limited support to the notion that some movement features, as well as the median inter-pose distance, could be especially salient when differentiating between directors (Figure \ref{fig:disance_importances_rf}). A collinearity analysis indicated that all motion statistics (in-place or sidereal, 2D or 3D) were broadly collinear, as were the inter-pose distance metrics, suggesting that each of these likely could be collapsed to a single feature in future studies (Figure \ref{fig:disance_collinearity_rf}).
@@ -141,34 +118,34 @@ Feature importance tests among the motion and distance features based upon mean 
 No strongly important features were evident in tests among vectors made up of averaged normalized 3D keypoint coordinates. We note, however, that such tests conducted with an earlier version of the corpus indicated that aspects of the positioning of the right wrist were likely to correlate to particular directors. The version of the corpus used in that phase included approximately 20\% more poses whose armatures were highly extrapolated due to occlusion; they subsequently were excluded.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.9\linewidth]{figures/poem_feature_importances_nb.png}
-  \caption{Feature importances of averaged view-invariant pose embedding vectors, quantified via mean decrease in accuracy when features are excluded during Gaussian Naive Bayes classification tests.}
-  \label{fig:poem_feature_importances_nb}
+\centering
+\includegraphics[width=0.9\linewidth]{figures/poem_feature_importances_nb.png}
+\caption{Feature importances of averaged view-invariant pose embedding vectors, quantified via mean decrease in accuracy when features are excluded during Gaussian Naive Bayes classification tests.}
+\label{fig:poem_feature_importances_nb}
 \end{figure}
 
 We did not attempt feature importance evaluations among the 60-element action recognition vectors, due to the difficulties inherent to interpreting such a large vector space.
 
 \begin{figure}[t!]
-  \centering
-  \includegraphics[width=0.9\linewidth]{figures/poem_embedding_umap_labeled.png}
-  \caption{A UMAP projection of view-invariant pose embeddings (16-element vectors) of a 1\% sample of 3 million total key poses detected in a set of 31 performance videos directed by one of three contemporary theater directors. The average embeddings of each director’s entire sub-corpus are represented by large hexagons, and the average embeddings of each work are represented by diamonds.}
-  \label{fig:poem_embedding}
+\centering
+\includegraphics[width=0.9\linewidth]{figures/poem_embedding_umap_labeled.png}
+\caption{A UMAP projection of view-invariant pose embeddings (16-element vectors) of a 1\% sample of 3 million total key poses detected in a set of 31 performance videos directed by one of three contemporary theater directors. The average embeddings of each director’s entire sub-corpus are represented by large hexagons, and the average embeddings of each work are represented by diamonds.}
+\label{fig:poem_embedding}
 \end{figure}
 
 \begin{figure}[t!]
-  \centering
-  \begin{subfigure}{.4\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{figures/pose_example_fingerprint.png}
-  \end{subfigure}
-  \hspace{4em}
-  \begin{subfigure}{.4\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{figures/hand_example_fingerprint.png}
-  \end{subfigure} 
-  \caption{Sample “fingerprints” of the average similarities of the body poses (left) and hand armatures (right) from a single excerpted performance to the labeled emotional/expressive archetypes from the Delsarte system.}
-  \label{fig:fingerprints}
+\centering
+\begin{subfigure}{.4\linewidth}
+\centering
+\includegraphics[width=\linewidth]{figures/pose_example_fingerprint.png}
+\end{subfigure}
+\hspace{4em}
+\begin{subfigure}{.4\linewidth}
+\centering
+\includegraphics[width=\linewidth]{figures/hand_example_fingerprint.png}
+\end{subfigure}
+\caption{Sample “fingerprints” of the average similarities of the body poses (left) and hand armatures (right) from a single excerpted performance to the labeled emotional/expressive archetypes from the Delsarte system.}
+\label{fig:fingerprints}
 \end{figure}
 
 We observed that a few elements of the view-invariant pose embeddings, which on the whole were most effective at differentiating between directors, were highly salient to such classifications (Figure \ref{fig:poem_feature_importances_nb}). Yet the difficulties of interpreting such embeddings precluded drawing any immediate conclusions. These findings did, however, motivate further explorations of this embedding space. A UMAP projection of a sample of pose embeddings from the full corpus (Figure \ref{fig:poem_embedding}) suggests that portions of the directors' pose ``repertoires'' occupy distinct portions of the embedding space, even if the works of Castellucci and Warlikowski are overall much more similar in their pose embedding projections to each other than they are to those of Jones.
@@ -180,129 +157,125 @@ It is tempting to cherry-pick the poses from our extensive pose database that ar
 As an indication of a potential direction for future inquiries, Table \ref{tab:delsarte} provides some initial tallies of classification results when the Delsarte ``fingerprints'' based upon the feature classes discussed above are used to train classifiers of directorial styles. Only the classifiers using fingerprints calculated based upon the view-invariant pose embeddings consistently approach the classification accuracy of the raw features they are based upon (and some of the hands-based classifiers perform worse than chance). Yet the potential of these pose system ``overlays'' to improve the interpretability of the embedding space, as well as the Delsarte system's legacy as a foundational influence on modern theater, motivate further investigation along these lines.
 
 \begin{table}[h]
-  \centering 
-  \begin{tabular}{c|cccc}
-    \toprule
-    & \makecell{Pose 3D global \\ coordinates} & \makecell{Pose \\ embeddings} & \makecell{Hand joint \\ angles} & \makecell{Hand \\ embeddings} \\
-    \midrule
-    LOO cosine similarity & \makecell{70.97\% \\ (22/31)} & \makecell{64.52\% \\ (16/31)} & \makecell{48.39\% \\ (15/31)} & \makecell{48.39\% \\ (15/31)} \\
-    \midrule
-    10-fold Random Forest & \makecell{44.3\% \\ stdev: 28\%} & \makecell{70\% \\ stdev: 28.1\%} & \makecell{27.7\% \\ stdev: 27.1\%} & \makecell{44.2\% \\ stdev: 34.1\%} \\
-    \midrule
-    10-fold Gaussian NB & \makecell{48.3\% \\ stdev: 30.2\%} & \makecell{57.5\% \\ stdev: 30.4\%} & \makecell{26.7\% \\ stdev: 35.9\%} & \makecell{55\% \\ stdev: 29.9\%} \\
-    \bottomrule
-  \end{tabular}
-  \caption{Accuracies of the specified classification approaches given ``fingerprints'' based upon the average of pose and hand feature similarities to the Delsarte archetypes in the relevant latent space; statistics from Random Forest and Gaussian Naive Bayes reflect 10-fold cross validation. 33\% accuracy would be expected by chance.}
-  \label{tab:delsarte}
+\centering
+\begin{tabular}{c|cccc}
+\toprule
+& \makecell{Pose 3D global \\ coordinates} & \makecell{Pose \\ embeddings} & \makecell{Hand joint \\ angles} & \makecell{Hand \\ embeddings} \\
+\midrule
+LOO cosine similarity & \makecell{70.97\% \\ (22/31)} & \makecell{64.52\% \\ (16/31)} & \makecell{48.39\% \\ (15/31)} & \makecell{48.39\% \\ (15/31)} \\
+\midrule
+10-fold Random Forest & \makecell{44.3\% \\ stdev: 28\%} & \makecell{70\% \\ stdev: 28.1\%} & \makecell{27.7\% \\ stdev: 27.1\%} & \makecell{44.2\% \\ stdev: 34.1\%} \\
+\midrule
+10-fold Gaussian NB & \makecell{48.3\% \\ stdev: 30.2\%} & \makecell{57.5\% \\ stdev: 30.4\%} & \makecell{26.7\% \\ stdev: 35.9\%} & \makecell{55\% \\ stdev: 29.9\%} \\
+\bottomrule
+\end{tabular}
+\caption{Accuracies of the specified classification approaches given ``fingerprints'' based upon the average of pose and hand feature similarities to the Delsarte archetypes in the relevant latent space; statistics from Random Forest and Gaussian Naive Bayes reflect 10-fold cross validation. 33\% accuracy would be expected by chance.}
+\label{tab:delsarte}
 \end{table}
 
 There is an urgent need to pursue the application of statistical profiling methods, ideally targeted towards an even more extensive corpus than the present study, which are more sophisticated than simple vector averages, descriptive statistics and cosine similarities. Furthermore, a more systematic attempt to model ``gestures'' as variable-length sequences of similar poses that unfold over time, rather than simply considering them to be conceptually equivalent to static poses, is arguably overdue and has antecedents in motion capture-based studies \cite{10.1145/3272127.3275038}. Integrating action-recognition embeddings into this effort is also worth pursing.
 
 Other empirical tests of the effectiveness of computational pose stylometry might involve comparing the accuracy of actual human scholars versus machine classifier models when both are tasked with identifying the directors of excerpts from previously unseen performances. Similarly, comparing the likelihood of human experts to detect the presence of particular Delsarte pose archetypes to the archetype prevalence values outputted by our pose recognition system also would offer a more focused evaluation of the historically informed stylometric approaches outlined in this paper.
 
-Another follow-on experiment, which could provide an alternative control baseline to the assumption of random guessing, would be to compare the accuracy of our directorial classifiers based on poses, actions, motion and spatial relations to those trained on specifically non-stylistic aspects of performances, such as average duration or size of the cast. 
+Another follow-on experiment, which could provide an alternative control baseline to the assumption of random guessing, would be to compare the accuracy of our directorial classifiers based on poses, actions, motion and spatial relations to those trained on specifically non-stylistic aspects of performances, such as average duration or size of the cast.
 
 \section{Conclusion}
 
 This ongoing work represents a novel attempt to apply stylistic analyses to a large bespoke dataset of pose data generated with deep-learning technologies from in-the-wild theatrical performances. The range of potential enhancements and follow-up studies is as expansive as the set of potential features extracted via these state-of-the-art tools. Yet by focusing on isolating features that are most relevant to the quantification of directorial stylistic preferences, and by situating them within relevant historical frameworks, this study highlights some of the most promising avenues for further computational exploration of the compelling topic of theatrical pose.
 
-%\section*{Acknowledgments}
-
-
 \begin{longtable}{c|cccccccc}
-  \toprule
-  \makecell{Performance} & \makecell{Duration} & \makecell{Poses} & \makecell{Shots} & \makecell{Tracks} & \makecell{Poses \\ / pop. \\ frame} & \makecell{Inter \\ -pose  \\ dist \\ / pop. \\ frame \\ (m)} & \makecell{Side- \\ real \\ move- \\ ment \\ (m/s)} & \makecell{3D \\ move- \\ ment \\ (m/s)} \\
-  \endfirsthead
-  
-  \multicolumn{9}{c}%
-  {{\bfseries \tablename\ \thetable{} -- continued from previous page}} \\
-  \toprule
-  \makecell{Performance} & \makecell{Duration} & \makecell{Poses} & \makecell{Shots} & \makecell{Tracks} & \makecell{Poses \\ / pop. \\ frame} & \makecell{Inter \\ -pose  \\ dist \\ / pop. \\ frame \\ (m)} & \makecell{Side- \\ real \\ move- \\ ment \\ (m/s)} & \makecell{3D \\ move- \\ ment \\ (m/s)} \\
-  \bottomrule
-  \endhead
-  
-  \midrule \multicolumn{9}{r}{{Continued on next page}} \\
-  \endfoot
-  
-  \bottomrule
-  \endlastfoot
+\toprule
+\makecell{Performance} & \makecell{Duration} & \makecell{Poses} & \makecell{Shots} & \makecell{Tracks} & \makecell{Poses \\ / pop. \\ frame} & \makecell{Inter \\ -pose  \\ dist \\ / pop. \\ frame \\ (m)} & \makecell{Side- \\ real \\ move- \\ ment \\ (m/s)} & \makecell{3D \\ move- \\ ment \\ (m/s)} \\
+\endfirsthead
 
-  \midrule[\heavyrulewidth]
-  \midrule
-  \multicolumn{9}{c}{\textbf{Bill T. Jones}} \\
-  \midrule
-  \makecell{A Letter to \\ My Nephew} & \makecell{1:09:02} & \makecell{308088} & \makecell{698} & \makecell{182} & \makecell{3.373} & \makecell{2.339} & \makecell{0.652} & \makecell{1.645} \\
-  \cmidrule{1-9}
-  \makecell{Analogy/Dora: \\ Tramontane} & \makecell{1:17:12} & \makecell{411046} & \makecell{2136} & \makecell{1794} & \makecell{3.269} & \makecell{1.851} & \makecell{0.534} & \makecell{1.361} \\
-  \cmidrule{1-9}
-  \makecell{A Quarrelling \\ Pair} & \makecell{1:17:50} & \makecell{267257} & \makecell{759} & \makecell{729} & \makecell{2.144} & \makecell{1.722} & \makecell{0.753} & \makecell{1.716} \\
-  \cmidrule{1-9}
-  \makecell{D-Man in \\ the Waters} & \makecell{0:35:10} & \makecell{141191} & \makecell{855} & \makecell{110} & \makecell{3.125} & \makecell{2.559} & \makecell{0.540} & \makecell{1.235} \\
-  \cmidrule{1-9}
-  \makecell{Fondly Do \\ We Hope... \\ Fervently Do \\ We Pray} & \makecell{1:23:55} & \makecell{435160} & \makecell{1001} & \makecell{846} & \makecell{2.872} & \makecell{2.580} & \makecell{1.115} & \makecell{2.508} \\
-  \cmidrule{1-9}
-  \makecell{Holzer Duet... \\ Truisms} & \makecell{0:17:45} & \makecell{43206} & \makecell{88} & \makecell{65} & \makecell{3.158} & \makecell{2.009} & \makecell{0.539} & \makecell{1.379} \\
-  \cmidrule{1-9}
-  \makecell{Play and Play} & \makecell{1:12:50} & \makecell{462918} & \makecell{2359} & \makecell{230} & \makecell{1.547} & \makecell{1.211} & \makecell{0.462} & \makecell{1.500} \\
-  \cmidrule{1-9}
-  \makecell{Secret Pastures} & \makecell{1:33:54} & \makecell{419080} & \makecell{1470} & \makecell{14} & \makecell{3.521} & \makecell{1.828} & \makecell{0.687} & \makecell{1.901} \\
-  \cmidrule{1-9}
-  \makecell{Story/Time: \\ The Life of \\ an Idea} & \makecell{1:13:35} & \makecell{402026} & \makecell{1470} & \makecell{869} & \makecell{2.934} & \makecell{2.920} & \makecell{1.076} & \makecell{1.935} \\
-  \cmidrule{1-9}
-  \makecell{We Shall Not \\ Be Moved} & \makecell{1:57:30} & \makecell{633482} & \makecell{3244} & \makecell{4111} & \makecell{3.128} & \makecell{2.016} & \makecell{0.608} & \makecell{1.553} \\
-  \cmidrule{1-9}
-  \makecell{Analogy/Ambros: \\ The Emigrant} & \makecell{1:17:15} & \makecell{313735} & \makecell{1410} & \makecell{236} & \makecell{3.352} & \makecell{2.226} & \makecell{0.311} & \makecell{0.731} \\
-  \midrule[\heavyrulewidth]
-  \midrule
-  \multicolumn{9}{c}{\textbf{Romeo Castellucci}} \\
-  \midrule
-  \makecell{Das Floß der \\ Medusa (Henze)} & \makecell{1:21:35} & \makecell{114133} & \makecell{724} & \makecell{549} & \makecell{1.433} & \makecell{3.159} & \makecell{0.274} & \makecell{0.671} \\
-  \cmidrule{1-9}
-  \makecell{Democracy \\ in America} & \makecell{1:43:05} & \makecell{219148} & \makecell{524} & \makecell{46} & \makecell{2.469} & \makecell{2.906} & \makecell{0.496} & \makecell{0.715} \\
-  \cmidrule{1-9}
-  \makecell{Don Giovanni \\ (Mozart)} & \makecell{3:30:01} & \makecell{897915} & \makecell{5155} & \makecell{1009} & \makecell{2.990} & \makecell{1.853} & \makecell{0.334} & \makecell{0.748} \\
-  \cmidrule{1-9}
-  \makecell{Go Down, Moses} & \makecell{1:02:40} & \makecell{122960} & \makecell{289} & \makecell{78} & \makecell{1.818} & \makecell{1.626} & \makecell{0.268} & \makecell{0.692} \\
-  \cmidrule{1-9}
-  \makecell{Inferno} & \makecell{1:36:16} & \makecell{345711} & \makecell{2837} & \makecell{799} & \makecell{3.086} & \makecell{1.874} & \makecell{0.348} & \makecell{0.727} \\
-  \cmidrule{1-9}
-  \makecell{Parsifal (Wagner)} & \makecell{3:58:29} & \makecell{780960} & \makecell{3551} & \makecell{847} & \makecell{2.452} & \makecell{1.966} & \makecell{0.198} & \makecell{0.503} \\
-  \cmidrule{1-9}
-  \makecell{Purgatorio} & \makecell{1:13:48} & \makecell{93387} & \makecell{399} & \makecell{392} & \makecell{1.163} & \makecell{1.062} & \makecell{0.254} & \makecell{0.719} \\
-  \cmidrule{1-9}
-  \makecell{Requiem \\ (Mozart)} & \makecell{1:38:57} & \makecell{507498} & \makecell{2874} & \makecell{365} & \makecell{4.449} & \makecell{2.003} & \makecell{0.374} & \makecell{0.878} \\
-  \cmidrule{1-9}
-  \makecell{Resurrección \\ (Gustav Mahler)} & \makecell{1:40:15} & \makecell{295840} & \makecell{2212} & \makecell{610} & \makecell{2.709} & \makecell{1.990} & \makecell{0.476} & \makecell{1.095} \\
-  \cmidrule{1-9}
-  \makecell{The Magic Flute \\ (Mozart)} & \makecell{2:43:15} & \makecell{763697} & \makecell{4385} & \makecell{863} & \makecell{3.592} & \makecell{1.827} & \makecell{0.193} & \makecell{0.496} \\
-  \pagebreak
-  \midrule
-  \multicolumn{9}{c}{\textbf{Kryztof Warlikowski}} \\
-  \midrule
-  \makecell{Bluebeard's Castle \\ (Bartók) / \\ La voix humaine \\ (Poulenc)} & \makecell{2:02:19} & \makecell{278984} & \makecell{1389} & \makecell{736} & \makecell{1.667} & \makecell{1.563} & \makecell{0.243} & \makecell{0.662} \\
-  \cmidrule{1-9}
-  \makecell{Die Gezeichneten \\ (Schreker)} & \makecell{3:48:41} & \makecell{954114} & \makecell{5454} & \makecell{1345} & \makecell{2.962} & \makecell{2.025} & \makecell{0.262} & \makecell{0.603} \\
-  \cmidrule{1-9}
-  \makecell{Elektra (Strauss)} & \makecell{2:06:25} & \makecell{324719} & \makecell{1220} & \makecell{532} & \makecell{2.03} & \makecell{1.599} & \makecell{0.226} & \makecell{0.564} \\
-  \cmidrule{1-9}
-  \makecell{Iphigénie en \\ Tauride \\ (Gluck)} & \makecell{2:11:26} & \makecell{510703} & \makecell{2648} & \makecell{822} & \makecell{2.708} & \makecell{1.674} & \makecell{0.207} & \makecell{0.526} \\
-  \cmidrule{1-9}
-  \makecell{Lady Macbeth \\ of Mtsensk \\ (Shostakovich) \\ pt. 1} & \makecell{1:47:13} & \makecell{412434} & \makecell{3402} & \makecell{774} & \makecell{2.533} & \makecell{2.017} & \makecell{0.295} & \makecell{0.719} \\
-  \cmidrule{1-9}
-  \makecell{Lady Macbeth \\ of Mtsensk \\ (Shostakovich) \\ pt. 2} & \makecell{1:17:36} & \makecell{446255} & \makecell{3619} & \makecell{526} & \makecell{3.827} & \makecell{1.903} & \makecell{0.325} & \makecell{0.658} \\
-  \cmidrule{1-9}
-  \makecell{Médée \\ (Cherubini)} & \makecell{2:24:41} & \makecell{653184} & \makecell{4443} & \makecell{1029} & \makecell{3.090} & \makecell{1.919} & \makecell{0.258} & \makecell{0.607} \\
-  \cmidrule{1-9}
-  \makecell{Les Contes \\ d'Hoffmann \\ (Offenbach)} & \makecell{3:08:39} & \makecell{930245} & \makecell{6181} & \makecell{1432} & \makecell{3.346} & \makecell{1.600} & \makecell{0.250} & \makecell{0.627} \\
-  \cmidrule{1-9}
-  \makecell{The French} & \makecell{3:45:47} & \makecell{906390} & \makecell{3410} & \makecell{982} & \makecell{2.163} & \makecell{1.494} & \makecell{0.175} & \makecell{0.504} \\
-  \cmidrule{1-9}
-  \makecell{Wozzeck (Berg)} & \makecell{1:45:20} & \makecell{352588} & \makecell{2766} & \makecell{887} & \makecell{2.294} & \makecell{1.398} & \makecell{0.309} & \makecell{0.744} \\
-  \midrule[\heavyrulewidth]
-  \caption{A listing of the performance dataset, divided into sections by director. Each row gives a performance's title, duration of the recording, number of poses, shots, and tracked motions detected in the performance, average (mean) number of poses in each frame with at least one pose, mean inter-pose distance in frames with poses, mean sidereal (relative to the background) motion, and mean motion in three-dimensional space. } \label{tab:performances} \\
+\multicolumn{9}{c}
+{{\bfseries \tablename\ \thetable{} -- continued from previous page}} \\
+\toprule
+\makecell{Performance} & \makecell{Duration} & \makecell{Poses} & \makecell{Shots} & \makecell{Tracks} & \makecell{Poses \\ / pop. \\ frame} & \makecell{Inter \\ -pose  \\ dist \\ / pop. \\ frame \\ (m)} & \makecell{Side- \\ real \\ move- \\ ment \\ (m/s)} & \makecell{3D \\ move- \\ ment \\ (m/s)} \\
+\bottomrule
+\endhead
+
+\midrule \multicolumn{9}{r}{{Continued on next page}} \\
+\endfoot
+
+\bottomrule
+\endlastfoot
+
+\midrule[\heavyrulewidth]
+\midrule
+\multicolumn{9}{c}{\textbf{Bill T. Jones}} \\
+\midrule
+\makecell{A Letter to \\ My Nephew} & \makecell{1:09:02} & \makecell{308088} & \makecell{698} & \makecell{182} & \makecell{3.373} & \makecell{2.339} & \makecell{0.652} & \makecell{1.645} \\
+\cmidrule{1-9}
+\makecell{Analogy/Dora: \\ Tramontane} & \makecell{1:17:12} & \makecell{411046} & \makecell{2136} & \makecell{1794} & \makecell{3.269} & \makecell{1.851} & \makecell{0.534} & \makecell{1.361} \\
+\cmidrule{1-9}
+\makecell{A Quarrelling \\ Pair} & \makecell{1:17:50} & \makecell{267257} & \makecell{759} & \makecell{729} & \makecell{2.144} & \makecell{1.722} & \makecell{0.753} & \makecell{1.716} \\
+\cmidrule{1-9}
+\makecell{D-Man in \\ the Waters} & \makecell{0:35:10} & \makecell{141191} & \makecell{855} & \makecell{110} & \makecell{3.125} & \makecell{2.559} & \makecell{0.540} & \makecell{1.235} \\
+\cmidrule{1-9}
+\makecell{Fondly Do \\ We Hope... \\ Fervently Do \\ We Pray} & \makecell{1:23:55} & \makecell{435160} & \makecell{1001} & \makecell{846} & \makecell{2.872} & \makecell{2.580} & \makecell{1.115} & \makecell{2.508} \\
+\cmidrule{1-9}
+\makecell{Holzer Duet... \\ Truisms} & \makecell{0:17:45} & \makecell{43206} & \makecell{88} & \makecell{65} & \makecell{3.158} & \makecell{2.009} & \makecell{0.539} & \makecell{1.379} \\
+\cmidrule{1-9}
+\makecell{Play and Play} & \makecell{1:12:50} & \makecell{462918} & \makecell{2359} & \makecell{230} & \makecell{1.547} & \makecell{1.211} & \makecell{0.462} & \makecell{1.500} \\
+\cmidrule{1-9}
+\makecell{Secret Pastures} & \makecell{1:33:54} & \makecell{419080} & \makecell{1470} & \makecell{14} & \makecell{3.521} & \makecell{1.828} & \makecell{0.687} & \makecell{1.901} \\
+\cmidrule{1-9}
+\makecell{Story/Time: \\ The Life of \\ an Idea} & \makecell{1:13:35} & \makecell{402026} & \makecell{1470} & \makecell{869} & \makecell{2.934} & \makecell{2.920} & \makecell{1.076} & \makecell{1.935} \\
+\cmidrule{1-9}
+\makecell{We Shall Not \\ Be Moved} & \makecell{1:57:30} & \makecell{633482} & \makecell{3244} & \makecell{4111} & \makecell{3.128} & \makecell{2.016} & \makecell{0.608} & \makecell{1.553} \\
+\cmidrule{1-9}
+\makecell{Analogy/Ambros: \\ The Emigrant} & \makecell{1:17:15} & \makecell{313735} & \makecell{1410} & \makecell{236} & \makecell{3.352} & \makecell{2.226} & \makecell{0.311} & \makecell{0.731} \\
+\midrule[\heavyrulewidth]
+\midrule
+\multicolumn{9}{c}{\textbf{Romeo Castellucci}} \\
+\midrule
+\makecell{Das Floß der \\ Medusa (Henze)} & \makecell{1:21:35} & \makecell{114133} & \makecell{724} & \makecell{549} & \makecell{1.433} & \makecell{3.159} & \makecell{0.274} & \makecell{0.671} \\
+\cmidrule{1-9}
+\makecell{Democracy \\ in America} & \makecell{1:43:05} & \makecell{219148} & \makecell{524} & \makecell{46} & \makecell{2.469} & \makecell{2.906} & \makecell{0.496} & \makecell{0.715} \\
+\cmidrule{1-9}
+\makecell{Don Giovanni \\ (Mozart)} & \makecell{3:30:01} & \makecell{897915} & \makecell{5155} & \makecell{1009} & \makecell{2.990} & \makecell{1.853} & \makecell{0.334} & \makecell{0.748} \\
+\cmidrule{1-9}
+\makecell{Go Down, Moses} & \makecell{1:02:40} & \makecell{122960} & \makecell{289} & \makecell{78} & \makecell{1.818} & \makecell{1.626} & \makecell{0.268} & \makecell{0.692} \\
+\cmidrule{1-9}
+\makecell{Inferno} & \makecell{1:36:16} & \makecell{345711} & \makecell{2837} & \makecell{799} & \makecell{3.086} & \makecell{1.874} & \makecell{0.348} & \makecell{0.727} \\
+\cmidrule{1-9}
+\makecell{Parsifal (Wagner)} & \makecell{3:58:29} & \makecell{780960} & \makecell{3551} & \makecell{847} & \makecell{2.452} & \makecell{1.966} & \makecell{0.198} & \makecell{0.503} \\
+\cmidrule{1-9}
+\makecell{Purgatorio} & \makecell{1:13:48} & \makecell{93387} & \makecell{399} & \makecell{392} & \makecell{1.163} & \makecell{1.062} & \makecell{0.254} & \makecell{0.719} \\
+\cmidrule{1-9}
+\makecell{Requiem \\ (Mozart)} & \makecell{1:38:57} & \makecell{507498} & \makecell{2874} & \makecell{365} & \makecell{4.449} & \makecell{2.003} & \makecell{0.374} & \makecell{0.878} \\
+\cmidrule{1-9}
+\makecell{Resurrección \\ (Gustav Mahler)} & \makecell{1:40:15} & \makecell{295840} & \makecell{2212} & \makecell{610} & \makecell{2.709} & \makecell{1.990} & \makecell{0.476} & \makecell{1.095} \\
+\cmidrule{1-9}
+\makecell{The Magic Flute \\ (Mozart)} & \makecell{2:43:15} & \makecell{763697} & \makecell{4385} & \makecell{863} & \makecell{3.592} & \makecell{1.827} & \makecell{0.193} & \makecell{0.496} \\
+\pagebreak
+\midrule
+\multicolumn{9}{c}{\textbf{Kryztof Warlikowski}} \\
+\midrule
+\makecell{Bluebeard's Castle \\ (Bartók) / \\ La voix humaine \\ (Poulenc)} & \makecell{2:02:19} & \makecell{278984} & \makecell{1389} & \makecell{736} & \makecell{1.667} & \makecell{1.563} & \makecell{0.243} & \makecell{0.662} \\
+\cmidrule{1-9}
+\makecell{Die Gezeichneten \\ (Schreker)} & \makecell{3:48:41} & \makecell{954114} & \makecell{5454} & \makecell{1345} & \makecell{2.962} & \makecell{2.025} & \makecell{0.262} & \makecell{0.603} \\
+\cmidrule{1-9}
+\makecell{Elektra (Strauss)} & \makecell{2:06:25} & \makecell{324719} & \makecell{1220} & \makecell{532} & \makecell{2.03} & \makecell{1.599} & \makecell{0.226} & \makecell{0.564} \\
+\cmidrule{1-9}
+\makecell{Iphigénie en \\ Tauride \\ (Gluck)} & \makecell{2:11:26} & \makecell{510703} & \makecell{2648} & \makecell{822} & \makecell{2.708} & \makecell{1.674} & \makecell{0.207} & \makecell{0.526} \\
+\cmidrule{1-9}
+\makecell{Lady Macbeth \\ of Mtsensk \\ (Shostakovich) \\ pt. 1} & \makecell{1:47:13} & \makecell{412434} & \makecell{3402} & \makecell{774} & \makecell{2.533} & \makecell{2.017} & \makecell{0.295} & \makecell{0.719} \\
+\cmidrule{1-9}
+\makecell{Lady Macbeth \\ of Mtsensk \\ (Shostakovich) \\ pt. 2} & \makecell{1:17:36} & \makecell{446255} & \makecell{3619} & \makecell{526} & \makecell{3.827} & \makecell{1.903} & \makecell{0.325} & \makecell{0.658} \\
+\cmidrule{1-9}
+\makecell{Médée \\ (Cherubini)} & \makecell{2:24:41} & \makecell{653184} & \makecell{4443} & \makecell{1029} & \makecell{3.090} & \makecell{1.919} & \makecell{0.258} & \makecell{0.607} \\
+\cmidrule{1-9}
+\makecell{Les Contes \\ d'Hoffmann \\ (Offenbach)} & \makecell{3:08:39} & \makecell{930245} & \makecell{6181} & \makecell{1432} & \makecell{3.346} & \makecell{1.600} & \makecell{0.250} & \makecell{0.627} \\
+\cmidrule{1-9}
+\makecell{The French} & \makecell{3:45:47} & \makecell{906390} & \makecell{3410} & \makecell{982} & \makecell{2.163} & \makecell{1.494} & \makecell{0.175} & \makecell{0.504} \\
+\cmidrule{1-9}
+\makecell{Wozzeck (Berg)} & \makecell{1:45:20} & \makecell{352588} & \makecell{2766} & \makecell{887} & \makecell{2.294} & \makecell{1.398} & \makecell{0.309} & \makecell{0.744} \\
+\midrule[\heavyrulewidth]
+\caption{A listing of the performance dataset, divided into sections by director. Each row gives a performance's title, duration of the recording, number of poses, shots, and tracked motions detected in the performance, average (mean) number of poses in each frame with at least one pose, mean inter-pose distance in frames with poses, mean sidereal (relative to the background) motion, and mean motion in three-dimensional space. } \label{tab:performances} \\
 \end{longtable}
 
-% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
 \printbibliography
 
 \end{document}

@@ -1,78 +1,50 @@
-% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
-% *Anthology of Computers and the Humanities*. ADD THE OPTION
-% 'final' WHEN CREATING THE FINAL VERSION OF THE PAPER. 
-% DO NOT change the documentclass
-\documentclass[final]{anthology-ch} % for the final version
-% \documentclass{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
-% LOAD LaTeX PACKAGES
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{alphabeta}
 
-% ADD your own packages using \usepackage{}
-
-% TITLE OF THE SUBMISSION
-% Change this to the name of your submission
 \title{Towards a Computational Study of Ancient Greek Rhyme}
 
-% AUTHOR AND AFFILIATION INFORMATION
-% For each author, include a new call to the \author command, with
-% the numbers in brackets indicating the associated affiliations 
-% (next section) and ORCID-ID for each author.  
 \author[1,2]{Keith Begley}[
-  orcid=0000-0003-1448-4344
+orcid=0000-0003-1448-4344
 ]
 
 \author[3]{Leon Wash}[
-  orcid=0000-0003-4437-1236
+orcid=0000-0003-4437-1236
 ]
 
-% There should be one call to \affiliation for each affiliation of
-% the authors. Multiple affiliations can be given to each author
-% and an affiliation can be given to multiple authors. 
 \affiliation{1}{School of Computer Science and Statistics, Trinity College Dublin, Ireland}
 \affiliation{2}{Honorary Associate, Department of Philosophy, Durham University, United Kingdom}
 \affiliation{3}{Department of Classics, Trinity College Dublin, Ireland}
 
-% KEYWORDS
-% Provide one or more keywords or key phrases seperated by commas
-% using the following command
 \keywords{rhyme, \textit{homoeoteleuton}, ancient Greek poetry, hexameter, rhetoric, computational philology}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
 \pagestart{509}
 \pageend{522}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/wzq90UqABYVz}  
+\doi{10.63744/wzq90UqABYVz}
 \paperorder{31}
 
 \addbibresource{bibliography.bib}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HERE IS THE START OF THE TEXT
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
-This paper presents a new program, Greek Rhyme Yielder (GRY), written by the authors in order to gather rhyme (or rhyme-like) phenomena and statistics about them from ancient Greek texts. The goal of the larger research project is to intervene in an old and lingering debate about whether there is any rhyme at all in ancient Greek poetry. The method is an empirical study of relevant digital corpora, combined with close readings of relevant passages. The purposes of this paper are: to explain the program, its capabilities, and its use, especially for those who may be interested in using it themselves; and to lay out some initial results and their significance for that old debate. 
+This paper presents a new program, Greek Rhyme Yielder (GRY), written by the authors in order to gather rhyme (or rhyme-like) phenomena and statistics about them from ancient Greek texts. The goal of the larger research project is to intervene in an old and lingering debate about whether there is any rhyme at all in ancient Greek poetry. The method is an empirical study of relevant digital corpora, combined with close readings of relevant passages. The purposes of this paper are: to explain the program, its capabilities, and its use, especially for those who may be interested in using it themselves; and to lay out some initial results and their significance for that old debate.
 \end{abstract}
-% \section{Introduction} 
-
-% Here is an example of the first section of the paper. You may modify \texttt{paper.tex} by renaming, deleting, or adding sections of your own and substituting our instructional text with the text of your paper. Add references to previous work to \texttt{biblography.bib} as BibTeX entries. Refer to the Conference Call for Papers (CfP) for details about submission types and paper lengths. Do \textit{not} modify \texttt{anthology-ch.cls} when editing this template. 
 
 \section{Introduction}
 \label{1intro}
 
 Although it has been simmering down over the last fifty years or so, for centuries there has been a debate over whether there is any rhyme in ancient Greek poetry. Many have claimed that there is not any rhyme: rhyme is allegedly too artificial, barbaric, childish, feminine, or medieval for the ancient Greeks. Some scholars, acknowledging that certain verses do seem to rhyme, have asserted that any apparent rhymes are merely accidental. Others have conceded that rhyme was employed occasionally, but restricted to particular genres or contexts, such as lullabies, hymns, or comic poetry. Few have argued that rhyme phenomena are more widespread. But some attempts to catalogue possible rhymes in Greek poetry were published already in the nineteenth century, and by the 1960s, the potential for a computer-assisted study was being noted (as discussed with references below). Yet until now no attempt at a thorough and systematic study has been made. Instead, over the last half-century, occasional observations and arguments about rhyme phenomena have been popping up like rare mushrooms in commentaries on Homer and Hesiod and elsewhere. Scholars are thus proving more and more receptive to the assumption that there are some rhymes already in Homer, even if they are not focusing on them.
 
-The time is ripe therefore for a concerted study of the problem. As we see it, it requires a two-fold approach. The first element is careful analysis of the linguistic, metrical, and other poetical (or ‘rhetorical’) factors that are involved in any given instance and may characterize general patterns. The second is a thorough and systematic study of a large corpus of texts, which will allow us to assess the various claims that have been made with reference to data from large samples and therefore by means of statistical calculations of greater reliability. 
+The time is ripe therefore for a concerted study of the problem. As we see it, it requires a two-fold approach. The first element is careful analysis of the linguistic, metrical, and other poetical (or ‘rhetorical’) factors that are involved in any given instance and may characterize general patterns. The second is a thorough and systematic study of a large corpus of texts, which will allow us to assess the various claims that have been made with reference to data from large samples and therefore by means of statistical calculations of greater reliability.
 
 To that end, we have developed a computer program, entitled Greek Rhyme Yielder (GRY), which gathers rhyme phenomena and data about them from digitized texts. The main purpose of this paper is to describe the program (\hyperref[sec:3des]{§3}), along with some results obtained from it and their significance for the old debate (\hyperref[sec:4res]{§4} and the \hyperref[sec:app]{Appendix}). Here, those results will be used to test two closely related but distinct claims that have been commonly made, namely (a) that rhyme was introduced into Greek literature by the prose-author Gorgias in the fifth century, and was only then taken up by poets, and (b) that poets before Gorgias avoided rhyme. As we will see, in some of his writings Gorgias did in fact make far more concentrated use of rhyme than any surviving predecessor. Yet overall, the use of rhyme in pre-Gorgianic poets tends in fact to be similar in frequency and in type to most of those after him, whereas the lowest frequency of rhyme in any hexameter poet that we have studied appears after Gorgias. Moreover, the sorts of rhyme employed by Gorgias can be readily found in prior poets, including Hesiod and Homer. Given that and their patterns of distribution even in those poets, we conclude that the most probable story, as some have maintained, is that Gorgias took patterns already in use among the poets and elevated them to a dominant stylistic principle. In the \hyperref[sec:app]{Appendix}, claim (b) will be assessed further by means of results for the distribution of rhyming words by metrical position within the verse. But before we turn to the program and those results, we will take a closer look (\hyperref[sec:2litrev]{§2}) at the history of the debate to which this paper aims to contribute.
 
@@ -87,12 +59,12 @@ Starting in the early nineteenth century, a few scholars resisted the simplistic
 antyga par pymatēn sakeos pyka poiēt\textbf{oio}.}
 
 And he put in it the great strength of the \textbf{river Ocean} \newline
-along the outermost edge of the shield closely \textbf{wrought}. 
+along the outermost edge of the shield closely \textbf{wrought}.
 \end{quote}
 
-\noindent This couplet displays two sets of patterns worth discussing briefly now in order to help the reader appreciate the larger scholarly debate. The first set is commonly invoked in support of the claim that rhymes in Greek poetry are accidental, and it comprises features of grammar and of the formulaic system of Greek epic. Grammatically speaking, all three forms are in the same case, namely the genitive, the first two being in direct agreement, the third being a parallel form within a prepositional phrase. Since Greek is a heavily inflected language, many of the rhymes in Greek are in fact grammatical, often involving either a noun-adjective phrase in agreement or words in parallel syntax. The second feature is the role of ‘formulaic’ patterns especially in early epic, as scholars have come to appreciate more and more since Parry \cite{Parry:1928} (see now also \cite{Bozzone:2024}). These formulaic patterns include tendencies to place certain words in certain positions within the verse. So \textit{potamoio} most commonly occurs either here (at 5.5, the ‘trochaic’ caesura, discussed below) or at line-end; \textit{Okeanoio} usually at line-end; and \textit{poiētoio} likewise at line-end, typically in the same formula: (genitive noun) + \textit{pyka poiētoio} (‘of the x closely wrought’). Such grammatical and poetical or metrical considerations are fundamental for understanding much of the phenomena in question, and may indeed suffice to explain many apparent rhymes. On the other hand, apart from the apparent imitation by later poets who exploited such effects in more extensive and consistent ways, e.g., medieval poets, there is a second set of patterns, of more ‘immanent’ factors, that motivate some scepticism about whether grammatical and formulaic patterns could explain away all such rhymes. The first of such immanent factors in the couplet above is the internal rhyme between line-end and the caesura, which in the medieval period would become canonic and dubbed ‘leonine’ (and this one was noted by Shewan \cite{Shewan:1925}). The second is end-rhyme between adjacent lines. Thirdly, they form a striking cluster of rhymes, which is arguably harder to dismiss than either one alone. Still more interestingly, this cluster comes at the close of a highly polished series of verses, demonstrating a tendency that has been noted for elegiac poetry by Faraone \cite{Faraone:2008}. In short, when one pays close attention even to Homer, there are verses that can be justifiably read as rhyming. 
+\noindent This couplet displays two sets of patterns worth discussing briefly now in order to help the reader appreciate the larger scholarly debate. The first set is commonly invoked in support of the claim that rhymes in Greek poetry are accidental, and it comprises features of grammar and of the formulaic system of Greek epic. Grammatically speaking, all three forms are in the same case, namely the genitive, the first two being in direct agreement, the third being a parallel form within a prepositional phrase. Since Greek is a heavily inflected language, many of the rhymes in Greek are in fact grammatical, often involving either a noun-adjective phrase in agreement or words in parallel syntax. The second feature is the role of ‘formulaic’ patterns especially in early epic, as scholars have come to appreciate more and more since Parry \cite{Parry:1928} (see now also \cite{Bozzone:2024}). These formulaic patterns include tendencies to place certain words in certain positions within the verse. So \textit{potamoio} most commonly occurs either here (at 5.5, the ‘trochaic’ caesura, discussed below) or at line-end; \textit{Okeanoio} usually at line-end; and \textit{poiētoio} likewise at line-end, typically in the same formula: (genitive noun) + \textit{pyka poiētoio} (‘of the x closely wrought’). Such grammatical and poetical or metrical considerations are fundamental for understanding much of the phenomena in question, and may indeed suffice to explain many apparent rhymes. On the other hand, apart from the apparent imitation by later poets who exploited such effects in more extensive and consistent ways, e.g., medieval poets, there is a second set of patterns, of more ‘immanent’ factors, that motivate some scepticism about whether grammatical and formulaic patterns could explain away all such rhymes. The first of such immanent factors in the couplet above is the internal rhyme between line-end and the caesura, which in the medieval period would become canonic and dubbed ‘leonine’ (and this one was noted by Shewan \cite{Shewan:1925}). The second is end-rhyme between adjacent lines. Thirdly, they form a striking cluster of rhymes, which is arguably harder to dismiss than either one alone. Still more interestingly, this cluster comes at the close of a highly polished series of verses, demonstrating a tendency that has been noted for elegiac poetry by Faraone \cite{Faraone:2008}. In short, when one pays close attention even to Homer, there are verses that can be justifiably read as rhyming.
 
-By the end of the nineteenth century, a couple of German dissertations were devoted to cataloguing such possible rhymes in early Greek poetry (see \cite{Holzapfel:1851}, \cite{Dingeldein:1892}), and early in the next century a short study was written in English \cite{Shewan:1925}. Those efforts were dampened, however, by Norden’s \textit{Die antike Kunstprosa} (‘The ancient Art-prose’, \cite{Norden:1898}). Norden argued that rhyme as such is a rhetorical device introduced by Gorgias into prose; that from there it gradually infected the taste and practice of some poets; and so, that any apparent rhyme before Gorgias is unconscious and accidental. Apart from the many echoes of his core argument (e.g. \cite{Wilkinson:1963}), Norden’s influence is evident in a rare consensus that emerged, that there was intentional rhyme at least in one passage from the playwright Euripides (who was influenced by rhetoric), where it was agreed to have a calculated, comical effect (e.g. \cite{Stanford:1967}, \cite{Parker:2007}, \cite{Brogan:2012}). 
+By the end of the nineteenth century, a couple of German dissertations were devoted to cataloguing such possible rhymes in early Greek poetry (see \cite{Holzapfel:1851}, \cite{Dingeldein:1892}), and early in the next century a short study was written in English \cite{Shewan:1925}. Those efforts were dampened, however, by Norden’s \textit{Die antike Kunstprosa} (‘The ancient Art-prose’, \cite{Norden:1898}). Norden argued that rhyme as such is a rhetorical device introduced by Gorgias into prose; that from there it gradually infected the taste and practice of some poets; and so, that any apparent rhyme before Gorgias is unconscious and accidental. Apart from the many echoes of his core argument (e.g. \cite{Wilkinson:1963}), Norden’s influence is evident in a rare consensus that emerged, that there was intentional rhyme at least in one passage from the playwright Euripides (who was influenced by rhetoric), where it was agreed to have a calculated, comical effect (e.g. \cite{Stanford:1967}, \cite{Parker:2007}, \cite{Brogan:2012}).
 
 On the other hand, a less restrictive approach was encouraged by a consensus that developed outside of classical studies, that medieval rhyme built upon early Christian hymns in Latin that rhyme less systematically but more than classical Latin verse (\cite{Thurneysen:1885}, \cite{Norberg:2004}). Some scholars began to apply the category of rhyme to early Greek hexameter hymns, whether as embedded in longer poems such as Hesiod’s \textit{Works \& Days} or as independent compositions like the \textit{Homeric Hymns}, attributed in antiquity to Homer (see esp. \cite{Cantarella:1931}, \cite{West:1978}, and more recently \cite{Vergados:2013}).
 
@@ -101,7 +73,7 @@ Yet it was only in the 1960s and ‘70s that more concerted attempts were made t
 \section{Description of the Program}
 \label{3Des}
 
-GRY is written in the Python language. The acronym is also a transliteration of the Greek word \textit{gry} (γρῦ), which admits of many apparent meanings, including: ‘syllable, peep, grunt, morsel, tidbit,’ and, perhaps etymologically, ‘dirt under the fingernails’ (\cite{LSJ:1996}). The name seemed especially appropriate to the orientation around final syllables, but is also intended as a signal of our humble expectations. The program shall be made available on GitHub. 
+GRY is written in the Python language. The acronym is also a transliteration of the Greek word \textit{gry} (γρῦ), which admits of many apparent meanings, including: ‘syllable, peep, grunt, morsel, tidbit,’ and, perhaps etymologically, ‘dirt under the fingernails’ (\cite{LSJ:1996}). The name seemed especially appropriate to the orientation around final syllables, but is also intended as a signal of our humble expectations. The program shall be made available on GitHub.
 
 The program is written only for Greek texts. It can be run on two file types: .txt (with the Greek in unicode) and .xml (in betacode). We have made use of digitized texts that are in the public domain and can be found on \url{https://perseus.tufts.edu} and other sources; .txt or .xml files can be downloaded directly, or .txt files can be created manually.
 
@@ -115,28 +87,28 @@ To constitute a match, all characters or diphthongs must be either identical or 
 
 The text is cleaned into strings from which punctuation marks, non-Greek characters, and trailing whitespaces are removed. The program then takes two strings, labeled ‘prior’ and ‘posterior,’ which may be formed from the same line, i.e., as the full line and the same with one word or more removed, or from the initial ‘prior’ line and a subsequent ‘posterior’ (or a portion thereof). The ‘prior’ line is the ‘comparandum’, the ‘posterior’ the ‘comparatum’: the program determines whether some portion of the prior is repeated in the posterior.
 
-The default window length is two lines: the default comparison includes the ‘prior’ line and the immediately following line. The ‘target line’ is a line within the window that can be identified so as to have its results sectioned off for separate analysis. The default target line is the line immediately following the ‘prior’ line (target line = 1). The default is therefore to look for rhyme phenomena between lines, or ‘interlinear’ matches. 
+The default window length is two lines: the default comparison includes the ‘prior’ line and the immediately following line. The ‘target line’ is a line within the window that can be identified so as to have its results sectioned off for separate analysis. The default target line is the line immediately following the ‘prior’ line (target line = 1). The default is therefore to look for rhyme phenomena between lines, or ‘interlinear’ matches.
 
 In order to search for intralinear matches within one and the same line, including leonine rhymes, window length can be reduced to 1, or the target line can be specified as 0. This capacity is discussed further in the Appendix. The window length can also be extended beyond 2; and, when it has been extended, the target line can be specified, so that matches between the prior line and, e.g., the line after the immediately following line (target line = 2) are recorded separately. This capacity is also discussed further in the Appendix.
 
-A little more needs to be said about metre. The dactylic hexameter can be conventionally represented as follows: 
+A little more needs to be said about metre. The dactylic hexameter can be conventionally represented as follows:
 
 \begin{figure}[h!]
-  \centering
-  \includegraphics[width=0.4\linewidth]{figures/1.png}
-  \caption{The Dactylic Hexameter}
-  \label{fig:example1}
+\centering
+\includegraphics[width=0.4\linewidth]{figures/1.png}
+\caption{The Dactylic Hexameter}
+\label{fig:example}
 \end{figure}
 
-\noindent where the second part of each foot can be filled by either two short syllables (thus producing the eponymous dactyl) or one long (producing a spondee), and the final position can be filled by either a short or a long syllable but for simplicity is treated as long (so the final foot is a spondee). Each properly formed hexameter line instantiates this metre by whatever combination of available positions, although there are various preferences and tendencies. 
+\noindent where the second part of each foot can be filled by either two short syllables (thus producing the eponymous dactyl) or one long (producing a spondee), and the final position can be filled by either a short or a long syllable but for simplicity is treated as long (so the final foot is a spondee). Each properly formed hexameter line instantiates this metre by whatever combination of available positions, although there are various preferences and tendencies.
 
 Different systems have been proposed to label these positions. We follow the most common, established by O’Neill \cite{ONeill:1942}, in which the positions are labeled by a numerical sequence, with each long given a value of 1, each short 0.5. For example, a line with the following scansion
 
 \begin{figure}[h!]
-  \centering
-  \includegraphics[width=0.4\linewidth]{figures/2.png}
-  \caption{Example of a Scansion}
-  \label{fig:example2}
+\centering
+\includegraphics[width=0.4\linewidth]{figures/2.png}
+\caption{Example of a Scansion}
+\label{fig:example}
 \end{figure}
 
 \noindent would be represented by the following numerical sequence\newline
@@ -144,56 +116,56 @@ Different systems have been proposed to label these positions. We follow the mos
 \quad \quad \quad \quad \quad \quad 1 1.5 2 3 4 5 5.5 6 7 8 9 9.5 10 11 12\newline
 \end{center}
 
-\noindent GRY employs this system in tracking and plotting the metrical distribution of rhyme phenomena within and between verses, as will be displayed below in the Appendix. 
+\noindent GRY employs this system in tracking and plotting the metrical distribution of rhyme phenomena within and between verses, as will be displayed below in the Appendix.
 
-The only other feature of the ancient Greek hexameter that needs to be discussed here is the caesura, or word-break, which occurs with varying regularity at different positions in the line. The most reliable caesurae occur in the third foot after position 5 or 5.5; one or the other or both caesurae appear in the vast majority of verses (e.g. 986:14 per 1,000 lines of the \textit{Iliad}, according to West \cite{West:1982}). All of the lines that lack a caesura at 5 or 5.5 have a caesura after 7. The caesura cannot be strictly correlated with a rhythmic break, since there is commonly no syntactic or semantic break even at the third-foot caesura; so we cannot assume that rhyme at a caesura carries rhythmic emphasis as such. However, the regularity of that third-foot caesura (and the fourth-foot) is undeniably related to the rhythmical tendencies of Greek verse-composition and its substructure of intonational units (or clauses or phrases). For our purposes here, the doctrine of the caesura provides an important background for assessments of rhyme between line-end and the caesura, as discussed further in the Appendix. 
+The only other feature of the ancient Greek hexameter that needs to be discussed here is the caesura, or word-break, which occurs with varying regularity at different positions in the line. The most reliable caesurae occur in the third foot after position 5 or 5.5; one or the other or both caesurae appear in the vast majority of verses (e.g. 986:14 per 1,000 lines of the \textit{Iliad}, according to West \cite{West:1982}). All of the lines that lack a caesura at 5 or 5.5 have a caesura after 7. The caesura cannot be strictly correlated with a rhythmic break, since there is commonly no syntactic or semantic break even at the third-foot caesura; so we cannot assume that rhyme at a caesura carries rhythmic emphasis as such. However, the regularity of that third-foot caesura (and the fourth-foot) is undeniably related to the rhythmical tendencies of Greek verse-composition and its substructure of intonational units (or clauses or phrases). For our purposes here, the doctrine of the caesura provides an important background for assessments of rhyme between line-end and the caesura, as discussed further in the Appendix.
 
 Finally, another function of the program enables the comparison of poetry with prose texts, which is essential for testing the old claims about rhyme in prose compared with poetry, and also for getting a better sense of the language’s tendencies and estimating a baseline rate of rhyme-like effects in Greek apart from its configuration in verse. The basic principle here is that punctuation in prose texts approximates the segmentation of hexameter verses, whereby verse-end or caesura often coincides with clause-end. The command -s segments the text into lines by punctuation (‘,’, ‘;’, ‘·’, ‘.’, and ‘:’, which is not Greek but sometimes appears in the digitised texts). The program can then be run to find matches in the resulting lines. In the next section, we will focus on a comparison of the results from this function applied to selected prose texts with results from poetical texts.
 
 \section{Results of a Comparison of Poetry and Prose}
 \label{4Res}
 
-As noted above, even the most hard-nosed deniers of rhyme in ancient Greek poetry were willing to admit rhyme in ancient Greek oratory. This alone calls for some comparison between the tendencies of poetry and at least oratorical prose. Here we will test Norden’s  \cite{Norden:1898} claim through a comparison of poetry and prose, primarily oratory. But a more general purpose of this comparison is to get a better sense of the language’s general tendency toward rhyming clauses. 
+As noted above, even the most hard-nosed deniers of rhyme in ancient Greek poetry were willing to admit rhyme in ancient Greek oratory. This alone calls for some comparison between the tendencies of poetry and at least oratorical prose. Here we will test Norden’s  \cite{Norden:1898} claim through a comparison of poetry and prose, primarily oratory. But a more general purpose of this comparison is to get a better sense of the language’s general tendency toward rhyming clauses.
 
-Fig. 3 gives the program’s results for end-rhyme (window length 2) in a selection of authors and texts, in approximate chronological order, with V or P for verse or prose, and the number of verses or lines. The selected \textit{Homeric Hymns} are the long hymns to Demeter, Hermes, and Aphrodite. The present purpose is not a systematic study of all relevant texts, but only an initial demonstration based on some representative texts. 
+Fig. 3 gives the program’s results for end-rhyme (window length 2) in a selection of authors and texts, in approximate chronological order, with V or P for verse or prose, and the number of verses or lines. The selected \textit{Homeric Hymns} are the long hymns to Demeter, Hermes, and Aphrodite. The present purpose is not a systematic study of all relevant texts, but only an initial demonstration based on some representative texts.
 
 \begin{figure}[h!]
-  \centering
-  \includegraphics[width=1\linewidth]{figures/FIG1NEWEST.png}
-  \caption{End-rhyme (percent of lines involved in)}
-  \label{fig:example3}
+\centering
+\includegraphics[width=1\linewidth]{figures/FIG1NEWEST.png}
+\caption{End-rhyme (percent of lines involved in)}
+\label{fig:example}
 \end{figure}
 
 \noindent Based on the numbers alone, and assuming that the selection is representative, it is undeniable that Gorgias was doing something exceptional relative to prose and poetry both before and after him. Most conspicuous are the figures for his \textit{Encomium of Helen} (which praises and exculpates the legendary Helen of Troy) and the short surviving excerpt (or ‘fragment’) of his \textit{Funeral Oration}, but his \textit{Defense of Palamedes} (defending another legendary character from the Trojan War) also stands out. These highly polished display (or ‘epideictic’) pieces are the longest preserved pieces of his writing. Here is one sentence to illustrate the density and types of Gorgias’ rhymes:
 
 \begin{quote}
-\textit{pephyke gar ou to krei\textbf{sson} hypo tou hē\textbf{ssonos} kōly\textbf{esthai},\newline 
-alla to hē\textbf{sson} hypo tou krei\textbf{ssonos} arkh\textbf{esthai} kai ag\textbf{esthai},\newline 
-kai to men krei\textbf{sson} hēgei\textbf{sthai},\newline 
+\textit{pephyke gar ou to krei\textbf{sson} hypo tou hē\textbf{ssonos} kōly\textbf{esthai},\newline
+alla to hē\textbf{sson} hypo tou krei\textbf{ssonos} arkh\textbf{esthai} kai ag\textbf{esthai},\newline
+kai to men krei\textbf{sson} hēgei\textbf{sthai},\newline
 to de hē\textbf{sson} hepe\textbf{sthai}}. (\textit{Helen} 6)
 
-For by nature the \textbf{stronger} by the \textbf{weaker} is not \textbf{prevented},\newline 
-But the \textbf{weaker} by the \textbf{stronger is ruled} and \textbf{led},\newline 
+For by nature the \textbf{stronger} by the \textbf{weaker} is not \textbf{prevented},\newline
+But the \textbf{weaker} by the \textbf{stronger is ruled} and \textbf{led},\newline
 and the \textbf{stronger leads},\newline
 while the \textbf{weaker follows}.
 \end{quote}
 
 \noindent Note that the numbers in Fig. 3 are based only on end-rhyme, but one can see from this example that the rhyme effects (including verbatim repetition, not boldened above) can extend well beyond that. The rhymes in this pair of antitheses are primarily restricted to \textit{homoeoteleuton}, or the identity of inflectional endings. However, there are also ‘slant’ rhymes (i.e., of non-identical but similar sounds, optionally included by the extra character matches), which extend into stems and surely add to the concerted assonance of the sentence: note the play on \textit{ei} (ει) and \textit{ē} (η) in all the forms of \textit{kr\textbf{eisson}(-os)} and \textit{h\textbf{ēsson}(-os)}, and on those two combined with \textit{e} (ε) in \textit{\textbf{hē}g\textbf{eisthai}/\textbf{he}p\textbf{esthai}}.
 
-The only two comparable pieces in our selection are from Lysias and Isocrates: the former evidently imitated Gorgias at least in his \textit{Funeral Oration}, while the latter has been noted since antiquity as an imitator of Gorgias. By contrast, Herodotus, Plato, and Xenophon show markedly less. Plato’s two works may be particularly illuminating, since the first, the \textit{Apology}, is explicitly presented in the text itself (by the speaker, Socrates) as improvised and unlikely to show the marks of polished oratory that the jury is accustomed to; not surprisingly, then, it shows the lowest frequency of end-rhyme of our selection of prose. This may provide a rough estimate of the spoken language’s tendency toward rhyming clauses, which is to say for the most part pairs of clauses with parallel syntax (at least in extended speech containing both narrative and argumentative portions). This helps us to get a better sense of the tendencies of poetry, which we will return to shortly. 
+The only two comparable pieces in our selection are from Lysias and Isocrates: the former evidently imitated Gorgias at least in his \textit{Funeral Oration}, while the latter has been noted since antiquity as an imitator of Gorgias. By contrast, Herodotus, Plato, and Xenophon show markedly less. Plato’s two works may be particularly illuminating, since the first, the \textit{Apology}, is explicitly presented in the text itself (by the speaker, Socrates) as improvised and unlikely to show the marks of polished oratory that the jury is accustomed to; not surprisingly, then, it shows the lowest frequency of end-rhyme of our selection of prose. This may provide a rough estimate of the spoken language’s tendency toward rhyming clauses, which is to say for the most part pairs of clauses with parallel syntax (at least in extended speech containing both narrative and argumentative portions). This helps us to get a better sense of the tendencies of poetry, which we will return to shortly.
 
 \begin{figure}[h!]
-  \centering
-  \includegraphics[width=1\linewidth]{figures/FIG2NEWEST.png}
-  \caption{Polysyllabic end-rhyme (percent of lines involved in)}
-  \label{fig:example4}
+\centering
+\includegraphics[width=1\linewidth]{figures/FIG2NEWEST.png}
+\caption{Polysyllabic end-rhyme (percent of lines involved in)}
+\label{fig:example}
 \end{figure}
 
 Also revealing is a comparison of the same selection’s results for polysyllabic matches, given in Fig. 4. Gorgias’ pioneering efforts take on a somewhat different aspect here. First, we can see that Hesiod’s \textit{Theogony} is more obviously exceptional among earlier verse; a closer look shows that its high number is due in part to rhyming names (in five of the sixteen pairs), most memorably the brothers \textit{Promēthea} and \textit{Epimēthea} (Prometheus and Epimetheus in the accusative case, both at line-end, 510–511) and some personified abstractions reminiscent of Gorgias’ antitheses (228–229). Gorgias evidently developed this tendency much further, with a marked increase in the \textit{Encomium of Helen}, which is a rather short bravura performance (158 lines when separated by punctuation, in contrast with the \textit{Theogony}’s 1,022), and then an extraordinary concentration in the fragment of his \textit{Funeral Oration} (35 lines), which we know was excerpted by a later author to illustrate the character of Gorgias’ display speeches. (So, although the frequency of end-rhyme is otherwise very close in the two texts, one should bear in mind the possibility of selection bias due to the attractions of a ‘purple’ passage.) With that precedent, it is less surprising to see the figure for Lysias’ own essay in the same genre.
 
-Yet the results from the program in Fig. 3 already show an obstacle for the old doctrine: rhyme in the selected hexameter poets at least did not increase very markedly after Gorgias (fifth century BC); the pre-Gorgianic average from our selection is 9.67\%, the post-Gorgianic 10.88\%. This discrepancy likely results from the selection, in which imitators of Hesiod predominate. The most Homeric of them, Apollonius of Rhodes (third century BC) shows lower numbers even than Homer in his erudite epic, the \textit{Argonautica}. For his part, Aratus (also third century BC) shows a tendency remarkably close to that of Hesiod, his primary model; the same is true of Oppian (second century AD) and pseudo-Oppian (third century AD). Even Nonnus (fifth century AD), some nine-hundred years after Gorgias, whose style is regarded as being rather lax in many aspects, only gets up to the levels of Herodotus and Plato’s \textit{Phaedrus}; and his extremely infrequent use of polysyllabic rhymes shows that he did not seek out the most conspicuous sorts of rhymes with any regularity. So our results for hexameter poetry at least cannot be used to support the old claim about Gorgias’ influence on the poets. 
+Yet the results from the program in Fig. 3 already show an obstacle for the old doctrine: rhyme in the selected hexameter poets at least did not increase very markedly after Gorgias (fifth century BC); the pre-Gorgianic average from our selection is 9.67\%, the post-Gorgianic 10.88\%. This discrepancy likely results from the selection, in which imitators of Hesiod predominate. The most Homeric of them, Apollonius of Rhodes (third century BC) shows lower numbers even than Homer in his erudite epic, the \textit{Argonautica}. For his part, Aratus (also third century BC) shows a tendency remarkably close to that of Hesiod, his primary model; the same is true of Oppian (second century AD) and pseudo-Oppian (third century AD). Even Nonnus (fifth century AD), some nine-hundred years after Gorgias, whose style is regarded as being rather lax in many aspects, only gets up to the levels of Herodotus and Plato’s \textit{Phaedrus}; and his extremely infrequent use of polysyllabic rhymes shows that he did not seek out the most conspicuous sorts of rhymes with any regularity. So our results for hexameter poetry at least cannot be used to support the old claim about Gorgias’ influence on the poets.
 
-The argument against the old doctrine must get its main force, however, from closer examination of the texts, and a demonstration that the sorts of rhymes exhibited in Gorgias can also be found easily in prior poetry, and that they cannot all be easily dismissed as accidental. As just discussed, Hesiod’s \textit{Theogony} contains some obvious parallels; the same is true of \textit{Works \& Days}, although they are rarer. Yet even in the \textit{Iliad} there are passages that show a remarkable kinship with Gorgias’ style. Here we will share just two. The first is the famous ‘Generation of leaves’ speech: 
+The argument against the old doctrine must get its main force, however, from closer examination of the texts, and a demonstration that the sorts of rhymes exhibited in Gorgias can also be found easily in prior poetry, and that they cannot all be easily dismissed as accidental. As just discussed, Hesiod’s \textit{Theogony} contains some obvious parallels; the same is true of \textit{Works \& Days}, although they are rarer. Yet even in the \textit{Iliad} there are passages that show a remarkable kinship with Gorgias’ style. Here we will share just two. The first is the famous ‘Generation of leaves’ speech:
 
 \begin{quote}
 \textit{hoiē per phyll\underline{ōn} gene\textbf{ē}, toiē de kai andr\underline{ōn}.\newline
@@ -201,23 +173,23 @@ phylla ta men t’ anemos khamadis khe\underline{ei}, alla de hyl\textbf{ē} \ne
 tēlethoōsa phy\underline{ei}, earos d’ epigignetai hōr\textbf{ē}: \newline
 hōs andrōn gene\textbf{ē} hē men phy\underline{ei}, hē d’ apolēg\underline{ei}.} (\textit{Iliad} 6.146–149)
 
-Just as the \textbf{generation} \underline{of leaves}, so also that \underline{of men}.\newline 
+Just as the \textbf{generation} \underline{of leaves}, so also that \underline{of men}.\newline
 Some leaves the wind \underline{pours down} to the ground, others the \textbf{wood}\newline
-flourishing \underline{sprouts forth}, and spring arrives in \textbf{season};\newline 
-so one \textbf{generation} of men \underline{sprouts forth}, another \underline{ceases}.  
+flourishing \underline{sprouts forth}, and spring arrives in \textbf{season};\newline
+so one \textbf{generation} of men \underline{sprouts forth}, another \underline{ceases}.
 \end{quote}
 
-\noindent Here the rhymes at clause-end are marvelously interwoven with others at verse-end and the caesurae, but the most familiar patterns are end-rhyme in the second and third verses, and leonine in the first (at position 5 and line-end); as with the example from Gorgias, there is much more going on here than is easily labelled. It has been persuasively argued that this particular short speech is evidence of the sort of clever ‘rhetorical’ poetry used in symposia, or the more-or-less ‘high’-culture drinking parties of the Greeks (\cite{Pelliccia:2002}). One further consideration that we would add is the use of rhyme, which seems to anticipate what we see in Gorgias’ flowery display speeches. 
+\noindent Here the rhymes at clause-end are marvelously interwoven with others at verse-end and the caesurae, but the most familiar patterns are end-rhyme in the second and third verses, and leonine in the first (at position 5 and line-end); as with the example from Gorgias, there is much more going on here than is easily labelled. It has been persuasively argued that this particular short speech is evidence of the sort of clever ‘rhetorical’ poetry used in symposia, or the more-or-less ‘high’-culture drinking parties of the Greeks (\cite{Pelliccia:2002}). One further consideration that we would add is the use of rhyme, which seems to anticipate what we see in Gorgias’ flowery display speeches.
 
-A similar conclusion may be drawn from the second example, the final ten lines of the ‘Shield of Achilles,’ of which we saw the concluding couplet above. The ‘Shield’ is a finely wrought description (‘ecphrasis’) of a mythical shield, covered with representations of features of the world, and crafted by the god Hephaestus. The entire ‘Shield’ passage (18.478–608) has been subjected to intense scrutiny, but the rhymes in the final ten lines (599–608) have been almost entirely ignored. The selection starts in the middle of a description of a scene with dancers, acrobats, and a bard, and concludes with a particularly striking couplet about the ocean depicted along the outer rim: 
+A similar conclusion may be drawn from the second example, the final ten lines of the ‘Shield of Achilles,’ of which we saw the concluding couplet above. The ‘Shield’ is a finely wrought description (‘ecphrasis’) of a mythical shield, covered with representations of features of the world, and crafted by the god Hephaestus. The entire ‘Shield’ passage (18.478–608) has been subjected to intense scrutiny, but the rhymes in the final ten lines (599–608) have been almost entirely ignored. The selection starts in the middle of a description of a scene with dancers, acrobats, and a bard, and concludes with a particularly striking couplet about the ocean depicted along the outer rim:
 
 \begin{quote}
-    
+
 \textit{A\quad hoi d’ hote men \underline{threksaskon epist}amenoisi podes\textbf{si}\newline
 B\quad rheia mal’, hōs hote tis trokhon armenon en palam\textbf{ēisin}\newline
 B\quad Hezomenos kerameus peirēsetai, ai ke the\textbf{ēisin}·\newline
-A\quad allote d’ au \underline{threksaskon epi st}ikhas allēloi\textbf{si}.\newline	
-C\quad pollos d’ himeroenta khoron periistath’ homīl\textbf{os}\newline		
+A\quad allote d’ au \underline{threksaskon epi st}ikhas allēloi\textbf{si}.\newline
+C\quad pollos d’ himeroenta khoron periistath’ homīl\textbf{os}\newline
 C\quad terpomenoi· <meta de sphin emelpeto theios aoid\textbf{os}\newline
 D\quad phormizōn·> doiō de kybistētēre kat’ aut\textbf{ous}\newline
 D\quad molpēs eksarkhontes edineuon kata mess\textbf{ous}.\newline
@@ -236,96 +208,43 @@ On it he set also the \textbf{river’s} great might, \textbf{Ocean’s},\newlin
 around the outermost rim of the shield thickly \textbf{wrought}.
 \end{quote}
 
-\noindent This sequence, which approaches the structure of a sonnet, contains a mixture of grammatical as well as non-grammatical rhyme. For example, the rhymes in A, which build on the verbatim repetition of the verb at mid-line and the punning echo of \textit{epist-} in \textit{epi st-}, are grammatical, but not the result of simple parallelism. The rhyming words in B are a verb and a noun which simply happen to have rhyming endings. The remarkable cohesion of the rhyme patterns here leads us to conclude that, even if rhyme was never strictly a structural principle in ancient Greek verse, it played an occasional role that cannot be dismissed and demands further study. 
+\noindent This sequence, which approaches the structure of a sonnet, contains a mixture of grammatical as well as non-grammatical rhyme. For example, the rhymes in A, which build on the verbatim repetition of the verb at mid-line and the punning echo of \textit{epist-} in \textit{epi st-}, are grammatical, but not the result of simple parallelism. The rhyming words in B are a verb and a noun which simply happen to have rhyming endings. The remarkable cohesion of the rhyme patterns here leads us to conclude that, even if rhyme was never strictly a structural principle in ancient Greek verse, it played an occasional role that cannot be dismissed and demands further study.
 
 \section{Conclusion}
 
 We hope to have cast some doubt on the old doctrine about rhyme in ancient Greek. The results from GRY help to illuminate just how distinctive Gorgias’ contribution was, but at the same time they strengthen the philological argument that he only developed features that were already present, and at least occasionally deliberately exploited, in the earliest surviving poetry, but especially in Hesiod. If this is valid, then further study of a fuller corpus of texts is warranted, in order to get a more precise sense of the differences between various authors, genres, and periods, and in order better to comprehend those occasional uses of rhyme. We hope that GRY shall make such a study both feasible and replicable.
 
-
-% \subsection{Details} \label{sec:intro_details}
-
-% You may also include subsections if they help organize your text, but they
-% are not required. Use as many sections and subsections with whatever names work
-% for your submission!
-
-% 
-
-\noindent
-\textbf{Another tip.} In some cases, it may be helpful to use \texttt{paragraph} to title individual paragraphs. For example, if a section describes features for a classifier, you can optionally title each paragraph with the name of each feature. 
-
-%\section{Elements}
-
-%\subsection{Citing elements}
-
-%Here are some examples of how to construct and reference common elements in LaTeX. References to elements such as tables, figures, equations and sections make use of \texttt{label} names that you set. References to citations should use the labels you indicate in \texttt{bibliography.bib}. Change all of these examples and values with your own data. 
-
-%We can cite Table~\ref{tab:example} as well as Figure~\ref{fig:example}, and we also cite an example paper \cite{tettoni2024discoverability}.
-%We can also include mathematical notations, such as:
-%\begin{align}
-%f(y) &= x^2. %\label{fig:squared}
-%\end{align}
-%The line number of the equation can be cited as
-%Equation~\ref{fig:squared}. You can also cite multiple papers together \cite{barré2024latent, levenson2024textual, bambaci2024steps}, and reference figures or tables indirectly in parentheses (Figure~\ref{fig:example_bigger}). You can also cite other sections or subsections of your paper, such as \S\ref{sec:intro_details}. 
-
-
-
-%\subsection{Required specifications}
-
-%Tables and figures should \textit{not} appear at the top of the first page above the paper title and abstract, but can be placed within the main text, as exemplified by Table~\ref{tab:example}. They may also be placed at the top of non-first pages, as exemplified by Figures~\ref{fig:example} and \ref{fig:example_bigger}. Figures and tables discussed in the main text should appear \textit{before} the References section. Supplementary materials should be referenced by their relevant Appendix section, such as Appendix~\ref{appdx:first}. 
-
-%Do \textit{not} change the font size of table and figure captions, or the spacing between text lines, section/subsection titles, tables, figures, and captions. You should size your figures and tables so that they stay within the \texttt{linewidth} of the paper. 
-
-% \begin{figure}[t!]
-%   \centering
-%   \includegraphics[width=0.4\linewidth]{640x480.png}
-%   \caption{Example figure and figure caption}
-  \label{app}
-%   
-% \end{figure}
-
-% \begin{figure}[t!]
-%   \centering
-%   \includegraphics[width=0.4\linewidth]{640x480.png}
-%   \includegraphics[width=0.4\linewidth]{640x480.png}
-%   \caption{Example figure, where two \texttt{.png} are placed side by side}
-  \label{fig:example5}
-%   
-% \end{figure}
-
 \section*{Acknowledgements}
 
-Leon Wash's research has been generously supported by a Government of Ireland Postdoctoral Fellowship. Our paper has benefited from criticism by two anonymous reviewers and Ben Nagy. We also thank our families and especially our wives, Annette and Krista. 
+Leon Wash's research has been generously supported by a Government of Ireland Postdoctoral Fellowship. Our paper has benefited from criticism by two anonymous reviewers and Ben Nagy. We also thank our families and especially our wives, Annette and Krista.
 
-% Print the biblography at the end. Keep this line after the main text of your paper, and before an appendix. 
 \printbibliography
 
-% You can include an appendix using the following command
 \appendix
 
 \section{Appendix: Distribution of Rhyme by Target Line and Metrical Position}
-
+\label{app}
 
 We turn now to two methods of analysis enabled by GRY and applied here only to the selected hexameter poems treated above. The first method examines rhyme frequencies according to target line, and the second looks at frequencies according to metrical position within the line. In order to test the claim that Greek poets avoided rhyme, our hypotheses were (a) that matches would increase significantly when the target line was 2 or greater, and (b) that rhyming words would be preferentially placed at less rhythmically prominent positions in the verse. As we will now show, the results in general seem to falsify both hypotheses, but there are some interesting variations among the texts and authors selected.
 
 Fig. 5 shows the program’s results for end-rhyme by target line from 1 to 7.
 
 \begin{figure}[h!]
-  \centering
-  \includegraphics[width=1\linewidth]{figures/FIG3.png}
-  \caption{End-rhyme by target line (percent)}
-  \label{fig:example6}
+\centering
+\includegraphics[width=1\linewidth]{figures/FIG3.png}
+\caption{End-rhyme by target line (percent)}
+\label{fig:example}
 \end{figure}
 
 \noindent Perhaps most immediately noticeable are the spikes in Hesiod’s \textit{Theogony}, Aratus’ \textit{Phaenomena}, and ps.-Oppian’s \textit{Cynegetica}, and then the generally sustained levels of Nonnus’ \textit{Dionysiaca}. Setting aside the latter, the ranges are again mostly fairly steady from the pre-Gorgianic (the first five) to the post-Gorgianic. Among the individual poems, the least fluctuation occurs in the \textit{Iliad} and \textit{Odyssey}: each shows a very slight increase in target line 2, but otherwise the results suggest that in general rhyme was neither being avoided nor sought out. The situation is rather different with Hesiod, who, in the first place, evidently tends to use more rhyming words at line-end even when they are far enough apart so as to be unlikely to register as rhyming in the audience’s or the poet’s working memory. So the 2+\% increase over Homer in target line 1 appears in a different light due to the following numbers, which are generally higher. The results for target line 2 in the \textit{Theogony} are particularly noteworthy: here, a closer examination shows that the spike is largely due to a dramatic increase in verbatim repetition at that distance. The fall in the next two lines could initially give the impression that end-rhymes are preferentially clustered in target lines 1 and 2, but then the higher results for 5 and 6 again reveal that other factors are probably at play. The same general observations apply to Aratus’ \textit{Phaenomena} (where target line 7 seems to be a fluke; target line 8 produces only 10\% again). Hesiod’s numbers in \textit{Works \& Days} are noteworthy for the 1+\% drop from 1 to 2, which at least shows that rhymes were not being avoided in the first line relative to the second line; and the fluctuation otherwise suggests general indifference, as in Homer. The selected \textit{Homeric Hymns} and ps.-Oppian’s \textit{Cynegetica} show the clearest tendency toward the accumulation of end-rhymes close to each other; Oppian’s \textit{Halieutica} and Nonnus’ \textit{Dionysiaca}, despite the slight bump in target line 2, show a similar tendency. The only author whose tendency would confirm the old doctrine of avoidance is the post-Gorgianic Apollonius, whose \textit{Argonautica} has the lowest level of end-rhymes that we have measured in target line 1, but otherwise has levels comparable to Hesiod’s. Of course, coming from the third century, Apollonius’ avoidance of immediate end-rhyme would counter the other doctrine, that it was poets after Gorgias who used more rhyme. Finally, we should say a word about Nonnus: the generally higher levels seem to be a result of the greater uniformity of his diction, a feature that is less surprising especially when one considers the tremendous length of his poem (20,426 lines, in comparison with the \textit{Iliad}’s 15,683). In sum, the hypothesis has been shown to be at best questionable for several of the texts, clearly falsified for several more, and obviously valid for just one, Apollonius’ post-Gorgianic \textit{Argonautica}.
 
-In Fig. 6 are GRY’s results for polysyllabic matches under the same parameters. 
+In Fig. 6 are GRY’s results for polysyllabic matches under the same parameters.
 
 \begin{figure}[h!]
-  \centering
-  \includegraphics[width=1\linewidth]{figures/FIG4.png}
-  \caption{Polysyllabic end-rhyme by target line (percent)}
-  \label{fig:example7}
+\centering
+\includegraphics[width=1\linewidth]{figures/FIG4.png}
+\caption{Polysyllabic end-rhyme by target line (percent)}
+\label{fig:example}
 \end{figure}
 
 \noindent Here we will only note the obvious tendency in Hesiod’s \textit{Theogony} and \textit{Works \& Days}, as well as Oppian’s \textit{Halieutica} and Ps.-Oppian’s \textit{Cynegetica}, to keep polysyllabic rhymes closer to each other within a window of five lines; and, conversely, the jump in the \textit{Odyssey} and the \textit{Dionysiaca} from their remarkably low numbers in target line 1, and then the steady upward climb in the \textit{Argonautica}. When it comes to polysyllabic rhymes, then, our impression of Hesiod especially is confirmed, and, on the other hand, the \textit{Odyssey} and the \textit{Dionysiaca} seem to join the \textit{Argonautica} in avoiding at least these more extensive matches in immediately adjacent lines. Closer examination will be undertaken in another paper.
@@ -333,28 +252,27 @@ In Fig. 6 are GRY’s results for polysyllabic matches under the same parameters
 We turn lastly to an analysis of the distribution of rhymes by metrical position within the line, utilising the numbering system outlined above, \hyperref[sec:3Des]{§3}. For this portion, we will consider just one example, Hesiod’s \textit{Theogony}. Fig. 7 shows the numbers of intralinear matches (target line 0).
 
 \begin{figure}[h!]
-  \centering
-  \includegraphics[width=1\linewidth]{figures/FIG5.png}
-  \caption{Intralinear matches by metrical position in the \textit{Theogony}}
-  \label{fig:example8}
+\centering
+\includegraphics[width=1\linewidth]{figures/FIG5.png}
+\caption{Intralinear matches by metrical position in the \textit{Theogony}}
+\label{fig:example}
 \end{figure}
 
 \noindent Let us begin with the polysyllabic matches, where things are simpler, with just two prominent maxima at 5.5 and 9.5. The maximum at 9.5 is primarily the result of rhyming noun-adjective phrases such as \textit{en āthanatoisi theoisi} (‘among the eternal gods,’ \textit{Theogony} 120). The peak at 5/5.5 brings us to the dominant caesura: here, the polysyllabic matches are often between two related phrases occupying the two halves (or cola) of the line, e.g. \textit{moiran en anthrōp\textbf{oisi} kai āthanatoisi the\textbf{oisi}} (‘fate among \textbf{humans} and the eternal \textbf{gods}’, 204). Another common pattern is a noun at the caesura followed by an appositional phrase, as in \textit{tauta moi espete M\textbf{ousai}, Olympia dōmat’ ekh\textbf{ousai}} (‘Tell me these things, \textbf{Muses}, \textbf{inhabiting} Olympian houses,’ 114), where the proper name \textit{Mousai} (at 5.5) rhymes with the inflectional ending of the participle \textit{ekhousai}, or \textit{kourēn Ōkean\textbf{oio}, telēentos potam\textbf{oio}} (‘daughter of \textbf{Ocean}, the ever-circling \textbf{river},’ 979; compare 242), which has the same leonine rhyme as we saw in the second-to-last line of the ‘Shield of Achilles.’ It must be emphasised that the placement of a polysyllabic rhyme with the final word faces metrical constraints simply as a result of ending in a sequence that suits the final foot (either trochee or spondee), although the precise tendencies vary by the entire metrical shape of the word. Still, it is clear that polysyllabic matches were not being pushed to less rhythmically prominent positions in the line.
 
 The same is true of matches in general. The peaks in the ‘all matches’ series are indicative of the same and similar patterns, first and foremost the caesura at 5/5.5. The peaks at 9, 8, and 7 in turn are largely attributable to rhyming noun-adjective (including noun-participle) phrases comparable to the one just mentioned. Within the line, then, it seems clear that many rhymes were being allowed at the most prominent positions, especially 5/5.5 and close to the line-end where the assonance with the final word would be most likely to be perceptible.
 
-Finally, the overall tendency toward rhyme in those positions is further illuminated by the final set of results for our discussion here, in Fig. 8, which shows matches by metrical position as a proportion of the total word-breaks in each position. 
+Finally, the overall tendency toward rhyme in those positions is further illuminated by the final set of results for our discussion here, in Fig. 8, which shows matches by metrical position as a proportion of the total word-breaks in each position.
 
 \begin{figure}[h!]
-  \centering
-  \includegraphics[width=1\linewidth]{figures/FIG6.png}
-  \caption{Intralinear matches as a proportion of word-breaks by metrical position in the \textit{Theogony}}
-  
+\centering
+\includegraphics[width=1\linewidth]{figures/FIG6.png}
+\caption{Intralinear matches as a proportion of word-breaks by metrical position in the \textit{Theogony}}
+\label{fig:example}
 \end{figure}
 
 Here, the tendency to place rhyming words together at verse-end is still more clearly pronounced. And although the peak at 5/5.5 is significantly diminished, it still remains at a higher percentage than all the other positions besides 9 and 10. We can safely infer that rhyme is at least not being avoided at the mid-line caesura; and, as a close reading of lines such as those quoted above shows, there is a strong case to be made that rhyme was also occasionally sought at precisely those positions.
 
-Since GRY also enables the metrical tracking of matches in other target lines, similar analysis can be performed in order to examine the distribution of rhymes within the line relative to those at line-end. But we leave that for another occasion. 
-  
+Since GRY also enables the metrical tracking of matches in other target lines, similar analysis can be performed in order to examine the distribution of rhymes within the line relative to those at line-end. But we leave that for another occasion.
 
 \end{document}

@@ -1,52 +1,46 @@
-\documentclass[final]{anthology-ch}         % for the submission
+\documentclass[final]{anthology-ch}
 
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{fancyvrb}
 \usepackage{tipa}
 
-\providecommand{\tightlist}{%
-  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\providecommand{\tightlist}{
+\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 
 \title{Measuring the Stories in Contemporary Songs}
- 
+
 \author{David Bamman}[
-  orcid=0009-0003-1171-9408
+orcid=0009-0003-1171-9408
 ]
 
 \author{Sabrina Baur}[
-  orcid=
+orcid=
 ]
 
 \author{Mackenzie  H\d{a}nh Cramer}[
-  orcid=
+orcid=
 ]
 
 \author{Anna Ho}[
-  orcid=
+orcid=
 ]
 
 \author{Tom McEnaney}[
-  orcid=
+orcid=
 ]
-
-
-
 
 \affiliation{}{University of California, Berkeley}
 
 \keywords{Narrativity, song lyrics, cultural analytics}
 
-% METADATA FOR THE PUBLICATION
-% This will be filled in when the document is published; the values can
-% be kept as their defaults when the file is submitted
 \pubyear{2025}
 \pubvolume{3}
-\pagestart{800}
-\pageend{824}
+\pagestart{804}
+\pageend{828}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
-\doi{10.63744/w9C0wDxmZTVt}  
+\doi{10.63744/w9C0wDxmZTVt}
 \paperorder{48}
 \addbibresource{bibliography.bib}
 
@@ -58,7 +52,7 @@
 
 \begin{abstract}
 
-Lyric poetry---the poetry of song---is often defined in opposition to narrative. In this work, we examine this relationship by carrying out an empirical study to measure the degree of \emph{narrativity} present in contemporary songs, using a dataset of popular (Billboard Hot 100) and prestigious (Grammy-nominated) songs spanning 1960--2024.  While we might expect the 1960s (with ballad-driven folk singers like Joan Baez, Bob Dylan and Simon \& Garfunkel) to be a high-water mark for narrativity, we find the opposite: narrativity has been steadily increasing over this period, largely due to the rise of the strongly narrative genres of hip hop and rap.  We also find that it is a marker of prestige for country music, with Grammy-award nominated ``Best Country'' songs displaying significantly higher narrativity rates than non-nominated songs from the same album. 
+Lyric poetry---the poetry of song---is often defined in opposition to narrative. In this work, we examine this relationship by carrying out an empirical study to measure the degree of \emph{narrativity} present in contemporary songs, using a dataset of popular (Billboard Hot 100) and prestigious (Grammy-nominated) songs spanning 1960--2024.  While we might expect the 1960s (with ballad-driven folk singers like Joan Baez, Bob Dylan and Simon \& Garfunkel) to be a high-water mark for narrativity, we find the opposite: narrativity has been steadily increasing over this period, largely due to the rise of the strongly narrative genres of hip hop and rap.  We also find that it is a marker of prestige for country music, with Grammy-award nominated ``Best Country'' songs displaying significantly higher narrativity rates than non-nominated songs from the same album.
 \end{abstract}
 
 \section{Introduction}
@@ -70,29 +64,26 @@ Lyric poetry---the poetry of song---is often defined in opposition to narrative.
 \hspace*{19em} (Harry Chapin, ``Cat's in the Cradle'')
 \end{quote}
 
-Lyric poetry is the language of song; originally denoting accompaniment by lyre, but characterized by the first-person subject and attention to the personal experience of the poet, in contrast to the retelling of events in epic poetry.\footnote{``\textit{Lyric} was from its inception a term used to describe a music that could no longer be heard, an idea of poetry characterized by a lost collective experience,'' writes Virginia Jackson in her definition of ``lyric'' for the \textit{Princeton Encyclopedia of Poetry and Poetics}\ \cite[826]{greene2012princeton}} While originally useful to differentiate Sappho from Homer, the rise of historical poetics upended a number of key claims in the tradition of lyric theory. Chief among those claims was Jonathan Culler’s influential assertion, initially made in 1977\ \cite{culler77}, and reiterated and expanded upon in subsequent articles and his 2015 book \emph{Theory of the Lyric}\ \cite{culler2015theory}, that lyric is a nonnarrative genre.  In 1977 Culler suggested that one can ``distinguish two forces in poetry, the narrative and the apostrophic''---a first-person subject addressing an absent interlocutor---and that ``the lyric is characteristically the triumph of the apostrophic''\ \cite[66]{culler77}.\footnote{``Apostrophe resists narrative because its now is not a moment in a temporal sequence but a now of discourse, of writing''\ \cite[68]{culler77}. While Culler’s conflict with historical poetics seems to come down to the difference between transhistorical categories and historicist claims about the historical invention of labels like lyric, Culler himself admits that lyric became hegemonic in the 19th century as prose genres like the novel became the increasingly dominant homes for narrative writing\ \cite[76]{culler2015theory}.}  In 2015, Culler added, ``The fundamental characteristic of lyric…[is] the iterative and iterable performance of an event in the lyric present, in the special `now,' of lyric articulation \ldots Fiction is about what happened next; lyric is about what happens now''\ \cite[226]{culler2015theory}. While Culler does not dismiss the existence of narrative poetry (he cites epic, didactic, and other poetic forms), and sometimes makes room for other historical uses of poetry, he firmly insists that ``The notion of lyric as a genre, then, at bottom embodies a claim that \emph{poetry} as a whole (which includes long narrative poems of various sorts) is in various ways a less useful category for thinking about poems than is \emph{lyric}''\ \cite[89]{culler2015theory}. From the more limited notion of ``apostrophic poetry'' to the more totalizing understanding that lyric, rather than ``\emph{poetry} as a whole,'' best helps us theorize poems, Culler constructs a dividing line between the lyric genre and narrative. 
+Lyric poetry is the language of song; originally denoting accompaniment by lyre, but characterized by the first-person subject and attention to the personal experience of the poet, in contrast to the retelling of events in epic poetry.\footnote{``\textit{Lyric} was from its inception a term used to describe a music that could no longer be heard, an idea of poetry characterized by a lost collective experience,'' writes Virginia Jackson in her definition of ``lyric'' for the \textit{Princeton Encyclopedia of Poetry and Poetics}\ \cite[826]{greene2012princeton}} While originally useful to differentiate Sappho from Homer, the rise of historical poetics upended a number of key claims in the tradition of lyric theory. Chief among those claims was Jonathan Culler’s influential assertion, initially made in 1977\ \cite{culler77}, and reiterated and expanded upon in subsequent articles and his 2015 book \emph{Theory of the Lyric}\ \cite{culler2015theory}, that lyric is a nonnarrative genre.  In 1977 Culler suggested that one can ``distinguish two forces in poetry, the narrative and the apostrophic''---a first-person subject addressing an absent interlocutor---and that ``the lyric is characteristically the triumph of the apostrophic''\ \cite[66]{culler77}.\footnote{``Apostrophe resists narrative because its now is not a moment in a temporal sequence but a now of discourse, of writing''\ \cite[68]{culler77}. While Culler’s conflict with historical poetics seems to come down to the difference between transhistorical categories and historicist claims about the historical invention of labels like lyric, Culler himself admits that lyric became hegemonic in the 19th century as prose genres like the novel became the increasingly dominant homes for narrative writing\ \cite[76]{culler2015theory}.}  In 2015, Culler added, ``The fundamental characteristic of lyric…[is] the iterative and iterable performance of an event in the lyric present, in the special `now,' of lyric articulation \ldots Fiction is about what happened next; lyric is about what happens now''\ \cite[226]{culler2015theory}. While Culler does not dismiss the existence of narrative poetry (he cites epic, didactic, and other poetic forms), and sometimes makes room for other historical uses of poetry, he firmly insists that ``The notion of lyric as a genre, then, at bottom embodies a claim that \emph{poetry} as a whole (which includes long narrative poems of various sorts) is in various ways a less useful category for thinking about poems than is \emph{lyric}''\ \cite[89]{culler2015theory}. From the more limited notion of ``apostrophic poetry'' to the more totalizing understanding that lyric, rather than ``\emph{poetry} as a whole,'' best helps us theorize poems, Culler constructs a dividing line between the lyric genre and narrative.
 
 We find an exemplary contrast to this position in Maureen McLane’s \emph{Balladeering, Minstrelsy, and the Making of Romantic Poetry}\ \cite{mclane2008balladeering}. There McLane argues that ballads, or literary poems modeled on narrative songs with a stanzaic structure, were central to the invention of 19th century Romanticism, the historical moment and ideology that, perhaps more than any other, produced the poems and poetic theory most famous for restricting poetry to lyric as the voice crying out in the desert. This was the context that produced John Stuart Mill’s often quoted phrase: ``Poetry is overheard.''\footnote{See McLane\ \cite{mclane2008balladeering}, Stewart\ \cite{stewart1991notes}, and Mill\ \cite{mill1833poetry} (later published as Mill\ \cite{mill1973thoughts}).}
-Coleridge and Wordsworth’s 1798 \emph{Lyrical Ballads} marks the transition point where lyric rises from the ashes of the ballad, burning off the tradition of collective storytelling for the modernity of singular expression (with all the Adornian caveats about how collective historical experience imprints itself upon even the most individualist lyric poem). 
-That said, it was a slow burn, with the ballad’s influence extending at least into the latter half of the 19th century, relevant still in the poetry of historical poetics’ favorite poet: Emily Dickinson.\footnote{Culler enlists Cristianne Miller’s reading of Emily Dickinson\ \cite{miller2012hymn} against Virginia Jackson’s notion of ``lyricization''\ \cite{jackson2005dickinson}, or the social invention of lyric, Jackson traces in her study of Dickinson: ``In the early and mid-19th century United States, ‘lyric’ described any poetry that was not distinctly dramatic, epic, or narrative, that was harmonic or musical in its language, or that was conceived as song. Dickinson’s poetry fits this model'' (Miller quoted in Culler\ \cite[84]{culler2015theory}. }  
+Coleridge and Wordsworth’s 1798 \emph{Lyrical Ballads} marks the transition point where lyric rises from the ashes of the ballad, burning off the tradition of collective storytelling for the modernity of singular expression (with all the Adornian caveats about how collective historical experience imprints itself upon even the most individualist lyric poem).
+That said, it was a slow burn, with the ballad’s influence extending at least into the latter half of the 19th century, relevant still in the poetry of historical poetics’ favorite poet: Emily Dickinson.\footnote{Culler enlists Cristianne Miller’s reading of Emily Dickinson\ \cite{miller2012hymn} against Virginia Jackson’s notion of ``lyricization''\ \cite{jackson2005dickinson}, or the social invention of lyric, Jackson traces in her study of Dickinson: ``In the early and mid-19th century United States, ‘lyric’ described any poetry that was not distinctly dramatic, epic, or narrative, that was harmonic or musical in its language, or that was conceived as song. Dickinson’s poetry fits this model'' (Miller quoted in Culler\ \cite[84]{culler2015theory}. }
 
-The ballad has proven important to arguments that seek to historicize lyric not as fundamentally and structurally timeless (existing for all time and free of the unfolding time of narrative). On the other hand, Culler and his followers continue to assert that lyric is coherent, and its coherence depends, in part, on its rejection of narrative. This division has brought these theorists and others to ask after the influence of song in poetry, which leads us to wonder if there might be another lyric theory if we thought of the problem through \textit{lyrics} theory. 
+The ballad has proven important to arguments that seek to historicize lyric not as fundamentally and structurally timeless (existing for all time and free of the unfolding time of narrative). On the other hand, Culler and his followers continue to assert that lyric is coherent, and its coherence depends, in part, on its rejection of narrative. This division has brought these theorists and others to ask after the influence of song in poetry, which leads us to wonder if there might be another lyric theory if we thought of the problem through \textit{lyrics} theory.
 
-For example, if the first-person subject of lyric emerged by both picking up and then throwing out the narrative baggage of the ballad, would the same hold true for music lyrics in the 20th century? 
-Do song lyrics follow ``lyric'' and outright reject narrative? Does the tradition of singer-songwriters popularized in the 1960s with folk singers like Joan Baez, Bob Dylan, Simon \& Garfunkel, Peter, Paul, and Mary, and others returning to the narrative form of the ballad establish a high-water mark for narrative in musical lyrics that has never returned?\footnote{See Hampton\ \cite{hampton2013tangled}.}  In this article we seek to test whether ``lyricization'' and the totalizing genre of lyric has done away with narrative in music lyrics, or if lyrics might present us with a new reconciliation between lyric and narrative. 
+For example, if the first-person subject of lyric emerged by both picking up and then throwing out the narrative baggage of the ballad, would the same hold true for music lyrics in the 20th century?
+Do song lyrics follow ``lyric'' and outright reject narrative? Does the tradition of singer-songwriters popularized in the 1960s with folk singers like Joan Baez, Bob Dylan, Simon \& Garfunkel, Peter, Paul, and Mary, and others returning to the narrative form of the ballad establish a high-water mark for narrative in musical lyrics that has never returned?\footnote{See Hampton\ \cite{hampton2013tangled}.}  In this article we seek to test whether ``lyricization'' and the totalizing genre of lyric has done away with narrative in music lyrics, or if lyrics might present us with a new reconciliation between lyric and narrative.
 
 For decades, musicologists and other academic theorists have had surprisingly little to say about lyrics and narrative outside of scholars of country music\footnote{See Fox\ \cite{fox2004real}, Neal\ \cite{neal2007narrative}, and Stimeling\ \cite{stimeling2017oxford}, among others.} (to which we will return) and the oral tradition of folksong, which has charted the historical shift from ballad to lyric, including in the transmission of individual songs\ \cite{abrahams1968anglo}.
 Just over a decade ago, Keith Negus wrote that ``the popular song…has been almost entirely ignored in the vast literature on narrative''\ \cite[368]{negus2012narrative}.
-A year later, Julia Simon, borrowing from Culler, argued that critics had implicitly aligned blues with lyric and ballad with epic poetry, but that the two ``are drawn together in the efforts by the listener to make lyric conform to understandable forms of narrative''\ \cite[52]{simon2013}. By 2019, Timothy Hampton, writing about Bob Dylan, would follow Simon’s distinction (blues as lyric, ballad as narrative) to argue that Dylan maneuvers back-and-forth ``within a kind of dialectic…to turn old forms to new purposes''\ \cite[161]{hampton2019bob}. While these strategies within a song form might complicate what counts as narrative, what happens when we look across the history of popular song in the United States from the 1960s to the present, and attempt to trace the narrativity of lyrics? 
+A year later, Julia Simon, borrowing from Culler, argued that critics had implicitly aligned blues with lyric and ballad with epic poetry, but that the two ``are drawn together in the efforts by the listener to make lyric conform to understandable forms of narrative''\ \cite[52]{simon2013}. By 2019, Timothy Hampton, writing about Bob Dylan, would follow Simon’s distinction (blues as lyric, ballad as narrative) to argue that Dylan maneuvers back-and-forth ``within a kind of dialectic…to turn old forms to new purposes''\ \cite[161]{hampton2019bob}. While these strategies within a song form might complicate what counts as narrative, what happens when we look across the history of popular song in the United States from the 1960s to the present, and attempt to trace the narrativity of lyrics?
 
 \section{Data}\label{data}
 
-
 To do so, we first gather together a dataset of song lyrics, designed to capture both popularity and prestige: from Wikipedia we draw the Billboard Year-End Hot 100 singles from 1960-2024, which ranks singles based on (physical and digital) sales and airplay, including streaming.  From \url{www.billboard.com} we also create a collection of popular songs by genre: Billboard year-end hot song charts for R\&B/Hip Hop (2002--2024), Rock/Alternative (2009-2024), Country (2002-2024) and Rap (2013-2024). To build a collection focused on prestige, we identify all songs nominated for a Grammy \emph{Song of the Year} over the period of 1960-2025.  We draw lyrics for each song from \url{www.azlyrics.com}.
 
-
 \section{Framework}
-
 
 Our goal is to trace the narrativity of lyrics in contemporary song over a period of 65 years and explore its dynamics across a range of genres.  Doing so analytically presents a challenge to measurement: how do we judge the degree of narrativity present in a song?  This is fundamentally a question of operationalization\ \cite{piper2017think,pichler2022concepts}---the act of transforming a theoretical construct into a measurable phenomenon.
 
@@ -100,36 +91,32 @@ A now growing body of research at the intersection of musicology and narrative h
 
 Nichols 2007\ \cite{nichols2007} provides one attempt at this, developing a 5-item Likert scale: songs at level 1 have ``no story per se in the lyrics''; level-2 songs ``contain elements of narrative discourse, but these are not reflected or supported in the (neutral) musical setting'' and levels 3 and above offer increasing narrativity as the music and other modalities (including artwork) interact in complex ways.  Songs like ``Relax'' (by Frankie Goes to Hollywood) and ``I Want to Hold your Hand'' (The Beatles) are examples of low-narrativity songs (level 1) in this system, while ``Don't You Want Me'' (Human League) show signs of narrativity (the song begins ``You were working as a waitress in a cocktail bar \ldots when I met you'').
 
-This operationalization is useful in providing a broad structure for the ways in which the holistic production of a song work together to inform the narrative experiences, but our goal is more narrow: to find the degree to which we see narrative embedded within the lyrics themselves, and how legible a story can be when only considering the words. 
+This operationalization is useful in providing a broad structure for the ways in which the holistic production of a song work together to inform the narrative experiences, but our goal is more narrow: to find the degree to which we see narrative embedded within the lyrics themselves, and how legible a story can be when only considering the words.
 
 For this we require a finer-grained instrument narrowly focused on textual narratives.  Modrow 2016\ \cite{modrow2016} provides one extensive theoretical system for the manual tagging of narrativity in songs that centers the concept of eventfulness and changes of state; in this work we draw as well on an increasing body of work using computational methods for narrative detection\ \cite{piper2022toward,steg-etal-2022-computational,antoniak-etal-2024-people,piper-bagga-2025-narradetect}.  We rely in particular on the work of Piper et al. 2021\ \cite{piper2021detecting} and Piper and Bagga\ \cite{piper2022toward,piper-bagga-2025-narradetect}, who decompose narrativity across a range of genres into three axes (grounding in Herman 2009\ \cite{herman2009basic}):
 
 \begin{itemize}
 \item \textbf{Agent}, the degree to which a passage ``foregrounds the lived experience of particular agents.''
-\item \textbf{Events}, the degree to which a passage is ``organized around sequences of events that occur over time.''    
+\item \textbf{Events}, the degree to which a passage is ``organized around sequences of events that occur over time.''
 \item \textbf{World}, the degree to which a passage ``creates a world that I can see or feel.''
 \end{itemize}
 
 This framework was developed in the context of a range of genres, including not only fiction and non-fiction, but poetry as well\ \cite{piper2021detecting}.  H{\"u}hn and Kiefer 2005 \cite{huhn2011narratological} converge on a related framework in their narratological analysis of lyric, emphasizing the role of events (``the temporal sequence of happenings'' described in a poem) and mediation (``relating these happenings from a particular perspective'') in defining narrative.  We make similar adaptations as we interpret this framework for songs---for instance, counting changes of psychological state as events (as H{\"u}hn and Kiefer note, ``in lyric poetry, happenings are frequently composed of mental or psychological processes'') and attending to the agency of the first-person speaker.\footnote{``In lyric poetry, stories tend to differ from those of novels in that they are concerned primarily with internal phenomena such as perceptions, thoughts, ideas, feelings, memories, desires, attitudes, and products of the imagination that the speaker or protagonist ascribes to him- or herself as a story in a monological process of mental reflection, defining his or her individual identity by means of that story.'' \cite[18]{huhn2011narratological}}
 
-Like Piper and Bagga 2022\ \cite{piper2022toward}, we define each of these axes as a 5-point Likert scale, ranging from low (1) to high (5).  In guiding our application of this framework to song, we pay particular attention to the \emph{specificity} of description: while all songs could be interpreted to contain implied stories, we formalize this measure by rating the degree to which each of these elements are explicit in the lyrics; the greater the inference required to identify the actors involved, or the sequence of events in which they participate, the lower the judgment of narrativity.  
+Like Piper and Bagga 2022\ \cite{piper2022toward}, we define each of these axes as a 5-point Likert scale, ranging from low (1) to high (5).  In guiding our application of this framework to song, we pay particular attention to the \emph{specificity} of description: while all songs could be interpreted to contain implied stories, we formalize this measure by rating the degree to which each of these elements are explicit in the lyrics; the greater the inference required to identify the actors involved, or the sequence of events in which they participate, the lower the judgment of narrativity.
 We codify this operationalization in a set of guidelines, which serve to circumscribe the boundaries of song narrativity and provide signposts to guide judgments of its presence in lyrics. The full annotation guidelines can be found in Appendix \ref{guidelines}.
-
 
 This framework encodes the decision to treat individual songs in their entirety as the unit of analysis.  This leaves open a range of alternative specifications that are equally interesting.  For instance, to what degree does a narrative present within a song have internal structure\ \cite{alberhasky2024songs} (as, for example, in Harry Chapin's \emph{Cat's in the Cradle} [quoted in the epigraph], where the story describes a role reversal that unfolds over decades)?  Likewise, what narrative techniques do entire albums use in their storytelling? Past work has explored the audio factors in track sequencing\ \cite{neto2023algorithmic,10.1371/journal.pone.0316963}, and many albums---ranging Pink Floyd's \emph{The Wall} to Janelle Mon\'{a}e's \emph{The ArchAndroid}---have an explicit narrative arc that unfolds over the course of a sequence of songs.  Our focus on the holistic narrativity of a song offers a natural starting point for analysis, and we leave to other work to explore these questions of narrative structure.
 
-
-
 \section{Annotation}
-
 
 Using the guidelines, three annotators, all co-authors, each independently provided judgments of narrativity for a total of 1,076 songs.  From the dataset described in \S\ref{data} above, we annotate the following:
 
 \begin{itemize}
 
-    \item Grammy nominees for \emph{Song of the Year}, 1960-2025, along with one other song from the same album.
+\item Grammy nominees for \emph{Song of the Year}, 1960-2025, along with one other song from the same album.
 
-    \item Billboard Year-End Hot 100, 1960--2024.  We sample eight songs per year from these lists, sampling at random (but excluding any Grammy nominated songs of the year already identified above).
+\item Billboard Year-End Hot 100, 1960--2024.  We sample eight songs per year from these lists, sampling at random (but excluding any Grammy nominated songs of the year already identified above).
 
 \end{itemize}
 
@@ -138,55 +125,40 @@ We only include songs for annotation with lyrics on \url{www.azlyrics.com}.  Eac
 We generate final scores for Agent, Events, and World as the average of all three independent annotations; any song with a standard deviation greater than 1 is then discussed to yield a final consensus rating.  Figure \ref{fig:annos} illustrates the distribution of these resulting annotations over the three categories; while many songs center the experiences of agents, fewer focus on sequences of events or build a world that is inhabitable by a listener.
 
 \begin{figure}[!htp]
-  \centering
-  \includegraphics[width=1\columnwidth]{figures/annotation_dist.png}
-  \caption{
-  Distribution of annotations for agents, events, and world-building. 
-  }
-  \label{fig:annos}
+\centering
+\includegraphics[width=1\columnwidth]{figures/annotation_dist.png}
+\caption{
+Distribution of annotations for agents, events, and world-building.
+}
+\label{fig:annos}
 \end{figure}
 
 \section{Models}
-
-
 
 The process described above created an annotated dataset of 1,076 songs.  To explore the degree to which song narrativity can be modeled to enable larger-scale analysis, we use this data in a predictive machine learning framework, evaluating the capability of models to recreate these human judgments of narrativity\ \cite{bamman2024classification}.
 We divided this dataset into partitions for training ($n=646$), development ($n=215$) and test ($n=215$) and assessed the performance of a number of regression models for predicting a scalar value for each of the three dimensions using only information from the lyrics of the song. Each model is given access to the complete original lyrics of a song, preprocessing only to remove mentions of speaker turns (e.g. ``[Taylor Swift:]'') occassionally found when there are multiple singers in a song. For each model, we optimize hyperparameters (learning rate, $\ell_2$ regularization strength) on development data using the \texttt{optuna} optimization library\ \cite{akiba2019optuna} over 50 optimization trials.
 We consider the following classes of models:
 
+\paragraph{Minimal narrative features.}  Inspired by Piper and Bagga, we build a model using the five most informative features from that work that are able to predict narrativity in a number of (non-song) genres: the rate of past-tense verbs (VBD), nouns (NN) and present-tense verbs (VBZ), concreteness (the average value of terms in the lexicon of Brysbaert et al. 2014\ \cite{brysbaert2014concreteness}), and the agenthood (the rate of animate entities participating as the subjects of verbs).  Parts of speech are tagged and  parsed for syntax using SpaCy in BookNLP.  We train an $\ell_2$-regularized linear regression on this dataset, using the development data to find the best $\ell_2$ strength.
 
-
-\noindent
-\textbf{Minimal narrative features.}  Inspired by Piper and Bagga, we build a model using the five most informative features from that work that are able to predict narrativity in a number of (non-song) genres: the rate of past-tense verbs (VBD), nouns (NN) and present-tense verbs (VBZ), concreteness (the average value of terms in the lexicon of Brysbaert et al. 2014\ \cite{brysbaert2014concreteness}), and the agenthood (the rate of animate entities participating as the subjects of verbs).  Parts of speech are tagged and  parsed for syntax using SpaCy in BookNLP.  We train an $\ell_2$-regularized linear regression on this dataset, using the development data to find the best $\ell_2$ strength.
-
-
-
-\noindent
-\textbf{Featurized.} 
+\paragraph{Featurized.}
 We test several other feature combinations in $\ell_2$-regularized linear regressions (using development data to again find the best $\ell_2$ for each one).  \textbf{1pp} includes only the rate of 1st-person pronouns (\emph{I, me, my}); \textbf{POS + animacy + concreteness + 1pp} adds the animacy and concreteness features from the minimal narrativity feature set, along with rates for all parts of speech; \textbf{BoW + POS + animacy + concreteness + 1pp} additionally adds unigram bag-of-words features.
 
+\paragraph{Masked LM.} We explore four models pre-trained via masked language modeling objectives: BERT\ \cite{devlin-etal-2019-bert}, RoBERTA\ \cite{liu2019roberta}, DeBERTa (V3)\ \cite{he2021debertav3} and ModernBERT\ \cite{warner2024smarter}.  We train separate models for each of the three aspects of narrativity; to each base model we add a linear layer, minimizing the average mean squared error.  We fine-tune all parameters on training data and use development data to find the best learning rate for each model.
 
-
-\noindent
-\textbf{Masked LM.} We explore four models pre-trained via masked language modeling objectives: BERT\ \cite{devlin-etal-2019-bert}, RoBERTA\ \cite{liu2019roberta}, DeBERTa (V3)\ \cite{he2021debertav3} and ModernBERT\ \cite{warner2024smarter}.  We train separate models for each of the three aspects of narrativity; to each base model we add a linear layer, minimizing the average mean squared error.  We fine-tune all parameters on training data and use development data to find the best learning rate for each model.
-
-
-
-\noindent
-\textbf{Prompting models.}  We also assess the performance of three frontier LLMs: {GPT 4.1} (OpenAI), {Gemini 2.5 Pro} (Google) and {Claude Opus 4} (Anthropic). For all models, we prompt for 5-point Likert scale ratings on each of the three dimensions, providing three examples of input/output pairs; the full prompt can be found in appendix \ref{appdx:prompt}.
+\paragraph{Prompting models.}  We also assess the performance of three frontier LLMs: {GPT 4.1} (OpenAI), {Gemini 2.5 Pro} (Google) and {Claude Opus 4} (Anthropic). For all models, we prompt for 5-point Likert scale ratings on each of the three dimensions, providing three examples of input/output pairs; the full prompt can be found in appendix \ref{appdx:prompt}.
 
 \subsection{Results}
-
 
 To assess performance, we generate a composite ``narrativity'' score as the average of Agent, Events, and World scores (for both the annotated data and all model predictions).  We then measure the Spearman rank correlation coefficient (following Piper and Bagga \cite{piper2022toward}) between the true and predicted narrativity scores for all songs in the test data.
 
 Table \ref{tab:models} illustrates the performance for all models, along with 95\% bootstrap confidence intervals.  We see that BERT-class models are the best performing (and practically indistinguishable from each other), with featurized bag-of-words models also competitive.  LLMs and models without word features all struggle with this measurement.  Performance by individual axis can be found in table \ref{tab:modelsaxis} (Appendix \ref{axisperf}).
 
 \begin{table}[h]
-    \centering
-    \begin{tabular}{lc}
+\centering
+\begin{tabular}{lc}
 Model&Spearman $\rho$\\
-        \toprule
+\toprule
 RoBERTa&	0.840 [0.791-0.878]\\
 DeBERTa-v3	&0.837 [0.787-0.876]\\
 BERT	&0.828 [0.777-0.870]\\
@@ -199,56 +171,51 @@ POS + animacy + concreteness + 1pp &0.508 [0.396-0.603]\\
 Minimal narrative features &0.427 [0.314-0.531] \\
 1pp & -0.082 [-0.217-0.054] \\
 
-        \bottomrule
-    \end{tabular}
-    
-    \caption{\label{tab:models}
-      Model performance, along with 95\% bootstrap confidence intervals.
-     }
-  \label{analyses}
+\bottomrule
+\end{tabular}
+
+\caption{\label{tab:models}
+Model performance, along with 95\% bootstrap confidence intervals.
+}
 \end{table}
 
 We use perturbation-based methods\ \cite{IVANOVS2021228} to investigate the most predictive terms for each narrative task in the best-performing RoBERTa model (for details, see Appendix \ref{interp}). The most frequent terms in local explanations for the agent task include not only a focus on the first-person (\emph{I}) and \emph{mirror} reflecting back on that first person, but also a focus on inebriation (\emph{drunk, wine, wasted, drank}).  The most common explanations for the event task include not only a focus on the past tense identified by Piper and Bagga (\emph{said, planned, stole}), but also explicit temporal indicators (\emph{tonight, yesterday, evening, tomorrow}).  The world-building task includes explanations in specific places (\emph{downtown, hall, town, mall, street, train, city}) and things \emph{(coffee, wine)}.
 
-\section{Analysis}
+\section{Analysis}\label{analyses}
 
-With a construct of narrativity in song defined, human judgments of narrativity for songs created, and predictive models able to reproduce those judgments with relatively high accuracy, we have the requisite pieces to turn back to our original question: how do we see narrativity expressed in the lyrics of contemporary songs?  
+With a construct of narrativity in song defined, human judgments of narrativity for songs created, and predictive models able to reproduce those judgments with relatively high accuracy, we have the requisite pieces to turn back to our original question: how do we see narrativity expressed in the lyrics of contemporary songs?
 
 We identify all songs from the Billboard Year-End Hot 100 from 1960--2024 and gather any available lyrics from \url{www.azlyrics.com} (a total of 5,745 songs).  In this collection, the average song spans 423 tokens, with the most represented genres including pop (19.6\%), contemporary R\&B (16.5\%), soul (8.8\%), hip-hop (8.6\%), pop rock (8.4\%), country (8\%), soft rock (7.9\%), and dance pop (6.4\%).
 
 For each song, we use our best-performing model (RoBERTa) to predict its composite narrativity as the average of model predictions for Agent, Events, and World.  Appendix \ref{topsongs} illustrates the most narrative songs within this collection; Appendix \ref{closereading} provides a close reading of two of them (Taylor Swift's ``All Too Well'' and Ice Cube's ``It was a Good Day'').
-
 
 \subsection{Narrativity over time}
 
 How has the narrativity of songs changed over time? Figure \ref{fig:billtop100} plots the average narrativity in the Billboard Year-End Hot 100 again over the period 1960-2024, along with 95\% confidence intervals.  We see a strong correlation over time ($\rho=0.87, p<0.001$), with an absolute increase in narrativity of 1.14 points from 1960 (2.58) to 2024 (3.72).\footnote{Additional robustness checks on model bias and annotator familiarity can be found in Appendix \ref{robustness}.}
 
 \begin{figure}[!htp]
-  \centering
-  \includegraphics[width=.5\columnwidth]{figures/billboard_hot100_year.png}
-  \caption{
-  Narrativity over time, Billboard Year-End Hot 100 (1960-2024), with 95\% confidence intervals. 
-  }
-  \label{fig:billtop100}
+\centering
+\includegraphics[width=.5\columnwidth]
+{figures/billboard_hot100_year.png}
+\caption{
+Narrativity over time, Billboard Year-End Hot 100 (1960-2024), with 95\% confidence intervals.
+}
+\label{fig:billtop100}
 \end{figure}
 
-This finding seems to challenge the assumptions we set out at the opening of this article, where, taking the familiar division between lyric (non-narrative) and ballad (narrative), we expected that the popular identification of the 1960s with the resurgence of traditional ballads by folk singers like Bob Dylan would have led to a sharp rise in the narrative drive of songs in the 60s. However, while Dylan appears on the Billboard charts with three different songs in the mid to late 60s, and covers of his songs by The Byrds and The Turtles chart as well, they’re joined by only a small handful of other folk songs, and among them all, only Simon and Garfunkel’s ``Scarborough Fair'' (\#89 in 1968) is an arrangement of a traditional ballad. Instead of the ballad revivalists, Motown and the Beatles saturate the charts across the 60s. 
-%\\[20pt]
+This finding seems to challenge the assumptions we set out at the opening of this article, where, taking the familiar division between lyric (non-narrative) and ballad (narrative), we expected that the popular identification of the 1960s with the resurgence of traditional ballads by folk singers like Bob Dylan would have led to a sharp rise in the narrative drive of songs in the 60s. However, while Dylan appears on the Billboard charts with three different songs in the mid to late 60s, and covers of his songs by The Byrds and The Turtles chart as well, they’re joined by only a small handful of other folk songs, and among them all, only Simon and Garfunkel’s ``Scarborough Fair'' (\#89 in 1968) is an arrangement of a traditional ballad. Instead of the ballad revivalists, Motown and the Beatles saturate the charts across the 60s.
 
-The revolution in popular \textit{narrative} songwriting and fandom, it seems, would take another thirty years, driven by another genre, associated not with the ballad, but with lyric: hip hop. 
-
-
+The revolution in popular \textit{narrative} songwriting and fandom, it seems, would take another thirty years, driven by another genre, associated not with the ballad, but with lyric: hip hop.
 
 \subsection{Genre}
-
 
 For songs in the Billboard Hot 100 (1960-2024), we examine the relationship between narrativity and genre by gathering fine-grained genre information for each song from Wikipedia.  Table \ref{tab:genre} presents the average narrativity among all genres attested by at least 200 songs; we see hip hop clearly differentiated as the most narrative of genres, followed by country;\footnote{Modrow 2016\ \cite{modrow2016} finds a similar emphasis on narrativity and ``super-narrativity''  in hip hop and country within a collection of 78 German and English pop songs.}  the least narrative of genres are disco and soul.
 
 \begin{table}[h!]
-    \centering
-    \begin{tabular}{lllll}
+\centering
+\begin{tabular}{lllll}
 Genre&Narrativity&Agents&Events&World\\
-        \toprule
+\toprule
 
 Hip hop&	4.01 {\small[3.96-4.07]}&4.47 {\small[4.44-4.51]}&3.84 {\small[3.76-3.92]}&3.72 {\small[3.65-3.80]}\\
 Country&	3.43 {\small[3.35-3.51]}&4.05 {\small[4.00-4.10]}&3.48 {\small[3.38-3.59]}&2.74 {\small[2.62-2.87]}\\
@@ -263,42 +230,38 @@ Funk&	2.86 {\small[2.76-2.97]}&3.65 {\small[3.56-3.75]}&2.64 {\small[2.51-2.77]}
 Soul&	2.72 {\small[2.66-2.78]}&3.66 {\small[3.61-3.71]}&2.64 {\small[2.56-2.73]}&1.86 {\small[1.77-1.94]}\\
 Disco&	2.71 {\small[2.62-2.81]}&3.54 {\small[3.46-3.62]}&2.55 {\small[2.42-2.68]}&2.05 {\small[1.92-2.19]}\\
 
-        \bottomrule
-    \end{tabular}
-    
-    \caption{\label{tab:genre}
-      Narrativity by genre, along with 95\% confidence intervals. 
-    }
-  \label{fig:hiphoprap}
+\bottomrule
+\end{tabular}
+
+\caption{\label{tab:genre}
+Narrativity by genre, along with 95\% confidence intervals.
+}
 \end{table}
 
-
 The dominance of hip hop and country provides important context for the rising trend in narrativity illustrated in figure \ref{fig:billtop100}. How much of this rise is due to the rise of hip hop itself? Figure \ref{fig:hiphoprap} answers this by plotting the proportion of the Billboard Hot 100 songs that are comprised of both hip hop/rap (left) and country (right) songs.  While country has seen a recent resurgence that may partially sustain narrativity today, hip hop increasingly dominated the charts during the narrative revolution in popular music starting in the mid-1990s---from fig. \ref{fig:billtop100}, we can see the 1990s brought a rapid ascent of narrativity that has persisted into the 21st century.
-The 1990s is where hip hop, not folk songs, mark the turning point for narrative in popular music. 
-
+The 1990s is where hip hop, not folk songs, mark the turning point for narrative in popular music.
 
 \begin{figure}[!htp]
-  \centering
-  \includegraphics[width=1\columnwidth]{figures/hip_hop_country.png}
-  \caption{
-  Proportion of songs on the Billboard Hot 100 that are hip hop/rap (left) and country (right).  The rise in narrativity in fig. \ref{fig:billtop100} is concurrent with the increasing charting of hip hop/rap songs on the Billboard Hot 100, and sustained by the renewed popularity of country in the 2020s.}
-  \label{fig:billboardgenre}
+\centering
+\includegraphics[width=1\columnwidth]{figures/hip_hop_country.png}
+\caption{
+Proportion of songs on the Billboard Hot 100 that are hip hop/rap (left) and country (right).  The rise in narrativity in fig. \ref{fig:billtop100} is concurrent with the increasing charting of hip hop/rap songs on the Billboard Hot 100, and sustained by the renewed popularity of country in the 2020s.}
+\label{fig:hiphoprap}
 \end{figure}
 
 That hip hop would drive narrative might seem surprising to critics, popular and academic, who argue that the genre, more than any other, marks the return of poetry to popular culture.\footnote{See Hankin\ \cite{hankin2023break}, Culler\ \cite{culler2019whyrhythm}, Bradley\ \cite{bradley2009book} and Perry\ \cite{perry2004prophets}.}
-In their 2020 book\textit{ Rhymes in the Flow: How Rappers Flip the Beat}, authors Aurko Joshi and Macklin Smith confidently declare that ``the lyric mode dominates rap'' and ``[n]arrative is relatively uncommon''\ \cite[149]{smith2020rhymes}. They in particular attribute this perceived rarity towards the genre’s focus on the ``spontaneous or spontaneous-seeming performance self,'' exemplified in first-person name drops, braggadocio, wordplay and aphorisms rounding out an artist’s dramatic personae as well as foundational hip hop forms such as off-the-cuff freestyling, that preclude the ``detachment'' required for ``sustained, song-length narrative[s]'' and story arcs \cite[120]{smith2020rhymes}. More recently, Charlie Hankin takes up lyric theory from Culler and others to argue that hip hop freestyling is a ``present-tense'' exercise, a recursive work exemplified in what he names ``raplove'': ``Without the time to elaborate a narrative arc, freestylers often rhyme about ‘what is happening, usually in present tense.’ Freestyling, in other words, is a poetics of epistrophic return, a turning about on ‘lo que hay’ (what there is)''\ \cite[50]{hankin2023break}. The implication that the fast-talking, improvisational subsets of hip hop are restricted not only by temporality but also time in their ephemeral performances overlooks the genre’s world-building, chronicling, and characterizational narrativity. While these authors acknowledge minor narrative moments in hip hop, their work cannot conceive of hip hop's narrative influence. 
+In their 2020 book\textit{ Rhymes in the Flow: How Rappers Flip the Beat}, authors Aurko Joshi and Macklin Smith confidently declare that ``the lyric mode dominates rap'' and ``[n]arrative is relatively uncommon''\ \cite[149]{smith2020rhymes}. They in particular attribute this perceived rarity towards the genre’s focus on the ``spontaneous or spontaneous-seeming performance self,'' exemplified in first-person name drops, braggadocio, wordplay and aphorisms rounding out an artist’s dramatic personae as well as foundational hip hop forms such as off-the-cuff freestyling, that preclude the ``detachment'' required for ``sustained, song-length narrative[s]'' and story arcs \cite[120]{smith2020rhymes}. More recently, Charlie Hankin takes up lyric theory from Culler and others to argue that hip hop freestyling is a ``present-tense'' exercise, a recursive work exemplified in what he names ``raplove'': ``Without the time to elaborate a narrative arc, freestylers often rhyme about ‘what is happening, usually in present tense.’ Freestyling, in other words, is a poetics of epistrophic return, a turning about on ‘lo que hay’ (what there is)''\ \cite[50]{hankin2023break}. The implication that the fast-talking, improvisational subsets of hip hop are restricted not only by temporality but also time in their ephemeral performances overlooks the genre’s world-building, chronicling, and characterizational narrativity. While these authors acknowledge minor narrative moments in hip hop, their work cannot conceive of hip hop's narrative influence.
 
 While the charts above examine narrativity in the Billboard Top 100 (and see an explanation for that rise in the composition of the Top 100 itself), we can examine this same phenomenon in more detail within each genre by considering the Billboard year-end ``Hot Song'' charts for R\&B/Hip Hop (2002--2024), Rock/Alternative (2009-2024), Country (2002-2024) and Rap (2013-2024)---lists again driven by popularity in sales and airplay but specific to each genre.  Figure \ref{fig:billboardgenre} illustrates this fuller narrative picture in genre over time. We can see that country, R\&B/hip hop and rap have all been relatively stable in their individual narrativity over time (with rap showing the highest sustained levels), lending credence to the observation that changing narrativity within the Billboard charts is primarily due to the changing genre composition of the chart itself; but we also see strong increases in narrativity \emph{within} the genre of rock and (to a lesser extent) pop as well, reflecting a potential influence that cuts across genres.
 
 \begin{figure}[!htp]
-  \centering
-  \includegraphics[width=1\columnwidth]{figures/billboard_subcharts_year.png}
-  \caption{
-  Narrativity over time, Billboard Year-End Hot Songs (by genre) with 95\% confidence intervals. 
-  }
-  \label{tab:grammy}
+\centering
+\includegraphics[width=1\columnwidth]{figures/billboard_subcharts_year.png}
+\caption{
+Narrativity over time, Billboard Year-End Hot Songs (by genre) with 95\% confidence intervals.
+}
+\label{fig:billboardgenre}
 \end{figure}
-
 
 \subsection{Grammy nominations}
 
@@ -306,33 +269,27 @@ Finally, we test the relationship between narrativity and prestige (measured thr
 
 For manually annotated Song of the Year tracks, nominated songs are 4.2\% more narrative (3.15 vs. 3.02) but the difference is not significant when correcting for multiple hypothesis tests ($p=0.050, n=278$).  For Grammy Best \{Rock, Country, R\&B, Rap\} Songs, nominated songs are 3.1\% more narrative (3.40 vs. 3.30) and significantly so ($p=0.002, n=768$), but a breakdown by genre (table \ref{tab:grammy}) reveals that this effect is due entirely to the Best Country Song category, which sees a 5.8\% increase in narrativity between nominated songs and non-nominated songs from the same album (and significant at $\alpha=0.05$).
 
-
 \begin{table}[h!]
-    \centering
-    \begin{tabular}{llllll}
+\centering
+\begin{tabular}{llllll}
 Genre&Nominated&Non-nominated&$\uparrow$&$n$&$p$\\
-        \toprule
+\toprule
 
 Country&3.61&3.40&5.8&259&0.002 \\
 R\&B&3.03&2.98&1.6&247&0.426 \\
 Rock&3.13&3.08&1.5&162&0.502 \\
 Rap&4.25&4.18&1.6&100&0.261 \\
-        \bottomrule
-    \end{tabular}
-    
-    \caption{
-      Narrativity by award category.
-    }
-  \label{authorcontributions}
+\bottomrule
+\end{tabular}
+
+\caption{\label{tab:grammy}
+Narrativity by award category.
+}
 \end{table}
 
-This finding is striking as scholarship around country music’s prestige tends to emphasize a complicated conceptual terrain of ``covert prestige''\ \cite[32]{fox2004real} in tension with ``constructed naturalness''\ \cite[3]{pecknold2007selling}, where commercial success and mainstream prestige—the categories embodied in a Grammy Award—stand opposed to notions of ``real country''\ \cite{Lloyd2017,Edwards2017,Hughes2017}. Meanwhile, Jocelyn Neal has argued that specific ``narrative paradigms'' dominate country music composition\ \cite{neal2007narrative}, but while she notes that the songwriters she discusses have won numerous awards, she does not make an explicit argument about the relationship between narrativity and industry prestige like our findings point to here. A focus on narrative might be a key way to rethink commercial prestige and the paradigms of composition that stretch across the genre, even amidst the competing models of prestige that inhere within country music. 
-
-
-
+This finding is striking as scholarship around country music’s prestige tends to emphasize a complicated conceptual terrain of ``covert prestige''\ \cite[32]{fox2004real} in tension with ``constructed naturalness''\ \cite[3]{pecknold2007selling}, where commercial success and mainstream prestige—the categories embodied in a Grammy Award—stand opposed to notions of ``real country''\ \cite{Lloyd2017,Edwards2017,Hughes2017}. Meanwhile, Jocelyn Neal has argued that specific ``narrative paradigms'' dominate country music composition\ \cite{neal2007narrative}, but while she notes that the songwriters she discusses have won numerous awards, she does not make an explicit argument about the relationship between narrativity and industry prestige like our findings point to here. A focus on narrative might be a key way to rethink commercial prestige and the paradigms of composition that stretch across the genre, even amidst the competing models of prestige that inhere within country music.
 
 \section{Conclusion}
-
 
 In defining a computational model of narrativity in songs, this work charts the unequivocal rise of storytelling in contemporary popular music reflected in the Billboard top 100, finding an explanation for that rise in the increasing dominance of hip hop/rap in those charts and sustained by the renewed popularity of country in the 2020s. That hip hop, the genre most identified with lyric poetry, and not country, known for its long history of ballads, initially ushered in a new narrative moment in popular music, troubles the expected distinction between lyric and ballad. Pushing past these older divisions, hip hop requires a ``lyrics theory,'' an understanding of how the most popular of song lyrics at the end of the 20\textsuperscript{th} century and the first decades of the 21\textsuperscript{st} fuse the poetic attention to rhythm and rhyme, and an intricate linguistic play with tropes and metaphors, to a propulsive narrative mode. This poetic combination of lyric and narrative also returns attention to classic studies of hip hop by Nelson George\ \cite{george1998hip}, Cheryl L. Keyes\ \cite{keyes2002rap}, and Tricia Rose\ \cite{rose1994blacknoise}, but with data to show that narrative storytelling isn't just a minor aspect of hip hop, but a major force that has shaped the recent history of popular music.\footnote{Keyes\ \cite{keyes2002rap}, Robin D.G. Kelley\ \cite{kelley2004looking}, Rose\ \cite{rose1994blacknoise}, and others point to the history of ``toasting'' as the narrative form most closely aligned with hip hop. However, Joshi and Smith claim that ``first-person toasts in  the manner of Blowfy’s `Rapp Dirty' (1980) are, we found, relatively rare''\ \cite[148]{smith2020rhymes}.}  The two genres of hip hop and country have come to define the poles of our moment, with their cross pollination showing up in the music of Lil Nas X, Beyonc\'e and others; we might look to their shared focus on storytelling as a natural bridge between them.
 
@@ -342,17 +299,15 @@ Data and code to support this work, and enable other explorations of narrativity
 
 The research reported in this article was supported by funding from the National Science Foundation (IIS-1942591), with computing resources provided by the Google Gemma Academic Program.  This work benefitted from conversations with Colin Bazsali and helpful feedback from reviewers at CHR, for which we are grateful.
 
-
 \clearpage
 
 \printbibliography
 
 \appendix
 
-
 \clearpage
 \section{Author contributions}
-
+\label{authorcontributions}
 
 \begin{itemize}
 
@@ -373,10 +328,10 @@ The research reported in this article was supported by funding from the National
 What are the songs that show the highest narrativity over our period of analysis? We identify all songs from the Billboard Year-End Hot 100 from 1960--2024 and gather any available lyrics from \url{www.azlyrics.com} (a total of 5,745 songs).  For each song, we use our best-performing model (RoBERTa) to predict its composite narrativity as the average of model predictions for Agent, Events, and World.  Table \ref{tab:topsongs} list the top ten songs by highest predicted narrativity.
 
 \begin{table}[h!]
-    \centering
-    \begin{tabular}{llll}
+\centering
+\begin{tabular}{llll}
 Score&Date&Artist&Song\\
-        \toprule    
+\toprule
 4.95&1973&Vicki Lawrence&The Night the Lights Went Out in Georgia\\
 4.94&1967&Bobbie Gentry&Ode to Billie Joe\\
 4.93&2003&Dierks Bentley&What Was I Thinkin'\\
@@ -387,26 +342,25 @@ Score&Date&Artist&Song\\
 4.90&1968&Jeannie C. Riley&Harper Valley PTA\\
 4.89&1989&Tone Loc&Wild Thing\\
 4.89&2001&Craig David&Fill Me In\\
-        \bottomrule
-    \end{tabular}
-    
-    \caption{\label{tab:topsongs}
-      Highest predicted songs among Billboard Hot 100 (1960-2024).
-    }
-  \label{closereading}
+\bottomrule
+\end{tabular}
+
+\caption{\label{tab:topsongs}
+Highest predicted songs among Billboard Hot 100 (1960-2024).
+}
 \end{table}
 
 \section{Close Reading}
+\label{closereading}
+Our computational model allows for what Bamman et al. 2024\ \cite{bamman2024classification} term ``classification-assisted close reading''---identifying the salient texts within a broader collection for deeper analysis.  Our top songs offer different engagements with narrativity, but across genres they vividly create worlds from romance and survival. The original 2012 version\footnote{The version in our dataset is the 2021 re-recording (``Taylor's Version'', 5 minutes and 29 seconds), which appears as \#76 on the 2022 Billboard Hot 100 and has identical lyrics to the 2012 version.} of Taylor Swift’s ``All Too Well,'' overladen with flashbacks, scene cutting, and even metanarrative flourishes, culminates in the refrain’s memory touchstone: ``I remember it all too well.'' The opening line builds a world concisely through an ``I'' and ``you''---the romantic dyad at the heart of pop romance—stepping into the threshold of the past: ``I walked through the door with you.'' This spatialization of temporality (a doorway to the past) is also a particular kind of space: a domestic world, which ``felt like home somehow.'' The romantic memories that iterate across the song embed memory objects, none more potent than the lost scarf (``you’ve still got it in your drawer even now'') from the opening verse that returns in the ultimate verse (``you keep my old scarf from that very first week''), tracing a narrative arc to a return that comments on the song’s own theme of nostalgia and heartbreak.
 
-Our computational model allows for what Bamman et al. 2024\ \cite{bamman2024classification} term ``classification-assisted close reading''---identifying the salient texts within a broader collection for deeper analysis.  Our top songs offer different engagements with narrativity, but across genres they vividly create worlds from romance and survival. The original 2012 version\footnote{The version in our dataset is the 2021 re-recording (``Taylor's Version'', 5 minutes and 29 seconds), which appears as \#76 on the 2022 Billboard Hot 100 and has identical lyrics to the 2012 version.} of Taylor Swift’s ``All Too Well,'' overladen with flashbacks, scene cutting, and even metanarrative flourishes, culminates in the refrain’s memory touchstone: ``I remember it all too well.'' The opening line builds a world concisely through an ``I'' and ``you''---the romantic dyad at the heart of pop romance—stepping into the threshold of the past: ``I walked through the door with you.'' This spatialization of temporality (a doorway to the past) is also a particular kind of space: a domestic world, which ``felt like home somehow.'' The romantic memories that iterate across the song embed memory objects, none more potent than the lost scarf (``you’ve still got it in your drawer even now'') from the opening verse that returns in the ultimate verse (``you keep my old scarf from that very first week''), tracing a narrative arc to a return that comments on the song’s own theme of nostalgia and heartbreak. 
+The song’s obsession with telling, with repeatedly narrating the inability to move on from this breakup, relates to the singer’s ultimate power struggle to liberate herself from this past, and to make it a past where her ex-lover pines for her, where she retains control.
+Whereas at the start of the final verse the singer was stuck—``Time won’t fly, it’s like I’m paralyzed by it''---by the end of that verse the tables seem to be turned. The scarf marks her victory—``And it smells like me / You can’t get rid of it''---and seems to put her ex in a place where he longs for her. The closing refrain (``Wind in my hair, you were there, you remember it all / Down the stairs, you were there, you remember it all'') nearly closes the song with him stuck in the past, remorseful and desiring her. And yet, in the final line, the singer seems to join that same position: ``I remember it all.'' Is this a generous attempt at reconciliation?
+Or is it a structural conflict for the ego, the insistence that the ``I'' take the spotlight again in the end, even if it seems to turn her backwards as the song concludes?
 
-The song’s obsession with telling, with repeatedly narrating the inability to move on from this breakup, relates to the singer’s ultimate power struggle to liberate herself from this past, and to make it a past where her ex-lover pines for her, where she retains control. 
-Whereas at the start of the final verse the singer was stuck—``Time won’t fly, it’s like I’m paralyzed by it''---by the end of that verse the tables seem to be turned. The scarf marks her victory—``And it smells like me / You can’t get rid of it''---and seems to put her ex in a place where he longs for her. The closing refrain (``Wind in my hair, you were there, you remember it all / Down the stairs, you were there, you remember it all'') nearly closes the song with him stuck in the past, remorseful and desiring her. And yet, in the final line, the singer seems to join that same position: ``I remember it all.'' Is this a generous attempt at reconciliation? 
-Or is it a structural conflict for the ego, the insistence that the ``I'' take the spotlight again in the end, even if it seems to turn her backwards as the song concludes? 
+The high narrativity of this song derives from its agonic romance (the struggle between the agents ``I'' and ``you''), it’s detailed world building (``your drawer,'' ``getting lost upstate,'' ``autumn leaves,'' ``that little town street,'' ``a twin-sized bed''; ``the refrigerator light''), its evolving motifs (``you almost ran the red''; ``your cheeks were turning red''; ``I can picture it''; ``Photo album on the counter''), and an insistence on temporality and tense shifts (``we’re singing in the car''; ``there we are again on that little town street''; ``you used to be a little kid with glasses''; ``there we are again in the middle of the night'') that culminate in the song’s refrain ``you / I remember it all'' linked to that sense of temporal stasis (``time won’t fly'') and the tension between looking back, feeling the past as present, or moving on. We don’t need Faulkner or Genette to tell us narrative isn’t necessarily about forward progression. Our model recognizes that stories, from national traumas to personal romances, can narrate the inability to move on, a sentiment embodied in one of the world’s most famous singers revising her own heartbreak anthem in a sonic tumble of fading repetitions.
 
-The high narrativity of this song derives from its agonic romance (the struggle between the agents ``I'' and ``you''), it’s detailed world building (``your drawer,'' ``getting lost upstate,'' ``autumn leaves,'' ``that little town street,'' ``a twin-sized bed''; ``the refrigerator light''), its evolving motifs (``you almost ran the red''; ``your cheeks were turning red''; ``I can picture it''; ``Photo album on the counter''), and an insistence on temporality and tense shifts (``we’re singing in the car''; ``there we are again on that little town street''; ``you used to be a little kid with glasses''; ``there we are again in the middle of the night'') that culminate in the song’s refrain ``you / I remember it all'' linked to that sense of temporal stasis (``time won’t fly'') and the tension between looking back, feeling the past as present, or moving on. We don’t need Faulkner or Genette to tell us narrative isn’t necessarily about forward progression. Our model recognizes that stories, from national traumas to personal romances, can narrate the inability to move on, a sentiment embodied in one of the world’s most famous singers revising her own heartbreak anthem in a sonic tumble of fading repetitions. 
-
-Ice Cube’s ``It Was A Good Day'' joins the pantheon of attempts to narrate a life by telling the story of a day in the life. The story’s motivation is romantic, just like Swift’s, but there’s only teleology here, as Cube gets a call from ``a girl'' in the first verse and picks her up in the sixth verse, the day concluding after their romantic connection and a different version of Swift’s emphasis on the ``I'': ``Even saw the lights of the Goodyear Blimp / And it read ‘Ice Cube’s A Pimp.’'' A more public affirmation than in Swift, the narrative world recognizes the romantic aim of the song, its lights contrasting with what the singer doesn’t see: a cop car’s ``high beams,'' ``No helicopter looking for the murder.'' These other forces typically stand in the way of this singer’s journey. Different from Swift’s song, Ice Cube’s antagonism lies with the police and rivals whose absence on this day (``not a jacker in sight''; ``saw the police and they rolled right past me'') allows him to connect and share with his lover (``I had the brew, she had the chronic''). This isn’t a story about a romantic struggle. It’s a narrative of survival in a racist state. 
+Ice Cube’s ``It Was A Good Day'' joins the pantheon of attempts to narrate a life by telling the story of a day in the life. The story’s motivation is romantic, just like Swift’s, but there’s only teleology here, as Cube gets a call from ``a girl'' in the first verse and picks her up in the sixth verse, the day concluding after their romantic connection and a different version of Swift’s emphasis on the ``I'': ``Even saw the lights of the Goodyear Blimp / And it read ‘Ice Cube’s A Pimp.’'' A more public affirmation than in Swift, the narrative world recognizes the romantic aim of the song, its lights contrasting with what the singer doesn’t see: a cop car’s ``high beams,'' ``No helicopter looking for the murder.'' These other forces typically stand in the way of this singer’s journey. Different from Swift’s song, Ice Cube’s antagonism lies with the police and rivals whose absence on this day (``not a jacker in sight''; ``saw the police and they rolled right past me'') allows him to connect and share with his lover (``I had the brew, she had the chronic''). This isn’t a story about a romantic struggle. It’s a narrative of survival in a racist state.
 
 \section{Annotation Guidelines}
 \label{guidelines}
@@ -436,85 +390,85 @@ Qualities to consider:
 \begin{itemize}
 \tightlist
 \item
-  ``Lived experience:'' How specific are the protagonists' actions and
-  experiences? Are they performing key actions (ie. a romantic picnic, a
-  quest)? Are they feeling particular emotions (ie. regret, anger,
-  sadness, euphoria)? Are they explaining the background that led to
-  those actions and/or emotions?\\
+``Lived experience:'' How specific are the protagonists' actions and
+experiences? Are they performing key actions (ie. a romantic picnic, a
+quest)? Are they feeling particular emotions (ie. regret, anger,
+sadness, euphoria)? Are they explaining the background that led to
+those actions and/or emotions?\\
 \item
-  ``Particular agents:'' How specific are protagonists' identities and
-  personalities? Do we know who they are? Do we know about their past,
-  their families, their professions? Could they not be replaced with
-  people of any character, class, gender, nationality, race, appearance,
-  location etc.?
+``Particular agents:'' How specific are protagonists' identities and
+personalities? Do we know who they are? Do we know about their past,
+their families, their professions? Could they not be replaced with
+people of any character, class, gender, nationality, race, appearance,
+location etc.?
 
-  \begin{itemize}
-  \tightlist
-  \item
-    If both those qualities are met, mark 5/high agreement.
+\begin{itemize}
+\tightlist
+\item
+If both those qualities are met, mark 5/high agreement.
 
-    \begin{itemize}
-    \tightlist
-    \item
-      Example marked 5:
-      \href{https://www.azlyrics.com/lyrics/harrychapin/catsinthecradle.html}{Cat's
-      Cradle}.
+\begin{itemize}
+\tightlist
+\item
+Example marked 5:
+\href{https://www.azlyrics.com/lyrics/harrychapin/catsinthecradle.html}{Cat's
+Cradle}.
 
-      \begin{itemize}
-      \tightlist
-      \item
-        A father growing older (PA) no longer has a relationship with
-        his son, whom he had neglected due to work (LE).\\
-      \end{itemize}
-    \end{itemize}
-  \item
-    If only one of those qualities are met, mark 2-4 for middle/low
-    agreement, depending on how specific the met element is.
+\begin{itemize}
+\tightlist
+\item
+A father growing older (PA) no longer has a relationship with
+his son, whom he had neglected due to work (LE).\\
+\end{itemize}
+\end{itemize}
+\item
+If only one of those qualities are met, mark 2-4 for middle/low
+agreement, depending on how specific the met element is.
 
-    \begin{itemize}
-    \tightlist
-    \item
-      Example marked 2:
-      \href{https://www.azlyrics.com/lyrics/beatles/eightdaysaweek.html}{Eight
-      Days a Week}
+\begin{itemize}
+\tightlist
+\item
+Example marked 2:
+\href{https://www.azlyrics.com/lyrics/beatles/eightdaysaweek.html}{Eight
+Days a Week}
 
-      \begin{itemize}
-      \tightlist
-      \item
-        The narrator cares about a girl and thinks about her everyday.
-        This is missing PA (we have no details about who the narrator
-        is) but has some LE of them being in love.\\
-      \end{itemize}
-    \item
-      Example marked 4:
-      \href{https://www.azlyrics.com/lyrics/taylorswift/august.html}{august}
+\begin{itemize}
+\tightlist
+\item
+The narrator cares about a girl and thinks about her everyday.
+This is missing PA (we have no details about who the narrator
+is) but has some LE of them being in love.\\
+\end{itemize}
+\item
+Example marked 4:
+\href{https://www.azlyrics.com/lyrics/taylorswift/august.html}{august}
 
-      \begin{itemize}
-      \tightlist
-      \item
-        The narrator reminisces about a bygone relationship (LE). We
-        don't know who the narrator is, but the level of detail in the
-        described memories allows us to get a sense of their priorities
-        in those moments.\\
-      \end{itemize}
-    \end{itemize}
-  \item
-    If neither are met or are only barely met, mark 1/low agreement.
+\begin{itemize}
+\tightlist
+\item
+The narrator reminisces about a bygone relationship (LE). We
+don't know who the narrator is, but the level of detail in the
+described memories allows us to get a sense of their priorities
+in those moments.\\
+\end{itemize}
+\end{itemize}
+\item
+If neither are met or are only barely met, mark 1/low agreement.
 
-    \begin{itemize}
-    \tightlist
-    \item
-      Example marked 1:
-      \href{https://www.azlyrics.com/lyrics/davidbowie/fame.html}{Fame}
+\begin{itemize}
+\tightlist
+\item
+Example marked 1:
+\href{https://www.azlyrics.com/lyrics/davidbowie/fame.html}{Fame}
 
-      \begin{itemize}
-      \tightlist
-      \item
-        We know nothing about the narrator except their opinions on
-        fame. There is no protagonist.
-      \end{itemize}
-    \end{itemize}
-  \end{itemize}
+\begin{itemize}
+\tightlist
+\item
+We know nothing about the narrator except their opinions on
+fame. There is no protagonist.
+\end{itemize}
+\end{itemize}
+\end{itemize}
 \end{itemize}
 
 Potential ambiguities:
@@ -522,31 +476,31 @@ Potential ambiguities:
 \begin{itemize}
 \tightlist
 \item
-  Lived experience can help narrow down the particular agent. Someone
-  reacting abnormally to an event, engaging in drastic activity, or
-  feeling complicated/contradictory emotions can also give insight to
-  their character.
+Lived experience can help narrow down the particular agent. Someone
+reacting abnormally to an event, engaging in drastic activity, or
+feeling complicated/contradictory emotions can also give insight to
+their character.
 
-  \begin{itemize}
-  \tightlist
-  \item
-    Example marked 5:
-    \href{https://www.azlyrics.com/lyrics/beatles/norwegianwoodthisbirdhasflown.html}{Norwegian
-    Wood}.
-
-    \begin{itemize}
-    \tightlist
-    \item
-      The narrator is disappointed in love after a girl invites him back
-      to her place. In response, he lights a fire. This specific action
-      is evocative of an ending scene that shows the particularity of
-      the agent in question.\\
-    \end{itemize}
-  \end{itemize}
+\begin{itemize}
+\tightlist
 \item
-  Protagonist is not always the narrator and vice versa. If the song has
-  multiple protagonists, do most of them fit within the above qualities?
-  Rate accordingly.
+Example marked 5:
+\href{https://www.azlyrics.com/lyrics/beatles/norwegianwoodthisbirdhasflown.html}{Norwegian
+Wood}.
+
+\begin{itemize}
+\tightlist
+\item
+The narrator is disappointed in love after a girl invites him back
+to her place. In response, he lights a fire. This specific action
+is evocative of an ending scene that shows the particularity of
+the agent in question.\\
+\end{itemize}
+\end{itemize}
+\item
+Protagonist is not always the narrator and vice versa. If the song has
+multiple protagonists, do most of them fit within the above qualities?
+Rate accordingly.
 \end{itemize}
 
 \subsection{Statement 2: The passage is organized around sequences of events
@@ -566,73 +520,73 @@ Qualities to consider:
 \begin{itemize}
 \tightlist
 \item
-  ``Sequences of events:'' The sequence of events in particular is
-  distinct from the condition -\/- a condition describes a state of
-  being whereas the events recount what led to a particular state and
-  the phenomena of the state. For example, ``I am sad'' could be seen as
-  an event, but it does not qualify as a high agreement S2 unless it is
-  attached to a series of other events.\\
+``Sequences of events:'' The sequence of events in particular is
+distinct from the condition -\/- a condition describes a state of
+being whereas the events recount what led to a particular state and
+the phenomena of the state. For example, ``I am sad'' could be seen as
+an event, but it does not qualify as a high agreement S2 unless it is
+attached to a series of other events.\\
 \item
-  ``Over time:'' Not all events may be described in equal detail, but
-  there should be enough specificity to place all of them on a timeline
-  as well as logical/causal/situational links, ie. X happened so I am
-  sad and I did Y.
+``Over time:'' Not all events may be described in equal detail, but
+there should be enough specificity to place all of them on a timeline
+as well as logical/causal/situational links, ie. X happened so I am
+sad and I did Y.
 
-  \begin{itemize}
-  \tightlist
-  \item
-    If qualities are met in detail, mark 5/high agreement.
+\begin{itemize}
+\tightlist
+\item
+If qualities are met in detail, mark 5/high agreement.
 
-    \begin{itemize}
-    \tightlist
-    \item
-      Example marked 5:
-      \href{https://www.azlyrics.com/lyrics/harrychapin/catsinthecradle.html}{Cat's
-      Cradle}.
+\begin{itemize}
+\tightlist
+\item
+Example marked 5:
+\href{https://www.azlyrics.com/lyrics/harrychapin/catsinthecradle.html}{Cat's
+Cradle}.
 
-      \begin{itemize}
-      \tightlist
-      \item
-        The deterioration of the father-son relationship can be traced
-        to chronologically-depicted events in each verse.\\
-      \end{itemize}
-    \end{itemize}
-  \item
-    If qualities are met generally, mark 2-4 for middle/low agreement,
-    depending on how specific the met element is.
+\begin{itemize}
+\tightlist
+\item
+The deterioration of the father-son relationship can be traced
+to chronologically-depicted events in each verse.\\
+\end{itemize}
+\end{itemize}
+\item
+If qualities are met generally, mark 2-4 for middle/low agreement,
+depending on how specific the met element is.
 
-    \begin{itemize}
-    \tightlist
-    \item
-      Example marked 4:
-      \href{https://www.azlyrics.com/lyrics/michaeljackson/beatit.html}{Beat
-      it}
+\begin{itemize}
+\tightlist
+\item
+Example marked 4:
+\href{https://www.azlyrics.com/lyrics/michaeljackson/beatit.html}{Beat
+it}
 
-      \begin{itemize}
-      \tightlist
-      \item
-        In dispensing advice for a hunted individual to ``beat it'' the
-        narrator also discloses past and present happenings. They also
-        foreshadow what will happen if his advice is not heeded. The
-        general sentiment of the events stay the same but cohere well.\\
-      \end{itemize}
-    \end{itemize}
-  \item
-    If qualities only barely met, mark 1/low agreement.
+\begin{itemize}
+\tightlist
+\item
+In dispensing advice for a hunted individual to ``beat it'' the
+narrator also discloses past and present happenings. They also
+foreshadow what will happen if his advice is not heeded. The
+general sentiment of the events stay the same but cohere well.\\
+\end{itemize}
+\end{itemize}
+\item
+If qualities only barely met, mark 1/low agreement.
 
-    \begin{itemize}
-    \tightlist
-    \item
-      Example marked 1:
-      \href{https://www.azlyrics.com/lyrics/davidbowie/fame.html}{Fame}
+\begin{itemize}
+\tightlist
+\item
+Example marked 1:
+\href{https://www.azlyrics.com/lyrics/davidbowie/fame.html}{Fame}
 
-      \begin{itemize}
-      \tightlist
-      \item
-        This doesn't describe events in sequence but a phenomenon.
-      \end{itemize}
-    \end{itemize}
-  \end{itemize}
+\begin{itemize}
+\tightlist
+\item
+This doesn't describe events in sequence but a phenomenon.
+\end{itemize}
+\end{itemize}
+\end{itemize}
 \end{itemize}
 
 Potential ambiguities:
@@ -640,17 +594,17 @@ Potential ambiguities:
 \begin{itemize}
 \tightlist
 \item
-  Future events and degree of intentionality
+Future events and degree of intentionality
 
-  \begin{itemize}
-  \tightlist
-  \item
-    It can be difficult to tell which events count toward the
-    ``narrative timeline'' if they're being forecasted. Place them
-    according to the intentionality of the narrator (ie. Making a
-    wish/hope should not be counted as an event versus making a plan or
-    stating ``I will do X.'')
-  \end{itemize}
+\begin{itemize}
+\tightlist
+\item
+It can be difficult to tell which events count toward the
+``narrative timeline'' if they're being forecasted. Place them
+according to the intentionality of the narrator (ie. Making a
+wish/hope should not be counted as an event versus making a plan or
+stating ``I will do X.'')
+\end{itemize}
 \end{itemize}
 
 \subsection{Statement 3: The passage creates a world that I can see or
@@ -668,86 +622,86 @@ Qualities to consider:
 \begin{itemize}
 \tightlist
 \item
-  Inclusion of sensory elements: Can we see/feel/smell/touch the world
-  being presented? Are there physical elements, objects, furnishings or
-  geographical features with which we can anchor our understanding? Is
-  this world populated with other people besides the protagonist? The
-  scale of the `world' may be as vast as the western hemisphere or as
-  small as a bedroom, but the amount/specificity of sensory details will
-  determine agreement.\\
+Inclusion of sensory elements: Can we see/feel/smell/touch the world
+being presented? Are there physical elements, objects, furnishings or
+geographical features with which we can anchor our understanding? Is
+this world populated with other people besides the protagonist? The
+scale of the `world' may be as vast as the western hemisphere or as
+small as a bedroom, but the amount/specificity of sensory details will
+determine agreement.\\
 \item
-  ``Indexing:'' `real world' elements such as current events, place
-  names, popular figures, trends or vernacular can provide additional
-  dimension to the passages' `worldliness' as a situating short-cut.
+``Indexing:'' `real world' elements such as current events, place
+names, popular figures, trends or vernacular can provide additional
+dimension to the passages' `worldliness' as a situating short-cut.
 
-  \begin{itemize}
-  \tightlist
-  \item
-    If at least one of these qualities is met in detail, mark 5/high
-    agreement.
+\begin{itemize}
+\tightlist
+\item
+If at least one of these qualities is met in detail, mark 5/high
+agreement.
 
-    \begin{itemize}
-    \tightlist
-    \item
-      Example marked 5:
-      \href{https://www.azlyrics.com/lyrics/harrychapin/catsinthecradle.html}{Cat's
-      Cradle}.
+\begin{itemize}
+\tightlist
+\item
+Example marked 5:
+\href{https://www.azlyrics.com/lyrics/harrychapin/catsinthecradle.html}{Cat's
+Cradle}.
 
-      \begin{itemize}
-      \tightlist
-      \item
-        Though the father-son relationship is front and center in this
-        narrative, we are ushered into this world via references to
-        traveling, careers, bonding time and the ever-repeating nursery
-        rhymes.\\
-      \end{itemize}
-    \end{itemize}
-  \item
-    If at least one of these qualities are briefly met, mark 2-4 for
-    middle/low agreement, depending on how specific the met element is.
+\begin{itemize}
+\tightlist
+\item
+Though the father-son relationship is front and center in this
+narrative, we are ushered into this world via references to
+traveling, careers, bonding time and the ever-repeating nursery
+rhymes.\\
+\end{itemize}
+\end{itemize}
+\item
+If at least one of these qualities are briefly met, mark 2-4 for
+middle/low agreement, depending on how specific the met element is.
 
-    \begin{itemize}
-    \tightlist
-    \item
-      Example marked 2:
-      \href{https://www.azlyrics.com/lyrics/u2band/istillhaventfoundwhatimlookingfor.html}{I
-      Still Haven't Found}
+\begin{itemize}
+\tightlist
+\item
+Example marked 2:
+\href{https://www.azlyrics.com/lyrics/u2band/istillhaventfoundwhatimlookingfor.html}{I
+Still Haven't Found}
 
-      \begin{itemize}
-      \tightlist
-      \item
-        The landscapes mentioned in this song (ie ``highest mountain'')
-        are primarily to highlight the drastic actions the protagonist
-        has taken rather than to create a sense of the setting.\\
-      \end{itemize}
-    \item
-      Example marked 4:
-      \href{https://www.azlyrics.com/lyrics/christinaaguilera/beautiful.html}{Beautiful}
+\begin{itemize}
+\tightlist
+\item
+The landscapes mentioned in this song (ie ``highest mountain'')
+are primarily to highlight the drastic actions the protagonist
+has taken rather than to create a sense of the setting.\\
+\end{itemize}
+\item
+Example marked 4:
+\href{https://www.azlyrics.com/lyrics/christinaaguilera/beautiful.html}{Beautiful}
 
-      \begin{itemize}
-      \tightlist
-      \item
-        In portraying body image troubles, the narrative alludes to a
-        world where the protagonist is shamed into feeling insecure and
-        ``delirious.''\\
-      \end{itemize}
-    \end{itemize}
-  \item
-    If neither are met or are only barely met, mark 1/low agreement.
+\begin{itemize}
+\tightlist
+\item
+In portraying body image troubles, the narrative alludes to a
+world where the protagonist is shamed into feeling insecure and
+``delirious.''\\
+\end{itemize}
+\end{itemize}
+\item
+If neither are met or are only barely met, mark 1/low agreement.
 
-    \begin{itemize}
-    \tightlist
-    \item
-      Example marked 1:
-      \href{https://www.azlyrics.com/lyrics/davidbowie/fame.html}{Fame}
+\begin{itemize}
+\tightlist
+\item
+Example marked 1:
+\href{https://www.azlyrics.com/lyrics/davidbowie/fame.html}{Fame}
 
-      \begin{itemize}
-      \tightlist
-      \item
-        The only setting element mentioned is a limo, briefly.
-      \end{itemize}
-    \end{itemize}
-  \end{itemize}
+\begin{itemize}
+\tightlist
+\item
+The only setting element mentioned is a limo, briefly.
+\end{itemize}
+\end{itemize}
+\end{itemize}
 \end{itemize}
 
 Potential ambiguities:
@@ -755,29 +709,29 @@ Potential ambiguities:
 \begin{itemize}
 \tightlist
 \item
-  Unrealism: descriptions may feel less genuine or visceral if
-  interpreted as extended metaphors or allegories (which they sometimes
-  are!). They may also be cliched, stereotypical, or hyperbolic, all of
-  which could affect the annotator's ability to truly ``inhabit'' what
-  is being portrayed. However, we should prioritize the level of detail
-  supplied when annotating over the realism of the events/world.
+Unrealism: descriptions may feel less genuine or visceral if
+interpreted as extended metaphors or allegories (which they sometimes
+are!). They may also be cliched, stereotypical, or hyperbolic, all of
+which could affect the annotator's ability to truly ``inhabit'' what
+is being portrayed. However, we should prioritize the level of detail
+supplied when annotating over the realism of the events/world.
 
-  \begin{itemize}
-  \tightlist
-  \item
-    Example marked high agreement:
-    \href{https://www.azlyrics.com/lyrics/coldplay/vivalavida.html}{Viva
-    La Vida}
+\begin{itemize}
+\tightlist
+\item
+Example marked high agreement:
+\href{https://www.azlyrics.com/lyrics/coldplay/vivalavida.html}{Viva
+La Vida}
 
-    \begin{itemize}
-    \tightlist
-    \item
-      The narrator recounts his fall from grace with a Roman
-      Empire-esque backdrop. Though the setting seems highly stylised,
-      the level of detail and cohesion qualifies it for a higher
-      agreement rating.
-    \end{itemize}
-  \end{itemize}
+\begin{itemize}
+\tightlist
+\item
+The narrator recounts his fall from grace with a Roman
+Empire-esque backdrop. Though the setting seems highly stylised,
+the level of detail and cohesion qualifies it for a higher
+agreement rating.
+\end{itemize}
+\end{itemize}
 \end{itemize}
 
 \subsection{Additional considerations:}
@@ -785,85 +739,85 @@ Potential ambiguities:
 \begin{itemize}
 \tightlist
 \item
-  Overlap between S1's Lived Experiences and S2
+Overlap between S1's Lived Experiences and S2
 
-  \begin{itemize}
-  \tightlist
-  \item
-    Though both elements involve narrative events, S1 is focused on the
-    protagonist's experience of those events while S2 is interested in
-    their sequencing (ie. how cohesively the events fit together). They
-    should be considered as separate elements that can drastically
-    differ.
-
-    \begin{itemize}
-    \tightlist
-    \item
-      Example marked 4 for S1, 2 for S2:
-      \href{https://www.azlyrics.com/lyrics/brucespringsteen/hungryheart.html}{Hungry
-      Heart}
-
-      \begin{itemize}
-      \tightlist
-      \item
-        The narrator describes leaving a wife and kids as well as
-        engaging in a failed relationship in Kingstown. Though his lived
-        experience is palpable and detailed, it's unclear how one action
-        (driving away from a wife and kids) relates to the other
-        (falling in love then ending a relationship), or if the two are
-        even connected. Their ordering is also unclear.\\
-      \end{itemize}
-    \item
-      Example marked 3 for both S1 and S2:
-      \href{https://www.azlyrics.com/lyrics/luthervandross/theysaidyouneededme.html}{They
-      Said You Needed Me}
-
-      \begin{itemize}
-      \tightlist
-      \item
-        Example of I-statements combined with action verbs contributing
-        to both lived experiences and event sequences. It demonstrates
-        how a passage's key features can be attributed to multiple
-        categories.\\
-      \end{itemize}
-    \end{itemize}
-  \end{itemize}
+\begin{itemize}
+\tightlist
 \item
-  Level of inference
+Though both elements involve narrative events, S1 is focused on the
+protagonist's experience of those events while S2 is interested in
+their sequencing (ie. how cohesively the events fit together). They
+should be considered as separate elements that can drastically
+differ.
 
-  \begin{itemize}
-  \tightlist
-  \item
-    Many works evoke past agents or events only briefly and we must rely
-    on inference in order to make categorical judgements. The level of
-    inference necessary (high vs.~low) can depend on the amount and
-    specificity of existing details. In
-    \href{https://www.azlyrics.com/lyrics/beatles/norwegianwoodthisbirdhasflown.html}{Norwegian
-    Wood}, for instance, the main skeletal elements required for
-    high-agreement annotation are all present despite a dearth of
-    description. Songs requiring high levels of inference may be judged
-    based on how much is being implied.\\
-  \end{itemize}
+\begin{itemize}
+\tightlist
 \item
-  Cross-category influence
+Example marked 4 for S1, 2 for S2:
+\href{https://www.azlyrics.com/lyrics/brucespringsteen/hungryheart.html}{Hungry
+Heart}
 
-  \begin{itemize}
-  \tightlist
-  \item
-    Though the statements' narrative qualities may inevitably influence
-    one another at times (ie. S3's lack of world-sense is affected by
-    S1's narratorial ambivalence), we are encouraged to consider each
-    statement as its own element and consider them independently from
-    one another. The categories may have similar or vastly different
-    agreement levels.
-  \end{itemize}
+\begin{itemize}
+\tightlist
+\item
+The narrator describes leaving a wife and kids as well as
+engaging in a failed relationship in Kingstown. Though his lived
+experience is palpable and detailed, it's unclear how one action
+(driving away from a wife and kids) relates to the other
+(falling in love then ending a relationship), or if the two are
+even connected. Their ordering is also unclear.\\
+\end{itemize}
+\item
+Example marked 3 for both S1 and S2:
+\href{https://www.azlyrics.com/lyrics/luthervandross/theysaidyouneededme.html}{They
+Said You Needed Me}
+
+\begin{itemize}
+\tightlist
+\item
+Example of I-statements combined with action verbs contributing
+to both lived experiences and event sequences. It demonstrates
+how a passage's key features can be attributed to multiple
+categories.\\
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\item
+Level of inference
+
+\begin{itemize}
+\tightlist
+\item
+Many works evoke past agents or events only briefly and we must rely
+on inference in order to make categorical judgements. The level of
+inference necessary (high vs.~low) can depend on the amount and
+specificity of existing details. In
+\href{https://www.azlyrics.com/lyrics/beatles/norwegianwoodthisbirdhasflown.html}{Norwegian
+Wood}, for instance, the main skeletal elements required for
+high-agreement annotation are all present despite a dearth of
+description. Songs requiring high levels of inference may be judged
+based on how much is being implied.\\
+\end{itemize}
+\item
+Cross-category influence
+
+\begin{itemize}
+\tightlist
+\item
+Though the statements' narrative qualities may inevitably influence
+one another at times (ie. S3's lack of world-sense is affected by
+S1's narratorial ambivalence), we are encouraged to consider each
+statement as its own element and consider them independently from
+one another. The categories may have similar or vastly different
+agreement levels.
+\end{itemize}
 \end{itemize}
 
 \clearpage
 \section{LLM prompt} \label{appdx:prompt}
 The following is the prompt given to LLMs (GPT-4.1, Gemini 2.5 Pro, and Claude Opus 4).
 \\[10pt]
-\fbox{%
+\fbox{
 \begin{minipage}{\textwidth}
 Task: After reading a song’s lyrics in its entirety, rate your agreement with the following statements on a Likert Scale (1, 2, 3, 4 or 5), with 1 denoting low agreement and 5 denoting high agreement.
 \\[10pt]
@@ -901,17 +855,16 @@ Output:
 \end{minipage}
 }
 
-
 \clearpage
 
 \section{Model performance by narrativity axis}
 \label{axisperf}
 
 \begin{table}[h]
-    \centering
-    \begin{tabular}{lccc}
+\centering
+\begin{tabular}{lccc}
 Model&Agent $\rho$&Event $\rho$&World $\rho$\\
-        \toprule
+\toprule
 RoBERTa&0.682 [0.587-0.761]&0.786 [0.733-0.830]&0.816 [0.761-0.858]\\
 DeBERTa-v3&0.657 [0.568-0.733]&0.792 [0.741-0.834]&0.802 [0.747-0.847]\\
 BERT&0.614 [0.516-0.697]&0.760 [0.698-0.811]&0.812 [0.755-0.854]\\
@@ -923,31 +876,28 @@ BOW/POS/an./conc/1pp&0.669 [0.571-0.749]&0.721 [0.645-0.784]&0.749 [0.684-0.802]
 POS/an./conc/1pp&0.353 [0.227-0.469]&0.542 [0.441-0.631]&0.492 [0.387-0.589]\\
 Minimal narrative feats.&0.273 [0.145-0.392]&0.474 [0.366-0.572]&0.368 [0.248-0.480]\\
 1pp&0.090 [-0.046-0.227]&-0.091 [-0.224-0.043]&0.213 [0.077-0.342]\\
-        \bottomrule
-    \end{tabular}
-    
-    \caption{\label{tab:modelsaxis}
-      Model performance along each individual axis, along with 95\% bootstrap confidence intervals; models are ranked from best to worst based on composite narrativity (as in table \ref{tab:models}).
-     }
-  \label{interp}
+\bottomrule
+\end{tabular}
+
+\caption{\label{tab:modelsaxis}
+Model performance along each individual axis, along with 95\% bootstrap confidence intervals; models are ranked from best to worst based on composite narrativity (as in table \ref{tab:models}).
+}
 \end{table}
 
 Table \ref{tab:modelsaxis} illustrates the performance of all models along each individual axis (ranked according to their overall performance on the composite narrativity score).  We can see that the agent axis is the most difficult for all models, and especially so for prompted-based LLMs.
 
 \section{Interpretability}
-
+\label{interp}
 
 In order to understand what the best-performing RoBERTa model is learning about narrativity, we draw on perturbation-based methods\ \cite{IVANOVS2021228} to interrogate which words in the input are most critical for the predictions being made.  Given a textual sequence $x = \{x_1, \ldots x_n\}$ corresponding to the lyrics of a song, we replace each single token $x_i$ in turn with RoBERTa's mask symbol (one token at a time) and generate a prediction from that perturbation.  We treat the tokens corresponding to the 10 lowest-scoring perturbations (i.e., the tokens whose removal leads to the biggest reductions in narrativity) as the most significant \emph{local} explanations (the leading explanations for the predictions made for a single song).
 We aggregate these local, song-level explanations into global model explanations by counting the fraction of times a given word type appears in a local explanation among all of its occurrences.
 
-
-
 \begin{table}[h!]
-    \centering
-    \begin{tabular}{llllll}
+\centering
+\begin{tabular}{llllll}
 \\
 agent&&events&&world& \\
-        \toprule
+\toprule
 mirror&0.538&tonight&0.792&downtown&0.710\\
 I&0.531&telephone&0.704&hall&0.629\\
 drunk&0.479&said&0.632&town&0.625\\
@@ -958,40 +908,39 @@ conversation&0.386&tomorrow&0.606&train&0.596\\
 car&0.361&home&0.594&city&0.578\\
 funny&0.356&stole&0.575&wine&0.512\\
 drank&0.343&were&0.573&moonlight&0.507\\
-        \bottomrule
-    \end{tabular}
-    
-    \caption{\label{tab:interp}
-      Top global explanations for each narrativity task.  79.2\% of occurrences of \emph{tonight} appear as local explanations.
-    }
-  \label{robustness}
+\bottomrule
+\end{tabular}
+
+\caption{\label{tab:interp}
+Top global explanations for each narrativity task.  79.2\% of occurrences of \emph{tonight} appear as local explanations.
+}
 \end{table}
 
 The most frequent terms in local explanations for the agent task include not only a focus on the first-person (\emph{I}) and \emph{mirror} reflecting back on that first person, but also a focus on inebriation (\emph{drunk, wine, wasted, drank}).  The most common explanations for the event task include not only a focus on the past tense identified by Piper and Bagga (\emph{said, planned, stole}), but also explicit temporal indicators (\emph{tonight, yesterday, evening, tomorrow}).  The world-building task includes explanations in specific places (\emph{downtown, hall, town, mall, street, train, city}) and things \emph{(coffee, wine)}.
 
 \section{Robustness}
-
+\label{robustness}
 
 To test the robustness of these results, we probe two adversarial scenarios: first, is it possible that a BERT-based model (or any other learned model) has learned a bias in its predictions that invents a trend over time that is not present in the original annotations?  Figure \ref{fig:manual} rejects this by illustrating the average narrativity over time only for human-annotated songs (i.e., not model predictions); while the confidence intervals are much wider (corresponding to the smaller amount of data annotated per year), we see the same increasing trend.
 
 \begin{figure}[!htp]
-  \centering
-  \includegraphics[width=0.5\columnwidth]{figures/billboard_hot100_manual_year.png}
-  \caption{
- Narrativity over time, measured only using manual annotations.
-  }
-  \label{fig:manual}
+\centering
+\includegraphics[width=0.5\columnwidth]{figures/billboard_hot100_manual_year.png}
+\caption{
+Narrativity over time, measured only using manual annotations.
+}
+\label{fig:manual}
 \end{figure}
 
 Second, is it possible that judgments of narrativity are influenced by annotators' familiarity with the songs being judged?  A credible alternative is that any human judge may see songs they are familiar with as more narrative than songs that are not, simply as a function of having a deeper contextual understanding of those songs developed through repeated listening.  Annotators could also in principle draw on musical and visual information (in the context of music videos) in implicitly informing their judgments.  We test this by asking annotators to rate their familiarity with a subset of songs they annotated, and only plotting the narrativity of songs they are \emph{not} familiar with.  Fig. \ref{fig:unfamiliar} illustrates that this subset displays the same increase over time as the predicted measures of narrativity of full Billboard charts.
 
 \begin{figure}[!htp]
-  \centering
-  \includegraphics[width=0.5\columnwidth]{figures/billboard_hot100_manual_year_only_unknown.png}
-  \caption{
-  Narrativity over time, average annotation for songs \emph{unknown} to annotators.  Increasing narrativity over time is not explained by annotator familiarity. 
-  }
-  \label{fig:unfamiliar}
+\centering
+\includegraphics[width=0.5\columnwidth]{figures/billboard_hot100_manual_year_only_unknown.png}
+\caption{
+Narrativity over time, average annotation for songs \emph{unknown} to annotators.  Increasing narrativity over time is not explained by annotator familiarity.
+}
+\label{fig:unfamiliar}
 \end{figure}
 
 \vspace{0.5em}
