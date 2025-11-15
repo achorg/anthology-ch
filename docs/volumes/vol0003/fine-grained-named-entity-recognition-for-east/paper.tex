@@ -103,8 +103,6 @@ The labels are mutually exclusive, any span can only be annotated with a single 
 
 \begin{table}[t]
 \centering
-\caption{Label set with corresponding entities}
-\label{tab:tag-set}
 \begin{tabular}{llll}
 \hline
 \multicolumn{1}{c}{\textbf{NER label}} & \multicolumn{1}{c}{\textbf{Description}}                                                                                    & \multicolumn{1}{c}{\textbf{Related entities}}                                   \\ \hline
@@ -127,6 +125,8 @@ DATE                                   & Date                                   
 DOC                                    & Document                                                                                                                    & documents                                                                       \\ \hline
 
 \end{tabular}
+\caption{Label set with corresponding entities}
+\label{tab:tag-set}
 \end{table}
 
 \subsection{Annotation process}\label{annotation-process}
@@ -235,8 +235,6 @@ Table~\ref{tab:model-sizes}.
 
 \begin{table}[h]
 \centering
-\caption{Pretrained-model parameters and sizes}
-\label{tab:model-sizes}
 \begin{tabular}{lrrrrrr}
 \toprule\noalign{}
 model & vocabulary & layers & dimension & \multicolumn{3}{c}{parameters (M)}   \\
@@ -249,6 +247,8 @@ XLMR-base & 250 & 12 & 768& 192 & 85 &277 \\
 XLMR-large & 250 & 24 & 1024 & 257 & 302 &558 \\
 \bottomrule
 \end{tabular}
+\caption{Pretrained-model parameters and sizes}
+\label{tab:model-sizes}
 \end{table}
 
 \subsection{Experimental setup}\label{experimental-setup}
@@ -274,9 +274,6 @@ reflected by faster model convergence, with the best results being reached after
 
 \begin{table}[h]
 \centering
-\caption{Validation scores for models trained on the train-A set, averaged over 3 seeds. The best average metric scores
-are reported along with the epoch at which they were measured and with  standard deviation.}
-\label{tab:model-validation}
 \begin{tabular}{lrllrllrll}
 \toprule\noalign{}
 & \multicolumn{3}{c}{micro F1}& \multicolumn{3}{c}{macro F1}& \multicolumn{3}{c}{weighted F1} \\
@@ -289,6 +286,9 @@ XLMR-base & 40 & 77.1 & 0.44 & 40 & 69.8 & 0.78 & 34 & 78.4 & 1.19 \\
 XLMR-large & 36 & 81.1 & 1.37 & 22 & \textbf{72.1} & 1.84 & 39 & 81.7 & 1.56 \\
 \bottomrule
 \end{tabular}
+\caption{Validation scores for models trained on the train-A set, averaged over 3 seeds. The best average metric scores
+are reported along with the epoch at which they were measured and with  standard deviation.}
+\label{tab:model-validation}
 \end{table}
 
 The advantage of gloBERTise for our case carries out to unseen data as shown by the test results in Table~\ref{tab:model-test}:
@@ -297,8 +297,6 @@ is lower on the test data.
 
 \begin{table}[h]
 \centering
-\caption{Pretrained-model comparison by validation (token and seqeval) and test seqeval scores for best micro-F1 checkpoint (single seed).}
-\label{tab:model-test}
 \begin{tabular}{lrlllllllll}
 \toprule
 & \multicolumn{4}{c}{validation token F1}& \multicolumn{3}{c}{validation seqeval F1}& \multicolumn{3}{c}{test seqeval F1} \\
@@ -315,6 +313,8 @@ XLMR-base	&28&	78.1	&71.4	&78.5	&79.1	&74.5	&78.9	&55.1	&48.6	&50.5
 XLMR-large&	37	&\textbf{82.6}	&\textbf{72.2}	&\textbf{83.1}	&\textbf{84.2}	&\textbf{80.3}	&\textbf{84.2}	&65.9	&59.1	&62.8\\
 \bottomrule
 \end{tabular}
+\caption{Pretrained-model comparison by validation (token and seqeval) and test seqeval scores for best micro-F1 checkpoint (single seed).}
+\label{tab:model-test}
 \end{table}
 
 The good performance obtained with gloBERTise is encouraging, as it allows us to experiment with a lighter model,
@@ -395,10 +395,6 @@ We adopt class-agnostic co-training with the full \textit{vocgm} as setting for 
 
 \begin{table}[ht!]
 \centering
-\caption{Data augmentation of the \textit{train-A} set with the \textit{vocgm} training data. Effect of
-entity-density threshold (\textit{edt}) and class-agnostic co-training (\textit{cact}) with
-gloBERTise on validation scores. Training size refers to the number of entities.}
-\label{tab:vocgm-aug-val}
 \begin{tabular}{lccrllrllrll}
 \toprule\noalign{}
 &&training & \multicolumn{3}{c}{micro F1}& \multicolumn{3}{c}{macro F1}& \multicolumn{3}{c}{weighted F1} \\
@@ -415,6 +411,10 @@ edt& cact &size (k)&epoch& F1&std& epoch&F1 &std&epoch& F1 & std\\
 0.1 & yes & 12.5 & 10 & 82.5 & 0.62 & 24 & 74.4 & 1.85 & 34 & 83.5 & 0.69 \\
 \bottomrule
 \end{tabular}
+\caption{Data augmentation of the \textit{train-A} set with the \textit{vocgm} training data. Effect of
+entity-density threshold (\textit{edt}) and class-agnostic co-training (\textit{cact}) with
+gloBERTise on validation scores. Training size refers to the number of entities.}
+\label{tab:vocgm-aug-val}
 \end{table}
 
 \subsection{Data augmentation with task data and external data}
@@ -422,8 +422,6 @@ As more annotations become available in a project, one can wonder if there is st
 
 \begin{table}[ht!]
 \centering
-\caption{Data augmentation with task-data (\textit{train-B}) and external data (\textit{vocgm}). Finetuning scores on the train-A, train-B, joint A and B sets, and \textit{vocgm}-augmented sets.}
-\label{tab:data-aug-val}
 \begin{tabular}{lrllrllrll}
 \toprule\noalign{}
 & \multicolumn{3}{c}{micro F1}& \multicolumn{3}{c}{macro F1}& \multicolumn{3}{c}{weighted F1} \\
@@ -437,14 +435,14 @@ A+vocgm& 6 & 82.7 & 0.27 & 11 & 74.7 & 1.55 & 7 & 84.3 & 0.79  \\
 A+B+vocgm &  35 & \textbf{84.3} & 0.46 & 13 & \textbf{76.1} & 1.23 & 39 & \textbf{84.8} & 0.36 \\
 \bottomrule
 \end{tabular}
+\caption{Data augmentation with task-data (\textit{train-B}) and external data (\textit{vocgm}). Finetuning scores on the train-A, train-B, joint A and B sets, and \textit{vocgm}-augmented sets.}
+\label{tab:data-aug-val}
 \end{table}
 
 In contrast, test results, reported in Table~\ref{tab:data-aug-test}, show that models co-trained on the \texttt{train-B} set perform relatively better on the test data, reflecting the somewhat closer distributions within the \texttt{train-B/test} set of annotations. Class-agnostic co-training with the \textit{vocgm} data however still provides gains for micro and macro F1 test seqeval scores.
 
 \begin{table}[ht!]
 \centering
-\caption{Data augmentation: validation (token and seqeval) and test seqeval scores for best micro-F1 checkpoint (single seed). All checkpoints use the same initial seed, and are selected by (token) micro F1 scores.}
-\label{tab:data-aug-test}
 \begin{tabular}{lrlllllllll}
 \toprule
 & \multicolumn{4}{c}{validation token F1}& \multicolumn{3}{c}{validation seqeval F1}& \multicolumn{3}{c}{test seqeval F1} \\
@@ -463,14 +461,12 @@ A$+$vocgm & 15 & 82.8 & \textbf{75.5} & \textbf{84.1} & 85.3 & 81.6 & 85.3 & 67.
 A$+$B$+$vocgm & 40 & \textbf{83.1} & 75.0 & 83.4 & \textbf{85.8} & \textbf{82.4} & \textbf{85.8} & \textbf{69.7} & \textbf{64.7} & 66.4 \\
 \bottomrule
 \end{tabular}
+\caption{Data augmentation: validation (token and seqeval) and test seqeval scores for best micro-F1 checkpoint (single seed). All checkpoints use the same initial seed, and are selected by (token) micro F1 scores.}
+\label{tab:data-aug-test}
 \end{table}
 
-A comparison of precision and recall, shown in Table~\ref{tab:data-aug-pr}, shows that
-\textit{vocgm} augmented models have higher overall precision but lower recall on the test data.
 \begin{table}[ht!]
 \centering
-\caption{Data augmentation with task-data (\textit{train-B}) and external data (\textit{vocgm}): seqeval precision and recall. Best test scores for augmented data models are boldfaced.}
-\label{tab:data-aug-pr}
 \begin{tabular}{lcccccccccccc}
 \toprule\noalign{}
 & \multicolumn{6}{c}{validation}& \multicolumn{6}{c}{test}\\
@@ -488,16 +484,17 @@ A+vocgm&  85.6 &     85.0 &  83.6 &     80.8 &    86.0 &     85.0 &   77.6 &    
 ABvocgm & 85.1 &      86.6 &   83.7 &      82.4 &      85.4 &      86.6 &      \textbf{77.7} &      63.1 &      71.6 &      62.8 &      79.3 &      63.1 \\
 \bottomrule
 \end{tabular}
+\caption{Data augmentation with task-data (\textit{train-B}) and external data (\textit{vocgm}): seqeval precision and recall. Best test scores for augmented data models are boldfaced.}
+\label{tab:data-aug-pr}
 \end{table}
+
+
+A comparison of precision and recall, shown in Table~\ref{tab:data-aug-pr}, shows that
+\textit{vocgm} augmented models have higher overall precision but lower recall on the test data.
 The higher precision of \textit{vocgm}-augmented models can be attributed to the larger training data: as models are exposed to more data during training, even \texttt{O} instances contribute to penalizing false positives.
 
 \begin{table}[h!]
 \centering
-\caption{Type level seqeval scores for the in-task (\textit{A+B}) and external (\textit{A+B+vocgm}) augmented training data.
-We separate types by their presence in the \textit{vocgm} training data. Best F1 scores per type are boldfaced;
-underlined values highlight types for which the \textit{A+B+vocgm} trained model has higher precision on unknown types
-and types for which the non-\textit{vocgm}-augmented model has higher precision or recall on augmented types.}
-\label{tab:seqeval-detail}
 \begin{tabular}{lrlllrlllr}
 \toprule
 & train & \multicolumn{3}{c}{A+B}& train & \multicolumn{3}{c}{A+B+vocgm}& test \\
@@ -537,7 +534,13 @@ PER\_NAME & 678 &   68.8 &      71.7 &      70.2   & 4700 &  71.4 &      76.1 & 
 SHIP & 247 & \underline{100.0} &      \underline{85.7} &      \textbf{92.3} &  1730 &  84.6 &      78.6 &      81.5 &  14\\
 \bottomrule
 \end{tabular}
+\caption{Type level seqeval scores for the in-task (\textit{A+B}) and external (\textit{A+B+vocgm}) augmented training data.
+We separate types by their presence in the \textit{vocgm} training data. Best F1 scores per type are boldfaced;
+underlined values highlight types for which the \textit{A+B+vocgm} trained model has higher precision on unknown types
+and types for which the non-\textit{vocgm}-augmented model has higher precision or recall on augmented types.}
+\label{tab:seqeval-detail}
 \end{table}
+
 In some cases, namely \texttt{CMTY\_NAME}, \texttt{DOC}, \texttt{PER\_ATTR}, \texttt{SHIP\_TYPE}, and \texttt{STATUS}, this leads to a higher precision of the \textit{A+B+vocgm} model on \textit{vocgm}-unknown types, as shown in Table~\ref{tab:seqeval-detail}.
 The lower test recall with the \textit{A+B+vocgm} model results mostly from the combination of poor recall for the \texttt{PER\_ATTR} class and the weight of that class in the text data, which also explains the lower overall weighted F1 score in Table~\ref{tab:data-aug-test}. The low recall for this class is the combined result of under-representation in the training data and over-representation in the test data (see Figure~\ref{fig:entity-dist}).
 Whereas performance for this class should improve from retraining a NER model on all the data, this result shows how sensitive the less represented types are to differences between training and unseen data.

@@ -19,6 +19,7 @@
 \usepackage{array}
 \usepackage{tabularx}
 \usepackage{listings}
+\usepackage{makecell}
 
 \usepackage{amsmath}
 \usepackage{enumitem}
@@ -308,6 +309,7 @@ Conversely, death events presented in indirect modes, either through the narrato
 
 \begin{table}[htpb]
 \begin{minipage}{\textwidth}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{l r  r r r | r r r | r r r}
 \toprule
 \multicolumn{11}{c}{\textbf{\texttt{llama3.1:70b}}} \\
@@ -323,7 +325,9 @@ Conversely, death events presented in indirect modes, either through the narrato
 \textcolor{gray}{\texttt{direct thought}}  & \textcolor{gray}{$3$}  & \textcolor{gray}{0\%}  & \textcolor{gray}{100\%}  & \textcolor{gray}{0\%}  & \textcolor{gray}{100\%}  & \textcolor{gray}{0\%}  & \textcolor{gray}{0\%}  & \textcolor{gray}{100\%}  & \textcolor{gray}{0\%}  & \textcolor{gray}{0\%} \\
 \bottomrule
 \end{tabular}
+}
 \vspace{1em}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{l r  r r r | r r r | r r r}
 \toprule
 \multicolumn{11}{c}{\textbf{\texttt{deepseek-r1:70b}}} \\
@@ -339,6 +343,7 @@ Conversely, death events presented in indirect modes, either through the narrato
 \textcolor{gray}{\texttt{direct thought}}  & \textcolor{gray}{$3$}  & \textcolor{gray}{0\%}  & \textcolor{gray}{67\%}  & \textcolor{gray}{33\%}  & \textcolor{gray}{33\%}  & \textcolor{gray}{33\%}  & \textcolor{gray}{33\%}  & \textcolor{gray}{0\%}  & \textcolor{gray}{67\%}  & \textcolor{gray}{33\%} \\
 \bottomrule
 \end{tabular}
+}
 \caption{Error analysis by presentation mode for \texttt{llama3.1:70b} and \texttt{deepseek-r1:70b}. Results for presentation modes with a low number of samples are reported but excluded from the comparison.}
 \label{tab:err_an_presentation_mode}
 \end{minipage}
@@ -346,6 +351,7 @@ Conversely, death events presented in indirect modes, either through the narrato
 
 \begin{table}[htpb]
 \begin{minipage}{\textwidth}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{l r  r r r | r r r | r r r}
 \toprule
 \multicolumn{11}{c}{\textbf{\texttt{llama3.1:70b}}} \\
@@ -359,7 +365,9 @@ Conversely, death events presented in indirect modes, either through the narrato
 \textcolor{gray}{\texttt{second}}  & \textcolor{gray}{$10$}  & \textcolor{gray}{0\%}  & \textcolor{gray}{22\%}  & \textcolor{gray}{78\%}  & \textcolor{gray}{20\%}  & \textcolor{gray}{40\%}  & \textcolor{gray}{40\%}  & \textcolor{gray}{20\%}  & \textcolor{gray}{10\%}  & \textcolor{gray}{70\%} \\
 \bottomrule
 \end{tabular}
+}
 \vspace{1em}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{l r  r r r | r r r | r r r}
 \toprule
 \multicolumn{11}{c}{\textbf{\texttt{deepseek-r1:70b}}} \\
@@ -373,6 +381,7 @@ Conversely, death events presented in indirect modes, either through the narrato
 \textcolor{gray}{\texttt{second}}  & \textcolor{gray}{$10$}  & \textcolor{gray}{30\%}  & \textcolor{gray}{0\%}  & \textcolor{gray}{70\%}  & \textcolor{gray}{30\%}  & \textcolor{gray}{10\%}  & \textcolor{gray}{60\%}  & \textcolor{gray}{20\%}  & \textcolor{gray}{20\%}  & \textcolor{gray}{60\%} \\
 \bottomrule
 \end{tabular}
+}
 \caption{Error analysis by narrator's point of view (POV) for \texttt{llama3.1:70b} and \texttt{deepseek-r1:70b}. Results for narrator's POVs with a low number of samples are reported but excluded from the comparison.}
 \label{tab:err_an_narrator_pov}
 \end{minipage}
@@ -421,7 +430,7 @@ We also conducted quartile analysis and Spearman's $\rho$ computations for textu
 As seen in Tables~\ref{tab:finegrained_eval} and \ref{tab:coarse_grained_eval} death event extraction from fiction is characterised by low Recall, while Precision tends to achieve higher scores. However, false positives can still occur.
 LLMs may generate hallucinations~\cite{HallucinationSurvey}, incorporating their background knowledge of the story's characters and settings into the summary or in the KE step. This phenomenon is especially significant in the context of fanfiction, where characters and narrative universes are often drawn from pre-existing works. Consequently, the LLM may inject information into the summary based on its prior training rather than the input text. This issue is especially relevant to our case study, which uses narratives inspired by Greek mythology, a domain well-known and extensively documented online.
 
-We observed an illustrative example of this phenomenon with \texttt{llama3.1:70b}. When generating a generic summary, the LLM produced the sentence: "However, Clytaemnestra appears behind him, seeking revenge for their daughter Iphigenia's death, and strikes Agamemnon down with her sword." From this summary sentence, our KE step incorrectly identified a death event with Iphigenia as the Victim, Agamemnon as the Perpetrator, and stabbing as the Mode of Demise; all three elements of this extracted triple were false positives. Crucially, this event does not appear anywhere in the corresponding full story.\footnote{The full story has title \textit{Cassandra's Song} and workid 734141} The presence of the characters \textit{Agamemnon}, \textit{Cassandra}, and \textit{Clytemnestra} in the actual narrative appears to have prompted the LLM to incorporate background knowledge about Iphigenia's death--a well-documented mythological antecedent that serves as motivation for Clytemnestra's actions in the Greek tragedy--even though this backstory was not present in the input text. This demonstrates how models can inadvertently inject external knowledge into summaries, leading to extracted information that, while mythologically accurate, constitutes a false positive for our task. We report further examples of such false positives in Appendix~\ref{app:fp_examples}.
+We observed an illustrative example of this phenomenon with \texttt{llama3.1:70b}. When generating a generic summary, the LLM produced the sentence: ``However, Clytaemnestra appears behind him, seeking revenge for their daughter Iphigenia's death, and strikes Agamemnon down with her sword." From this summary sentence, our KE step incorrectly identified a death event with Iphigenia as the Victim, Agamemnon as the Perpetrator, and stabbing as the Mode of Demise; all three elements of this extracted triple were false positives. Crucially, this event does not appear anywhere in the corresponding full story.\footnote{The full story has title \textit{Cassandra's Song} and workid 734141} The presence of the characters \textit{Agamemnon}, \textit{Cassandra}, and \textit{Clytemnestra} in the actual narrative appears to have prompted the LLM to incorporate background knowledge about Iphigenia's death--a well-documented mythological antecedent that serves as motivation for Clytemnestra's actions in the Greek tragedy--even though this backstory was not present in the input text. This demonstrates how models can inadvertently inject external knowledge into summaries, leading to extracted information that, while mythologically accurate, constitutes a false positive for our task. We report further examples of such false positives in Appendix~\ref{app:fp_examples}.
 
 \section{Conclusion}
 This research investigated the feasibility of using LLMs for automated knowledge extraction of death events from fictional narratives, specifically Greek mythology fanfiction. We explored the impact of different input presentations: full text, generic summaries, and specialised summaries tailored for death event extraction. Our findings indicate that specialised summaries can offer some performance improvements, especially with shorter narratives, but gains are modest (+0.09 \(F1\)), leaving the task challenging. However, this advantage diminishes with increasing story length and word entropy, where all input types lead to low performance. Correlation analysis reveals stronger associations between extraction errors and story length and word entropy when processing full stories. These correlations weaken with summary inputs, suggesting that summarisation may be a beneficial preprocessing strategy for event extraction from fiction. We also showed examples of the detrimental effects of knowledge leakage from pre-training, leading to false-positive extractions. This issue is particularly prominent in domains like Greek mythology, where widely available background information can contaminate the LLM's output. Moreover, the way information is presented significantly impacts KE performance. First-person narratives and direct speech consistently yielded worse extractions compared to other narrative perspectives, likely due to their less explicit presentation of events.
@@ -651,7 +660,7 @@ Examples of presentation modes for death events, including corresponding IDs and
 \midrule
 Input & Victim & Perpetrator & Mode of Demise & Summary Sentence \\
 \midrule
-Generic Summary & \textbf{Medusa's human partner} & \textcolor{red}{-} & \textcolor{red}{-} & The narrator, Medusa, lives with a human man for many years, hiding her true reptilian form from him. As he ages and his health declines, he eventually discovers her secret but is not repelled by it. In fact, he finds her snakes beautiful and asks to see her eyes, which shine like mother of pearl. With his dying breath, he thanks Medusa for a life well-lived and a painless death, and turns into stone as he passes away. Despite her grief, Medusa feels her heart is light, knowing she will see him again in the afterlife and that their love has given her the strength to carry on.\\
+Generic Summary & \makecell[t]{\textbf{Medusa's human}\\ \textbf{partner}} & \textcolor{red}{-} & \textcolor{red}{-} & The narrator, Medusa, lives with a human man for many years, hiding her true reptilian form from him. As he ages and his health declines, he eventually discovers her secret but is not repelled by it. In fact, he finds her snakes beautiful and asks to see her eyes, which shine like mother of pearl. With his dying breath, he thanks Medusa for a life well-lived and a painless death, and turns into stone as he passes away. Despite her grief, Medusa feels her heart is light, knowing she will see him again in the afterlife and that their love has given her the strength to carry on.\\
 Specialised Summary & \textbf{old man} & \textbf{Medusa} & \textbf{petrification} & Medusa's lover, an old man with weak eyesight, dies after being petrified by Medusa's gaze at his own request, allowing him to die painlessly and with dignity. He is the victim, and Medusa is the unwitting perpetrator of his demise. Athena is indirectly responsible for his death, as she had previously laughed in Medusa's head, foreshadowing the event.\\
 Story & \textbf{the male protagonist} & \textcolor{red}{Athena} & \textbf{petrification} & N/A \\
 \bottomrule
