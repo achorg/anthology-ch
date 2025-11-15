@@ -300,7 +300,7 @@ every axis plot/.append style={fill=cyan!60, draw=none}
 \label{fig:www_variation}
 \end{figure}
 
-\newpage
+%\newpage
 \section{Training Experiments}
 
 To move from simple analysis of decoder models' output to encoding prosodic features required substantial data collection and curation and symbolic representations of prosody (scansions). First, however I tested what might happen with purely text-based fine-tuning on unusually divergent and complex metrical poetry. Could one push models out of their iambic comfort zone?
@@ -496,29 +496,14 @@ transform to rhythm: Let Vales embroidery wear, let Flowers be tinged & //x/xx//
 
 Finally, I provide a comparative analysis of Shakespeare's Sonnet 129 using metricalT5, prosodic.py with human emendations, and a few-shot prompting of Claude's Sonnet 4.5 model. For Claude, I provided a scansion of Sonnet 116 and the prompt ``You are a poetry scholar who scans lines of poetry to determine 1) their underlying metrical pattern, 2) the stress pattern of their performance, and 3) the complexity of the line. Complexity is a function of the distance between (1) and (2).'' As with the ECPA training data I regularized spelling. Error distance is measured via Levenshtein distance, namely how many character edits are required to match values. A unified table of these results is available at \url{https://github.com/cretic/t5-metrical-poetry}.
 
-\begin{longtable}{lp{0.8\textwidth}}
+\begin{table}[htbp]
+\centering
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lp{0.8\textwidth}}
 \toprule
 \# & line \\
 \midrule
-\endfirsthead
-
-\multicolumn{2}{c}
-{\tablename\ \thetable\ -- continued from previous page} \\
-\toprule
-\# & line \\
-\midrule
-\endhead
-
-\midrule
-\multicolumn{2}{r}{Continued on next page} \\
-\endfoot
-
-\bottomrule
-\\
-\caption{Shakespeare Sonnet 129}
-\label{tab:poem}
-\endlastfoot
-
 1 & The expense of spirit in a waste of shame \\
 
 2 & Is lust in action; and till action, lust \\
@@ -546,33 +531,21 @@ Finally, I provide a comparative analysis of Shakespeare's Sonnet 129 using metr
 13 & All this the world well knows; yet none knows well \\
 
 14 & To shun the heaven that leads men to this hell. \\
-
-\end{longtable}
-
-\small
-\begin{longtable}{lccccc}
-\toprule
-\# & prosodic complexity & t5 complexity & claude complexity & t5 error & claude error \\
-\midrule
-\endfirsthead
-
-\multicolumn{6}{c}
-{\tablename\ \thetable\ -- continued from previous page} \\
-\toprule
-\# & prosodic complexity & t5 complexity & claude complexity & t5 error & claude error \\
-\midrule
-\endhead
-
-\midrule
-\multicolumn{6}{r}{Continued on next page} \\
-\endfoot
-
 \bottomrule
-\\
-\caption{Complexity Analysis: T5 vs Claude}
-\label{tab:complexity}
-\endlastfoot
+\end{tabular}
+}
+\caption{Shakespeare Sonnet 129}
+\label{tab:poem}
+\end{table}
 
+\begin{table}[htbp]
+\centering
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccccc}
+\toprule
+\# & prosodic complexity & t5 complexity & claude complexity & t5 error & claude error \\
+\midrule
 1 & 2.0 & 2.0 & 1.0 & 0.0 & 1.0 \\
 \hline
 2 & 1.0 & 1.0 & 1.0 & 0.0 & 0.0 \\
@@ -602,35 +575,21 @@ Finally, I provide a comparative analysis of Shakespeare's Sonnet 129 using metr
 14 & 2.0 & 2.0 & 1.0 & 0.0 & 1.0 \\
 \hline
 average error &  &  &  & 0.429 & 0.929 \\
-
-\end{longtable}
-
-\clearpage
-
-\small
-\begin{longtable}{cccccc}
-\toprule
-Line & Prosodic Meter & T5 Meter & T5 Lev Dist & Claude Meter & Claude Lev Dist \\
-\midrule
-\endfirsthead
-
-\multicolumn{6}{c}
-{\tablename\ \thetable\ -- continued from previous page} \\
-\toprule
-Line & Prosodic Meter & T5 Meter & T5 Lev Dist & Claude Meter & Claude Lev Dist \\
-\midrule
-\endhead
-
-\midrule
-\multicolumn{6}{r}{Continued on next page} \\
-\endfoot
-
 \bottomrule
-\\
-\caption{Meter Analysis: T5 vs Claude} \\
-\label{tab:meter}
-\endlastfoot
+\end{tabular}
+}
+\caption{Complexity Analysis: T5 vs Claude}
+\label{tab:complexity}
+\end{table}
 
+\begin{table}[htbp]
+\centering
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{cccccc}
+\toprule
+Line & Prosodic Meter & T5 Meter & T5 Lev Dist & Claude Meter & Claude Lev Dist \\
+\midrule
 1 & WWSWSWSWSWS & WWSWSWSWSWS & 0.0 & WSWSWSWSWS & 1.0 \\
 2 & WSWSWSWSWS & WSWSWSWSWS & 0.0 & WSWSWSWSWS & 0.0 \\
 3 & WSWSWSWSWS & WSWSWWSWSWS & 1.0 & WSWSWSWSWS & 0.0 \\
@@ -646,34 +605,21 @@ Line & Prosodic Meter & T5 Meter & T5 Lev Dist & Claude Meter & Claude Lev Dist 
 13 & WSWSWSWSWS & SWWSWSWSWS & 2.0 & WSWSWSWSWS & 0.0 \\
 14 & WSWSWSWSWWS & WSWSWSWSWS & 1.0 & WSWSWSWSWS & 1.0 \\
 average distances &  &  & 0.286 &  & 0.929 \\
-
-\end{longtable}
-
-\small
-\begin{longtable}{cccccc}
-
-\toprule
-Line & Prosodic Rhythm & T5 Rhythm & T5 Lev Dist & Claude Rhythm & Claude Lev Dist \\
-\midrule
-\endfirsthead
-
-\multicolumn{6}{c}
-{\tablename\ \thetable\ -- continued from previous page} \\
-\toprule
-Line & Prosodic Rhythm & T5 Rhythm & T5 Lev Dist & Claude Rhythm & Claude Lev Dist \\
-\midrule
-\endhead
-
-\midrule
-\multicolumn{6}{r}{Continued on next page} \\
-\endfoot
-
 \bottomrule
-\\
-\caption{Rhythm Analysis: T5 vs Claude}\\
-\label{tab:rhythm}
-\endlastfoot
+\end{tabular}
+}
+\caption{Meter Analysis: T5 vs Claude} 
+\label{tab:meter}
+\end{table}
 
+\begin{table}[htbp]
+\centering
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{cccccc}
+\toprule
+Line & Prosodic Rhythm & T5 Rhythm & T5 Lev Dist & Claude Rhythm & Claude Lev Dist \\
+\midrule
 1 & xx/x/x/x/x/ & xx/x/x/x/x/ & 0.0 & x/xx/xx/x/ & 3.0 \\
 2 & x/x/xxx/x/ & x/x/xxx/x/ & 0.0 & x/xx/x/x/x/ & 2.0 \\
 3 & x/x/x/x/x/ & x/x/xx/x/x/ & 1.0 & x/x/xx/x/x/ & 1.0 \\
@@ -689,8 +635,12 @@ Line & Prosodic Rhythm & T5 Rhythm & T5 Lev Dist & Claude Rhythm & Claude Lev Di
 13 & //x///x/x/ & /xx///x/// & 2.0 & x/x//x/x/x/ & 2.0 \\
 14 & x/x/x//xx/ & x/x/x//xx/ & 0.0 & x/x/xx/x/x/ & 2.0 \\
 average distances &  &  & 0.714 &  & 1.571 \\
-
-\end{longtable}
+\bottomrule
+\end{tabular}
+}
+\caption{Rhythm Analysis: T5 vs Claude}
+\label{tab:rhythm}
+\end{table}
 
 This comparison reaffirms that frontier models rarely align with computer-aided human scansion save for the simplest lines: those with a standard WSWSWSWSWS pattern and x/x/x/x/x/ rhythm. Lines like 4 and 10, which begin with stress (i.e. ``trochaic'' openings), tend to throw off the model. It does not know that iambic meter stays iambic throughout, restores order as the line (and sonnet) proceeds. I admit that fine-grained analysis of individual lines feels inadvisable for tools aimed at corpus level study. Training metricalT5 on 17th century and other poetry might also improve performance; Claude may perform better with different prompting, though the exploration above suggests it will not.
 

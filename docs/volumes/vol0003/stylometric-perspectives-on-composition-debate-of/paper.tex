@@ -73,7 +73,7 @@ In this paper, the investigation focuses on three quantitative arguments that ad
 \end{itemize}
 
 \noindent
-A summary of these different claims is available in table~\ref{tab:claims}.
+A summary of these different claims is available in Table~\ref{tab:claims}.
 
 \subsection{Research Question}
 Our paper is thus positioned within the field of computational stylometry, which applies statistical and computational tools to written texts in order to uncover underlying stylistic patterns, often for authorship attribution or compositional analysis in order to revisit established debates by moving from qualitative interpretations to quantitative, data-driven modeling of linguistic features such as function words or n-grams~\cite{Zhang2018, deneire2018filelfo, nielbo2019automated, ml_stylometry_2020}. While the previous quoted studies have made their stylometric claims based on selected passages due to the manual computation, our paper seeks to systematically test and generalize these findings in light of the ongoing debate about the composition of AA and AAM.\\
@@ -109,9 +109,8 @@ The titles of the individual texts follow the naming conventions used in the tex
 \label{tab:texts-used}
 \end{table}
 
-\centering
-
 \begin{table}
+\centering
 \begin{tabular}{l l l}
 \textbf{Abbreviated Title} & \textbf{Source} & \textbf{Chapters} \\
 \midrule
@@ -146,6 +145,7 @@ We divide our selected features into two sub-categories, classically used in sty
 \begin{table}[!h]
 \centering
 \scriptsize
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{l | l | l }
 \textbf{Author} & \textbf{Claim} & \textbf{Metric} \\
 \hline
@@ -155,12 +155,13 @@ Zachariades-Holmberg~\cite{zachariadesholmberg1999} & High distribution of abs g
 \hline
 Warren~\cite{warren_greek_1999} & Verb in the middle position in AA than in AAM & Split sent. in 3, find finite verb position \\
 \end{tabular}
+}
 \caption{Scholars claims and selected metrics for validation\label{tab:claims}}
 \end{table}
 
 \subsubsection{Vocabulary Richness Analysis}
 
-The first axis of our analysis assesses the \textit{vocabulary richness} of the texts, in light of Prieur's observation that the language of the AA is much richer than that of the AAM, which he characterizes as employing a "simple" and "limited vocabulary"~\cite{Prieur1986}. \\
+The first axis of our analysis assesses the \textit{vocabulary richness} of the texts, in light of Prieur's observation that the language of the AA is much richer than that of the AAM, which he characterizes as employing a ``simple" and ``limited vocabulary"~\cite{Prieur1986}. \\
 We verify this claim by relying on three widely used stylometric indicators: the \textit{type-token ratio} (TTR), \textit{sentence-level vocabulary richness}, and the \textit{median sentence length}~\cite{kettunen2014typeratio}:
 \noindent
 \begin{enumerate}
@@ -215,7 +216,7 @@ We compute its frequency per number of sentences:
 \paragraph{Verb positions}
 
 Following Warren's analysis, the verb position within the sentence serves as an indicator of the stylistic level in Ancient Greek prose. Skilled authors are typically associated with a preference for placing the (finite) verb in the middle of the sentence, rather than at the beginning or end. In contrast, less skilled or more colloquial styles tend to position the verb at the start of the sentence. While Warren examined seven chapters of AAM and ten chapters of AA, our computational approach allows us to treat a larger volume of data and consider the entirety of the book.\\
-To compute this score, sentences were divided into three equal parts, and we then identified in which part the finite verb occurred, defined as those tagged by SpaCy with a POS "AUX" or "VERB", as well as a  VerbForm set to "Fin" in the morphological analysis. The number of verbs found in each part is then summed across each text and divided by the total number of verbs in the text to account for different lengths.\\
+To compute this score, sentences were divided into three equal parts, and we then identified in which part the finite verb occurred, defined as those tagged by SpaCy with a POS ``AUX" or ``VERB", as well as a  VerbForm set to ``Fin" in the morphological analysis. The number of verbs found in each part is then summed across each text and divided by the total number of verbs in the text to account for different lengths.\\
 \noindent
 More formally, if we consider that a text consists of \( m \) sentences:
 \[
@@ -234,7 +235,7 @@ Each sentence \( S^{(j)} = [w^{(j)}_1, w^{(j)}_2, \dots, w^{(j)}_{n_j}] \) is th
 \noindent
 We then define the set of finite verbs as:
 \[
-FV = \left\{ w \,\middle|\, \texttt{pos}(w) \in \{\text{"AUX"}, \text{"VERB"}\} \text{ and } \texttt{VerbForm}(w) = \text{"Fin"} \right\}
+FV = \left\{ w \,\middle|\, \texttt{pos}(w) \in \{\text{``AUX"}, \text{``VERB"}\} \text{ and } \texttt{VerbForm}(w) = \text{``Fin"} \right\}
 \]
 
 \noindent
@@ -249,7 +250,7 @@ This then leads to the average relative position of finite verbs within their re
 All code used in this study was written in Python, and the results are fully reproducible via the companion GitHub repository\footnote{\url{https://github.com/Computing-Antiquity/acts_andrew_stylometry}}. Due to copyright constraints, only the texts edited by Tischendorf and Bonnet are available on the GitHub repository. These datasets, to our knowledge, are the only freely available digital transcriptions of the Acts of Andrew and the Acts of Andrew and Matthew. We hope that these datasets will trigger further experimentation on these apocryphal texts.
 
 \section{Results and discussion\label{sec:results}}
-We present the selected metrics for investigating and systematizing the stylometric claims in the following section. We summarize our results and their relationship to existing claims in table~\ref{tab:summary}.
+We present the selected metrics for investigating and systematizing the stylometric claims in the following section. We summarize our results and their relationship to existing claims in Table~\ref{tab:summary}.
 
 \subsection{Vocabulary Analysis}
 
@@ -320,7 +321,7 @@ MartAndrBonTert    & 0.62 & 7.36 \\
 
 \paragraph{Subordinate and Non-Subordinate Verbs}
 
-Analysis of subordinate and main verb ratios reveals clear syntactic differences across the texts, as displayed in table~\ref {tab:subordinate-nonsubordinates}.
+Analysis of subordinate and main verb ratios reveals clear syntactic differences across the texts, as displayed in Table~\ref {tab:subordinate-nonsubordinates}.
 
 \begin{table}[H]
 \centering
@@ -408,6 +409,7 @@ The AAM texts (e.g., \textit{AndrMattBon}, \textit{AndrMattTisch}, and their var
 \begin{table}[!h]
 \centering
 \scriptsize
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{ l | l | l | l | l }
 \textbf{Author} & \textbf{Claim} & \textbf{Confirmed} &\textbf{ Confirmed w. Nuance} & \textbf{Unconfirmed} \\
 \hline
@@ -421,15 +423,16 @@ Prieur/Hilhorst \& Lallemand & Simple language in AAM & X & &  \\
 \hline
 Zachariades-Holmberg & High Distribution of Absolute Genitive in AA & X & \\
 \end{tabular}
+}
 \caption{Summary of results and relationship between scholarly claims\label{tab:summary}}
 \end{table}
 
 \section{Conclusion and Further Works\label{sec:conclusion}}
-Our results show that we on many points can corroborate the stylometric claims that have been conducted manually in previous scholarship, for example, concerning a lower vocabulary richness, a more paratactic sentence structure, and a high use of periphrastic constructions for the AAM, which would support the claim that AAM and AA do not belong to a common original. However, we could also detect important nuances: First, the placement of the verb is more evenly distributed than previously shown; second, the use of hypotaxis was not in the low end for the AAM, for which reason we cannot deem it completely "simple" in this regard. \\
+Our results show that we on many points can corroborate the stylometric claims that have been conducted manually in previous scholarship, for example, concerning a lower vocabulary richness, a more paratactic sentence structure, and a high use of periphrastic constructions for the AAM, which would support the claim that AAM and AA do not belong to a common original. However, we could also detect important nuances: First, the placement of the verb is more evenly distributed than previously shown; second, the use of hypotaxis was not in the low end for the AAM, for which reason we cannot deem it completely ``simple" in this regard. \\
 Our experiments so far have taken the texts in their present editions; however, proponents of the relationship between AAM and AA suggest a kinship based more on thematic lines that follow a now lost, primitive version of the text. In our future work, we will pursue such an investigation, attempting to analyze hidden literary layers with more topical and content-oriented analyses.
 
 \section*{Acknowledgments}
-This project has been partially funded by the Carlsberg Semper Ardens Project: "Computing Antiquity: Computational Research in Ancient Text Corpora"
+This project has been partially funded by the Carlsberg Semper Ardens Project: ``Computing Antiquity: Computational Research in Ancient Text Corpora"
 
 \pagebreak
 

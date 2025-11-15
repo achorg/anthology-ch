@@ -5,6 +5,7 @@
 \usepackage{multirow}
 \usepackage{float}
 \usepackage{geometry}
+\usepackage{listings}
 \geometry{a4paper, margin=1in}
 
 \title{Benchmarking Methods for Digitizing Print Bibliographies}
@@ -92,7 +93,7 @@ We use character error rate (CER), word error rate (WER), and token sort ratio (
 We report accuracy metrics for both non-normalized and normalized results. For non-normalized results, pre-processing includes (i) replacing line breaks and tabs with spaces, (ii) removing all instances of hyphens followed by spaces, except for numeric intervals where hyphens remain, (iii) replacing multiple spaces with one space, and (iv) removing leading and trailing spaces. These methods will reduce the differences inherent between OCR software and LLMs as well as small differences in transcription that do not affect how the data is understood and may have arisen from human discernment or error when creating the ground truth.
 
 \subsection{JSON Creation}
-To create usable structured JSON output using mLLMs, we needed a way to enforce the structure of the output for benchmarking comparison as well as usability for future database construction. Some mLLMs have built-in features for defining strict guidelines for structured output. For cross-model compatibility, we used a structured output solution called Instructor, a third-party tool for creating and validating structured output from a variety of mLLM providers. We were able to use a single JSON schema for every model, provided in \ref{appdx:first}. Strings have the default value of the empty string ("") and integers have the default value of 0. Because each entry in the original text can exclude any of the fields, a unified way to handle nonexistent information was an important consideration. Almost every entry is missing at least one of the fields (most commonly the maiden name). Assuring the mLLM that it is acceptable for an entry to be missing information and providing guidance of what value to assign to those fields is another way to discourage hallucinations. For cut-off entries at the start or end of pages, whichever information is present on that page is included as its own entry. Ground truth was created by running the mLLM JSON creation process on each page, and then manually correcting it by referencing the original scanned image of the page.
+To create usable structured JSON output using mLLMs, we needed a way to enforce the structure of the output for benchmarking comparison as well as usability for future database construction. Some mLLMs have built-in features for defining strict guidelines for structured output. For cross-model compatibility, we used a structured output solution called Instructor, a third-party tool for creating and validating structured output from a variety of mLLM providers. We were able to use a single JSON schema for every model, provided in \ref{appdx:first}. Strings have the default value of the empty string (``") and integers have the default value of 0. Because each entry in the original text can exclude any of the fields, a unified way to handle nonexistent information was an important consideration. Almost every entry is missing at least one of the fields (most commonly the maiden name). Assuring the mLLM that it is acceptable for an entry to be missing information and providing guidance of what value to assign to those fields is another way to discourage hallucinations. For cut-off entries at the start or end of pages, whichever information is present on that page is included as its own entry. Ground truth was created by running the mLLM JSON creation process on each page, and then manually correcting it by referencing the original scanned image of the page.
 
 \subsection{JSON Accuracy}
 JSON accuracy consists of opening the JSON output as tabular data and reporting the number of matching cells out of all cells. We use three metrics to calculate whether two corresponding cells match. First, the exact match compares whether two cells match exactly after alignment pre-processing is done. Next, the normalized match compares whether two cells match exactly after only alphanumeric, underscore, and whitespace characters are kept and multiple spaces are replaced with single spaces for text cells. Finally, the fuzzy match uses RapidFuzz’s Jaro-Winkler algorithm with a match threshold of 0.9 on the non-normalized data.
@@ -135,7 +136,7 @@ Based on these requirements, we selected Gpt-4o (OpenAI) and Gemini-2.5-Flash (G
 \subsection{Prompt Engineering}
 Prior researchers stress the importance of careful prompt engineering in their paper. Initial prompt testing was done with the AI Studio version of Gemini 2.5 Pro (temperature = 0). Gemini 2.5 Pro required minimum prompting to behave how we wanted it, with very few noticeable errors. The only extra instructions were to put the index numbers at the end of entries, put each entry on a separate line, and to not make up information that did not appear on the page.
 
-Unfortunately, the API access to this model was not free, so we reverted to Gemini 2.5 Flash for the rest of our testing. While continuing to test, we noticed that on pages with handwritten text the mLLM was able to transcribe those notes as well, so the line "Ignore handwritten marginalia when transcribing" was added to the end. The mLLM would sometimes avoid transcribing the headings and page numbers, possibly because they were not “entries.” Therefore, "Transcribe all text that appears on the page" was added within the prompt. Next, testing needed to be expanded to include GPT-4o as well. Unexpectedly, GPT-4o did not respond well to some aspects of the prompt that improved the behavior in Gemini. Asking the API to provide the output in a txt file occasionally caused it to insist that it did not have this functionality. The line about handwritten marginalia caused it to sometimes add a message at the top that it could only transcribe typed text. At this point, we combined aspects of our current prompt with a prompt that GPT-4o had responded well to, in hopes of creating a prompt that was acceptable to both models. The biggest change was providing the model a “role” to play, which we can hypothesize reduced direct messages to the user being inserted at the beginning of output because a “text correction assistant” would not need to speak to a user. The role also provides a justification for transcribing a book which reduced refusals of the task. Finally, a separate prompt was created for the direct-from-image transcription. Prompts are included in Appendix \ref{appdx:second}.
+Unfortunately, the API access to this model was not free, so we reverted to Gemini 2.5 Flash for the rest of our testing. While continuing to test, we noticed that on pages with handwritten text the mLLM was able to transcribe those notes as well, so the line ``Ignore handwritten marginalia when transcribing" was added to the end. The mLLM would sometimes avoid transcribing the headings and page numbers, possibly because they were not “entries.” Therefore, ``Transcribe all text that appears on the page" was added within the prompt. Next, testing needed to be expanded to include GPT-4o as well. Unexpectedly, GPT-4o did not respond well to some aspects of the prompt that improved the behavior in Gemini. Asking the API to provide the output in a txt file occasionally caused it to insist that it did not have this functionality. The line about handwritten marginalia caused it to sometimes add a message at the top that it could only transcribe typed text. At this point, we combined aspects of our current prompt with a prompt that GPT-4o had responded well to, in hopes of creating a prompt that was acceptable to both models. The biggest change was providing the model a “role” to play, which we can hypothesize reduced direct messages to the user being inserted at the beginning of output because a “text correction assistant” would not need to speak to a user. The role also provides a justification for transcribing a book which reduced refusals of the task. Finally, a separate prompt was created for the direct-from-image transcription. Prompts are included in Appendix \ref{appdx:second}.
 
 To fully maximize the behavior of either model, separate prompts would be used that tailor to their differences, but in order to fairly benchmark their performance compared to one another a universal prompt was needed.
 
@@ -195,7 +196,7 @@ For JSON creation directly from images, however, Gemini 2.5 Flash consistently o
 \label{table:2}
 \end{table}
 
-Much analysis remains to be done on error patterns in the JSON and their effect on data usability, but as a preliminary overview we examined the granular match rates for each field. The lowest match rates were for the "library" field, for which values are drawn from a set of abbreviations specific to this work, likely making them more of a challenge for the model to predict (see Figure \ref{fig:json-img-errors} and Figure \ref{fig:json-text-errors}).
+Much analysis remains to be done on error patterns in the JSON and their effect on data usability, but as a preliminary overview we examined the granular match rates for each field. The lowest match rates were for the ``library" field, for which values are drawn from a set of abbreviations specific to this work, likely making them more of a challenge for the model to predict (see Figure \ref{fig:json-img-errors} and Figure \ref{fig:json-text-errors}).
 
 \begin{figure}[H]
 \centering
@@ -236,6 +237,8 @@ The authors are grateful for the support of the Grinnell College Summer Mentored
 
 \section{Entry Schema Using Instructor} \label{appdx:first}
 
+\begin{lstlisting}[breaklines=true, basicstyle=\ttfamily]
+
 class Entry(BaseModel):
 
 lastname: str = Field(default="", description="The author\'s last name. In the original entries, names are written in Last Name, First Name format. If the name is followed by \"(pseud.)\", this indicates that the name is a pseudonym, but it should still be stored in this field. If this information is not found, assign the empty string to this field.",)
@@ -269,6 +272,8 @@ index: int = Field(default=0, description="The index number of the bibliography 
 class Entries(BaseModel):
 
 entries: List[Entry]
+
+\end{lstlisting}
 
 \section{Prompt Engineering} \label{appdx:second}
 
