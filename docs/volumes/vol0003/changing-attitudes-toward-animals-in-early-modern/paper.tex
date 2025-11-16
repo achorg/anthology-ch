@@ -89,10 +89,10 @@ Dominionistic & mastery, physical control, dominance over nature & \textit{Wanne
 \hline
 Symbolic & use of nature in language and thought & \textit{Als leeuwen sij tot mi lopen / Soe rasen en grimmen sij.}~\cite{zuylen1540souterliedekens} & When like lions they come at me, They rage and roar with fury. \\
 \hline
-\end{longtable}
 \captionsetup{type=table}
 \caption{Kellert's nature attitude typology: definitions and examples.}
 \label{tab:attitudes}
+\end{longtable}
 }
 
 \noindent The typology is assumed to be universal and has been widely tested, although mainly in Western contexts~\cite{ross2018stephen}.
@@ -201,7 +201,7 @@ The increase in Reason is in line with traditional scholarship by Thomas~\cite{t
 
 A finding we did not hypothesize is the decrease of the Symbolic and Spiritual attitudes. In fact, the decrease of the Symbolic attitude has the strongest slope in our corpus. These trends might be interpreted as a demystification of nature, since Spiritual and Symbolic have in common that in these attitudes nature is something ``more that itself''. This might touch on what literary historians, in the English context, have described as the decline of allegory in the seventeenth and eighteenth centuries, although that narrative is not uncontroversial~\cite{honig1959, gulya2016}. However, there are alternative explanations, such as corpus effects or the possibility of more general decreases in the use of figurative speech in language or knowledge about nature.
 
-Beyond the statistical detection of attitude shifts, this study also contributes to historical scholarship by offering a sense of proportionality. As shown in  Fig.~\ref{fig:plot_attitude_vs_attitudes}, while the early modern period might indeed bring some change into animal attitudes, most changes are not too dramatic. With the exception of Reason, attitudes that are marginal at the start of the period, are still marginal at the end. In the case of changing attitudes toward animals, change is not the same as a revolution.
+Beyond the statistical detection of attitude shifts, this study also contributes to historical scholarship by offering a sense of proportionality. As shown in  Figure~\ref{fig:plot_attitude_vs_attitudes}, while the early modern period might indeed bring some change into animal attitudes, most changes are not too dramatic. With the exception of Reason, attitudes that are marginal at the start of the period, are still marginal at the end. In the case of changing attitudes toward animals, change is not the same as a revolution.
 
 We note several methodological caveats and natural extensions. First, the use of two classification models introduces compounded uncertainty: errors in the animal identification model propagate to the attitude classification stage, potentially amplifying misclassification rates. Second, the uneven distribution of Kellert's values across the dataset limits our ability to obtain robust precision and recall estimates for rare attitudes, such as Moralistic. Third, the DBNL dataset consists primarily of culturally significant literary works, which may not be representative of broader societal discourse. We might expect everyday texts to reveal more practical attitudes, such as Exploitation. Fourth, the Mann-Kendall test detects only monotonic change, so other types of change (e.g., abrupt shifts) may go undetected. Fifth, our analysis treated each attitude as independent, whereas some attitudes might co-occur or have inverse correlation. Sixth, we approached classification as a single label task on a single chunk; which means that the presence of multiple attitudes in the same chunk will be missed, as well as attitudes that emerge on the level of the text as a whole. Seventh, we have examined monotonic change without separating factors that might explain observed trends, such as genre, author gender, or the presence of specific animals.
 
@@ -212,7 +212,6 @@ This research was supported by Utrecht University AI Labs and the Meertens Insti
 
 \printbibliography
 
-\section{Appendices}
 \appendix
 
 \section{Encoder model training}\label{sec:encoder-training}
@@ -304,6 +303,7 @@ As some attitudes are very scarce in the dataset, for 3 of the 12 possible label
 
 \begin{table}[H]
 \label{tab:extralabelinfo-important-steps}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{llrrrrrrr}
 \toprule
 Prompt & Category & TP & FP & FN & TN & Precision & Recall & F1 \\
@@ -322,6 +322,7 @@ extralabelinfo\_important\_steps & No Animal & 69 & 2 & 19 & 53 & 0.972 & 0.784 
 extralabelinfo\_important\_steps & Attitude Unclear & 2 & 0 & 1 & 140 & 1.000 & 0.667 & 0.800 \\
 \bottomrule
 \end{tabular}
+}
 \caption{Results per nature-related attitude for used prompt-model combination.}
 \end{table}
 

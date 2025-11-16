@@ -106,7 +106,7 @@ Our analysis draws upon the UKTwitNewsCor dataset \cite{bisiani_uktwitnewscor_20
 Due to computational constraints, we implemented a two-stage stratified cluster sampling. First, we stratified across geography and publishers to ensures balanced geographic and organisational representation \cite{long_obtaining_2005}. Then, we sampled temporally from each of these subgroups to minimise seasonal patterns in news coverage. We randomly selected eight weekdays per stratum-year (two per quarter) using the constructed week method \cite{luke_how_2011}. The resulting sample (465,105 articles, 18.35\% of corpus) maintains complete spatial and publisher coverage while preserving within-day editorial relationships.
 
 \subsection{Geoparsing}
-To extract geographic locations from the articles, we applied a geoparsing pipeline developed in a companion study \cite{bisiani_towards_2025}. First, we extracted locations using SpaCy's transformer-based named entity recognition model \cite{honnibal2020spacy}. Location entities were then linked to real-world coordinate-candidates using two popular gazetteers for the UK: Ordnance Survey Open Names and OpenStreetMap. The identification of the correct set of coordinates for each location, a task known as toponym disambiguation \cite{hu_how_2023}, was found by presenting a large language model (LLM), gemma2-9b \cite{team_gemma_2024}, with the location, its candidate options, and additional context to guide the selection. Context included the article and the website of the news outlet. Given LLMs' limitations in directly processing geographic coordinates in relation to text \cite{mai_opportunities_2024}, we reformulated the disambiguation task around administrative boundaries. We mapped each coordinate set to its Local Authority District and asked the LLMs to classify which administrative district corresponds to a given toponym. This approach leverages the fact that LLMs can use their stronger contextual interpretation capabilities rather than performing precise spatial computations. This pipeline has been validated on a gold standard dataset consisting of 182 articles and 1,313 locations extracted from the same corpus, achieving high classification accuracy (F1 = 0.88, Accuracy = 0.82) and falling just behind state-of-the-art, which leverages fine-tuning\cite{hu_toponym_2024}. Appendix \ref{appdx:second} provides additional information regarding this procedure.
+To extract geographic locations from the articles, we applied a geoparsing pipeline developed in a companion study \cite{bisiani_towards_2025}. First, we extracted locations using SpaCy's transformer-based named entity recognition model \cite{honnibal2020spacy}. Location entities were then linked to real-world coordinate-candidates using two popular gazetteers for the UK: Ordnance Survey Open Names and OpenStreetMap. The identification of the correct set of coordinates for each location, a task known as toponym disambiguation \cite{hu_how_2023}, was found by presenting a large language model (LLM), gemma2-9b \cite{team_gemma_2024}, with the location, its candidate options, and additional context to guide the selection. Context included the article and the website of the news outlet. Given LLMs' limitations in directly processing geographic coordinates in relation to text \cite{mai_opportunities_2024}, we reformulated the disambiguation task around administrative boundaries. We mapped each coordinate set to its Local Authority District and asked the LLMs to classify which administrative district corresponds to a given toponym. This approach leverages the fact that LLMs can use their stronger contextual interpretation capabilities rather than performing precise spatial computations. This pipeline has been validated on a gold standard dataset consisting of 182 articles and 1,313 locations extracted from the same corpus, achieving high classification accuracy (F1 = 0.88, Accuracy = 0.82) and falling just behind state-of-the-art, which leverages fine-tuning \cite{hu_toponym_2024}. Appendix \ref{appdx:second} provides additional information regarding this procedure.
 
 The geoparsing pipeline processed 465,105 articles, identifying location mentions in 365,714 articles (78.6\%). From these articles, 1,657,425 location mentions were extracted, with 1,388,720 (83.8\%) successfully geocoded to specific coordinates. The final analytical sample comprises 347,291 articles containing geocoded locations, representing 158,288 unique geographic locations across the UK. Pipeline performance varied by outlet, with the majority (75\%) achieving geocoding success rates above 75\% (Figure \ref{fig:geoparsing_stats}b). The relationship between total mentions and unique locations (Figure \ref{fig:geoparsing_stats}c) reveals that outlets with higher mention volumes tend to have proportionally fewer unique locations, reflecting both the finite nature of local geography and the tendency for outlets to repeatedly reference key locations within their coverage areas.
 
@@ -177,8 +177,7 @@ News outlets in our sample display substantial diversity in the spatial characte
 \end{tabular}
 \footnotesize
 \newline
-Notes: Statistics computed across 358 media outlets.
-\caption{Descriptive Statistics of Features}\label{tab:descriptives}
+\caption{Descriptive Statistics of Features. Statistics computed across 358 media outlets.}\label{tab:descriptives}
 \end{table}
 
 Some outlets exhibit tightly localised coverage areas (as little as 4.5~km\textsuperscript{2}), while others reach over 123,000~km\textsuperscript{2}; there is similar variation in the number and distribution of administrative areas referenced. Coverage is rarely uniform: most outlets concentrate attention in a limited set of location types, with some demographic communities (e.g., Legacy Communities, Low-Skilled Migrant and Student Communities) disproportionately under-represented (Figure \ref{fig:demographics}a). Moderate to high spatial inequality (Gini $\approx$ 0.5) is common, and spatial clustering (Moran’s I $\approx$ 0) is typically low, indicating that mention patterns generally lack strong clustering or dispersion. Shannon entropy values further show that coverage is usually moderate in spatial diversity. Distance decay patterns also vary widely: some outlets achieve $75\%$ coverage within 25~km of their focal point, while others require more than 100~km, reflecting both hyperlocal and regional scales of operation (Figure \ref{fig:demographics}b). The proportion of highly local coverage (within 10~km) ranges from none to nearly all, with the distance coefficient of variation spanning 0.62 to nearly 6.
@@ -204,7 +203,7 @@ We systematically evaluated clustering solutions, finding that k-means with a hi
 
 \begin{table}[h]
 \centering
-\footnotesize
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{lccccccccc}
 \toprule
 \textbf{Cluster Type} & \textbf{N} & \textbf{Area (km²)} & \textbf{Districts} & \textbf{Gini} & \textbf{Entropy} & \textbf{Moran's I} & \textbf{DistCV} & \textbf{Pct10km (\%)} \\
@@ -217,10 +216,9 @@ Major City and Regional & 58 & 7,389 & 936 & 0.45 & 4.68 & 0.051 & 1.66 & 30.3 \
 Major Regional Daily & 5 & 79,014 & 1,119 & 0.41 & 5.38 & 0.051 & 1.17 & 23.0 \\
 \bottomrule
 \end{tabular}
-\footnotesize
+}
 \newline
-Notes: Cluster means shown. DistCV = Coefficient of Variation of distances; Pct10km = Percentage of location mentions within 10 km of outlet.
-\caption{Media Outlet Spatial Reach Typologies}\label{tab:cluster_profiles_expanded}
+\caption{Media Outlet Spatial Reach Typologies. Cluster means shown. DistCV = Coefficient of Variation of distances; Pct10km = Percentage of location mentions within 10 km of outlet.}\label{tab:cluster_profiles_expanded}
 \end{table}
 
 \begin{enumerate}
@@ -418,8 +416,7 @@ Full & HDBSCAN & 0.195 & 4 & 170 & 7, 6, 6, 169 \\
 \end{tabular}
 \footnotesize
 \newline
-Notes: Selected results from the combinations tested. Bold indicates chosen solution. DIANA = Divisive Analysis; Complete = Hierarchical clustering with complete linkage; Ward = Hierarchical clustering with Ward linkage; HDBSCAN = Hierarchical Density-Based Spatial Clustering. PCA percentages indicate variance retention.
-\caption{Clustering Method Performance Comparison}\label{tab:clustering_experiments}
+\caption{Clustering Method Performance Comparison. Selected results from the combinations tested. Bold indicates chosen solution. DIANA = Divisive Analysis; Complete = Hierarchical clustering with complete linkage; Ward = Hierarchical clustering with Ward linkage; HDBSCAN = Hierarchical Density-Based Spatial Clustering. PCA percentages indicate variance retention.}\label{tab:clustering_experiments}
 \end{table}
 
 \end{document}

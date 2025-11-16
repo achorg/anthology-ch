@@ -217,6 +217,22 @@ A total of 431 practitioner entities were identified from \textit{The Dictionary
 
 In this exercise, prompt engineering proved readily applicable for extracting named practitioner entities from relatively structured and clean Chinese texts. The model demonstrated viable accuracy in recognising various appellations and ethnographic information of historical figures without special additional instructions in the prompts. However, it struggled to differentiate between concepts such as organisation versus dynasty, and martial arts systems versus related notions like techniques or clans. To address this issue, we compiled terminologies from \textit{The Dictionary} and other sources into a reference file organised by category, and instructed the model to use these predefined entity groups during extraction. This refinement improved accuracy to 98\%.
 
+\begin{figure}[hp]
+        \centering
+        \includegraphics[width=\linewidth]{figures/entity.png}
+        \caption{A snapshot of extracted practitioner entities, processed from JSON into CSV format.}
+        \label{fig:MAentity}
+\end{figure}
+
+\begin{figure}[hp]
+        \centering
+        \includegraphics[width=\linewidth]{figures/relationentity.png}
+        \par\vspace{.6cm}
+        \includegraphics[width=.9\linewidth]{figures/master-sys-w.png}
+        \caption{Extraction of transmission contacts: (top) snapshot of extractions in CSV format; \newline(bottom) preliminary deployment of the transmission network in Neo4j.}
+        \label{fig:relationcsv}
+\end{figure}
+
 
 \subsection{Extraction of interpersonal contacts}
 
@@ -236,23 +252,6 @@ Through these experiments, we found that generally trained LLMs can be tuned via
 Procedurally, expert adjudication is critical for identifying inference issues and guiding prompt refinement. Fostering this process, excerpt extraction -- texts that directly underpin the model’s outputs -- has proven an effective practice that enhances expert efficiency while providing explainability for validated extractions.
 
 Methodologically, we plan further research in two directions: (1) applying chain-of-thought and self-reflective instructions to probe the limits of prompt engineering for heterogeneous and context-specific Chinese corpora; and (2) developing a specialised model as a checking layer to adjudicate and correct the model's outputs, for example, by inferring and cross-checking semantic indicators of master-disciple relationships from reference excerpts.
-
-
-\begin{figure}[hp]
-        \centering
-        \includegraphics[width=\linewidth]{figures/entity.png}
-        \caption{A snapshot of extracted practitioner entities, processed from JSON into CSV format.}
-        \label{fig:MAentity}
-\end{figure}
-
-\begin{figure}[hp]
-        \centering
-        \includegraphics[width=\linewidth]{figures/relationentity.png}
-        \par\vspace{.6cm}
-        \includegraphics[width=.9\linewidth]{figures/master-sys-w.png}
-        \caption{Extraction of transmission contacts: (top) snapshot of extractions in CSV format; \newline(bottom) preliminary deployment of the transmission network in Neo4j.}
-        \label{fig:relationcsv}
-\end{figure}
 
 
 \section*{Acknowledgements}
