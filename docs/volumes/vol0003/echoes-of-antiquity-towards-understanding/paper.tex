@@ -13,8 +13,6 @@
 \usepackage{adjustbox}
 \usepackage{multirow}
 
-\newcommand{\gr}[1]{{\selectlanguage{greek}\greekfont #1}}
-
 \newcommand{\detailtexcount}[1]{
 \immediate\write18{texcount -merge -sum -q #1.tex output.bbl > #1.wcdetail }
 \verbatiminput{#1.wcdetail}
@@ -54,8 +52,8 @@ orcid=0000-0002-5578-723X
 
 \pubyear{2025}
 \pubvolume{3}
-\pagestart{32}
-\pageend{32}
+\pagestart{33}
+\pageend{49}
 \conferencename{Computational Humanities Research 2025}
 \conferenceeditors{Taylor Arnold, Margherita Fantoli, and Ruben Ros}
 \doi{10.63744/XcjZ0MxpjIPj}
@@ -71,17 +69,10 @@ orcid=0000-0002-5578-723X
 This paper presents a systematic, data-driven comparison of human and large language model (LLM) translations of Ancient Greek texts, focusing on historiography and epic poetry. We assemble a parallel corpus of Greek source texts and multiple English translations, including both established human translations and new outputs from state-of-the-art LLMs such as GPT-4o, Gemini 1.5 Pro, and Claude 3.5 Sonnet. Using a unified computational workflow, we evaluate translations via lexical diversity, part-of-speech distributions, collocation profiles, and automatic translation quality metrics (BLEU, ROUGE, METEOR, chrF++). Our results reveal clear genre differences and demonstrate that, while LLMs can approach the fidelity of certain human translators and often reproduce dominant translation patterns, human versions retain greater interpretive diversity and linguistic nuance, especially in poetry. Collocation analyses further show that LLM outputs tend to converge on frequent patterns found in their training data, whereas human translators exhibit both shared conventions and unique, creative solutions. This work-in-progress study highlights both the potential and the present limitations of LLM-driven translation for classical scholarship, providing publicly available materials and quantitative benchmarks for future research in digital classics and translation studies.
 \end{abstract}
 
-\end{document}
-
-
-
-
-
-
 \section{Introduction}
 Modern historian Włodzimierz Lengauer controversially concludes his essay by advocating \emph{not} translating ancient texts at all. He contends that ``translation gives no idea of the original'' because it is impossible to reconstruct the meaning of texts written in languages and cultures that are now ``dead'' \parencite[pp.~26--27]{lengauer_traduttore_2013}. While this claim has sparked debate among scholars, it is rooted in the genuine complexities involved in rendering Ancient Greek into modern languages.\footnote{While Lengauer's examples focus on Polish, similar obstacles arise in translations from Ancient Greek to any modern language. This study focuses on Greek-to-English translation.}
 
-Translators face several interconnected challenges: \textbf{(1) Poetic Language:} Ancient Greek poetry, as found in Homer’s epics, uses intricate metre and formulaic metaphors (e.g., \gr{ῥοδοδάκτυλος Ἠώς}, \textit{rosy-fingered dawn}). Conveying such poetic qualities while maintaining accuracy is non-trivial. \textbf{(2) Cultural Context:} Concepts like \gr{ἀρετή}, spanning \textit{excellence}, \textit{virtue}, and \textit{valour}, resist direct equivalence, requiring translators to bridge cultural gaps and provide adequate interpretation. \textbf{(3) Historical References:} Frequent allusions require contextual knowledge (e.g., understanding the Peloponnesian War in Thucydides). \textbf{(4) Ambiguity and Wordplay:} Ambiguities in the source often elicit diverse interpretive choices, challenging translation fidelity.
+Translators face several interconnected challenges: \textbf{(1) Poetic Language:} Ancient Greek poetry, as found in Homer’s epics, uses intricate metre and formulaic metaphors (e.g., ῥοδοδάκτυλος Ἠώς, \textit{rosy-fingered dawn}). Conveying such poetic qualities while maintaining accuracy is non-trivial. \textbf{(2) Cultural Context:} Concepts like ἀρετή, spanning \textit{excellence}, \textit{virtue}, and \textit{valour}, resist direct equivalence, requiring translators to bridge cultural gaps and provide adequate interpretation. \textbf{(3) Historical References:} Frequent allusions require contextual knowledge (e.g., understanding the Peloponnesian War in Thucydides). \textbf{(4) Ambiguity and Wordplay:} Ambiguities in the source often elicit diverse interpretive choices, challenging translation fidelity.
 
 Lengauer’s ``non-translation'' solution is radical and, although intellectually rigorous, impractical, given the loss of access for most readers. We illustrate persistent translation challenges by a single sentence from Thucydides' \textit{Historiae} (Table~\ref{tab:example-translations}), where translators diverge on authorial voice and temporal phrases and none produces an identical outcome. This underscores that every translation involves choice and interpretation.
 
@@ -96,7 +87,7 @@ Large Language Models (LLMs) are increasingly used for translation. Their output
 \begin{tabularx}{\textwidth}{X*{5}{>{\centering\arraybackslash}X}}
 \toprule
 \textbf{Original} & \textbf{Cawley} & \textbf{Hammond} & \textbf{Mynott} & \textbf{Warner}  \\ \midrule
-\gr{τὰ γὰρ πρὸ αὐτῶν καὶ τὰ ἔτι παλαίτερα σαφῶς μὲν εὑρεῖν διὰ χρόνου πλῆθος ἀδύνατα ἦν, ἐκ δὲ τεκμηρίων ὧν ἐπὶ μακρότατον σκοποῦντί μοι πιστεῦσαι ξυμβαίνει οὐ μεγάλα νομίζω γενέσθαι οὔτε κατὰ τοὺς πολέμους οὔτε ἐς τὰ ἄλλα.} & For though the events of remote antiquity, and even those that more immediately precede the war, could not from lapse of time be clearly ascertained, yet the evidences which an inquiry carried as far back as was practicable leads me to trust, all point to the conclusion that there was nothing on a great scale, either in war or in other matters. & Accurate research into earlier or yet more ancient history was impossible given the great gap of time, but I have enquired as far into the past as I can, and on the evidence which I can trust I think there was nothing then on a large scale, either in wars or in anything else. & In respect of the preceding period and the still remoter past, the length of time that has elapsed made it impossible to ascertain clearly what happened; but from the evidence I ﬁnd I can trust in pushing my enquiries back as far as possible, I judge that earlier events were not on the same scale, either as regards their wars or in other respects. & For though I have found it impossible, because of its remoteness in time, to acquire a really precise knowledge of the distant past or even of the history preceding our own period, yet, after looking back into it as far as I can, all the evidence leads me to conclude that these periods were not great periods either in warfare or in anything else. \\ \bottomrule
+τὰ γὰρ πρὸ αὐτῶν καὶ τὰ ἔτι παλαίτερα σαφῶς μὲν εὑρεῖν διὰ χρόνου πλῆθος ἀδύνατα ἦν, ἐκ δὲ τεκμηρίων ὧν ἐπὶ μακρότατον σκοποῦντί μοι πιστεῦσαι ξυμβαίνει οὐ μεγάλα νομίζω γενέσθαι οὔτε κατὰ τοὺς πολέμους οὔτε ἐς τὰ ἄλλα. & For though the events of remote antiquity, and even those that more immediately precede the war, could not from lapse of time be clearly ascertained, yet the evidences which an inquiry carried as far back as was practicable leads me to trust, all point to the conclusion that there was nothing on a great scale, either in war or in other matters. & Accurate research into earlier or yet more ancient history was impossible given the great gap of time, but I have enquired as far into the past as I can, and on the evidence which I can trust I think there was nothing then on a large scale, either in wars or in anything else. & In respect of the preceding period and the still remoter past, the length of time that has elapsed made it impossible to ascertain clearly what happened; but from the evidence I ﬁnd I can trust in pushing my enquiries back as far as possible, I judge that earlier events were not on the same scale, either as regards their wars or in other respects. & For though I have found it impossible, because of its remoteness in time, to acquire a really precise knowledge of the distant past or even of the history preceding our own period, yet, after looking back into it as far as I can, all the evidence leads me to conclude that these periods were not great periods either in warfare or in anything else. \\ \bottomrule
 \end{tabularx}
 \caption{Original and four translations of Thuc.~Hist.~I, 1,3.}
 \label{tab:example-translations}
@@ -107,7 +98,7 @@ Large Language Models (LLMs) are increasingly used for translation. Their output
 \begin{tabularx}{\textwidth}{X*{4}{>{\centering\arraybackslash}X}}
 \toprule
 Original  & GPT-4o & Gemini 1.5 Pro  & Claude 3.5 Sonnet                               \\ \midrule
-\gr{τὰ γὰρ πρὸ αὐτῶν καὶ τὰ ἔτι παλαίτερα σαφῶς μὲν εὑρεῖν διὰ χρόνου πλῆθος ἀδύνατα ἦν, ἐκ δὲ τεκμηρίων ὧν ἐπὶ μακρότατον σκοποῦντί μοι πιστεῦσαι ξυμβαίνει οὐ μεγάλα νομίζω γενέσθαι οὔτε κατὰ τοὺς πολέμους οὔτε ἐς τὰ ἄλλα.} & For it was impossible to find clearly the events before them and those even older due to the length of time, but from the evidence that I have examined as far back as possible, I conclude that they were not significant either in terms of wars or in other respects. & For the events of an earlier date, and those still more remote, the lapse of time makes it impossible to know with certainty; but from such evidence as I have been able to obtain by careful inquiry, I think that they were not very important, either in the wars themselves, or otherwise. & For though the events of remote antiquity, and even those that more immediately preceded the war, could not from lapse of time be clearly ascertained, yet the evidences which an inquiry carried as far back as was practicable leads me to trust, all point to the conclusion that there was nothing on a great scale, either in war or in other matters. \\ \bottomrule
+τὰ γὰρ πρὸ αὐτῶν καὶ τὰ ἔτι παλαίτερα σαφῶς μὲν εὑρεῖν διὰ χρόνου πλῆθος ἀδύνατα ἦν, ἐκ δὲ τεκμηρίων ὧν ἐπὶ μακρότατον σκοποῦντί μοι πιστεῦσαι ξυμβαίνει οὐ μεγάλα νομίζω γενέσθαι οὔτε κατὰ τοὺς πολέμους οὔτε ἐς τὰ ἄλλα. & For it was impossible to find clearly the events before them and those even older due to the length of time, but from the evidence that I have examined as far back as possible, I conclude that they were not significant either in terms of wars or in other respects. & For the events of an earlier date, and those still more remote, the lapse of time makes it impossible to know with certainty; but from such evidence as I have been able to obtain by careful inquiry, I think that they were not very important, either in the wars themselves, or otherwise. & For though the events of remote antiquity, and even those that more immediately preceded the war, could not from lapse of time be clearly ascertained, yet the evidences which an inquiry carried as far back as was practicable leads me to trust, all point to the conclusion that there was nothing on a great scale, either in war or in other matters. \\ \bottomrule
 \end{tabularx}
 \caption{Translations of Thuc. Hist. I, 1,3 by GPT-4o, Gemini 1.5 Pro and Claude 3.5 Sonnet. }
 \label{tab:example-translations-llms}
@@ -289,8 +280,8 @@ chrF++ \cite{popovic-2017-chrf} & A character \textit{n}-gram based metric combi
 
 \begin{figure}
 \centering
-\subfloat[Lexical diversity scores of Homer's \textit{Odyssey} and its translations.]{\includesvg[width=0.46\textwidth]{images/homer-lexdiv-2.svg}}\qquad
-\subfloat[Lexical diversity scores of Thucydides' \textit{Historiae} and its translations.]{\includesvg[width=0.46\textwidth]{images/thuc-lexdiv-2.svg}}\qquad
+\subfloat[Lexical diversity scores of Homer's \textit{Odyssey} and its translations.]{\includegraphics[width=0.46\textwidth]{figures/homer-lexdiv-2.png}}\qquad
+\subfloat[Lexical diversity scores of Thucydides' \textit{Historiae} and its translations.]{\includegraphics[width=0.46\textwidth]{figures/thuc-lexdiv-2.png}}\qquad
 \caption{Lexical diversity (Type–Token Ratio) by book for each source and translation. \textbf{x-axis:} Book. \textbf{y-axis:} Type–Token Ratio (types/tokens). (Scales differ for Homer vs. Thucydides.)}
 \label{fig:lexdiv-profiles}
 \end{figure}
@@ -303,8 +294,8 @@ The POS tag profiles in Figure \ref{fig:pos-profiles} again show a difference be
 
 \begin{figure}
 \centering
-\subfloat[POS profile of Homer's \textit{Odyssey} and its translations.]{\includesvg[width=0.46\textwidth]{images/pos-homer-2.svg}}\qquad
-\subfloat[POS profile of Thucydides' \textit{Historiae} and its translations.]{\includesvg[width=0.46\textwidth]{images/pos-thyc-2.svg}}\qquad
+\subfloat[POS profile of Homer's \textit{Odyssey} and its translations.]{\includegraphics[width=0.46\textwidth]{figures/pos-homer-2.png}}\qquad
+\subfloat[POS profile of Thucydides' \textit{Historiae} and its translations.]{\includegraphics[width=0.46\textwidth]{figures/pos-thyc-2.png}}\qquad
 \caption{UPOS distribution profiles for source and translations (grouped bar charts). \textbf{x-axis}: UPOS tag. \textbf{y-axis}: Percentage of tokens.}
 \label{fig:pos-profiles}
 \end{figure}
@@ -325,8 +316,8 @@ Concretely, in Table \ref{tab:example-translations-llms} (Thuc. I.1.3), Claude's
 \begin{figure}
 \centering
 \subfloat[Distribution of translation fidelities of Homer's \textit{Odyssey}.]
-{\includegraphics[scale=0.65]{figures/fidelityHomer-Odyssey(Greek).png}}\qquad
-\subfloat[Distribution of translation fidelities of Thucydides' \textit{Historiae}.]{\includegraphics[scale=0.65]{figures/fidelityThucydides-History(Greek).png}}\qquad
+{\includegraphics[scale=0.65]{figures/fidelityHomer-Odyssey(Greek).pdf}}\qquad
+\subfloat[Distribution of translation fidelities of Thucydides' \textit{Historiae}.]{\includegraphics[scale=0.65]{figures/fidelityThucydides-History(Greek).pdf}}\qquad
 \caption{Distribution of translation fidelities of the translations. On the x-axis, we see the range of the cosine similarities, while the y-axis shows the respective translations (not the difference in scale (x-axis)).}
 \label{fig:trans-fidelity}
 \end{figure}
@@ -476,28 +467,28 @@ These heatmaps show the collocation comparison between translations ( \texttt{PM
 
 \begin{figure}[ht!]
 \centering
-\includesvg[width=\linewidth]{images/homer-bigrams.svg}
+\includegraphics[width=\linewidth]{figures/homer-bigrams.png}
 \caption{Statistics of bigrams of the Homer translations (Spearman's $\rho$ left, Kendall's $\tau$ right).}
 \label{fig:homer-bigram}
 \end{figure}
 
 \begin{figure}[ht!]
 \centering
-\includesvg[width=\linewidth]{images/homger-trigram.svg}
+\includegraphics[width=\linewidth]{figures/homger-trigram.png}
 \caption{Statistics of trigrams of the Homer translations (Spearman's $\rho$ left, Kendall's $\tau$ right).}
 \label{fig:homer-trigram}
 \end{figure}
 
 \begin{figure}[ht!]
 \centering
-\includesvg[width=\linewidth]{images/thuc-bigram.svg}
+\includegraphics[width=\linewidth]{figures/thuc-bigram.png}
 \caption{Statistics of bigrams of the Thucydides translations (Spearman's $\rho$ left, Kendall's $\tau$ right).}
 \label{fig:thuc-bigram}
 \end{figure}
 
 \begin{figure}[ht!]
 \centering
-\includesvg[width=\linewidth]{images/thuc-trigram.svg}
+\includegraphics[width=\linewidth]{figures/thuc-trigram.png}
 \caption{Statistics of trigrams of the Thucydides translations (Spearman's $\rho$ left, Kendall's $\tau$ right).}
 \label{fig:thuc-trigram}
 \end{figure}

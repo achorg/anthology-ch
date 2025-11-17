@@ -46,14 +46,15 @@ def make_volume_page(volume: str, papers: List) -> None:
             }
         )
 
-    # Get volume metadata from the first paper
-    volume_meta = papers[0].volume_meta
+    # Get volume metadata from data/metadata.json
+    metadata = get_metadata()
+    volume_meta = metadata.get(volume, {})
 
     # Render the template
     rendered = template.render(
         papers=paper_data,
-        date=volume_meta["date"],
-        pubvolume=volume_meta["pubvolume"],
+        date=volume_meta.get("date", ""),
+        pubvolume=volume_meta.get("pubvolume", ""),
         conferencename=volume_meta.get("conferencename"),
         conferenceeditors=volume_meta.get("conferenceeditors"),
         description=volume_meta.get("description"),
