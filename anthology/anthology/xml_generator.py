@@ -170,11 +170,15 @@ def create_crossref_xml(volume: str, papers: List, verbose: bool = False) -> Non
             if "orcid" in author.get("metadata", {}):
                 orcid = author["metadata"]["orcid"]
                 # Clean up ORCID - extract just the ID, remove any email or extra text
-                orcid = orcid.split()[0]  # Take only the first part before any space
-                # Ensure ORCID is in full URL format
-                if not orcid.startswith("http"):
-                    orcid = f"https://orcid.org/{orcid}"
-                ET.SubElement(person_name, "ORCID").text = orcid
+                orcid_parts = orcid.split()  # Take only the first part before any space
+                if orcid_parts:  # Only process if we have a non-empty ORCID
+                    orcid = orcid_parts[0]
+                    # Skip placeholder ORCIDs
+                    if "0000-0000-0000-0000" not in orcid:
+                        # Ensure ORCID is in full URL format
+                        if not orcid.startswith("http"):
+                            orcid = f"https://orcid.org/{orcid}"
+                        ET.SubElement(person_name, "ORCID").text = orcid
 
         # Abstract
         abstract_text = pmeta.get("abstract", "")
