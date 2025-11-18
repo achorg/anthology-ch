@@ -62,7 +62,7 @@ model.">
         <img src="../../../logo/logo.png" alt="ACH Logo">
       </a>
 
-      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMain">
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
@@ -162,70 +162,14 @@ Berlin, Germany</li>
 
       <!-- Abstract -->
       <div class="content">
-         <div class="abs"><span>Abstract</span><p>Datasets often need to be transformed—from an external file format
-into a database, from one database system into another, or from an
-outdated legacy system into an archive format. All transformations carry
-the risk of data corruption through software errors. What can software
-developers do to check data integrity and make sure that data is not
-lost or changed in the process? This paper presents three basic
-approaches with different degrees of accuracy and complexity,
-illustrated by real-world examples. The first example shows simple
-end-to-end statistics by counting entities during the import of a
-dataset into a database, the next more complex example shows bookkeeping
-of entities during the conversion of an HTML website, and the last a
-full round-trip migration and comparison of a project database and data
-model.</p></div>
+         <div class="abs"><span>Abstract</span><p>Datasets often need to be transformed—from an external file format into a database, from one database system into another, or from an outdated legacy system into an archive format. All transformations carry the risk of data corruption through software errors. What can software developers do to check data integrity and make sure that data is not lost or changed in the process? This paper presents three basic approaches with different degrees of accuracy and complexity, illustrated by real-world examples. The first example shows simple end-to-end statistics by counting entities during the import of a dataset into a database, the next more complex example shows bookkeeping of entities during the conversion of an HTML website, and the last a full round-trip migration and comparison of a project database and data model.</p></div>
 
-<h1 data-number="1" id="introduction"><span
-class="header-section-number">1</span> Introduction</h1>
-<p>Digital Humanities projects work with many kinds of data. But the
-data is very rarely created, processed, visualized, backed up and
-archived in a single format in only one computer system. It is almost
-always transformed in one or more steps between formats and systems. The
-journey starts when data is loaded into a database from a source file in
-a structured format like XML, JSON, or CSV or an unstructured format
-like plain text. This process is also often called ETL (extract,
-transform, load). The journey continues when data is migrated from one
-database system to a different one or from one data model to another and
-it may end when the data is migrated into an archival format for
-long-term preservation or other data export formats for users to
-download and process. Each of these transformations carries the risk of
-inadvertent loss or corruption of data.</p>
-<p>Most data transformations are done by software, often by multiple
-pieces of software by different authors. The integrity of transformed
-data depends therefore on the correctness of the software. The
-importance of software and of the correctness of software for the
-Digital Humanities has been argued more generally in the context of
-improving software quality through code review <span class="citation"
-data-cites="damerow_code_2025">[<a href="#ref-damerow_code_2025"
-role="doc-biblioref">1</a>]</span>. Code review and software tests as
-another element of good practice in software engineering often
-concentrate on small pieces of code and test small units with synthetic
-pieces of data. Software testing typically starts with isolated unit
-testing followed by more encompassing integration testing and system
-testing as described in an introductory text <span class="citation"
-data-cites="leloudas_introduction_2023">[<a
-href="#ref-leloudas_introduction_2023"
-role="doc-biblioref">2</a>]</span>. Testing data transformation
-integrity is not explicitly mentioned in this text, but it can be
-considered a type of end-to-end or system test where full, real input
-data is compared with the transformed output.</p>
-<p>In the following, I present three basic methods that were applied in
-different projects to detect data loss and corruption in the data
-transformation process. The methods range from simple and easy to
-implement counting techniques to the development of rather complex and
-work-intensive re-transformation and comparison tools. The costs and
-benefits of applying each method have to be considered in the context of
-the specific project and development constraints, as in all software
-engineering decisions. The effort of considering and implementing
-measures to detect data loss and corruption was motivated by the need
-for insights into the migration process during the development cycle and
-by cases of real data loss in production.</p>
-<h1 data-number="2" id="forms-of-data-loss-and-corruption"><span
-class="header-section-number">2</span> Forms of data loss and
-corruption</h1>
-<p>Inadvertent changes to data can be categorized into basic
-categories:</p>
+<h1 data-number="1" id="introduction"><span class="header-section-number">1</span> Introduction</h1>
+<p>Digital Humanities projects work with many kinds of data. But the data is very rarely created, processed, visualized, backed up and archived in a single format in only one computer system. It is almost always transformed in one or more steps between formats and systems. The journey starts when data is loaded into a database from a source file in a structured format like XML, JSON, or CSV or an unstructured format like plain text. This process is also often called ETL (extract, transform, load). The journey continues when data is migrated from one database system to a different one or from one data model to another and it may end when the data is migrated into an archival format for long-term preservation or other data export formats for users to download and process. Each of these transformations carries the risk of inadvertent loss or corruption of data.</p>
+<p>Most data transformations are done by software, often by multiple pieces of software by different authors. The integrity of transformed data depends therefore on the correctness of the software. The importance of software and of the correctness of software for the Digital Humanities has been argued more generally in the context of improving software quality through code review <span class="citation" data-cites="damerow_code_2025">[<a href="#ref-damerow_code_2025" role="doc-biblioref">1</a>]</span>. Code review and software tests as another element of good practice in software engineering often concentrate on small pieces of code and test small units with synthetic pieces of data. Software testing typically starts with isolated unit testing followed by more encompassing integration testing and system testing as described in an introductory text <span class="citation" data-cites="leloudas_introduction_2023">[<a href="#ref-leloudas_introduction_2023" role="doc-biblioref">2</a>]</span>. Testing data transformation integrity is not explicitly mentioned in this text, but it can be considered a type of end-to-end or system test where full, real input data is compared with the transformed output.</p>
+<p>In the following, I present three basic methods that were applied in different projects to detect data loss and corruption in the data transformation process. The methods range from simple and easy to implement counting techniques to the development of rather complex and work-intensive re-transformation and comparison tools. The costs and benefits of applying each method have to be considered in the context of the specific project and development constraints, as in all software engineering decisions. The effort of considering and implementing measures to detect data loss and corruption was motivated by the need for insights into the migration process during the development cycle and by cases of real data loss in production.</p>
+<h1 data-number="2" id="forms-of-data-loss-and-corruption"><span class="header-section-number">2</span> Forms of data loss and corruption</h1>
+<p>Inadvertent changes to data can be categorized into basic categories:</p>
 <ul>
 <li><p>Entries are dropped (fewer than before)</p></li>
 <li><p>Entries are added (more than before)</p></li>
@@ -235,55 +179,11 @@ categories:</p>
 <li><p>Dropped, added, or corrupted relations</p></li>
 </ul></li>
 </ul>
-<p>Depending on the system and data model, what is considered an entry
-can vary and attributes or relations of entities may not be strictly
-applicable. The concept of an entry being an entity with attributes that
-are simple data fields like strings or numbers and separate relations or
-references between entities works well for label-graph data models in
-graph databases like Neo4J or RDF and for object-oriented models in
-systems like Django<a href="#fn1" class="footnote-ref" id="fnref1"
-role="doc-noteref"><sup>1</sup></a> that are translated into more
-elaborate relational database schemas behind the scenes. The concept
-does not necessarily apply to the transformation of HTML or XML. The
-basic categories of dropped, added, and corrupted entries apply more
-generally.</p>
-<h1 data-number="3"
-id="method-1-count-entities-before-and-after-transformation"><span
-class="header-section-number">3</span> Method 1: Count entities before
-and after transformation</h1>
-<p>The simplest method is to count the entities in the data set before
-and after the transformation and to compare the counts. This method is
-easy to implement and able show data loss through dropped or added
-entities, but it cannot detect data corruption within the entities.
-Cases when an equal number of entities are added and dropped cannot be
-detected by this method. The impact of these issues can be reduced if
-groups of entities are counted and compared separately. In the example
-below, different types of entities are counted separately so that an
-added PLACE entity at the same time as a dropped PERSON entity would be
-detected even if the total number of entities stays the same.</p>
-<p>An example for this method is the import process of an XML data file
-into a Drupal<a href="#fn2" class="footnote-ref" id="fnref2"
-role="doc-noteref"><sup>2</sup></a> database. The project in question
-uses separate systems based on different technologies: a ResearchSpace<a
-href="#fn3" class="footnote-ref" id="fnref3"
-role="doc-noteref"><sup>3</sup></a> front end used by the domain experts
-for creating and editing the full dataset as CIDOC-CRM<a href="#fn4"
-class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> RDF
-data, and a Drupal website for the public presentation of the project
-results.</p>
-<p>The ResearchSpace data curation interface creates a custom XML
-formatted data dump every night, which is imported into the Drupal
-website database. The import process is implemented using a bash script
-that extracts the entity count from the XML file for each entity type.
-In this case the script uses the existing <code>count</code> attribute
-in the custom XML format as seen in
-Listing <a href="#code:xml-fragment">1</a>, but it would also be
-possible to use an XML processor to count the relevant XML tags. After
-the import process the script runs a <code>drush</code> command to
-extract the count of Drupal entities of the same type using a custom
-view as seen in Listing <a href="#code:ismi-cnt">2</a> and compares the
-resulting numbers. The script then creates an error notification if the
-numbers for each entity type do not match.</p>
+<p>Depending on the system and data model, what is considered an entry can vary and attributes or relations of entities may not be strictly applicable. The concept of an entry being an entity with attributes that are simple data fields like strings or numbers and separate relations or references between entities works well for label-graph data models in graph databases like Neo4J or RDF and for object-oriented models in systems like Django<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> that are translated into more elaborate relational database schemas behind the scenes. The concept does not necessarily apply to the transformation of HTML or XML. The basic categories of dropped, added, and corrupted entries apply more generally.</p>
+<h1 data-number="3" id="method-1-count-entities-before-and-after-transformation"><span class="header-section-number">3</span> Method 1: Count entities before and after transformation</h1>
+<p>The simplest method is to count the entities in the data set before and after the transformation and to compare the counts. This method is easy to implement and able show data loss through dropped or added entities, but it cannot detect data corruption within the entities. Cases when an equal number of entities are added and dropped cannot be detected by this method. The impact of these issues can be reduced if groups of entities are counted and compared separately. In the example below, different types of entities are counted separately so that an added PLACE entity at the same time as a dropped PERSON entity would be detected even if the total number of entities stays the same.</p>
+<p>An example for this method is the import process of an XML data file into a Drupal<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> database. The project in question uses separate systems based on different technologies: a ResearchSpace<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> front end used by the domain experts for creating and editing the full dataset as CIDOC-CRM<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> RDF data, and a Drupal website for the public presentation of the project results.</p>
+<p>The ResearchSpace data curation interface creates a custom XML formatted data dump every night, which is imported into the Drupal website database. The import process is implemented using a bash script that extracts the entity count from the XML file for each entity type. In this case the script uses the existing <code>count</code> attribute in the custom XML format as seen in Listing <a href="#code:xml-fragment">1</a>, but it would also be possible to use an XML processor to count the relevant XML tags. After the import process the script runs a <code>drush</code> command to extract the count of Drupal entities of the same type using a custom view as seen in Listing <a href="#code:ismi-cnt">2</a> and compares the resulting numbers. The script then creates an error notification if the numbers for each entity type do not match.</p>
 <figure class="float listing" id="code:xml-fragment">
 <div class="float-body listing">
 <pre><code class="language-xml">&lt;openmind-data version="5.1"&gt;
@@ -305,29 +205,9 @@ count
 </div>
 <figcaption>Listing 2: drush command to extract the count of Drupal entities by type.</figcaption>
 </figure>
-<h1 data-number="4"
-id="method-2-keep-track-of-entities-during-transformation-steps"><span
-class="header-section-number">4</span> Method 2: Keep track of entities
-during transformation steps</h1>
-<p>An intermediate method is internal bookkeeping in a transformation
-script. It is often possible to create counts and lists of items as they
-are read and compare these numbers or lists to the results of later
-stages of the transformation process. This method can detect dropped or
-added entities and, depending on the implementation, also some cases of
-corrupted entities. If items can be individually identified and kept in
-lists or sets it is possible to differentiate between added and dropped
-items and identify which items were added or dropped even if the total
-count stays the same.</p>
-<p>An example is a migration script that processes hundreds of HTML
-files that are the result of web scraping and a separate JSON file
-containing the navigation hierarchy exported from a dynamic legacy
-Zope<a href="#fn5" class="footnote-ref" id="fnref5"
-role="doc-noteref"><sup>5</sup></a> website. The migration script uses
-the HTML and JSON input files to create a corrected static HTML website.
-The script reads the navigation hierarchy file and the raw HTML files
-and processes the HTML by comparing links to other HTML files within the
-navigation hierarchy data to create correct links, omit duplicated
-files, and find broken links.</p>
+<h1 data-number="4" id="method-2-keep-track-of-entities-during-transformation-steps"><span class="header-section-number">4</span> Method 2: Keep track of entities during transformation steps</h1>
+<p>An intermediate method is internal bookkeeping in a transformation script. It is often possible to create counts and lists of items as they are read and compare these numbers or lists to the results of later stages of the transformation process. This method can detect dropped or added entities and, depending on the implementation, also some cases of corrupted entities. If items can be individually identified and kept in lists or sets it is possible to differentiate between added and dropped items and identify which items were added or dropped even if the total count stays the same.</p>
+<p>An example is a migration script that processes hundreds of HTML files that are the result of web scraping and a separate JSON file containing the navigation hierarchy exported from a dynamic legacy Zope<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a> website. The migration script uses the HTML and JSON input files to create a corrected static HTML website. The script reads the navigation hierarchy file and the raw HTML files and processes the HTML by comparing links to other HTML files within the navigation hierarchy data to create correct links, omit duplicated files, and find broken links.</p>
 <figure class="float listing" id="code:echo-loop">
 <div class="float-body listing">
 <pre><code class="language-python"># check all links
@@ -360,12 +240,7 @@ for atag in soup.find_all('a'):
 </div>
 <figcaption>Listing 3: Python script fragment showing a loop processing all a tags in an HTML document and adding a processed item.</figcaption>
 </figure>
-<p>During the process the script keeps a list of processed HTML files,
-and the links in each file, indexed by URL, as a Python set.
-Listing <a href="#code:echo-loop">3</a> shows a part of the main loop
-running through all HTML <code>a</code> tags representing links in a
-document, fixing the links and adding the successfully processed links
-to the set of processed links.</p>
+<p>During the process the script keeps a list of processed HTML files, and the links in each file, indexed by URL, as a Python set. Listing <a href="#code:echo-loop">3</a> shows a part of the main loop running through all HTML <code>a</code> tags representing links in a document, fixing the links and adding the successfully processed links to the set of processed links.</p>
 <figure class="float listing" id="code:echo-tracking">
 <div class="float-body listing">
 <pre><code class="language-python"># initialize processed_items with ignore_items
@@ -386,78 +261,17 @@ unprocessed_items = set(args.nav_struct.keys()) - args.processed_items</code></p
 </div>
 <figcaption>Listing 4: Python script fragment with a highlighted set of processed items and set math to determine unprocessed items.</figcaption>
 </figure>
-<p>This makes it possible to compare the number of processed items to
-the expected total based on the navigation hierarchy data. Since files
-and links are identified by URL, processed links can be removed from the
-expected links in the navigation hierarchy using set operations to
-generate the set of unprocessed items, as shown in
-Listing <a href="#code:echo-tracking">4</a>. This method can therefore
-also show errors in cases where an HTML file name or link is different
-from the navigation structure URL, which a simple count would not
-reveal.</p>
-<h1 data-number="5"
-id="method-3-round-trip-entities-and-compare-to-the-source-format"><span
-class="header-section-number">5</span> Method 3: Round-trip entities and
-compare to the source format</h1>
-<p>The most comprehensive and also most time-consuming strategy to test
-a transformation from one format into another is the development and
-application of an inverse transformation that converts the result format
-back into the source format and allows to compare the result to the
-original dataset in the original format. This method is the most
-comprehensive because it allows to check for data corruption in the
-entities as well as for data loss. The method is also time-consuming
-because it requires the development of an additional transformation step
-that can be similarly complex to the original transformation.</p>
-<p>An example for this case is the migration of the ISMI<a href="#fn6"
-class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a>
-project database from a legacy custom database software called OpenMind
-using a label-graph data model into a standard CIDOC-CRM based data
-model in RDF with a ResearchSpace front end. The biggest challenges in
-developing and testing this transformation were differences in the data
-models. The original label-graph data model consisted of about 40,000
-nodes of 18 types with 60,000 relations whereas the resulting CIDOC-CRM
-data model consisted of about 900,000 RDF triples of 100 ontology
-classes. In the label-graph model a node of type <code>person</code> has
-an attribute <code>name</code> containing the name as a string while in
-the CIDOC-CRM model a Person URI has a relation to an Appellation URI
-that has a relation to a Literal containing the name. There are
-additional differences between the old data model and the new standard
-model that required multiple entities for each text and witness entity
-in the new FRBRoo-based<a href="#fn7" class="footnote-ref" id="fnref7"
-role="doc-noteref"><sup>7</sup></a> model.</p>
-<p>The original migration from OpenMind to CIDOC-CRM used the X3ML<a
-href="#fn8" class="footnote-ref" id="fnref8"
-role="doc-noteref"><sup>8</sup></a> tool and language to create RDF. To
-check the results of this transformation, I developed an additional
-transformation from RDF back into the original OpenMind data model and a
-comparison tool to show differences in the resulting data sets using
-Python. Figure <a href="#fig:ismi-round-trip">1</a> shows a diagram of
-the full process.</p>
-<p>The ability to run this test was an invaluable asset during the
-development of the migration mapping. It allowed to find bugs in the
-initial mapping and to refactor the mapping incrementally to better
-align with requirements of the ResearchSpace front end, in the knowledge
-that any data corruption in the process would become immediately
-visible. The functional role that tests can have during software
-development is emphasized even more in methods like Test Driven
-Development (TDD).</p>
+<p>This makes it possible to compare the number of processed items to the expected total based on the navigation hierarchy data. Since files and links are identified by URL, processed links can be removed from the expected links in the navigation hierarchy using set operations to generate the set of unprocessed items, as shown in Listing <a href="#code:echo-tracking">4</a>. This method can therefore also show errors in cases where an HTML file name or link is different from the navigation structure URL, which a simple count would not reveal.</p>
+<h1 data-number="5" id="method-3-round-trip-entities-and-compare-to-the-source-format"><span class="header-section-number">5</span> Method 3: Round-trip entities and compare to the source format</h1>
+<p>The most comprehensive and also most time-consuming strategy to test a transformation from one format into another is the development and application of an inverse transformation that converts the result format back into the source format and allows to compare the result to the original dataset in the original format. This method is the most comprehensive because it allows to check for data corruption in the entities as well as for data loss. The method is also time-consuming because it requires the development of an additional transformation step that can be similarly complex to the original transformation.</p>
+<p>An example for this case is the migration of the ISMI<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> project database from a legacy custom database software called OpenMind using a label-graph data model into a standard CIDOC-CRM based data model in RDF with a ResearchSpace front end. The biggest challenges in developing and testing this transformation were differences in the data models. The original label-graph data model consisted of about 40,000 nodes of 18 types with 60,000 relations whereas the resulting CIDOC-CRM data model consisted of about 900,000 RDF triples of 100 ontology classes. In the label-graph model a node of type <code>person</code> has an attribute <code>name</code> containing the name as a string while in the CIDOC-CRM model a Person URI has a relation to an Appellation URI that has a relation to a Literal containing the name. There are additional differences between the old data model and the new standard model that required multiple entities for each text and witness entity in the new FRBRoo-based<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a> model.</p>
+<p>The original migration from OpenMind to CIDOC-CRM used the X3ML<a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a> tool and language to create RDF. To check the results of this transformation, I developed an additional transformation from RDF back into the original OpenMind data model and a comparison tool to show differences in the resulting data sets using Python. Figure <a href="#fig:ismi-round-trip">1</a> shows a diagram of the full process.</p>
+<p>The ability to run this test was an invaluable asset during the development of the migration mapping. It allowed to find bugs in the initial mapping and to refactor the mapping incrementally to better align with requirements of the ResearchSpace front end, in the knowledge that any data corruption in the process would become immediately visible. The functional role that tests can have during software development is emphasized even more in methods like Test Driven Development (TDD).</p>
 <figure id="fig:ismi-round-trip">
-<a href="figures/ismi-round-trip.png" data-lightbox="figures" data-title="Figure 1: Round-trip migration from the old OpenMind database model via a X3ML mapping to the new CIDOC-CRM RDF database model and back into the OpenMind model through a Python mapping allowing a Python comparison tool to test the result in the same kind of model."><img
-src="figures/ismi-round-trip.png" style="width:80.0%" /></a>
-<figcaption>Figure 1: Round-trip migration from the old OpenMind
-database model via a X3ML mapping to the new CIDOC-CRM RDF database
-model and back into the OpenMind model through a Python mapping allowing
-a Python comparison tool to test the result in the same kind of
-model.</figcaption>
+<a href="figures/ismi-round-trip.png" data-lightbox="figures" data-title="Figure 1: Round-trip migration from the old OpenMind database model via a X3ML mapping to the new CIDOC-CRM RDF database model and back into the OpenMind model through a Python mapping allowing a Python comparison tool to test the result in the same kind of model."><img src="figures/ismi-round-trip.png" style="width:80.0%" /></a>
+<figcaption>Figure 1: Round-trip migration from the old OpenMind database model via a X3ML mapping to the new CIDOC-CRM RDF database model and back into the OpenMind model through a Python mapping allowing a Python comparison tool to test the result in the same kind of model.</figcaption>
 </figure>
-<p>The comparison tool has options to selectively enable or disable
-certain checks or exclude specific relation, attribute, or entity types
-as shown in Listing <a href="#code:ismi-compare">5</a>. These options
-were used during the development process to focus on specific areas of
-the transformation in order to not drown in thousands of unrelated error
-messages, particularly during the early phase of development. Watching
-the number of errors go down was also a satisfying measure of
-development progress.</p>
+<p>The comparison tool has options to selectively enable or disable certain checks or exclude specific relation, attribute, or entity types as shown in Listing <a href="#code:ismi-compare">5</a>. These options were used during the development process to focus on specific areas of the transformation in order to not drown in thousands of unrelated error messages, particularly during the early phase of development. Watching the number of errors go down was also a satisfying measure of development progress.</p>
 <figure class="float listing" id="code:ismi-compare">
 <div class="float-body listing">
 <pre><code class="language-text">usage: compare_models.py [-h] [--version] [--ignore-nodes IGNORE_NODES]
@@ -491,19 +305,11 @@ options:
 </div>
 <figcaption>Listing 5: Command line options for the Python model comparison tool compare\_models, including options to show more or less detailed differences or to ignore specific item, attribute, or relation types.</figcaption>
 </figure>
-<h1 data-number="6" id="conclusion"><span
-class="header-section-number">6</span> Conclusion</h1>
-<p>The three basic methods for testing data integrity presented here
-have different strengths and weaknesses and every developer needs to
-weigh these against the requirements of the individual project and the
-available development resources.
-Table <a href="#tab:method-abilities">1</a> shows an overview of the
-methods and their ability to detect dropped or added or corrupted
-entities versus the implementation complexity.</p>
+<h1 data-number="6" id="conclusion"><span class="header-section-number">6</span> Conclusion</h1>
+<p>The three basic methods for testing data integrity presented here have different strengths and weaknesses and every developer needs to weigh these against the requirements of the individual project and the available development resources. Table <a href="#tab:method-abilities">1</a> shows an overview of the methods and their ability to detect dropped or added or corrupted entities versus the implementation complexity.</p>
 <div id="tab:method-abilities">
 <table>
-<caption>Table 1: Detection abilities and complexity cost of three
-methods.</caption>
+<caption>Table 1: Detection abilities and complexity cost of three methods.</caption>
 <thead>
 <tr>
 <th style="text-align: left;">Method</th>
@@ -514,22 +320,19 @@ methods.</caption>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">1: Count entities before and after
-transformation</td>
+<td style="text-align: left;">1: Count entities before and after transformation</td>
 <td style="text-align: left;"> yes (if total number changes)</td>
 <td style="text-align: left;"> no</td>
 <td style="text-align: center;">low</td>
 </tr>
 <tr>
-<td style="text-align: left;">2: Keep track of entities during
-transformation</td>
+<td style="text-align: left;">2: Keep track of entities during transformation</td>
 <td style="text-align: left;"> yes</td>
 <td style="text-align: left;"> possible</td>
 <td style="text-align: center;">medium</td>
 </tr>
 <tr>
-<td style="text-align: left;">3: Round-trip entities and compare
-result</td>
+<td style="text-align: left;">3: Round-trip entities and compare result</td>
 <td style="text-align: left;"> yes</td>
 <td style="text-align: left;"> yes</td>
 <td style="text-align: center;">high</td>
@@ -537,76 +340,29 @@ result</td>
 </tbody>
 </table>
 </div>
-<p>Creating and running different kinds of tests has become an integral
-part of good practice of software development in general. Tests let you
-trust your own code during and after active development. Tests also let
-others that review or use your code, trust the code. Tests can also be
-an active part of the development process when they allow to measure
-progress during the early phases of development or when they help to
-detect and avoid regressions when refactoring the code. The basic
-methods of end-to-end testing of data integrity shown here can be part
-of every developer’s toolbox of tests to apply, depending on the
-requirements of the development project.</p>
-<p>Another good practice of software development is the sharing of code
-in—preferably public—repositories to enable code review, re-use, or just
-the sharing of programming techniques and ideas. The repositories
-containing the scripts used as examples for methods 1 and 2 are not
-publicly available, but the scripts used for method 3 are available as
-part of the ISMI data model repository.<a href="#fn9"
-class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a></p>
+<p>Creating and running different kinds of tests has become an integral part of good practice of software development in general. Tests let you trust your own code during and after active development. Tests also let others that review or use your code, trust the code. Tests can also be an active part of the development process when they allow to measure progress during the early phases of development or when they help to detect and avoid regressions when refactoring the code. The basic methods of end-to-end testing of data integrity shown here can be part of every developer’s toolbox of tests to apply, depending on the requirements of the development project.</p>
+<p>Another good practice of software development is the sharing of code in—preferably public—repositories to enable code review, re-use, or just the sharing of programming techniques and ideas. The repositories containing the scripts used as examples for methods 1 and 2 are not publicly available, but the scripts used for method 3 are available as part of the ISMI data model repository.<a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a></p>
 <h1 class="unnumbered" id="bibliography">References</h1>
-<div id="refs" class="references csl-bib-body hanging-indent"
-data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
 <div id="ref-damerow_code_2025" class="csl-entry" role="listitem">
-[1] Damerow, Julia, Rebecca Sutton Koeser, Jeffrey C Carver, and Malte
-Vogl. <span>“Code Review in Digital Humanities.”</span> <em>Digital
-Scholarship in the Humanities</em>, vol. 40, no. Supplement_1, Jan.
-2025, pp. i18–26, <a
-href="https://doi.org/10.1093/llc/fqae052">https://doi.org/10.1093/llc/fqae052</a>.
+[1] Damerow, Julia, Rebecca Sutton Koeser, Jeffrey C Carver, and Malte Vogl. <span>“Code Review in Digital Humanities.”</span> <em>Digital Scholarship in the Humanities</em>, vol. 40, no. Supplement_1, Jan. 2025, pp. i18–26, <a href="https://doi.org/10.1093/llc/fqae052">https://doi.org/10.1093/llc/fqae052</a>.
 </div>
-<div id="ref-leloudas_introduction_2023" class="csl-entry"
-role="listitem">
-[2] Leloudas, Panagiotis. <em>Introduction to <span>Software</span>
-<span>Testing</span>: <span>A</span> <span>Practical</span>
-<span>Guide</span> to <span>Testing</span>, <span>Design</span>,
-<span>Automation</span>, and <span>Execution</span></em>. Apress, 2023,
-<a
-href="https://doi.org/10.1007/978-1-4842-9514-4">https://doi.org/10.1007/978-1-4842-9514-4</a>.
+<div id="ref-leloudas_introduction_2023" class="csl-entry" role="listitem">
+[2] Leloudas, Panagiotis. <em>Introduction to <span>Software</span> <span>Testing</span>: <span>A</span> <span>Practical</span> <span>Guide</span> to <span>Testing</span>, <span>Design</span>, <span>Automation</span>, and <span>Execution</span></em>. Apress, 2023, <a href="https://doi.org/10.1007/978-1-4842-9514-4">https://doi.org/10.1007/978-1-4842-9514-4</a>.
 </div>
 </div>
-<section id="footnotes" class="footnotes footnotes-end-of-document"
-role="doc-endnotes">
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p><a
-href="https://docs.djangoproject.com/en/5.2/topics/db/models/"
-class="uri">https://docs.djangoproject.com/en/5.2/topics/db/models/</a><a
-href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2"><p><a href="https://drupal.org/"
-class="uri">https://drupal.org/</a><a href="#fnref2"
-class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3"><p><a href="https://researchspace.org/"
-class="uri">https://researchspace.org/</a><a href="#fnref3"
-class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn4"><p><a href="https://cidoc-crm.org/"
-class="uri">https://cidoc-crm.org/</a><a href="#fnref4"
-class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn5"><p><a href="https://www.zope.dev/"
-class="uri">https://www.zope.dev/</a><a href="#fnref5"
-class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn6"><p><a href="https://ismi.mpiwg-berlin.mpg.de"
-class="uri">https://ismi.mpiwg-berlin.mpg.de</a><a href="#fnref6"
-class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn7"><p><a href="https://cidoc-crm.org/frbroo/"
-class="uri">https://cidoc-crm.org/frbroo/</a><a href="#fnref7"
-class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn8"><p><a href="https://github.com/isl/x3ml"
-class="uri">https://github.com/isl/x3ml</a><a href="#fnref8"
-class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn9"><p><a
-href="https://gitlab.gwdg.de/MPIWG/Department-II/ismi-cidoc-model/-/tree/master/Tools/graph-tools"
-class="uri">https://gitlab.gwdg.de/MPIWG/Department-II/ismi-cidoc-model/-/tree/master/Tools/graph-tools</a><a
-href="#fnref9" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p><a href="https://docs.djangoproject.com/en/5.2/topics/db/models/" class="uri">https://docs.djangoproject.com/en/5.2/topics/db/models/</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p><a href="https://drupal.org/" class="uri">https://drupal.org/</a><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p><a href="https://researchspace.org/" class="uri">https://researchspace.org/</a><a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p><a href="https://cidoc-crm.org/" class="uri">https://cidoc-crm.org/</a><a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p><a href="https://www.zope.dev/" class="uri">https://www.zope.dev/</a><a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p><a href="https://ismi.mpiwg-berlin.mpg.de" class="uri">https://ismi.mpiwg-berlin.mpg.de</a><a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7"><p><a href="https://cidoc-crm.org/frbroo/" class="uri">https://cidoc-crm.org/frbroo/</a><a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn8"><p><a href="https://github.com/isl/x3ml" class="uri">https://github.com/isl/x3ml</a><a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn9"><p><a href="https://gitlab.gwdg.de/MPIWG/Department-II/ismi-cidoc-model/-/tree/master/Tools/graph-tools" class="uri">https://gitlab.gwdg.de/MPIWG/Department-II/ismi-cidoc-model/-/tree/master/Tools/graph-tools</a><a href="#fnref9" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 

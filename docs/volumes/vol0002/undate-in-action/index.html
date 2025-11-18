@@ -60,7 +60,7 @@ plotting durations for events with known days but unknown years.">
         <img src="../../../logo/logo.png" alt="ACH Logo">
       </a>
 
-      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMain">
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
@@ -159,73 +159,19 @@ Jersey, USA</li>
 
       <!-- Abstract -->
       <div class="content">
-         <div class="abs"><span>Abstract</span><p>This paper provides an introduction to the <code>undate</code> python
-library with an emphasis on demonstrating supported functionality with
-some example use cases from specific projects. <code>undate</code> is
-designed for working with uncertain and partially known dates, and also
-includes support for dates in multiple calendars and with mixed
-precision. This paper provides an overview of the basic functionality
-with comparison to the Python built-in <code>datetime.date</code>,
-demonstrating support for missing and partially known values. Use cases
-and data from <em>Princeton Geniza Project</em> and <em>Shakespeare and
-Company Project</em> are used to further demonstrate the value and
-practical application of <code>undate</code> for parsing and comparing
-mixed precision dates in multiple calendars, and for calculating and
-plotting durations for events with known days but unknown years.</p></div>
+         <div class="abs"><span>Abstract</span><p>This paper provides an introduction to the <code>undate</code> python library with an emphasis on demonstrating supported functionality with some example use cases from specific projects. <code>undate</code> is designed for working with uncertain and partially known dates, and also includes support for dates in multiple calendars and with mixed precision. This paper provides an overview of the basic functionality with comparison to the Python built-in <code>datetime.date</code>, demonstrating support for missing and partially known values. Use cases and data from <em>Princeton Geniza Project</em> and <em>Shakespeare and Company Project</em> are used to further demonstrate the value and practical application of <code>undate</code> for parsing and comparing mixed precision dates in multiple calendars, and for calculating and plotting durations for events with known days but unknown years.</p></div>
 
-<h1 data-number="1" id="introduction"><span
-class="header-section-number">1</span> Introduction</h1>
-<p><code>undate</code> is a python library for working with uncertain or
-partially known dates, with support for multiple calendars <span
-class="citation" data-cites="koeser_undate_python_2025">[<a
-href="#ref-koeser_undate_python_2025"
-role="doc-biblioref">5</a>]</span>. It is “an ambitious in-progress
-effort to develop a pragmatic Python package for the computation and
-analysis of temporal information in humanistic and cultural data, with a
-particular emphasis on uncertain, incomplete or imprecise dates and with
-support for multiple calendaring systems and date formats” <span
-class="citation" data-cites="koeser_undate_2025">[<a
-href="#ref-koeser_undate_2025" role="doc-biblioref">6</a>]</span>. The
-software is freely available on GitHub<a href="#fn1"
-class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> and
-published under an open source software license. This project was
-originally started at a DHTech Hackathon <span class="citation"
-data-cites="koeser_join_2023">[<a href="#ref-koeser_join_2023"
-role="doc-biblioref">4</a>]</span>, and builds on experiences from other
-digital humanities projects. The ultimate goal is to build an active
-community of people that are using and maintaining the project, and
-developing it further.<a href="#fn2" class="footnote-ref" id="fnref2"
-role="doc-noteref"><sup>2</sup></a></p>
+<h1 data-number="1" id="introduction"><span class="header-section-number">1</span> Introduction</h1>
+<p><code>undate</code> is a python library for working with uncertain or partially known dates, with support for multiple calendars <span class="citation" data-cites="koeser_undate_python_2025">[<a href="#ref-koeser_undate_python_2025" role="doc-biblioref">5</a>]</span>. It is “an ambitious in-progress effort to develop a pragmatic Python package for the computation and analysis of temporal information in humanistic and cultural data, with a particular emphasis on uncertain, incomplete or imprecise dates and with support for multiple calendaring systems and date formats” <span class="citation" data-cites="koeser_undate_2025">[<a href="#ref-koeser_undate_2025" role="doc-biblioref">6</a>]</span>. The software is freely available on GitHub<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> and published under an open source software license. This project was originally started at a DHTech Hackathon <span class="citation" data-cites="koeser_join_2023">[<a href="#ref-koeser_join_2023" role="doc-biblioref">4</a>]</span>, and builds on experiences from other digital humanities projects. The ultimate goal is to build an active community of people that are using and maintaining the project, and developing it further.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
 <figure id="fig:logo" data-latex-placement="h">
-<a href="figures/undate_logo.png" data-lightbox="figures" data-title="Figure 1: undate project logo."><img
-src="figures/undate_logo.png" style="width:40.0%" /></a>
+<a href="figures/undate_logo.png" data-lightbox="figures" data-title="Figure 1: undate project logo."><img src="figures/undate_logo.png" style="width:40.0%" /></a>
 <figcaption>Figure 1: <code>undate</code> project logo.</figcaption>
 </figure>
-<p>For an in-depth understanding of the context, goals, humanities and
-software development methodologies that inform the project, and a
-comparison with related software, I encourage you to read the software
-paper “Undate: humanistic dates for computation” <span class="citation"
-data-cites="koeser_undate_2025">[<a href="#ref-koeser_undate_2025"
-role="doc-biblioref">6</a>]</span>. The logo (Figure
-<a href="#fig:logo">1</a>) was designed as a reminder of the competing
-needs for nuanced human-readable information and computationally
-tractable data.</p>
-<h2 data-number="1.1" id="sec:intro_details"><span
-class="header-section-number">1.1</span> How is <code>Undate</code> like
-<code>datetime.date</code>?</h2>
-<p>Before describing <code>undate</code>’s functionality for handling
-uncertain dates, first, as a point of reference, I demonstrate how it
-compares with the standard Python <code>datetime.date</code>
-implementation.</p>
-<p>Both an <code>undate.Undate</code> and a <code>datetime.date</code>
-can be initialized by specifying numeric values for year, month, and
-day. Both can be printed using the default serialization (ISO8601, or
-YYYY-MM-DD). <code>undate</code> is compatible with
-<code>datetime.date</code>, so we can also can compare these two
-objects. This means that <code>undate</code> can be easily used instead
-of or in conjunction with <code>datetime.date</code>.</p>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> datetime</span>
+<p>For an in-depth understanding of the context, goals, humanities and software development methodologies that inform the project, and a comparison with related software, I encourage you to read the software paper “Undate: humanistic dates for computation” <span class="citation" data-cites="koeser_undate_2025">[<a href="#ref-koeser_undate_2025" role="doc-biblioref">6</a>]</span>. The logo (Figure <a href="#fig:logo">1</a>) was designed as a reminder of the competing needs for nuanced human-readable information and computationally tractable data.</p>
+<h2 data-number="1.1" id="sec:intro_details"><span class="header-section-number">1.1</span> How is <code>Undate</code> like <code>datetime.date</code>?</h2>
+<p>Before describing <code>undate</code>’s functionality for handling uncertain dates, first, as a point of reference, I demonstrate how it compares with the standard Python <code>datetime.date</code> implementation.</p>
+<p>Both an <code>undate.Undate</code> and a <code>datetime.date</code> can be initialized by specifying numeric values for year, month, and day. Both can be printed using the default serialization (ISO8601, or YYYY-MM-DD). <code>undate</code> is compatible with <code>datetime.date</code>, so we can also can compare these two objects. This means that <code>undate</code> can be easily used instead of or in conjunction with <code>datetime.date</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> datetime</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> undate <span class="im">import</span> Undate</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -236,16 +182,9 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a hr
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>november7 <span class="op">=</span> Undate(year, month, day)</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> november7 <span class="op">==</span> dt_november7</span></code></pre></div>
-<h2 data-number="1.2" id="how-is-undate-not-like-datetime.date"><span
-class="header-section-number">1.2</span> How is <code>Undate</code>
-<em>not</em> like <code>datetime.date</code>?</h2>
-<p>However, there are some key differences between the packages. An
-<code>Undate</code> can be initialized with partial information.
-<code>Undate</code> can also take an optional label, since sometimes
-it’s useful to name a date. It can be initialized with year and month,
-just year, or even month and day with no year.</p>
-<div class="sourceCode" id="cb2"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># November 2000</span></span>
+<h2 data-number="1.2" id="how-is-undate-not-like-datetime.date"><span class="header-section-number">1.2</span> How is <code>Undate</code> <em>not</em> like <code>datetime.date</code>?</h2>
+<p>However, there are some key differences between the packages. An <code>Undate</code> can be initialized with partial information. <code>Undate</code> can also take an optional label, since sometimes it’s useful to name a date. It can be initialized with year and month, just year, or even month and day with no year.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># November 2000</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>november <span class="op">=</span> Undate(year, month, label<span class="op">=</span><span class="st">&quot;November 2000&quot;</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Year 2000</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>year2k <span class="op">=</span> Undate(year, label<span class="op">=</span><span class="st">&quot;Y2K&quot;</span>)</span>
@@ -256,24 +195,15 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a hr
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># sometimes names are important</span></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>easter1916 <span class="op">=</span> Undate(<span class="dv">1916</span>, <span class="dv">4</span>, <span class="dv">23</span>, label<span class="op">=</span><span class="st">&quot;Easter 1916&quot;</span>)</span></code></pre></div>
-<p>If you try to do that with <code>datetime.date</code>, you get a
-<code>TypeError</code> because all three fields are required.</p>
-<div class="sourceCode" id="cb3"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<p>If you try to do that with <code>datetime.date</code>, you get a <code>TypeError</code> because all three fields are required.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    datetime.date(year, month)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">TypeError</span> <span class="im">as</span> err:</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(err)</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">&quot;function missing required argument &#39;day&#39; (pos 3)&quot;</span></span></code></pre></div>
-<p>Each of these <code>Undate</code> objects can be printed out in a
-standard format; the <code>Undate</code> class also tracks how precisely
-a date is specified, and can calculate the duration. If we iterate over
-the example partially-known dates initialized in the code block above
-and print label, formatted date, precision, and duration in days, we get
-output like this (here and throughout, formatting has been added for
-readability):</p>
-<div class="sourceCode" id="cb4"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> example_date <span class="kw">in</span> [</span>
+<p>Each of these <code>Undate</code> objects can be printed out in a standard format; the <code>Undate</code> class also tracks how precisely a date is specified, and can calculate the duration. If we iterate over the example partially-known dates initialized in the code block above and print label, formatted date, precision, and duration in days, we get output like this (here and throughout, formatting has been added for readability):</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> example_date <span class="kw">in</span> [</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    november,</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    year2k,</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    november7_some_year,</span>
@@ -293,8 +223,7 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a hr
 <li><p>Date precision: YEAR</p></li>
 <li><p>Duration in days: 366</p></li>
 </ul>
-<p> <strong>Some November 7</strong>
-<code>-</code><code>-11-07</code></p>
+<p> <strong>Some November 7</strong> <code>-</code><code>-11-07</code></p>
 <ul>
 <li><p>Date precision: DAY</p></li>
 <li><p>Duration in days: 1</p></li>
@@ -309,32 +238,17 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a hr
 <li><p>Date precision: DAY</p></li>
 <li><p>Duration in days: 1</p></li>
 </ul>
-<p>We can also do some simple calculations, like checking whether one
-date falls within another date.</p>
-<div class="sourceCode" id="cb5"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> november <span class="kw">in</span> year2k   <span class="co"># 2000-11 in 2000</span></span>
+<p>We can also do some simple calculations, like checking whether one date falls within another date.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> november <span class="kw">in</span> year2k   <span class="co"># 2000-11 in 2000</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> november7 <span class="kw">in</span> november  <span class="co"># 2000-11-07 in 2000-11</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> easter1916 <span class="kw">not</span> <span class="kw">in</span> year2k  <span class="co"># 1916-02-23 not in 2000</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> november7_some_year <span class="kw">not</span> <span class="kw">in</span> year2k  <span class="co"># --11-07 not in 2000</span></span></code></pre></div>
-<h1 data-number="2" id="what-else-can-undate-do"><span
-class="header-section-number">2</span> What else can <code>Undate</code>
-do?</h1>
-<h2 data-number="2.1" id="partially-known-values"><span
-class="header-section-number">2.1</span> Partially known values</h2>
-<p>In the last set of examples, the values used to initialize
-<code>Undate</code> instances were all integers and parts of the date
-were either known or unknown. But what if you know part of a date?</p>
-<p>You can initialize <code>Undate</code> with strings and use
-<strong><code>X</code></strong> to indicate unknown values. (We chose
-<code>X</code> based on the <a
-href="https://www.loc.gov/standards/datetime/">Extended Date Time Format
-(EDTF)</a> specification).</p>
-<p>Here we initialize two dates with partially known information, where
-a year or month cannot be precisely pinned down but some information is
-known. As before, we can iterate over these dates and output label,
-formatted date, precision, and duration:</p>
-<div class="sourceCode" id="cb6"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>someyear_1900s <span class="op">=</span> Undate(<span class="st">&quot;19XX&quot;</span>, label<span class="op">=</span><span class="st">&quot;1900s&quot;</span>)</span>
+<h1 data-number="2" id="what-else-can-undate-do"><span class="header-section-number">2</span> What else can <code>Undate</code> do?</h1>
+<h2 data-number="2.1" id="partially-known-values"><span class="header-section-number">2.1</span> Partially known values</h2>
+<p>In the last set of examples, the values used to initialize <code>Undate</code> instances were all integers and parts of the date were either known or unknown. But what if you know part of a date?</p>
+<p>You can initialize <code>Undate</code> with strings and use <strong><code>X</code></strong> to indicate unknown values. (We chose <code>X</code> based on the <a href="https://www.loc.gov/standards/datetime/">Extended Date Time Format (EDTF)</a> specification).</p>
+<p>Here we initialize two dates with partially known information, where a year or month cannot be precisely pinned down but some information is known. As before, we can iterate over these dates and output label, formatted date, precision, and duration:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>someyear_1900s <span class="op">=</span> Undate(<span class="st">&quot;19XX&quot;</span>, label<span class="op">=</span><span class="st">&quot;1900s&quot;</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>late2022 <span class="op">=</span> Undate(<span class="dv">2022</span>, <span class="st">&quot;1X&quot;</span>, label<span class="op">=</span><span class="st">&quot;late 2022&quot;</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> example_date <span class="kw">in</span> [someyear_1900s, late2022]:</span>
@@ -352,30 +266,17 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a hr
 <li><p>Date precision: MONTH</p></li>
 <li><p>Duration in days: 31</p></li>
 </ul>
-<p>If you to initialize a <code>datetime.date</code> object like this,
-you get another <code>TypeError</code>.</p>
-<div class="sourceCode" id="cb7"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<p>If you to initialize a <code>datetime.date</code> object like this, you get another <code>TypeError</code>.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    datetime.date(<span class="st">&quot;19XX&quot;</span>, <span class="dv">1</span>, <span class="dv">1</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">TypeError</span> <span class="im">as</span> err:</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(err)</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">&quot;&#39;str&#39; object cannot be interpreted as an integer&quot;</span></span></code></pre></div>
-<h2 data-number="2.2" id="uncertain-durations"><span
-class="header-section-number">2.2</span> Uncertain durations</h2>
-<p>If you were paying close attention, you may have noticed I used the
-<code>max()</code> function in the code block above where I output the
-duration for the partially known dates.</p>
-<p>The most recent version of <code>undate</code> (version 0.5) includes
-experimental support for uncertain time deltas. This is just one aspect
-of support for working with dates and date ranges in terms of duration.
-The <code>undate</code> package also includes an
-<code>UndateInterval</code> class, with first-class support for date
-ranges between two uncertain dates, or an open interval starting or
-ending with an <code>Undate</code>. For reasons of space, I don’t
-discuss the interval functionality in this paper.</p>
-<div class="sourceCode" id="cb8"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;&quot;&quot;</span><span class="sc">{</span>someyear_1900s<span class="sc">.</span>label<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>someyear_1900s<span class="sc">}</span></span>
+<h2 data-number="2.2" id="uncertain-durations"><span class="header-section-number">2.2</span> Uncertain durations</h2>
+<p>If you were paying close attention, you may have noticed I used the <code>max()</code> function in the code block above where I output the duration for the partially known dates.</p>
+<p>The most recent version of <code>undate</code> (version 0.5) includes experimental support for uncertain time deltas. This is just one aspect of support for working with dates and date ranges in terms of duration. The <code>undate</code> package also includes an <code>UndateInterval</code> class, with first-class support for date ranges between two uncertain dates, or an open interval starting or ending with an <code>Undate</code>. For reasons of space, I don’t discuss the interval functionality in this paper.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;&quot;&quot;</span><span class="sc">{</span>someyear_1900s<span class="sc">.</span>label<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>someyear_1900s<span class="sc">}</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ss">- duration: </span><span class="sc">{</span>someyear_1900s<span class="sc">.</span>duration()<span class="sc">}</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ss">- duration in days: </span><span class="sc">{</span>someyear_1900s<span class="sc">.</span>duration()<span class="sc">.</span>days<span class="sc">}</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -386,19 +287,15 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a hr
 <p> <strong>1900s</strong> <code>19XX</code></p>
 <ul>
 <li><p>duration: <code>UnDelta(days=[365,366])</code></p></li>
-<li><p>duration in days:
-<code>UnInt(lower=365, upper=366)</code></p></li>
+<li><p>duration in days: <code>UnInt(lower=365, upper=366)</code></p></li>
 </ul>
 <p> <strong>late 2022</strong> <code>2022-1X</code></p>
 <ul>
 <li><p>duration: <code>UnDelta(days=[30,31])</code></p></li>
 <li><p>duration in days: <code>UnInt(lower=30, upper=31)</code></p></li>
 </ul>
-<p>Even without precise information, we can still do some useful
-comparisons. February of an unknown year is still shorter than October,
-November, or December.</p>
-<div class="sourceCode" id="cb9"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>some_february <span class="op">=</span> Undate(month<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="st">&quot;February of some year&quot;</span>)</span>
+<p>Even without precise information, we can still do some useful comparisons. February of an unknown year is still shorter than October, November, or December.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>some_february <span class="op">=</span> Undate(month<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="st">&quot;February of some year&quot;</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># February of an unknown year is shorter than </span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># an uncertain month 1X (October, November, or December) </span></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> some_february.duration() <span class="op">&lt;</span> late2022.duration()</span>
@@ -407,58 +304,20 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a hr
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="ss">- duration: </span><span class="sc">{</span>some_february<span class="sc">.</span>duration()<span class="sc">}</span></span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="ss">- duration in days: </span><span class="sc">{</span>some_february<span class="sc">.</span>duration()<span class="sc">.</span>days<span class="sc">}</span></span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="ss">&quot;&quot;&quot;</span>)</span></code></pre></div>
-<p> <strong>February of some year</strong>
-<span><code>-</code></span><span><code>-02</code></span></p>
+<p> <strong>February of some year</strong> <span><code>-</code></span><span><code>-02</code></span></p>
 <ul>
 <li><p>duration: <code>UnDelta(days=[28,29])</code></p></li>
 <li><p>duration in days: <code>UnInt(lower=28, upper=29)</code></p></li>
 </ul>
-<h1 data-number="3" id="example-use-cases-from-specific-projects"><span
-class="header-section-number">3</span> Example use cases from specific
-projects</h1>
-<p><code>undate</code> is informed by work from existing digital
-humanities projects, and has been developed with the goal of
-generalizing custom solutions into a reusable library to benefit the
-whole community. In particular, “<code>undate</code> draws on a partial
-date implementation from the <em>Shakespeare and Company Project</em>
-and calendar conversion and mixed precision dates in the <em>Princeton
-Geniza Project</em> (PGP). Calendar logic and representation is
-additionally informed by work on the <em>Islamic Scientific Manuscripts
-Initiative</em> (ISMI)” <span class="citation"
-data-cites="koeser_undate_2025">[<a href="#ref-koeser_undate_2025"
-role="doc-biblioref">6</a>]</span>.</p>
-<h2 data-number="3.1" id="princeton-geniza-project"><span
-class="header-section-number">3.1</span> Princeton Geniza Project</h2>
-<p>The <a href="https://geniza.princeton.edu/"><em>Princeton Geniza
-Project</em></a> (PGP) is a long-running project focused on materials
-from a synagogue in Cairo; these contents are primarily medieval, and
-largely written in Hebrew script. Because they are older and
-fragmentary, many of them cannot be dated; those documents that do have
-dates use a variety of calendars — the Hebrew <em>Anno Mundi</em> and
-Seleucid calendars, as well as the Islamic <em>Hijri</em> calendar. The
-Hebrew calendar is a lunisolar calendar and the Islamic calendar is a
-lunar calendar, so they don’t map neatly to the months and years of the
-Gregorian calendar.</p>
-<p>The PGP is one of the precursors that fed into the development of
-<code>undate</code>, due to this need to support storing, filtering, and
-searching dates from multiple calendars, with mixed precision, and
-various kinds of temporal uncertainty <span class="citation"
-data-cites="rustow_dating_2020">[<a href="#ref-rustow_dating_2020"
-role="doc-biblioref">10</a>]</span>. Here, I use data from the published
-PGP datasets <span class="citation"
-data-cites="rustow_princeton_2025">[<a href="#ref-rustow_princeton_2025"
-role="doc-biblioref">11</a>]</span> to demonstrate <code>undate</code>
-calendar parsing and conversion functionality.</p>
-<p>An <code>Undate</code> instance preserves any initial values for
-year, month, and day in the original calendar. As you see in Table
-<a href="#tab:pgp-parsed-dates">1</a>, the ISO format
-<code>Undate</code> corresponds to the original date rather than the
-standardized date.</p>
+<h1 data-number="3" id="example-use-cases-from-specific-projects"><span class="header-section-number">3</span> Example use cases from specific projects</h1>
+<p><code>undate</code> is informed by work from existing digital humanities projects, and has been developed with the goal of generalizing custom solutions into a reusable library to benefit the whole community. In particular, “<code>undate</code> draws on a partial date implementation from the <em>Shakespeare and Company Project</em> and calendar conversion and mixed precision dates in the <em>Princeton Geniza Project</em> (PGP). Calendar logic and representation is additionally informed by work on the <em>Islamic Scientific Manuscripts Initiative</em> (ISMI)” <span class="citation" data-cites="koeser_undate_2025">[<a href="#ref-koeser_undate_2025" role="doc-biblioref">6</a>]</span>.</p>
+<h2 data-number="3.1" id="princeton-geniza-project"><span class="header-section-number">3.1</span> Princeton Geniza Project</h2>
+<p>The <a href="https://geniza.princeton.edu/"><em>Princeton Geniza Project</em></a> (PGP) is a long-running project focused on materials from a synagogue in Cairo; these contents are primarily medieval, and largely written in Hebrew script. Because they are older and fragmentary, many of them cannot be dated; those documents that do have dates use a variety of calendars — the Hebrew <em>Anno Mundi</em> and Seleucid calendars, as well as the Islamic <em>Hijri</em> calendar. The Hebrew calendar is a lunisolar calendar and the Islamic calendar is a lunar calendar, so they don’t map neatly to the months and years of the Gregorian calendar.</p>
+<p>The PGP is one of the precursors that fed into the development of <code>undate</code>, due to this need to support storing, filtering, and searching dates from multiple calendars, with mixed precision, and various kinds of temporal uncertainty <span class="citation" data-cites="rustow_dating_2020">[<a href="#ref-rustow_dating_2020" role="doc-biblioref">10</a>]</span>. Here, I use data from the published PGP datasets <span class="citation" data-cites="rustow_princeton_2025">[<a href="#ref-rustow_princeton_2025" role="doc-biblioref">11</a>]</span> to demonstrate <code>undate</code> calendar parsing and conversion functionality.</p>
+<p>An <code>Undate</code> instance preserves any initial values for year, month, and day in the original calendar. As you see in Table <a href="#tab:pgp-parsed-dates">1</a>, the ISO format <code>Undate</code> corresponds to the original date rather than the standardized date.</p>
 <div id="tab:pgp-parsed-dates">
 <table>
-<caption>Table 1: A sampling of dates from PGP documents in different
-calendars; dates have been parsed by <code>Undate</code>, which was then
-used to report precision and weekday.</caption>
+<caption>Table 1: A sampling of dates from PGP documents in different calendars; dates have been parsed by <code>Undate</code>, which was then used to report precision and weekday.</caption>
 <thead>
 <tr>
 <th style="text-align: right;">Original Date</th>
@@ -565,21 +424,8 @@ used to report precision and weekday.</caption>
 </tbody>
 </table>
 </div>
-<p>Under the hood, <code>undate</code> calculates the earliest and
-latest possible dates in range for comparison and sorting. When an
-<code>Undate</code> object is initialized with a different calendar, the
-earliest and latest dates are based on conversion to the Gregorian
-calendar so that dates can be compared and used together across
-calendars. (The code used to parse the PGP document dates displayed in
-this example is available in Appendix
-<a href="#appdx:parse-pgp-dates">A</a>). When working across calendars,
-dates with the same precision (year, month) often have different
-durations in days.</p>
-<p>An <code>Undate</code> object is aware of date precision, which means
-that in a dataset with mixed precision dates like PGP, once dates are
-parsed we can easily see the variation in the data (Table
-<a href="#tab:pgp-date-precisions">2</a>).<a href="#fn3"
-class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
+<p>Under the hood, <code>undate</code> calculates the earliest and latest possible dates in range for comparison and sorting. When an <code>Undate</code> object is initialized with a different calendar, the earliest and latest dates are based on conversion to the Gregorian calendar so that dates can be compared and used together across calendars. (The code used to parse the PGP document dates displayed in this example is available in Appendix <a href="#appdx:parse-pgp-dates">A</a>). When working across calendars, dates with the same precision (year, month) often have different durations in days.</p>
+<p>An <code>Undate</code> object is aware of date precision, which means that in a dataset with mixed precision dates like PGP, once dates are parsed we can easily see the variation in the data (Table <a href="#tab:pgp-date-precisions">2</a>).<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
 <div id="tab:pgp-date-precisions">
 <table>
 <caption>Table 2: Totals for PGP documents and date precision</caption>
@@ -605,15 +451,10 @@ class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
 </tbody>
 </table>
 </div>
-<p>Only includes documents with standard dates that can be parsed by
-<code>undate</code>.</p>
+<p>Only includes documents with standard dates that can be parsed by <code>undate</code>.</p>
 <div id="tab:pgp-date-durations">
 <table>
-<caption>Table 3: Another sampling of dates from PGP documents in
-different calendars parsed by <code>Undate</code>. Earliest and latest
-dates are calculated in Gregorian / proleptic Gregorian calendar.
-Semantic durations like year and month result in different durations in
-days when working with multiple calendars.</caption>
+<caption>Table 3: Another sampling of dates from PGP documents in different calendars parsed by <code>Undate</code>. Earliest and latest dates are calculated in Gregorian / proleptic Gregorian calendar. Semantic durations like year and month result in different durations in days when working with multiple calendars.</caption>
 <thead>
 <tr>
 <th style="text-align: right;">Original Date</th>
@@ -740,53 +581,20 @@ days when working with multiple calendars.</caption>
 </tbody>
 </table>
 </div>
-<p>Preserving available details in mixed precision dates offers new
-opportunities for analysis; for instance, we can analyze weekday
-frequency by document type (Figure
-<a href="#fig:pgp-weekday-frequency">2</a>). In the PGP data, Legal
-documents and letters are the types of documents most likely to have a
-clear date. When visualized with a heatmap, the results match our
-expectations: Saturday is light for both types, because it is the Hebrew
-Shabbat, a day of rest. Monday and Thursday are the traditional
-convening days for court sessions, which is reflected in the
-preponderance of Legal documents on those days.<a href="#fn4"
-class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
+<p>Preserving available details in mixed precision dates offers new opportunities for analysis; for instance, we can analyze weekday frequency by document type (Figure <a href="#fig:pgp-weekday-frequency">2</a>). In the PGP data, Legal documents and letters are the types of documents most likely to have a clear date. When visualized with a heatmap, the results match our expectations: Saturday is light for both types, because it is the Hebrew Shabbat, a day of rest. Monday and Thursday are the traditional convening days for court sessions, which is reflected in the preponderance of Legal documents on those days.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
 <figure id="fig:pgp-weekday-frequency" data-latex-placement="h">
-<a href="figures/pgp_letters_legaldocs_weekday.png" data-lightbox="figures" data-title="Figure 2: Legal documents and letters frequency by weekday. "><img
-src="figures/pgp_letters_legaldocs_weekday.png"
-style="width:40.0%" /></a>
-<figcaption>Figure 2: Legal documents and letters frequency by weekday.
-</figcaption>
+<a href="figures/pgp_letters_legaldocs_weekday.png" data-lightbox="figures" data-title="Figure 2: Legal documents and letters frequency by weekday. "><img src="figures/pgp_letters_legaldocs_weekday.png" style="width:40.0%" /></a>
+<figcaption>Figure 2: Legal documents and letters frequency by weekday. </figcaption>
 </figure>
-<h2 data-number="3.2" id="shakespeare-and-company-project"><span
-class="header-section-number">3.2</span> Shakespeare and Company
-Project</h2>
-<p>The <a href="https://shakespeareandco.princeton.edu/"><em>Shakespeare
-and Company Project</em></a> is based on the materials from Sylvia
-Beach’s famous English-language lending library that operated in Paris
-in the 1920s and 1930s. This project is one of the precursors that fed
-into the development of <code>undate</code>, with an implementation to
-support incomplete dates written on handwritten cards <span
-class="citation"
-data-cites="kotin_shakespeare_2022 koeser_coding_2019">[<a
-href="#ref-kotin_shakespeare_2022" role="doc-biblioref">9</a>; <a
-href="#ref-koeser_coding_2019" role="doc-biblioref">3</a>]</span>.</p>
+<h2 data-number="3.2" id="shakespeare-and-company-project"><span class="header-section-number">3.2</span> Shakespeare and Company Project</h2>
+<p>The <a href="https://shakespeareandco.princeton.edu/"><em>Shakespeare and Company Project</em></a> is based on the materials from Sylvia Beach’s famous English-language lending library that operated in Paris in the 1920s and 1930s. This project is one of the precursors that fed into the development of <code>undate</code>, with an implementation to support incomplete dates written on handwritten cards <span class="citation" data-cites="kotin_shakespeare_2022 koeser_coding_2019">[<a href="#ref-kotin_shakespeare_2022" role="doc-biblioref">9</a>; <a href="#ref-koeser_coding_2019" role="doc-biblioref">3</a>]</span>.</p>
 <figure id="fig:stein-lending-card" data-latex-placement="h">
-<a href="figures/stein_lendingcard_unknownyear.jpg" data-lightbox="figures" data-title="Figure 3: Detail from Gertrude Stein’s lending library card showing handwritten borrow events with no year. [@stein_beachpapers_pul; @noauthor_gertrude_nodate] "><img
-src="figures/stein_lendingcard_unknownyear.jpg"
-style="width:70.0%" /></a>
-<figcaption>Figure 3: Detail from Gertrude Stein’s lending library card
-showing handwritten borrow events with no year. <span class="citation"
-data-cites="stein_beachpapers_pul noauthor_gertrude_nodate">[<a
-href="#ref-stein_beachpapers_pul" role="doc-biblioref">1</a>; <a
-href="#ref-noauthor_gertrude_nodate" role="doc-biblioref">2</a>]</span>
-</figcaption>
+<a href="figures/stein_lendingcard_unknownyear.jpg" data-lightbox="figures" data-title="Figure 3: Detail from Gertrude Stein’s lending library card showing handwritten borrow events with no year. [@stein_beachpapers_pul; @noauthor_gertrude_nodate] "><img src="figures/stein_lendingcard_unknownyear.jpg" style="width:70.0%" /></a>
+<figcaption>Figure 3: Detail from Gertrude Stein’s lending library card showing handwritten borrow events with no year. <span class="citation" data-cites="stein_beachpapers_pul noauthor_gertrude_nodate">[<a href="#ref-stein_beachpapers_pul" role="doc-biblioref">1</a>; <a href="#ref-noauthor_gertrude_nodate" role="doc-biblioref">2</a>]</span> </figcaption>
 </figure>
 <div id="tab:stein-borrowing">
 <table>
-<caption>Table 4: Sample borrowing activity for Gertrude Stein at the
-Shakespeare and Company lending library in Paris, including borrow
-events with unknown years but calculable durations.</caption>
+<caption>Table 4: Sample borrowing activity for Gertrude Stein at the Shakespeare and Company lending library in Paris, including borrow events with unknown years but calculable durations.</caption>
 <thead>
 <tr>
 <th style="text-align: left;">Start Date</th>
@@ -816,8 +624,7 @@ events with unknown years but calculable durations.</caption>
 <td style="text-align: left;">–01-24</td>
 <td style="text-align: left;">–05-30</td>
 <td style="text-align: left;">126</td>
-<td style="text-align: right;"><em>Boston Cooking-School Cook
-Book</em></td>
+<td style="text-align: right;"><em>Boston Cooking-School Cook Book</em></td>
 <td style="text-align: left;">Farmer, Fannie Merritt</td>
 <td style="text-align: left;"></td>
 <td style="text-align: right;"></td>
@@ -883,8 +690,7 @@ Book</em></td>
 <td style="text-align: left;">1920-04-29</td>
 <td style="text-align: left;">1920-06-03</td>
 <td style="text-align: left;">35</td>
-<td style="text-align: right;"><em>The Letters of George
-Meredith</em></td>
+<td style="text-align: right;"><em>The Letters of George Meredith</em></td>
 <td style="text-align: left;">Meredith, George</td>
 <td style="text-align: left;"></td>
 <td style="text-align: right;"></td>
@@ -894,86 +700,20 @@ Meredith</em></td>
 </tbody>
 </table>
 </div>
-<p>This project includes borrowing events with unknown years; with
-<code>undate</code> we can calculate how long a book was borrowed even
-when we don’t know the exact year. We use Gertrude Stein as an example
-here, since she is a well known figure with documented borrowing
-activity without known years (Figure
-<a href="#fig:stein-lending-card">3</a>), although she is far from the
-only one.<a href="#fn5" class="footnote-ref" id="fnref5"
-role="doc-noteref"><sup>5</sup></a> Stein has 46 borrow events with
-calculable duration; of those 7, or 15%, have no known year. If we limit
-our analysis to borrow events with known years, we arrive at an average
-borrow length of 32 days and a maximum of 91 days. However, when we
-include events with unknown years we get an average of 38 and a maximum
-of 126 days. In the context of this project, we calculate the duration
-of borrow events with unknown years as the shortest possible duration
-between the start and end date; that is, the the dates are in the same
-year (or following year, when the end date is an earlier month than the
-start date). This is based on our assumption that the clerks working in
-the book shop would have noted the year if the book was out for a longer
-time period, as they did in other cases.</p>
-<p>The full code used to calculate durations and plot them is available
-in Appendix <a href="#appdx:shxco-duration-raincloud">B</a>. Here we
-show a sample of the parsed borrow events (Table
-<a href="#tab:stein-borrowing">4</a>) and a raincloud plot of Stein’s
-borrowing (Figure <a href="#fig:stein-borrow-raincloud">4</a>) to
-demonstrate the value of including partial information in our analysis.
-As you can see, leaving out partially known dates would greatly change
-the distribution.</p>
+<p>This project includes borrowing events with unknown years; with <code>undate</code> we can calculate how long a book was borrowed even when we don’t know the exact year. We use Gertrude Stein as an example here, since she is a well known figure with documented borrowing activity without known years (Figure <a href="#fig:stein-lending-card">3</a>), although she is far from the only one.<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a> Stein has 46 borrow events with calculable duration; of those 7, or 15%, have no known year. If we limit our analysis to borrow events with known years, we arrive at an average borrow length of 32 days and a maximum of 91 days. However, when we include events with unknown years we get an average of 38 and a maximum of 126 days. In the context of this project, we calculate the duration of borrow events with unknown years as the shortest possible duration between the start and end date; that is, the the dates are in the same year (or following year, when the end date is an earlier month than the start date). This is based on our assumption that the clerks working in the book shop would have noted the year if the book was out for a longer time period, as they did in other cases.</p>
+<p>The full code used to calculate durations and plot them is available in Appendix <a href="#appdx:shxco-duration-raincloud">B</a>. Here we show a sample of the parsed borrow events (Table <a href="#tab:stein-borrowing">4</a>) and a raincloud plot of Stein’s borrowing (Figure <a href="#fig:stein-borrow-raincloud">4</a>) to demonstrate the value of including partial information in our analysis. As you can see, leaving out partially known dates would greatly change the distribution.</p>
 <figure id="fig:stein-borrow-raincloud" data-latex-placement="t!">
-<a href="figures/shxco_stein_borrows.png" data-lightbox="figures" data-title="Figure 4: Raincloud plot showing how long Gertrude Stein typically kept the books she borrowed. Borrows with unknown years are highlighted in orange in the lower portion (the “rain”) of the plot. "><img
-src="figures/shxco_stein_borrows.png" /></a>
-<figcaption>Figure 4: Raincloud plot showing how long Gertrude Stein
-typically kept the books she borrowed. Borrows with unknown years are
-highlighted in orange in the lower portion (the “rain”) of the plot.
-</figcaption>
+<a href="figures/shxco_stein_borrows.png" data-lightbox="figures" data-title="Figure 4: Raincloud plot showing how long Gertrude Stein typically kept the books she borrowed. Borrows with unknown years are highlighted in orange in the lower portion (the “rain”) of the plot. "><img src="figures/shxco_stein_borrows.png" /></a>
+<figcaption>Figure 4: Raincloud plot showing how long Gertrude Stein typically kept the books she borrowed. Borrows with unknown years are highlighted in orange in the lower portion (the “rain”) of the plot. </figcaption>
 </figure>
-<h1 data-number="4" id="sec:conclusion"><span
-class="header-section-number">4</span> Conclusion</h1>
-<p>This paper provides a demonstration of some of the current
-functionality of the <code>undate</code> python library, although it is
-certainly not exhaustive. I have barely touched on intervals and some of
-the calculations and logic around uncertainty that are currently
-supported. This package is still in active development, with tremendous
-potential in multiple directions. I and my collaborators plan to
-continue adding support for more calendars and formats (e.g., RDF and
-CIDOC-CRM), and improve the support for ambiguity and granularity in
-parsing and date precisions. Other avenues of interest are representing
-the temporal uncertainty in data visualizations based on
-<code>undate</code> parsing and analysis <span class="citation"
-data-cites="yau_visualizing_2018">[<a href="#ref-yau_visualizing_2018"
-role="doc-biblioref">12</a>]</span>, or making more use of labels for
-analysis. Development on <code>undate</code> input and use cases from
-the community to steer and prioritize the work, to ensure that work is
-interpretable and usable in the context of a specific project while
-still being general enough to be usable and accurate across disparate
-projects. As <code>undate</code> matures, I hope to start seeing it used
-in more projects, and we would love to know if there is an interest or
-need in adapting it to other programming languages or extending it for
-specific ecosystems and frameworks.</p>
+<h1 data-number="4" id="sec:conclusion"><span class="header-section-number">4</span> Conclusion</h1>
+<p>This paper provides a demonstration of some of the current functionality of the <code>undate</code> python library, although it is certainly not exhaustive. I have barely touched on intervals and some of the calculations and logic around uncertainty that are currently supported. This package is still in active development, with tremendous potential in multiple directions. I and my collaborators plan to continue adding support for more calendars and formats (e.g., RDF and CIDOC-CRM), and improve the support for ambiguity and granularity in parsing and date precisions. Other avenues of interest are representing the temporal uncertainty in data visualizations based on <code>undate</code> parsing and analysis <span class="citation" data-cites="yau_visualizing_2018">[<a href="#ref-yau_visualizing_2018" role="doc-biblioref">12</a>]</span>, or making more use of labels for analysis. Development on <code>undate</code> input and use cases from the community to steer and prioritize the work, to ensure that work is interpretable and usable in the context of a specific project while still being general enough to be usable and accurate across disparate projects. As <code>undate</code> matures, I hope to start seeing it used in more projects, and we would love to know if there is an interest or need in adapting it to other programming languages or extending it for specific ecosystems and frameworks.</p>
 <h1 class="unnumbered" id="acknowledgements">Acknowledgements</h1>
-<p>This work is supported by the Center for Digital Humanities at
-Princeton University. Thanks to my reviewers, especially: David Ragnar
-Nelson, who caught and corrected several errors in the code examples
-introduced in the conversion from notebook to paper; and Julia Damerow,
-for suggestions to improve the flow.</p>
-<h1 class="unnumbered" data-number="A" id="appdx:parse-pgp-dates"><span
-class="header-section-number">A</span> Parsing PGP document dates in
-multiple calendars</h1>
-<p>Princeton Geniza Project data includes documents with original dates
-in multiple calendars. <code>undate</code> does not yet provide an
-omnibus parser, so dates must be parsed according to their a known,
-supported calendar. The dates in this dataset are complicated and messy,
-and include qualifiers and uncertainty not yet supported by
-<code>undat</code>e parsing. For demonstration purposes, this example
-code removes and ignores those complexities.</p>
-<p>Adapted from an <a
-href="https://github.com/dh-tech/undate-python/blob/main/examples/pgp_dates.ipynb">example
-notebook</a> included in the <code>undate</code> software
-repository.</p>
-<div class="sourceCode" id="cb10"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
+<p>This work is supported by the Center for Digital Humanities at Princeton University. Thanks to my reviewers, especially: David Ragnar Nelson, who caught and corrected several errors in the code examples introduced in the conversion from notebook to paper; and Julia Damerow, for suggestions to improve the flow.</p>
+<h1 class="unnumbered" data-number="A" id="appdx:parse-pgp-dates"><span class="header-section-number">A</span> Parsing PGP document dates in multiple calendars</h1>
+<p>Princeton Geniza Project data includes documents with original dates in multiple calendars. <code>undate</code> does not yet provide an omnibus parser, so dates must be parsed according to their a known, supported calendar. The dates in this dataset are complicated and messy, and include qualifiers and uncertainty not yet supported by <code>undat</code>e parsing. For demonstration purposes, this example code removes and ignores those complexities.</p>
+<p>Adapted from an <a href="https://github.com/dh-tech/undate-python/blob/main/examples/pgp_dates.ipynb">example notebook</a> included in the <code>undate</code> software repository.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lark.exceptions <span class="im">import</span> UnexpectedEOF</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lark.visitors <span class="im">import</span> VisitError</span>
@@ -1118,37 +858,16 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a h
 <span id="cb10-143"><a href="#cb10-143" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;orig_date_precision&quot;</span>,</span>
 <span id="cb10-144"><a href="#cb10-144" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;undate_weekday_name&quot;</span>,</span>
 <span id="cb10-145"><a href="#cb10-145" aria-hidden="true" tabindex="-1"></a>).head(<span class="dv">10</span>)    </span></code></pre></div>
-<h1 class="unnumbered" data-number="B"
-id="appdx:shxco-duration-raincloud"><span
-class="header-section-number">B</span> Determine and plot durations for
-Shakespeare and Company Project borrowing</h1>
-<p>This project includes borrowing events with unknown years; with
-<code>undate</code> we can calculate how long a book was borrowed even
-when we don’t know the year.</p>
+<h1 class="unnumbered" data-number="B" id="appdx:shxco-duration-raincloud"><span class="header-section-number">B</span> Determine and plot durations for Shakespeare and Company Project borrowing</h1>
+<p>This project includes borrowing events with unknown years; with <code>undate</code> we can calculate how long a book was borrowed even when we don’t know the year.</p>
 <p>First we define a couple of methods that we’ll use with the data:</p>
 <ul>
-<li><p><code>undate_duration</code> to parse the dates and calculate
-duration in days</p></li>
-<li><p><code>known_year</code> to provide an indicator for whether the
-year was known, which we’ll use when plotting the data</p></li>
+<li><p><code>undate_duration</code> to parse the dates and calculate duration in days</p></li>
+<li><p><code>known_year</code> to provide an indicator for whether the year was known, which we’ll use when plotting the data</p></li>
 </ul>
-<p>We load the full events data from the Shakespeare and Company
-published datasets <span class="citation"
-data-cites="koeser_shakespeare_2025">[<a
-href="#ref-koeser_shakespeare_2025" role="doc-biblioref">7</a>]</span>
-and filter it to borrow events for Gertrude Stein based on
-<code>event_type</code> and <code>member_ids</code>. Then we use the
-custom methods defined first to calculate borrow durations and add a
-variable indicating whether the year is known.</p>
-<p>Finally, we define and use a method to generate a raincloud plot,
-showing the distribution of borrow durations in two different ways, and
-color the rain drops in the lower portion of the plot to highlight the
-durations based on borrow events with unknown years. (The raincloud plot
-is adapted from prior work in <span class="citation"
-data-cites="koeser_missing_2024">[<a href="#ref-koeser_missing_2024"
-role="doc-biblioref">8</a>]</span>.)</p>
-<div class="sourceCode" id="cb11"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> altair <span class="im">as</span> alt</span>
+<p>We load the full events data from the Shakespeare and Company published datasets <span class="citation" data-cites="koeser_shakespeare_2025">[<a href="#ref-koeser_shakespeare_2025" role="doc-biblioref">7</a>]</span> and filter it to borrow events for Gertrude Stein based on <code>event_type</code> and <code>member_ids</code>. Then we use the custom methods defined first to calculate borrow durations and add a variable indicating whether the year is known.</p>
+<p>Finally, we define and use a method to generate a raincloud plot, showing the distribution of borrow durations in two different ways, and color the rain drops in the lower portion of the plot to highlight the durations based on borrow events with unknown years. (The raincloud plot is adapted from prior work in <span class="citation" data-cites="koeser_missing_2024">[<a href="#ref-koeser_missing_2024" role="doc-biblioref">8</a>]</span>.)</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> altair <span class="im">as</span> alt</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> undate <span class="im">import</span> UndateInterval</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> undate.date <span class="im">import</span> ONE_DAY, UnInt</span>
@@ -1279,109 +998,52 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a h
 <span id="cb11-129"><a href="#cb11-129" aria-hidden="true" tabindex="-1"></a>    alt.Color(<span class="st">&quot;known_year&quot;</span>, title<span class="op">=</span><span class="st">&quot;Year&quot;</span>),</span>
 <span id="cb11-130"><a href="#cb11-130" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <h1 class="unnumbered" id="bibliography">References</h1>
-<div id="refs" class="references csl-bib-body hanging-indent"
-data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
 <div id="ref-stein_beachpapers_pul" class="csl-entry" role="listitem">
-[1] Beach, Sylvia. <em>Stein, Gertrude; Sylvia Beach Papers</em>. C0108.
-Manuscripts Division, Department of Special Collections, Princeton
-University Library.
+[1] Beach, Sylvia. <em>Stein, Gertrude; Sylvia Beach Papers</em>. C0108. Manuscripts Division, Department of Special Collections, Princeton University Library.
 </div>
-<div id="ref-noauthor_gertrude_nodate" class="csl-entry"
-role="listitem">
-[2] <span>“Gertrude <span>Stein</span>.”</span> <em>Shakespeare and
-Company Project</em>, <a
-href="https://shakespeareandco.princeton.edu/members/stein-gertrude/">https://shakespeareandco.princeton.edu/members/stein-gertrude/</a>.
+<div id="ref-noauthor_gertrude_nodate" class="csl-entry" role="listitem">
+[2] <span>“Gertrude <span>Stein</span>.”</span> <em>Shakespeare and Company Project</em>, <a href="https://shakespeareandco.princeton.edu/members/stein-gertrude/">https://shakespeareandco.princeton.edu/members/stein-gertrude/</a>.
 </div>
 <div id="ref-koeser_coding_2019" class="csl-entry" role="listitem">
-[3] Koeser, Rebecca Sutton. <span>“Coding with
-<span>Unknowns</span>.”</span> <em>Center for Digital Humanities at
-Princeton University</em>, Dec. 2019, <a
-href="https://cdh.princeton.edu/blog/2019/12/05/coding-unknowns/">https://cdh.princeton.edu/blog/2019/12/05/coding-unknowns/</a>.
+[3] Koeser, Rebecca Sutton. <span>“Coding with <span>Unknowns</span>.”</span> <em>Center for Digital Humanities at Princeton University</em>, Dec. 2019, <a href="https://cdh.princeton.edu/blog/2019/12/05/coding-unknowns/">https://cdh.princeton.edu/blog/2019/12/05/coding-unknowns/</a>.
 </div>
 <div id="ref-koeser_join_2023" class="csl-entry" role="listitem">
-[4] Koeser, Rebecca Sutton. <span>“Join Me for a <span>DHTech</span>
-Hackathon? <span>It</span>’s an Un-Date!”</span> <em>DHTech</em>, Feb.
-2023, <a
-href="https://dh-tech.github.io/blog/2023/02/09/hackathon-undate/">https://dh-tech.github.io/blog/2023/02/09/hackathon-undate/</a>.
+[4] Koeser, Rebecca Sutton. <span>“Join Me for a <span>DHTech</span> Hackathon? <span>It</span>’s an Un-Date!”</span> <em>DHTech</em>, Feb. 2023, <a href="https://dh-tech.github.io/blog/2023/02/09/hackathon-undate/">https://dh-tech.github.io/blog/2023/02/09/hackathon-undate/</a>.
 </div>
-<div id="ref-koeser_undate_python_2025" class="csl-entry"
-role="listitem">
-[5] Koeser, Rebecca Sutton, Cole Crawford, Julia Damerow, Malte Vogl,
-and Robert Casties. <em>Undate Python Library</em>. Zenodo, July 2025,
-<a
-href="https://doi.org/10.5281/zenodo.11068867">https://doi.org/10.5281/zenodo.11068867</a>.
+<div id="ref-koeser_undate_python_2025" class="csl-entry" role="listitem">
+[5] Koeser, Rebecca Sutton, Cole Crawford, Julia Damerow, Malte Vogl, and Robert Casties. <em>Undate Python Library</em>. Zenodo, July 2025, <a href="https://doi.org/10.5281/zenodo.11068867">https://doi.org/10.5281/zenodo.11068867</a>.
 </div>
 <div id="ref-koeser_undate_2025" class="csl-entry" role="listitem">
-[6] Koeser, Rebecca Sutton, Julia Damerow, Robert Casties, and Cole
-Crawford. <span>“Undate: Humanistic Dates for Computation.”</span>
-<em>Computational Humanities Research</em>, vol. 1, 2025, p. e5, <a
-href="https://doi.org/10.1017/chr.2025.10006">https://doi.org/10.1017/chr.2025.10006</a>.
+[6] Koeser, Rebecca Sutton, Julia Damerow, Robert Casties, and Cole Crawford. <span>“Undate: Humanistic Dates for Computation.”</span> <em>Computational Humanities Research</em>, vol. 1, 2025, p. e5, <a href="https://doi.org/10.1017/chr.2025.10006">https://doi.org/10.1017/chr.2025.10006</a>.
 </div>
 <div id="ref-koeser_shakespeare_2025" class="csl-entry" role="listitem">
-[7] Koeser, Rebecca Sutton, and Joshua Kotin. <em>Shakespeare and
-<span>Company</span> <span>Project</span> <span>Datasets</span></em>.
-2025, <a
-href="https://doi.org/10.34770/kf6c-b079">https://doi.org/10.34770/kf6c-b079</a>.
+[7] Koeser, Rebecca Sutton, and Joshua Kotin. <em>Shakespeare and <span>Company</span> <span>Project</span> <span>Datasets</span></em>. 2025, <a href="https://doi.org/10.34770/kf6c-b079">https://doi.org/10.34770/kf6c-b079</a>.
 </div>
 <div id="ref-koeser_missing_2024" class="csl-entry" role="listitem">
-[8] Koeser, Rebecca Sutton, and Zoe LeBlanc. <span>“Missing
-<span>Data</span>, <span>Speculative</span>
-<span>Reading</span>.”</span> <em>Journal of Cultural Analytics</em>,
-vol. 9, no. 2, May 2024, <a
-href="https://doi.org/10.22148/001c.116926">https://doi.org/10.22148/001c.116926</a>.
+[8] Koeser, Rebecca Sutton, and Zoe LeBlanc. <span>“Missing <span>Data</span>, <span>Speculative</span> <span>Reading</span>.”</span> <em>Journal of Cultural Analytics</em>, vol. 9, no. 2, May 2024, <a href="https://doi.org/10.22148/001c.116926">https://doi.org/10.22148/001c.116926</a>.
 </div>
 <div id="ref-kotin_shakespeare_2022" class="csl-entry" role="listitem">
-[9] Kotin, Joshua, and Rebecca Sutton Koeser. <span>“Shakespeare and
-<span>Company</span> <span>Project</span> <span>Data</span>
-<span>Sets</span>.”</span> <em>Journal of Cultural Analytics</em>, vol.
-7, no. 1, Feb. 2022, <a
-href="https://doi.org/10.22148/001c.32551">https://doi.org/10.22148/001c.32551</a>.
+[9] Kotin, Joshua, and Rebecca Sutton Koeser. <span>“Shakespeare and <span>Company</span> <span>Project</span> <span>Data</span> <span>Sets</span>.”</span> <em>Journal of Cultural Analytics</em>, vol. 7, no. 1, Feb. 2022, <a href="https://doi.org/10.22148/001c.32551">https://doi.org/10.22148/001c.32551</a>.
 </div>
 <div id="ref-rustow_dating_2020" class="csl-entry" role="listitem">
-[10] Rustow, Marina. <span>“Dating <span>Problems</span>?
-<span>Ask</span> the <span>Princeton</span> <span>Geniza</span>
-<span>Project</span> <span>Team</span>.”</span> <em>The Center for
-Digital Humanities at Princeton</em>, Nov. 2020, <a
-href="https://cdh.princeton.edu/blog/2020/11/18/dating-problems-ask-princeton-geniza-project-team/">https://cdh.princeton.edu/blog/2020/11/18/dating-problems-ask-princeton-geniza-project-team/</a>.
+[10] Rustow, Marina. <span>“Dating <span>Problems</span>? <span>Ask</span> the <span>Princeton</span> <span>Geniza</span> <span>Project</span> <span>Team</span>.”</span> <em>The Center for Digital Humanities at Princeton</em>, Nov. 2020, <a href="https://cdh.princeton.edu/blog/2020/11/18/dating-problems-ask-princeton-geniza-project-team/">https://cdh.princeton.edu/blog/2020/11/18/dating-problems-ask-princeton-geniza-project-team/</a>.
 </div>
 <div id="ref-rustow_princeton_2025" class="csl-entry" role="listitem">
-[11] Rustow, Marina, Rebecca Sutton Koeser, Rachel Richman, Ksenia
-Ryzhova, Amel Bensalim, and Abdellatif Mohamed. <em>Princeton
-<span>Geniza</span> <span>Project</span> <span>Dataset</span></em>.
-Zenodo, July 2025, <a
-href="https://doi.org/10.5281/zenodo.15839055">https://doi.org/10.5281/zenodo.15839055</a>.
+[11] Rustow, Marina, Rebecca Sutton Koeser, Rachel Richman, Ksenia Ryzhova, Amel Bensalim, and Abdellatif Mohamed. <em>Princeton <span>Geniza</span> <span>Project</span> <span>Dataset</span></em>. Zenodo, July 2025, <a href="https://doi.org/10.5281/zenodo.15839055">https://doi.org/10.5281/zenodo.15839055</a>.
 </div>
 <div id="ref-yau_visualizing_2018" class="csl-entry" role="listitem">
-[12] Yau, Nathan. <span>“Visualizing the <span>Uncertainty</span> in
-<span>Data</span>.”</span> <em>FlowingData</em>, Jan. 2018, <a
-href="https://flowingdata.com/2018/01/08/visualizing-the-uncertainty-in-data/">https://flowingdata.com/2018/01/08/visualizing-the-uncertainty-in-data/</a>.
+[12] Yau, Nathan. <span>“Visualizing the <span>Uncertainty</span> in <span>Data</span>.”</span> <em>FlowingData</em>, Jan. 2018, <a href="https://flowingdata.com/2018/01/08/visualizing-the-uncertainty-in-data/">https://flowingdata.com/2018/01/08/visualizing-the-uncertainty-in-data/</a>.
 </div>
 </div>
-<section id="footnotes" class="footnotes footnotes-end-of-document"
-role="doc-endnotes">
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p><a href="https://github.com/dh-tech/undate-python/"
-class="uri">https://github.com/dh-tech/undate-python/</a><a
-href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2"><p>This paper was originally presented as a “tool
-presentation.” An interactive version of the original is available
-online in the form of a Marimo notebook at <a
-href="https://rlskoeser.github.io/undate-in-action/">https://rlskoeser.github.io/undate-in-action/</a><a
-href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3"><p>With the caveat that in this case the results are
-somewhat skewed by the dates that can easily be parsed; PGP data
-includes modifiers not yet supported by <code>undate</code>, which were
-ignored during parsing.<a href="#fnref3" class="footnote-back"
-role="doc-backlink">↩︎</a></p></li>
-<li id="fn4"><p>Analysis and visualization adapted from prior work.
-<span class="citation" data-cites="koeser_undate_2025">[<a
-href="#ref-koeser_undate_2025" role="doc-biblioref">6</a>]</span><a
-href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn5"><p>Stein is famous enough that these unknowns could perhaps
-be resolved through research; that is not the case for the lesser known
-members of this library.<a href="#fnref5" class="footnote-back"
-role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p><a href="https://github.com/dh-tech/undate-python/" class="uri">https://github.com/dh-tech/undate-python/</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>This paper was originally presented as a “tool presentation.” An interactive version of the original is available online in the form of a Marimo notebook at <a href="https://rlskoeser.github.io/undate-in-action/">https://rlskoeser.github.io/undate-in-action/</a><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>With the caveat that in this case the results are somewhat skewed by the dates that can easily be parsed; PGP data includes modifiers not yet supported by <code>undate</code>, which were ignored during parsing.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>Analysis and visualization adapted from prior work. <span class="citation" data-cites="koeser_undate_2025">[<a href="#ref-koeser_undate_2025" role="doc-biblioref">6</a>]</span><a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>Stein is famous enough that these unknowns could perhaps be resolved through research; that is not the case for the lesser known members of this library.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 

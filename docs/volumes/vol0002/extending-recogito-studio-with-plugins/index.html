@@ -54,7 +54,7 @@ needs.">
         <img src="../../../logo/logo.png" alt="ACH Logo">
       </a>
 
-      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMain">
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
@@ -152,214 +152,67 @@ needs.">
 
       <!-- Abstract -->
       <div class="content">
-         <div class="abs"><span>Abstract</span><p>This paper describes the Recogito Studio collaborative annotation
-software platform, and how it can be extended by software developers,
-using a new extension mechanism. I discuss several existing extensions,
-or "plugins" to illustrate what an extension can do. The paper concludes
-with some reflections on how to manage collaborative software
-development across multiple institutions with different priorities and
-needs.</p></div>
+         <div class="abs"><span>Abstract</span><p>This paper describes the Recogito Studio collaborative annotation software platform, and how it can be extended by software developers, using a new extension mechanism. I discuss several existing extensions, or "plugins" to illustrate what an extension can do. The paper concludes with some reflections on how to manage collaborative software development across multiple institutions with different priorities and needs.</p></div>
 
-<h1 data-number="1" id="introduction"><span
-class="header-section-number">1</span> Introduction</h1>
-<p>Recogito Studio is a web-based platform for collaborative annotation
-of text and images. It supports a wide range of annotation types. The
-platform is designed to be user-friendly, with a focus on accessibility
-and ease of use for both technical and non-technical users.</p>
-<p>It has been developed by <a
-href="https://www.performantsoftware.com/">Performant Software
-Solutions</a> and <a href="https://rainersimon.io/">Rainer Simon</a>, in
-collaboration with a series of partners, whose use cases sometimes
-converge, and sometimes diverge, which presents the project with a
-challenge: how to design a system which can accommodate a range of use
-cases. This paper describes the solution we have arrived at: a modular
-architecture that allows for easy extension and customization through
-plugins.</p>
-<h2 data-number="1.1" id="sec:intro_details"><span
-class="header-section-number">1.1</span> Details</h2>
-<p>Scholars and practitioners from seven different organizations in five
-countries, and dozens of adopting institutions from major public
-research universities to small research organizations and software
-development companies, have worked together to produce a new open source
-software platform for collaborative annotation of text and images,
-called Recogito Studio.</p>
-<p>Developed starting in January 2023, with a first version released at
-the end of 2024, Recogito Studio incorporates ideas from earlier
-projects, chief among them Recogito (from the Pelagios Project), and
-Annotation Studio (built at MIT), and adds a number of new features for
-collaboration, extensions and integration with other tools and
-workflows.</p>
-<p>Several of its features are important for all project stakeholders
-(like support for widely-adopted standards like TEI-XML for text and
-IIIF for images), while others are specific to research or teaching in
-one field, like those aimed at art historians or archaeologists. In a
-project funded and developed jointly by several organizations, this
-raises several interesting questions, including:</p>
+<h1 data-number="1" id="introduction"><span class="header-section-number">1</span> Introduction</h1>
+<p>Recogito Studio is a web-based platform for collaborative annotation of text and images. It supports a wide range of annotation types. The platform is designed to be user-friendly, with a focus on accessibility and ease of use for both technical and non-technical users.</p>
+<p>It has been developed by <a href="https://www.performantsoftware.com/">Performant Software Solutions</a> and <a href="https://rainersimon.io/">Rainer Simon</a>, in collaboration with a series of partners, whose use cases sometimes converge, and sometimes diverge, which presents the project with a challenge: how to design a system which can accommodate a range of use cases. This paper describes the solution we have arrived at: a modular architecture that allows for easy extension and customization through plugins.</p>
+<h2 data-number="1.1" id="sec:intro_details"><span class="header-section-number">1.1</span> Details</h2>
+<p>Scholars and practitioners from seven different organizations in five countries, and dozens of adopting institutions from major public research universities to small research organizations and software development companies, have worked together to produce a new open source software platform for collaborative annotation of text and images, called Recogito Studio.</p>
+<p>Developed starting in January 2023, with a first version released at the end of 2024, Recogito Studio incorporates ideas from earlier projects, chief among them Recogito (from the Pelagios Project), and Annotation Studio (built at MIT), and adds a number of new features for collaboration, extensions and integration with other tools and workflows.</p>
+<p>Several of its features are important for all project stakeholders (like support for widely-adopted standards like TEI-XML for text and IIIF for images), while others are specific to research or teaching in one field, like those aimed at art historians or archaeologists. In a project funded and developed jointly by several organizations, this raises several interesting questions, including:</p>
 <ul>
-<li><p>How can we collectively sequence and prioritize features for
-development?</p></li>
-<li><p>Which features should be included in the “core” of the software
-and who decides?</p></li>
-<li><p>How can non-core features be identified, developed and deployed
-as needed?</p></li>
-<li><p>How can we design features with two or more
-stakeholders?</p></li>
-<li><p>What roles should users, developers, and funders play in project
-governance?</p></li>
+<li><p>How can we collectively sequence and prioritize features for development?</p></li>
+<li><p>Which features should be included in the “core” of the software and who decides?</p></li>
+<li><p>How can non-core features be identified, developed and deployed as needed?</p></li>
+<li><p>How can we design features with two or more stakeholders?</p></li>
+<li><p>What roles should users, developers, and funders play in project governance?</p></li>
 </ul>
-<p>This paper provides an overview of the resulting software and of the
-strategy we have adopted to answer the above questions: a plugin
-mechanism that allows the development of new features without adding
-them to the core codebase. Additionally, it covers:</p>
+<p>This paper provides an overview of the resulting software and of the strategy we have adopted to answer the above questions: a plugin mechanism that allows the development of new features without adding them to the core codebase. Additionally, it covers:</p>
 <ul>
 <li><p>Existing plugins and what they add to the platform.</p></li>
 <li><p>What plugins can and cannot do currently.</p></li>
 <li><p>Starting points for plugin development.</p></li>
 </ul>
-<p>We conclude with some of the benefits of this plugin architecture for
-the Recogito Studio project and community, which may be relevant to
-other digital humanities software projects.</p>
-<h1 data-number="2" id="overview-of-recogito-studio"><span
-class="header-section-number">2</span> Overview of Recogito Studio</h1>
-<h2 data-number="2.1" id="sec:overview_purpose"><span
-class="header-section-number">2.1</span> Purpose</h2>
-<p>Recogito Studio is a web-based platform for collaborative annotation
-of text (including TEI-XML) and images (including IIIF images). It
-supports import of text documents, IIIF manifests, and PDFs, and export
-of annotations in CSV and JSON-LD formats; TEI annotations, both
-standoff and inline, and embedded in derivative IIIF Manifests. The
-platform is user-friendly and accessible, designed with a focus on ease
-of use for end users.</p>
-<p>It’s in use by over 20 institutional adopters of the COVE Collective,
-the ATRIUM project in the EU, the University of Bonn, the University of
-Exeter, and Duke University.</p>
-<h2 data-number="2.2" id="sec:overview_architecture"><span
-class="header-section-number">2.2</span> Architecture</h2>
-<p>Recogito Studio is a web application with client and server
-components. The client component is built using the Astro website
-framework, while the server uses the supabase platform, based on the
-open source PostgreSQL database. Together, these two components form the
-core platform, which provides essential features such as management of
-users, documents, projects, and assignments (subgroupings of project
-documents and members); annotation storage, and basic annotation
-types.</p>
-<p>The plugin mechanism we discuss in this paper allows the client to be
-modified using plugins written in JavaScript and installed into the
-Astro client at build time, using documented extension points to add new
-functionality or modify existing features without otherwise altering the
-client or server codebase.</p>
-<h2 data-number="2.3" id="sec:overview_features"><span
-class="header-section-number">2.3</span> Major Features</h2>
-<p>Recogito Studio includes several features that differentiate it from
-other annotation tools:</p>
+<p>We conclude with some of the benefits of this plugin architecture for the Recogito Studio project and community, which may be relevant to other digital humanities software projects.</p>
+<h1 data-number="2" id="overview-of-recogito-studio"><span class="header-section-number">2</span> Overview of Recogito Studio</h1>
+<h2 data-number="2.1" id="sec:overview_purpose"><span class="header-section-number">2.1</span> Purpose</h2>
+<p>Recogito Studio is a web-based platform for collaborative annotation of text (including TEI-XML) and images (including IIIF images). It supports import of text documents, IIIF manifests, and PDFs, and export of annotations in CSV and JSON-LD formats; TEI annotations, both standoff and inline, and embedded in derivative IIIF Manifests. The platform is user-friendly and accessible, designed with a focus on ease of use for end users.</p>
+<p>It’s in use by over 20 institutional adopters of the COVE Collective, the ATRIUM project in the EU, the University of Bonn, the University of Exeter, and Duke University.</p>
+<h2 data-number="2.2" id="sec:overview_architecture"><span class="header-section-number">2.2</span> Architecture</h2>
+<p>Recogito Studio is a web application with client and server components. The client component is built using the Astro website framework, while the server uses the supabase platform, based on the open source PostgreSQL database. Together, these two components form the core platform, which provides essential features such as management of users, documents, projects, and assignments (subgroupings of project documents and members); annotation storage, and basic annotation types.</p>
+<p>The plugin mechanism we discuss in this paper allows the client to be modified using plugins written in JavaScript and installed into the Astro client at build time, using documented extension points to add new functionality or modify existing features without otherwise altering the client or server codebase.</p>
+<h2 data-number="2.3" id="sec:overview_features"><span class="header-section-number">2.3</span> Major Features</h2>
+<p>Recogito Studio includes several features that differentiate it from other annotation tools:</p>
 <ul>
-<li><p>Support for annotation on IIIF images, TEI text and PDF
-files.</p></li>
-<li><p>Real-time collaboration, allowing multiple users to annotate
-simultaneously.</p></li>
-<li><p>GDPR-compliant user and user data management, with support for
-customizable role-based access.</p></li>
-<li><p>Support for both password-based authentication and integration
-with SAML IdPs for single sign on.</p></li>
+<li><p>Support for annotation on IIIF images, TEI text and PDF files.</p></li>
+<li><p>Real-time collaboration, allowing multiple users to annotate simultaneously.</p></li>
+<li><p>GDPR-compliant user and user data management, with support for customizable role-based access.</p></li>
+<li><p>Support for both password-based authentication and integration with SAML IdPs for single sign on.</p></li>
 </ul>
-<h2 data-number="2.4" id="sec:overview_differentiation"><span
-class="header-section-number">2.4</span> Differentiation</h2>
-<p>Recogito Studio differentiates itself from other annotation platforms
-by its support for widely-adopted standards like TEI-XML, IIIF and W3C
-Annotations (as JSON-LD) to ensure compatibility with existing tools and
-workflows in the humanities. The plugin mechanism allows for rapid
-development and deployment of new features, enabling users to tailor the
-platform to their specific needs. The main codebase is released under
-the <a href="https://choosealicense.com/licenses/agpl-3.0/">AGPLv3</a>
-open source license, which is a significant advantage for adopters as
-well, but the plugin mechanism allows for the development of plugins to
-be released under other licenses as well, if desired, since those
-codebases are separate from the core codebase. Several of the existing
-plugins are released under more permissive licenses, such as the MIT
-license.</p>
-<h1 data-number="3" id="plugin-mechanism"><span
-class="header-section-number">3</span> Plugin Mechanism</h1>
-<p>The plugin mechanism in Recogito Studio allows developers to extend
-the platform’s functionality without modifying the core codebase. A good
-example of a common use case for this option would be connecting to an
-externally managed controlled vocabulary server with terms specific to a
-given project. That’s enabled by the Reconciliation API plugin, for
-which there’s a link in the appendix. Because each project can turn
-every available plugin on or off, and configure it differently, even
-projects within a single instance of the platform could use different
-externally managed controlled vocabularies with this plugin, or none at
-all.</p>
-<p>Plugins are developed using the Recogito Studio SDK, for which we
-include a link in Appendix
-<a href="#appdx:first_appendix_resources">A</a>. The SDK includes a
-boilerplate plugin template that developers can use as a starting point
-for their own plugins.</p>
-<p>The Recogito Studio SDK is designed to facilitate plugin development
-for the Recogito Studio Client without the need to set up the Recogito
-Server application in a local development environment or forking the
-code. It provides essential tools and abstractions to help you build
-useful extensions for the Recogito Studio ecosystem. It provides a test
-application that can be run locally before installing a plugin in a
-running instance of Recogito Studio, so developers can do most of their
-work locally.</p>
-<h2 data-number="3.1" id="sec:plugins_astro_integrations"><span
-class="header-section-number">3.1</span> Astro Integrations</h2>
-<p>The Recogito Studio Client is an <a
-href="https://astro.build">Astro</a> application. Recogito Studio
-plugins are implemented as Astro Integrations, the extension mechanism
-for the Astro framework, plus some additional features introduced by
-Recogito Studio’s own UI extension framework, as described in the next
-section.</p>
-<h2 data-number="3.2" id="sec:plugins_ui_extension"><span
-class="header-section-number">3.2</span> UI Extension Framework</h2>
-<p>Astro allows developers to write components in React to add
-interactivity to otherwise static content pages. Recogito Studio uses
-this capability to implement its annotation interfaces in React.
-Building on that foundation, Recogito Studio uses the React <a
-href="https://react.dev/reference/react/lazy#suspense-for-code-splitting">lazy
-loading</a> and <a
-href="https://react.dev/reference/react/Suspense">Suspense</a>
-mechanisms to allow plugins to dynamically inject their own React
-components into extension points that the Recogito Studio Client
-defines. The SDK also provides built-in <a
-href="https://recogitostudio.org/guides/sdk/#component-styling">CSS
-style classes</a>, making it easy for extensions to re-use Recogito’s
-native styling.</p>
-<p>To inject UI extensions, plugin developers must register their
-extensions following a specific process. This involves a small amount of
-boilerplate code, which the SDK helps simplify.</p>
-<h2 data-number="3.3" id="sec:plugins_capabilities"><span
-class="header-section-number">3.3</span> What Plugins Can Do</h2>
-<p>Currently, plugins can make changes to many of the core features of
-the user-facing client application, including:</p>
+<h2 data-number="2.4" id="sec:overview_differentiation"><span class="header-section-number">2.4</span> Differentiation</h2>
+<p>Recogito Studio differentiates itself from other annotation platforms by its support for widely-adopted standards like TEI-XML, IIIF and W3C Annotations (as JSON-LD) to ensure compatibility with existing tools and workflows in the humanities. The plugin mechanism allows for rapid development and deployment of new features, enabling users to tailor the platform to their specific needs. The main codebase is released under the <a href="https://choosealicense.com/licenses/agpl-3.0/">AGPLv3</a> open source license, which is a significant advantage for adopters as well, but the plugin mechanism allows for the development of plugins to be released under other licenses as well, if desired, since those codebases are separate from the core codebase. Several of the existing plugins are released under more permissive licenses, such as the MIT license.</p>
+<h1 data-number="3" id="plugin-mechanism"><span class="header-section-number">3</span> Plugin Mechanism</h1>
+<p>The plugin mechanism in Recogito Studio allows developers to extend the platform’s functionality without modifying the core codebase. A good example of a common use case for this option would be connecting to an externally managed controlled vocabulary server with terms specific to a given project. That’s enabled by the Reconciliation API plugin, for which there’s a link in the appendix. Because each project can turn every available plugin on or off, and configure it differently, even projects within a single instance of the platform could use different externally managed controlled vocabularies with this plugin, or none at all.</p>
+<p>Plugins are developed using the Recogito Studio SDK, for which we include a link in Appendix <a href="#appdx:first_appendix_resources">A</a>. The SDK includes a boilerplate plugin template that developers can use as a starting point for their own plugins.</p>
+<p>The Recogito Studio SDK is designed to facilitate plugin development for the Recogito Studio Client without the need to set up the Recogito Server application in a local development environment or forking the code. It provides essential tools and abstractions to help you build useful extensions for the Recogito Studio ecosystem. It provides a test application that can be run locally before installing a plugin in a running instance of Recogito Studio, so developers can do most of their work locally.</p>
+<h2 data-number="3.1" id="sec:plugins_astro_integrations"><span class="header-section-number">3.1</span> Astro Integrations</h2>
+<p>The Recogito Studio Client is an <a href="https://astro.build">Astro</a> application. Recogito Studio plugins are implemented as Astro Integrations, the extension mechanism for the Astro framework, plus some additional features introduced by Recogito Studio’s own UI extension framework, as described in the next section.</p>
+<h2 data-number="3.2" id="sec:plugins_ui_extension"><span class="header-section-number">3.2</span> UI Extension Framework</h2>
+<p>Astro allows developers to write components in React to add interactivity to otherwise static content pages. Recogito Studio uses this capability to implement its annotation interfaces in React. Building on that foundation, Recogito Studio uses the React <a href="https://react.dev/reference/react/lazy#suspense-for-code-splitting">lazy loading</a> and <a href="https://react.dev/reference/react/Suspense">Suspense</a> mechanisms to allow plugins to dynamically inject their own React components into extension points that the Recogito Studio Client defines. The SDK also provides built-in <a href="https://recogitostudio.org/guides/sdk/#component-styling">CSS style classes</a>, making it easy for extensions to re-use Recogito’s native styling.</p>
+<p>To inject UI extensions, plugin developers must register their extensions following a specific process. This involves a small amount of boilerplate code, which the SDK helps simplify.</p>
+<h2 data-number="3.3" id="sec:plugins_capabilities"><span class="header-section-number">3.3</span> What Plugins Can Do</h2>
+<p>Currently, plugins can make changes to many of the core features of the user-facing client application, including:</p>
 <ul>
-<li><p>Adding to the annotation interface (like the geotagging
-plugin).</p></li>
-<li><p>Connecting to external data sources and services (like the NER
-plugin).</p></li>
-<li><p>Replacing existing UI elements in the editor, such as swapping
-the default tag widget with a custom version that integrates an external
-vocabulary service.</p></li>
-<li><p>Enhancing page and API capabilities, e.g. introduce new API
-routes that export annotations in different data formats.</p></li>
+<li><p>Adding to the annotation interface (like the geotagging plugin).</p></li>
+<li><p>Connecting to external data sources and services (like the NER plugin).</p></li>
+<li><p>Replacing existing UI elements in the editor, such as swapping the default tag widget with a custom version that integrates an external vocabulary service.</p></li>
+<li><p>Enhancing page and API capabilities, e.g. introduce new API routes that export annotations in different data formats.</p></li>
 </ul>
-<p>As of now, plugins extend the Recogito Studio Client only. Plugins
-cannot extend the Server component of Recogito Studio. For example, it
-is not possible for plugins to change or add to the database schema, or
-add additional database functions or edge functions.</p>
-<h2 data-number="3.4" id="sec:plugins_example"><span
-class="header-section-number">3.4</span> Example Plugin Code</h2>
-<p>The complete documentation for the development of plugins is
-available in <a
-href="https://github.com/recogito/recogito-studio-sdk">Recogito Studio
-SDK</a>, but here is the code of a simple plugin to provide an idea of
-the skills required to create one: knowledge of modern JavaScript and
-TypeScript development, publication of packages on npmjs.com, and
-domain-specific knowledge required to make the plugin itself. The
-following code defines and registers a new plugin, but does not install
-it.</p>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// index.ts</span></span>
+<p>As of now, plugins extend the Recogito Studio Client only. Plugins cannot extend the Server component of Recogito Studio. For example, it is not possible for plugins to change or add to the database schema, or add additional database functions or edge functions.</p>
+<h2 data-number="3.4" id="sec:plugins_example"><span class="header-section-number">3.4</span> Example Plugin Code</h2>
+<p>The complete documentation for the development of plugins is available in <a href="https://github.com/recogito/recogito-studio-sdk">Recogito Studio SDK</a>, but here is the code of a simple plugin to provide an idea of the skills required to create one: knowledge of modern JavaScript and TypeScript development, publication of packages on npmjs.com, and domain-specific knowledge required to make the plugin itself. The following code defines and registers a new plugin, but does not install it.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// index.ts</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> <span class="im">type</span> { AstroIntegration } <span class="im">from</span> <span class="st">&quot;astro&quot;</span><span class="op">;</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { <span class="bu">Plugin</span><span class="op">,</span> registerPlugin } <span class="im">from</span> <span class="st">&quot;@recogito/studio-sdk&quot;</span><span class="op">;</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -385,138 +238,42 @@ class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb1-
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span>
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="im">default</span> plugin<span class="op">;</span></span></code></pre></div>
-<h2 data-number="3.5" id="sec:plugins_existing"><span
-class="header-section-number">3.5</span> Existing Plugins</h2>
-<p>Several plugins have already been developed for Recogito Studio,
-showcasing the platform’s extensibility and flexibility. Some notable
-examples include:</p>
-<p> <strong>Geotagger.</strong> Adds geotagging capabilities,
-configurable with multiple external gazetteers, allowing users to
-identify place names in text and image documents, visualize them on a
-map, and export them in GeoJSON format.</p>
-<p> <strong>NER Plugin.</strong> Enables connection to an external named
-entity recognition service, allowing automated annotation entities such
-as people, organizations, and locations in text documents.</p>
-<p> <strong>Reconciliation API Plugin.</strong> Enables connection to an
-external name authority service for use as a source for tags from a
-controlled vocabulary.</p>
+<h2 data-number="3.5" id="sec:plugins_existing"><span class="header-section-number">3.5</span> Existing Plugins</h2>
+<p>Several plugins have already been developed for Recogito Studio, showcasing the platform’s extensibility and flexibility. Some notable examples include:</p>
+<p> <strong>Geotagger.</strong> Adds geotagging capabilities, configurable with multiple external gazetteers, allowing users to identify place names in text and image documents, visualize them on a map, and export them in GeoJSON format.</p>
+<p> <strong>NER Plugin.</strong> Enables connection to an external named entity recognition service, allowing automated annotation entities such as people, organizations, and locations in text documents.</p>
+<p> <strong>Reconciliation API Plugin.</strong> Enables connection to an external name authority service for use as a source for tags from a controlled vocabulary.</p>
 <p><br />
-A full list of existing plugins with brief descriptions and links is
-available in Appendix
-<a href="#appdx:second_appendix_plugins">B</a>.</p>
-<h1 data-number="4" id="conclusion"><span
-class="header-section-number">4</span> Conclusion</h1>
-<p>Plugins enhance the flexibility of Recogito Studio, by making it
-possible for developers to extend the Recogito Studio client component
-with relative ease. The plugins developed to date have been developed by
-the members of the core development team, in collaboration with a range
-of external stakeholders.</p>
-<p>We hope that by reducing the barrier to entry for developers to get
-involved in the project, we can encourage a broader community of
-contributors to participate in the platform’s evolution and in turn make
-the platform more useful to a wider range of audiences.</p>
-<p>Since plugins can be developed using JavaScript, the world’s most
-widely used programming language, and independently of the core
-codebase, developers can focus on specific features or integrations
-without needing to understand the entire platform. A plugin mechanism
-with these characteristics offers one possible set of answers to the
-questions in our introduction.</p>
-<p>Since there is no permanent institutional support for the Recogito
-Studio project, we often <em>can’t</em> predictably sequence and
-prioritize features; rather, we must respond to requests which originate
-with adopters who can fund the features they require.</p>
-<p>In this context, implementing a smaller set of core features in the
-server component, and allowing developers to add new features easily to
-the client component as plugins removes the necessity of a more-rigid
-governance process. Hence, it makes sense to include only features that
-are clearly essential, or universally useful, in the core of the
-software; anything specific to a more esoteric use case should be
-implemented as a plugin, so it’s available to those who need it, without
-pulling the core feature set in a direction that is less than optimal
-for the more common use cases.</p>
-<p>For the more esoteric use cases, plugins remove constraints. There is
-a low technical barrier to entry for developers, and no requirement to
-achieve consensus with a dispersed user community to inform design and
-development. Plugins don’t take long to develop, which means that they
-are inexpensive, reducing the requirement to raise significant funding.
-Stakeholders whose requirements are similar to a point, but diverge
-subtly or significantly can develop and deploy whichever version of the
-feature they need.</p>
-<p>While annotation is a widely used technology, it takes innumerable
-forms, so it makes sense to provide a core set of features, and to allow
-adopters to define new features without consideration for how their
-requirements may affect others’ use cases. Developers should likewise be
-able to develop and deploy new features as plugins, without needing to
-modify the core codebase, and funders should be able to fund specific
-features or integrations as plugins, without needing to fund an entire
-platform.</p>
-<p>This plugin architecture supports these roles by making it easy for
-developers to add new features as plugins, without needing to modify the
-core codebase. While there is currently no funding or organizational
-capacity to support developer communications and other desirable
-activities, both developers and adopters have contributed time and
-effort to those maintenance tasks.</p>
-<p>We hope these factors will encourage adoption of Recogito Studio,
-allowing for rapid prototyping and deployment of new features, and there
-is evidence that it will, in the form of the several plugins developed
-by the community to date.</p>
+A full list of existing plugins with brief descriptions and links is available in Appendix <a href="#appdx:second_appendix_plugins">B</a>.</p>
+<h1 data-number="4" id="conclusion"><span class="header-section-number">4</span> Conclusion</h1>
+<p>Plugins enhance the flexibility of Recogito Studio, by making it possible for developers to extend the Recogito Studio client component with relative ease. The plugins developed to date have been developed by the members of the core development team, in collaboration with a range of external stakeholders.</p>
+<p>We hope that by reducing the barrier to entry for developers to get involved in the project, we can encourage a broader community of contributors to participate in the platform’s evolution and in turn make the platform more useful to a wider range of audiences.</p>
+<p>Since plugins can be developed using JavaScript, the world’s most widely used programming language, and independently of the core codebase, developers can focus on specific features or integrations without needing to understand the entire platform. A plugin mechanism with these characteristics offers one possible set of answers to the questions in our introduction.</p>
+<p>Since there is no permanent institutional support for the Recogito Studio project, we often <em>can’t</em> predictably sequence and prioritize features; rather, we must respond to requests which originate with adopters who can fund the features they require.</p>
+<p>In this context, implementing a smaller set of core features in the server component, and allowing developers to add new features easily to the client component as plugins removes the necessity of a more-rigid governance process. Hence, it makes sense to include only features that are clearly essential, or universally useful, in the core of the software; anything specific to a more esoteric use case should be implemented as a plugin, so it’s available to those who need it, without pulling the core feature set in a direction that is less than optimal for the more common use cases.</p>
+<p>For the more esoteric use cases, plugins remove constraints. There is a low technical barrier to entry for developers, and no requirement to achieve consensus with a dispersed user community to inform design and development. Plugins don’t take long to develop, which means that they are inexpensive, reducing the requirement to raise significant funding. Stakeholders whose requirements are similar to a point, but diverge subtly or significantly can develop and deploy whichever version of the feature they need.</p>
+<p>While annotation is a widely used technology, it takes innumerable forms, so it makes sense to provide a core set of features, and to allow adopters to define new features without consideration for how their requirements may affect others’ use cases. Developers should likewise be able to develop and deploy new features as plugins, without needing to modify the core codebase, and funders should be able to fund specific features or integrations as plugins, without needing to fund an entire platform.</p>
+<p>This plugin architecture supports these roles by making it easy for developers to add new features as plugins, without needing to modify the core codebase. While there is currently no funding or organizational capacity to support developer communications and other desirable activities, both developers and adopters have contributed time and effort to those maintenance tasks.</p>
+<p>We hope these factors will encourage adoption of Recogito Studio, allowing for rapid prototyping and deployment of new features, and there is evidence that it will, in the form of the several plugins developed by the community to date.</p>
 <h1 class="unnumbered" id="acknowledgments">Acknowledgments</h1>
-<p>We would like to acknowledge the contributions of the Recogito Studio
-design and development team, including but not limited to: Rainer Simon,
-Lorin Jameson, Chelsea Giordan and Steve Marvin. Many collaborators have
-participated in the codesign of the application, and their institutions
-have contributed significant funding to the project as well. Jann
-Mueller and Christian M. Stracke at the University of Bonn; Dino Felluga
-of the COVE Collective; Ed Triplett at Duke University; Fabrizio Nevola
-and Leif Isaaksen at University of Exeter; and Elton Barker of the
-Pelagios Network. The ATRIUM Project and Ruhr University Bochum have
-also adopted Recogito Studio and have provided funding for
-development.</p>
-<h1 class="unnumbered" data-number="A"
-id="appdx:first_appendix_resources"><span
-class="header-section-number">A</span> Resources</h1>
+<p>We would like to acknowledge the contributions of the Recogito Studio design and development team, including but not limited to: Rainer Simon, Lorin Jameson, Chelsea Giordan and Steve Marvin. Many collaborators have participated in the codesign of the application, and their institutions have contributed significant funding to the project as well. Jann Mueller and Christian M. Stracke at the University of Bonn; Dino Felluga of the COVE Collective; Ed Triplett at Duke University; Fabrizio Nevola and Leif Isaaksen at University of Exeter; and Elton Barker of the Pelagios Network. The ATRIUM Project and Ruhr University Bochum have also adopted Recogito Studio and have provided funding for development.</p>
+<h1 class="unnumbered" data-number="A" id="appdx:first_appendix_resources"><span class="header-section-number">A</span> Resources</h1>
 <ul>
-<li><p>Project Website &amp; Documentation: <a
-href="https://recogitostudio.org/"
-class="uri">https://recogitostudio.org/</a></p></li>
-<li><p>Plugin Template: <a
-href="https://github.com/recogito/plugin-template"
-class="uri">https://github.com/recogito/plugin-template</a></p></li>
-<li><p>Plugin SDK: <a
-href="https://github.com/recogito/recogito-studio-sdk"
-class="uri">https://github.com/recogito/recogito-studio-sdk</a></p></li>
-<li><p>Astro Website Framework: <a href="https://astro.build/"
-class="uri">https://astro.build/</a></p></li>
-<li><p>Supabase Platform: <a href="https://www.supabase.com/"
-class="uri">https://www.supabase.com/</a></p></li>
+<li><p>Project Website &amp; Documentation: <a href="https://recogitostudio.org/" class="uri">https://recogitostudio.org/</a></p></li>
+<li><p>Plugin Template: <a href="https://github.com/recogito/plugin-template" class="uri">https://github.com/recogito/plugin-template</a></p></li>
+<li><p>Plugin SDK: <a href="https://github.com/recogito/recogito-studio-sdk" class="uri">https://github.com/recogito/recogito-studio-sdk</a></p></li>
+<li><p>Astro Website Framework: <a href="https://astro.build/" class="uri">https://astro.build/</a></p></li>
+<li><p>Supabase Platform: <a href="https://www.supabase.com/" class="uri">https://www.supabase.com/</a></p></li>
 </ul>
-<h1 class="unnumbered" data-number="B"
-id="appdx:second_appendix_plugins"><span
-class="header-section-number">B</span> Existing Plugins</h1>
-<p>A current list of existing plugins can be accessed by visiting: <a
-href="https://github.com/recogito/?q=plugin">https://github.com/recogito/?q=plugin</a>.
-As of now, that list includes the following:</p>
+<h1 class="unnumbered" data-number="B" id="appdx:second_appendix_plugins"><span class="header-section-number">B</span> Existing Plugins</h1>
+<p>A current list of existing plugins can be accessed by visiting: <a href="https://github.com/recogito/?q=plugin">https://github.com/recogito/?q=plugin</a>. As of now, that list includes the following:</p>
 <ul>
-<li><p>Recogito Studio plugin that can perform Named Entity Recognition
-on TEI and Plain Text: <a href="https://github.com/recogito/plugin-ner"
-class="uri">https://github.com/recogito/plugin-ner</a></p></li>
-<li><p>Allows users to make a read-only annotation editable, by cloning
-it into the active layer: <a
-href="https://github.com/recogito/plugin-revisions"
-class="uri">https://github.com/recogito/plugin-revisions</a></p></li>
-<li><p>A plugin for exporting TEI annotations as inline markup: <a
-href="https://github.com/recogito/plugin-tei-inliner"
-class="uri">https://github.com/recogito/plugin-tei-inliner</a></p></li>
-<li><p>Use a Reconciliation Service API endpoint as a tag source in
-Recogito Studio projects: <a
-href="https://github.com/recogito/plugin-reconciliation-service"
-class="uri">https://github.com/recogito/plugin-reconciliation-service</a></p></li>
-<li><p>A custom annotation export for Duke University’s Unreal 3D
-importer: <a href="https://github.com/recogito/plugin-sandcastle-export"
-class="uri">https://github.com/recogito/plugin-sandcastle-export</a></p></li>
-<li><p>Recogito Geotagging Plugin: <a
-href="https://github.com/recogito/plugin-geotagging"
-class="uri">https://github.com/recogito/plugin-geotagging</a></p></li>
+<li><p>Recogito Studio plugin that can perform Named Entity Recognition on TEI and Plain Text: <a href="https://github.com/recogito/plugin-ner" class="uri">https://github.com/recogito/plugin-ner</a></p></li>
+<li><p>Allows users to make a read-only annotation editable, by cloning it into the active layer: <a href="https://github.com/recogito/plugin-revisions" class="uri">https://github.com/recogito/plugin-revisions</a></p></li>
+<li><p>A plugin for exporting TEI annotations as inline markup: <a href="https://github.com/recogito/plugin-tei-inliner" class="uri">https://github.com/recogito/plugin-tei-inliner</a></p></li>
+<li><p>Use a Reconciliation Service API endpoint as a tag source in Recogito Studio projects: <a href="https://github.com/recogito/plugin-reconciliation-service" class="uri">https://github.com/recogito/plugin-reconciliation-service</a></p></li>
+<li><p>A custom annotation export for Duke University’s Unreal 3D importer: <a href="https://github.com/recogito/plugin-sandcastle-export" class="uri">https://github.com/recogito/plugin-sandcastle-export</a></p></li>
+<li><p>Recogito Geotagging Plugin: <a href="https://github.com/recogito/plugin-geotagging" class="uri">https://github.com/recogito/plugin-geotagging</a></p></li>
 </ul>
 
       </div>
