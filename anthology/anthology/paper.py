@@ -768,6 +768,9 @@ class Paper:
         Updates the paper.tex file with volume, year, conference, editor,
         and page number information.
 
+        If the volume's "frozen" flag is set to true in metadata.json,
+        page numbers will not be updated.
+
         Args:
             page_start: Starting page number in the volume
             end_page: Ending page number in the volume
@@ -788,8 +791,12 @@ class Paper:
         updated_paper = fill_value(
             updated_paper, "conferenceeditors", self.volume_meta["conferenceeditors"]
         )
-        updated_paper = fill_value(updated_paper, "pagestart", str(page_start))
-        updated_paper = fill_value(updated_paper, "pageend", str(end_page))
+
+        # Only update page numbers if the volume is not frozen
+        if not self.volume_meta.get("frozen", False):
+            updated_paper = fill_value(updated_paper, "pagestart", str(page_start))
+            updated_paper = fill_value(updated_paper, "pageend", str(end_page))
+
         paper_file.write_text(updated_paper)
 
     def create_bibtex(self) -> None:
@@ -979,11 +986,34 @@ class Paper:
             convert_latex_to_unicode(abstract_latex) if abstract_latex else ""
         )
 
-        # Parse keywords into a list
+        # Parse keywords into a list and process each through pandoc
         keywords_str = pmeta.get("keywords", "")
-        keywords_list = (
-            [kw.strip() for kw in keywords_str.split(",")] if keywords_str else []
-        )
+        keywords_list = []
+        keywords_list_plain = []  # Plain text version for citation metadata
+        if keywords_str:
+            raw_keywords = [kw.strip() for kw in keywords_str.split(",")]
+            for kw in raw_keywords:
+                try:
+                    # Use Pandoc to convert each keyword from LaTeX to HTML
+                    kw_result = subprocess.run(
+                        ["pandoc", "-f", "latex", "-t", "html5", "--wrap=none"],
+                        input=kw,
+                        capture_output=True,
+                        text=True,
+                        check=True,
+                    )
+                    # Strip outer <p> tags from pandoc output
+                    processed_kw = kw_result.stdout.strip()
+                    if processed_kw.startswith("<p>") and processed_kw.endswith("</p>"):
+                        processed_kw = processed_kw[3:-4]
+                    keywords_list.append(processed_kw)
+
+                    # Also create a plain text version using convert_latex_to_unicode
+                    keywords_list_plain.append(convert_latex_to_unicode(kw))
+                except subprocess.CalledProcessError:
+                    # If conversion fails, use the raw keyword
+                    keywords_list.append(kw)
+                    keywords_list_plain.append(convert_latex_to_unicode(kw))
 
         # Prepare citation authors
         cite_authors = []
@@ -1073,7 +1103,7 @@ class Paper:
             cite_editors=cite_editors,
             cite_abstract=abstract_text_clean,
             cite_language="en",
-            cite_keywords=keywords_list,
+            cite_keywords=keywords_list_plain,
             cite_html_url=cite_html_url,
             cite_pdf_url=cite_pdf_url,
         )

@@ -745,9 +745,32 @@ def build(verbose, volume):
         # Get page count
         np = p.num_pages()
 
-        # Add metadata
-        p.add_metadata(page_start, page_start + np - 1)
-        page_start = page_start + np
+        # Check if volume is frozen
+        is_frozen = p.volume_meta.get("frozen", False)
+
+        if is_frozen:
+            # For frozen volumes, read existing page numbers from the TeX file
+            pmeta = p.get_latex_metadata()
+            existing_start = pmeta.get("publication_info", {}).get("pagestart")
+            existing_end = pmeta.get("publication_info", {}).get("pageend")
+
+            if existing_start and existing_end:
+                # Use existing page numbers (add_metadata will skip updating them)
+                p.add_metadata(int(existing_start), int(existing_end))
+                # Update page_start for next paper based on actual page count
+                page_start = int(existing_end) + 1
+                if verbose:
+                    click.echo(f"  Volume frozen: keeping existing pages {existing_start}-{existing_end}")
+            else:
+                # No existing page numbers, treat as unfrozen
+                if verbose:
+                    click.echo(f"  Warning: Volume marked as frozen but no existing page numbers found")
+                p.add_metadata(page_start, page_start + np - 1)
+                page_start = page_start + np
+        else:
+            # Add metadata with calculated page numbers
+            p.add_metadata(page_start, page_start + np - 1)
+            page_start = page_start + np
 
         # Second compilation with metadata
         success = p.compile_xelatex(verbose=verbose)
