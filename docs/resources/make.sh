@@ -8,6 +8,7 @@ rm ach-docx-en.zip
 rm ach-docx-fr.zip
 
 mkdir ach-latex-en
+cp template-latex/orcid.png ach-latex-en
 cp template-latex/640x480.png ach-latex-en
 cp template-latex/anthology-ch.cls ach-latex-en
 cp template-latex/bibliography.bib ach-latex-en
@@ -18,6 +19,7 @@ zip -r ach-latex-en.zip ach-latex-en
 rm -rf ach-latex-en
 
 mkdir ach-latex-fr
+cp template-latex/orcid.png ach-latex-fr
 cp template-latex/640x480.png ach-latex-fr
 cp template-latex/anthology-ch.cls ach-latex-fr
 cp template-latex/bibliography.bib ach-latex-fr

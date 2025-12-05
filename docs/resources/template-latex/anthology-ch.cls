@@ -58,9 +58,10 @@
     Scale=MatchLowercase
   ]
   % Redefine small caps commands to use Noto Serif
-  \let\oldtextsc\textsc
-  \renewcommand{\textsc}[1]{{\scfallbackfont\oldtextsc{#1}}}
-  \DeclareRobustCommand\scshape{\scfallbackfont\addfontfeature{Letters=SmallCaps}}
+  \AtBeginDocument{%
+    \renewcommand{\textsc}[1]{{\scfallbackfont\addfontfeature{Letters=SmallCaps}#1}}
+    \DeclareRobustCommand{\scshape}{\scfallbackfont\addfontfeature{Letters=SmallCaps}}
+  }
 \else
   % pdfLaTeX: Use tinos package
   \RequirePackage{tinos}
@@ -88,6 +89,11 @@
 \@frafalse  % Default is not French mode
 \DeclareOption{fra}{\@fratrue}
 
+% CREATE A CUSTOM OPTION WITH NO DEFAULT ACH HEADER/FOOTER
+\newif\if@custom
+\@customfalse  % Default is not French mode
+\DeclareOption{custom}{\@customtrue}
+
 \ProcessOptions\relax
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,8 +103,9 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % COMMANDS TO GRAB CUSTOM METADATA PRODUCED IN THE TEX FILE
-\newcommand{\@keywords}{}
-\newcommand{\keywords}[1]{\renewcommand{\@keywords}{#1}}
+\NewDocumentCommand{\keywords}{O{eng} m}{%
+  \expandafter\gdef\csname kw@#1\endcsname{#2}%
+}
 \newcommand{\@pubyear}{}
 \newcommand{\pubyear}[1]{\renewcommand{\@pubyear}{#1}}
 \newcommand{\@pubvolume}{}
@@ -115,6 +122,8 @@
 \newcommand{\conferenceeditors}[1]{\renewcommand{\@conferenceeditors}{#1}}
 \newcommand{\@doi}{}
 \newcommand{\doi}[1]{\renewcommand{\@doi}{#1}}
+\newcommand{\@customhead}{}
+\newcommand{\customhead}[1]{\renewcommand{\@customhead}{#1}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % STORING THE AUTHOR DATA
@@ -204,15 +213,25 @@
 \fancypagestyle{firstpage}{
   \fancyhf{} 
   \if@final
-    \fancyhead[L]{
-      \textbf{\small\textcolor{newgray}{Anthology of Computers and the Humanities, Vol. \@pubvolume}}
-    }
+    \if@custom
+      \fancyhead[L]{
+        \textbf{\small\textcolor{newgray}{\@customhead}}
+      }
+    \else
+      \fancyhead[L]{
+        \textbf{\small\textcolor{newgray}{Anthology of Computers and the Humanities, Vol. \@pubvolume}}
+      }
+    \fi
   \else
     \fancyhead[L]{
-      \if@fra
-        \textbf{\small\textcolor{newgray}{Anthology of Computers and the Humanities: En cours d'examen}}
+      \if@custom
+          \textbf{\small\textcolor{newgray}{\@customhead}} 
       \else
-        \textbf{\small\textcolor{newgray}{Anthology of Computers and the Humanities: Under Review}}
+        \if@fra
+          \textbf{\small\textcolor{newgray}{Anthology of Computers and the Humanities: En cours d'examen}}
+        \else
+          \textbf{\small\textcolor{newgray}{Anthology of Computers and the Humanities: Under Review}}
+        \fi
       \fi
     }
   \fi
@@ -239,34 +258,21 @@
 
 \if@final
   \if@fra
-    \newcommand{\@firstpagefootnote}{\footnotesize\@authornamesend. ``\@title.''\if\relax\detokenize\expandafter{\@conferencename}\relax\else\ \textit{\@conferencename}\if\relax\detokenize\expandafter{\@conferenceeditors}\relax\else, éd. par \@conferenceeditors\fi.\fi\ Vol. \@pubvolume. Anthology of Computers et the Humanities. \@pubyear, \@pagestart--\@pageend. \href{https://doi.org/\@doi}{https://doi.org/\@doi}.
+    \if@custom
+      \newcommand{\@firstpagefootnote}{\footnotesize \textcolor{newgray}{© 2025 par les auteurs. Sous licence \href{https://creativecommons.org/licenses/by/4.0/deed.fr}{Creative Commons Attribution 4.0 International (CC BY 4.0).}}}
+    \else
+      \newcommand{\@firstpagefootnote}{\footnotesize\begin{minipage}[t]{\linewidth}\@authornamesend. ``\@title.''\if\relax\detokenize\expandafter{\@conferencename}\relax\else\ \textit{\@conferencename}\if\relax\detokenize\expandafter{\@conferenceeditors}\relax\else, éd. par \@conferenceeditors\fi.\fi\ Vol. \@pubvolume. Anthology of Computers et the Humanities. \@pubyear, \@pagestart--\@pageend. \href{https://doi.org/\@doi}{https://doi.org/\@doi}.\par\vspace{0.5em}\par\ifx\@correspondingauthor\@empty\else\noindent Corresponding author: \@correspondingauthor\ (\href{mailto:\@correspondingemail}{\@correspondingemail})\par\vspace{0.5em}\par\fi\noindent\textcolor{newgray}{© 2025 par les auteurs. Sous licence \href{https://creativecommons.org/licenses/by/4.0/deed.fr}{Creative Commons Attribution 4.0 International (CC BY 4.0).}}\end{minipage}}
+    \fi
 
-  \vspace{0.5em}
-
-  \ifx\@correspondingauthor\@empty\else
-  \noindent
-  Corresponding author: \@correspondingauthor\ (\href{mailto:\@correspondingemail}{\@correspondingemail})
-
-  \vspace{0.5em}
-  \fi
-
-  \noindent
-  \textcolor{newgray}{© 2025 par les auteurs. Sous licence \href{https://creativecommons.org/licenses/by/4.0/deed.fr}{Creative Commons Attribution 4.0 International (CC BY 4.0).}}}
   \else
-    \newcommand{\@firstpagefootnote}{\footnotesize\@authornamesend. ``\@title.''\if\relax\detokenize\expandafter{\@conferencename}\relax\else\ In:~\textit{\@conferencename}\if\relax\detokenize\expandafter{\@conferenceeditors}\relax\else, ed. by \@conferenceeditors\fi.\fi\ Vol. \@pubvolume. Anthology of Computers and the Humanities. \@pubyear, \@pagestart--\@pageend. \href{https://doi.org/\@doi}{https://doi.org/\@doi}.
 
-  \vspace{0.5em}
-
-  \ifx\@correspondingauthor\@empty\else
-  \noindent
-  Corresponding author: \@correspondingauthor\ (\href{mailto:\@correspondingemail}{\@correspondingemail})
-
-  \vspace{0.5em}
+    \if@custom
+      \newcommand{\@firstpagefootnote}{\footnotesize \textcolor{newgray}{© 2025 by the authors. Licensed under \href{https://creativecommons.org/licenses/by/4.0}{Creative Commons Attribution 4.0 International (CC BY 4.0).}}}
+    \else
+      \newcommand{\@firstpagefootnote}{\footnotesize\begin{minipage}[t]{\linewidth}\@authornamesend. ``\@title.''\if\relax\detokenize\expandafter{\@conferencename}\relax\else\ In:~\textit{\@conferencename}\if\relax\detokenize\expandafter{\@conferenceeditors}\relax\else, ed. by \@conferenceeditors\fi.\fi\ Vol. \@pubvolume. Anthology of Computers and the Humanities. \@pubyear, \@pagestart--\@pageend. \href{https://doi.org/\@doi}{https://doi.org/\@doi}.\par\vspace{0.5em}\par\ifx\@correspondingauthor\@empty\else\noindent Corresponding author: \@correspondingauthor\ (\href{mailto:\@correspondingemail}{\@correspondingemail})\par\vspace{0.5em}\par\fi\noindent\textcolor{newgray}{© 2025 by the authors. Licensed under \href{https://creativecommons.org/licenses/by/4.0}{Creative Commons Attribution 4.0 International (CC BY 4.0).}}\end{minipage}}
+    \fi
   \fi
 
-  \noindent
-  \textcolor{newgray}{© 2025 by the authors. Licensed under \href{https://creativecommons.org/licenses/by/4.0}{Creative Commons Attribution 4.0 International (CC BY 4.0).}}}
-  \fi
 \else
   \if@fra
     \newcommand{\@firstpagefootnote}{L'article en cours d'examen.
@@ -305,38 +311,71 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % DEFINE THE ABSTRACT ENVIRONMENT
 \renewenvironment{abstract}{%
-  \normalsize
-  \begin{center}
     \if@fra
-      \bfseries Résumé
+        \selectlanguage{english}
+        \normalsize 
+        \begin{center}
+            \bfseries Abstract
+        \end{center}
     \else
-      \bfseries Abstract
+        \normalsize 
+        \begin{center}
+            \bfseries Abstract
+        \end{center}
     \fi
-  \end{center}
   \small
   \quotation\par\noindent\ignorespaces
 }{
-  \if@fra
-    {\\\\\textbf{Mots-clés:} \@keywords}
+  % Add blank line before keywords if any exist
+  \ifcsname kw@fra\endcsname
+    \\\\%
   \else
-    {\\\\\textbf{Keywords:} \@keywords}
+    \ifcsname kw@eng\endcsname
+      \\\\%
+    \fi
   \fi
-  \endquotation
-  \vspace{1em}
+  % Display French keywords
+  \ifcsname kw@fra\endcsname
+    {\textbf{Mots-clés:} \csname kw@fra\endcsname}%
+    \ifcsname kw@eng\endcsname
+      \\%
+    \fi
+  \fi
+  % Display English keywords
+  \ifcsname kw@eng\endcsname
+    {\textbf{Keywords:} \csname kw@eng\endcsname}%
+  \fi
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CONFIGURE PDF METADATA
 \AtBeginDocument{%
-  \hypersetup{
-    pdftitle={\@title},
-    pdfauthor={\@authornames},
-    pdfsubject={Anthology of Computers and the Humanities, Vol. \@pubvolume},
-    pdfkeywords={\@keywords},
-    pdfcreator={XeLaTeX with anthology-ch.cls},
-    pdfproducer={XeLaTeX with hyperref},
-  }
+  \if@custom
+    \ifcsname kw@eng\endcsname
+      \hypersetup{%
+        pdftitle={\@title},
+        pdfauthor={\@authornames},
+        pdfcreator={XeLaTeX with anthology-ch.cls},
+        pdfproducer={XeLaTeX with hyperref},
+      }%
+    \else
+      \hypersetup{%
+        pdftitle={\@title},
+        pdfauthor={\@authornames},
+        pdfcreator={XeLaTeX with anthology-ch.cls},
+        pdfproducer={XeLaTeX with hyperref},
+      }%
+    \fi
+  \else
+    \hypersetup{%
+      pdftitle={\@title},
+      pdfauthor={\@authornames},
+      pdfsubject={Anthology of Computers and the Humanities, Vol. \@pubvolume},
+      pdfcreator={XeLaTeX with anthology-ch.cls},
+      pdfproducer={XeLaTeX with hyperref},
+    }%
+  \fi
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
