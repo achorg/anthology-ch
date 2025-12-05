@@ -77,6 +77,8 @@
 \RequirePackage{xcolor}
 \RequirePackage{xparse}
 \RequirePackage[hidelinks]{hyperref}
+\RequirePackage{silence}
+\WarningFilter{hyperref}{Ignoring empty anchor}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CREATE A DRAFT OPTION THAT WE SET WHEN THIS IS THE FINAL VERSION
@@ -254,7 +256,7 @@
 \noindent
 \mbox{\textsuperscript{\@thefnmark}~}{#1}}
 
-\newcommand{\firstpagefootnote}[1]{\gdef\@firstpagefootnote{#1}}
+\newcommand{\firstpagefootnote}[1]{\begin{NoHyper}\gdef\@firstpagefootnote{#1}\end{NoHyper}}
 
 \if@final
   \if@fra
