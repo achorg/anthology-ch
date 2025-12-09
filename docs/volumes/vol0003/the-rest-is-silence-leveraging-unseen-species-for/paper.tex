@@ -70,12 +70,10 @@ cultural objects and artefacts, often gathered in observational rather than cont
 Found distributions of these objects are thus heavily shaped by uncertainties associated with historical transmission processes, including missingness (e.g. because something lies hidden in some basement) or loss (e.g. because a library burnt down). What's worse, if there is no external record about a missing or lost item, there is no way of knowing that it had ever existed. In order to understand the representativeness of observed samples in the humanities, it is thus of great interest to be able to gauge how much we should expect to be missing.
 
 This problem structurally resembles similar issues in species ecology, where researchers need to estimate the number of species from a limited set of incomplete samples. These belong to the class of Unseen Species models (USMs), which have recently been employed in cultural contexts as well: in computational literary studies, for estimating the true size of Shakespeare's vocabulary \cite{Efron1976_EstimatingNumberUnseen},
-
 most prominently in a comparative study of loss of medieval chivalric epics across different European cultures \cite{kestemont2022unseen},
 loss in mid-19th century Russian poetry \cite{martynenko2023unreadPoetry}, or library records \cite{koeser2024speculativeReading}. Beyond literary studies, the size of the Dutch East India Company \cite{wevers2022unseenSailor} or the population of a specific prison in Brussels \cite{karsdorp2024beyond}.
 In musicology, these have been used to compare the diversities of secular and sacred late medieval Italian repertoire \cite{cuthbert2009iceberg}. While awareness of this ``borrowing'' from ecology is growing, the potential of these models to give a better grasp of the unknown, to guide quantitative musicological research, and to provide new insights for data collection efforts is far from realised.
 
-%\clearpage
 In this contribution, we probe the usefulness of USMs for musicology in four different case studies using sets of musicological data. We aim to demonstrate what kinds of questions can be addressed by applying USMs in music research, and to provoke discussions about the strengths and limits of this approach.
 
 To that end, we first introduce the methodology in Section~\ref{sec:methods}, and apply it to four musicological case studies in Section~\ref{sec:compmus}, namely the RISM and Cantus databases (Section~\ref{sec:RISM_Cantus}), a dataset of differences between 19th-century music prints (Section~\ref{sec:differences}), a dataset of folks music sessions (Section~\ref{sec:sessions}), and, finally, a large corpus of harmonic annotations in pieces from different composers (Section~\ref{sec:vocabulary}). We discuss our results in Section~\ref{sec:discussion} and conclude with their implications and potential for (computational) musicology (Section~\ref{sec:conclusion}).
@@ -94,114 +92,86 @@ This question is critical to the representativeness of musicological data. For e
 
 \paragraph{Modeling the abundance of species --- cultural units.}
 In virtually any kind of collection of cultural objects, some units are highly abundant (very common; e.g., the same composition occurs in many manuscripts, the same song is known across an entire region, the same musical patterns occurs over and over in a composer's work), while others are rare, possibly occurring only once or twice. The (unknown) probability to encounter an instance of a certain unit --- observing a specimen of a species --- is thus proportional to the number of times that unit occurs in the whole tradition (also generally unknown). This is called the \textit{relative abundance} (or relative frequency) $p_i$ of a unit $i$, and probability theory ensures that $p_i\geq 0$ and $\sum_i p_i = 1$, for $i=1,\dots, S$, where $S$ stands for the total number of cultural species (the quantity of interest here).\footnote{Relative abundances have been generalised to cover also the probability of species being detected in the first place \cite{chao2017deciphering}.}
-
 For an observed collection of $n$ cultural units $i$ with abundances $X_i$, it holds that
-
 \begin{align}
 \sum_{i = 1 \dots S} X_i = n.
 \end{align}
-
 For some --- possibly even most --- species, $X_i=0$, i.e. they are not observed.
-
 While they were at some point present, written down or perhaps sung by someone, they don't figure in the particular dataset/catalog/songbook observed.
 The \textit{absolute frequency} of species with a particular abundance $r$ is defined as:
-
 \begin{align}
 f_r = \left|\{X_i\mid X_i=r\}\right|.
 \end{align}
-
 This implies that $f_1$ is the number of species observed only once (singletons)\footnote{In the context of corpus studies in natural language processing (NLP), singletons are sometimes called \textit{hapax legomena} (Greek for `read only once')~\cite{Manning2003_FoundationsStatisticalNatural}.} and $f_2$ is the number of species observed twice (doubletons). With $f_0$ we denote the (unknown) number of species that was not observed. It logically follows that the total number of distinct species observed in the sample, $S_{\mathrm{obs}}$, is given by
-
 \begin{align}
 S_{\mathrm{obs}} = \sum_{r = 1 \dots \infty} f_r. \label{eq:Sobs}
 \end{align}
-
 This, finally, allows us to define our quantity of interest, $S$: the true size of the musical tradition (for which we are only looking at a limited sample) measured in terms of the number of distinct musical items (songs, manuscripts, harmonies, etc.). It is simply the number of items observed plus the number of items not observed:
-
 \begin{align}
 S = S_{\mathrm{obs}} + f_0.  \label{eq:4}
 \end{align}
-
 Since $S_{\mathrm{obs}}$ is known (Eq.~\ref{eq:Sobs}) and the true value of $f_0$ cannot be known, finding $S$ relies on  estimating $f_0$ based on limited samples. Estimating $f_0$ is where individual Unseen Species models from ecology come into play.
 
 \paragraph{Modeling species incidence.}
 For some musicological scenarios, it seems more appropriate to track \textit{incidence}, i.e., the presence or absence of some musical unit in a sample, instead of counting how many times each individual species was observed.
-
 Incidence-based models look at $m$ different samples and re-define $f_r$ to represent the number of species observed in $r$ samples (instead of $r$ times in a single sample in the case of species abundance).
-
 We only care about \textit{whether} a cultural unit has appeared in a sample.
 
 Decisions such as choosing between abundance and incidence are the responsibility of the experiment designer(s) and depend on factors that can better be addressed by theory than by empiricism~\cite{deffnerBridgingTheoryData2024}.
 
 \paragraph{Chao estimators.}
 Popular estimators for species abundance and incidence are the Chao estimators \cite{chao1984estimator}, which have already been applied in the computational humanities~\cite{karsdorpIntroducingFunctionalDiversity2022,kestemont2022unseen}. Among those, ``Chao1''\footnote{
-Other common methods are the Abundance Coverage Estimator (ACE)~\cite{chao2004ace}, Jackknife~\cite{smith1984jackknife}, and Good-Toulmin estimators~\cite{orlitsky2016optimal,hao2020multiplicity}. Here, we opt for using Chao estimators because a) they provide a conservative lower bound \cite{kestemont2022unseen}; b) because they have already been used in other applications of the unseen species model to the humanities; and c) because they are straightforward to compute; and d) because their interpretation naturally flows from their formal logic. A python impelementation is available in the \texttt{Copia} library \cite{karsdorpIntroducingFunctionalDiversity2022}.
-
-}
+Other common methods are the Abundance Coverage Estimator (ACE)~\cite{chao2004ace}, Jackknife~\cite{smith1984jackknife}, and Good-Toulmin estimators~\cite{orlitsky2016optimal,hao2020multiplicity}. Here, we opt for using Chao estimators because a) they provide a conservative lower bound \cite{kestemont2022unseen}; b) because they have already been used in other applications of the unseen species model to the humanities; and c) because they are straightforward to compute; and d) because their interpretation naturally flows from their formal logic. A python impelementation is available in the \texttt{Copia} library \cite{karsdorpIntroducingFunctionalDiversity2022}.}
 is one particular way of estimating $S$ from the relative frequency counts $f_r, r > 0$.
-
 It is formally defined as:
 \begin{align}
 S = S_{\mathrm{obs}} + \frac{f_1^2}{2 \cdot f_2}, \label{eq:5}
 \end{align}
-
 that is, it estimates the number of species yet unseen from the numbers of species observed only once or twice.\footnote{In cases where both abundance and incidence is studied, $f_r$ for incidence is commonly denoted by $Q_r$, and the incidence-based estimator is called ``Chao2''~\cite{chao1984estimator,chao2017deciphering}.}
 From Equations~\ref{eq:4} and~\ref{eq:5} follows that the number of unseen species is given by
-
 \begin{align}
 f_0 = \frac{f_1^2}{2 \cdot f_2} = S - S_{\mathrm{obs}},
 \end{align}
-
 and we define \textit{species coverage} (the overall ratio of species already observed) as
-
 \begin{align}
 \hat{c}=\frac{S_{\mathrm{obs}}}{S}.
 \end{align}
 
 As mentioned above, the estimator is based solely on the count of singletons ($f_1$) and doubletons ($f_2$).
 The basic intuition behind this assumption is that distributions of counts
-
 usually have
 a `long tail': few items occur very frequently and many items occur rarely~\cite{clausetPowerLawDistributionsEmpirical2009}, and the probability mass available for yet unseen species should follow from the length of the tail.\footnote{A constructive proof derived from Good-Turing smoothing \cite{good1953smoothing,gale1995good} is provided in \cite{chao2017deciphering}.}
 
 Crucially, this estimator is non-parametric \cite{chao1984estimator}: it can be used regardless of the underlying distribution of relative abundances or incidences $p_i$. This is crucial because this distribution is usually unknown and allows for the application of Chao1 across a wide range of research areas.
-
 The Chao estimates for $f_0$ are lower bounds \cite{chao2017deciphering}: they provide the \textit{minimum} expected number of unseen species (we could still be missing more). Consequently, the estimated species coverage constitutes an \textit{upper} bound: a value of 0.5 means that we have observed \textit{at most} half of all the musical species in some collection or repertoire.
 
 \paragraph{Relationship to Type-Token Ratio.}
-
 We also provide the numbers of types ($n_t$) and tokens ($n_T$) --- corresponding to incidence and abundance data, respectively --- for the respective corpora to calculate the the type-token ratio ($\text{TTR} = N_t/N_T$) that has been used in computational linguistics and computational humanities to characterise lexical diversity \cite{milickaRankfrequencyRelationTypetoken2012}.
 
 TTR only considers the global number of tokens and thus corresponds to the expected number of individuals per species under a uniform model.
 While both Chao1 and TTR characterise diversity from categorically distributed data, their relation is not straight-forward.
 A dataset with a few very dominant ``species'' but many rare ones may have a low TTR ratio but at the same time a high estimated proportion of unseen species; a dataset where everything occurs twice or a few times but rarely just once will have very low $f_0$ estimate but a high TTR.
-
 As they both do relate to underlying diversity, we do expect TTR and Chao1 to still be
 correlated, but
-
 one should not expect this correlation to be particularly strong.
 
 \section{Applications for Computational Musicology}\label{sec:compmus}
 
 A crucial step in applying Unseen Species Models from ecology to cultural contexts in the humanities in general and to musicology in particular is to draw convincing analogies of what the concept of species corresponds to.
-
 Here, we draw an analogy between biological species and some music(ologic)al entity in four case studies relevant for different branches of musicological research. We start by looking at unseen composers and repertoire in large collections of music sources (historical musicology), move on to differences in music prints (music philology), followed by analyzing sessions of folk musicians (ethnomusicology) and harmonic vocabularies in different repertoires (music theory).
 
 \subsection{Case Study 1: Databases and archives}
 \label{sec:RISM_Cantus}
 
 Empirical conclusions drawn about a musical tradition from a database rely on its representativeness. While one cannot know what is not represented in a database (this effort could just be spent better by adding the given items to the database!), we can use the Unseen Species models to estimate \textit{how much} of whatever entity we define as the ``species'' is not covered by the data source. We can thus quantify how much ``cultural diversity'' has not yet been documented.
-
 We present here reports from two of the largest musicological databases: RISM, by far the largest database of musical sources, and the Cantus database of Gregorian chant.
 
 \subsubsection{RISM: Counting composers}
 
 How many composers were active in Europe since the Renaissance?
 How many composers are we still to discover whose works lie undetected on some attic or archive shelf?
-
 There is no better database to answer such questions than the \textit{Répertoire International des Sources Musicales} (RISM),\footnote{\url{https://rism.online/}} a database of more than 1,500,000 musical sources assembled across nearly 3,000 holding institutions.
 In this setting, each composer (identified by a RISM authority record) can be thought of as a species, and the presence of a composer's work in a source catalogued in RISM is then an observation of that species.
-
 For a given institution, the composer observation count is the number of sources held by that institution in which the composer appears.
 
 The resulting dataset contains records for 48,524 composers\footnote{In the usual sense of the term: persons who are identified as authors of written musical works. We do not consider phenomena such as recording folk musics, or rather: we accept editorial decisions made by those who catalogued records in RISM.} with works observed across 2,933 holding institutions, with a total of 2,009,343 observations of composers appearing in sources.\footnote{This includes reprints, but a reprint is in fact a valid sign of the underlying ``abundance'' of a composer.}
@@ -235,7 +205,6 @@ We compute the TTR and Chao1 coverage $S_{\text{obs}} / S$ for each RISM institu
 The Cantus database\footnote{\url{https://cantusdatabase.org/}} is a large-scale project for cataloguing Gregorian chant that has been running since the mid-1980s \cite{lacoste2012cantus, lacoste2022cantus}. It primary mechanism is the Cantus ID, which identifies instances of the same chant --- element of Gregorian repertoire --- across multiple manuscripts. Cataloguing a manuscript means primarily assigning Cantus IDs to all chants recorded therein. Chant manuscripts often have more than 1,500 chants, so cataloguing even a single manuscript requires considerable effort.
 
 Gregorian chant was --- is --- an immense tradition.
-
 Despite the initial Carolingian project of Gregorian chant as a tightly controlled expression of a common identity \cite{hiley1993western}[p.514--523],
 over the centuries and across Latin Europe, repertoire choices diversified greatly, to the extent that one can often identify the provenance of a manuscript directly from the repertoire choices. This combination of diversity and scale permits one to think of the Gregorian tradition in terms of ecology, and ask: to what extent has the Cantus database covered the existing ``biodiversity'' of chant?
 
@@ -276,19 +245,13 @@ over the centuries and across Latin Europe, repertoire choices diversified great
 \end{table}
 
 In this abstraction, the Cantus IDs are species, and manuscripts serve as samples. We ask: how much of chant repertoire has been catalogued, and how much remains to be discovered?
-
 Chant repertoire is categorised according to \textit{genre}, its function in liturgy. For example: antiphons are short and simple chants that are sung before and after psalms; responsories are longer and more ornate chants that are sung between blocks of psalm-antiphon pairs.
-
 Individual chant genres had a varied history as liturgy developed: for instance, the Offertory verses (a genre sung in Mass) fell out of use after the 13th century \cite[p.121]{hiley1993western}. It therefore makes sense to quantify the (in)completeness of the Cantus database according to the individual main genres.
 
 In this case study, we apply an incidence-based approach over abundance. Instead of counting how many times each Cantus ID appeared in the dataset, we count its presence or absence in manuscripts.
-
 A chant recorded in only one source, even if used twice or more times, is still considered a singleton and contributes to $f_1$.
-
 Preferring incidence follows naturally from the structure of chant data. Each manuscript acts as a sample from one site: a particular ecclesiastical community.
-
 A chant being used in more than one liturgical position in a certain church should not necessarily imply the particular chant would be more likely to be used in other churches.
-
 We use CantusCorpus~v0.2 \cite{cornelissen2020studying}, a dataset derived from the Cantus database that is most widely used for computational chant research \cite{cornelissen2020mode,helsen2021sticky,lanz2023,lanz2025modality}.
 
 We report the Chao1 upper bounds on coverage for individual genres on CantusCorpus~v2.0 in \autoref{tab:cantuscorpus:results}. The genres of chant for one type of liturgy, the Divine Office (upper section of \autoref{tab:cantuscorpus:results}), exhibit overall lower maximum coverage than the chants for Mass (lower section of \autoref{tab:cantuscorpus:results}) This is quantitative confirmation that Mass repertoire was more stable, possibly because the Mass is a public liturgy while the Divine Office is primarily a private prayer for the clergy, and thus changing Office repertoire may have been easier (though still with bureaucracy involved \cite{hallas2021offices}), though interestingly the Introit genre, which starts the Mass, seems to be covered less well.
@@ -317,11 +280,9 @@ Neither the Type-Token Ratio, nor its incidence-based analogy Sample-Type Ratio,
 In this case study, we examine visual/notational differences between six editions of Beethoven's Bagatelles Op. 33, Nos. 1—5. The editions we used are the first print by Bureau d'Arts [sic] et d'Industrie (c. 1803), Zulehner (c. 1808), André (c. 1825), Schott (c. 1826), Haslinger (c. 1845) and Breitkopf~\&~Härtel (1864).\footnote{All the editions can be found online at the Beethoven Haus Bonn (\url{https://tinyurl.com/BeethovenhausOp33}) except for the Breitkopf edition which can be found via the Petrucci Music Library (\url{https://imslp.org/wiki/7_Bagatelles,_Op.33_(Beethoven,_Ludwig_van)}.}
 The data for this analysis consists of files containing the results of comparisons of different MEI encodings of the six editions.
 Through comparisons using the Python tool \texttt{musicdiff}~\cite{Foscarin2019},\footnote{\url{https://github.com/gregchapman-dev/musicdiff.git}} we obtained the differences between each pair of encodings\footnote{Find the encodings here: \url{https://github.com/CorpusBeethoviensis/beethoven-diff-docker.git}} from which we extract the kinds and numbers of differences that occur.
-
 The Bagatelles contain a total of $38,785$ differences, summed across the six editions of each of the seven Bagatelles (for a total of $15 \times 7 = 105$ pairwise comparisons). There are $81$ different types of differences.
 
 Some types differences are illustrated in Figure~\ref{fig:editions}. It shows bars 25--26 from the 5th Bagatelle in the editions of Breitkopf \& Härtel and Schott. In the edition on the left (Breitkopf) the melody in the right hand is split across staffs.
-
 On the right, the same melody is printed in the lower staff (with one exception). There are also less obvious differences: the numbers to indicate triplets in the left hand in the first bar of the Breitkopf edition are omitted by Schott, slurs placed above two notes in the Breitkopf edition are below in the Schott edition, and symbols of quarter rest are different.
 
 \begin{figure}[h]
@@ -341,13 +302,10 @@ On the right, the same melody is printed in the lower staff (with one exception)
 For most of the transmission history of these works---and music in general---, prints played a crucial role, and they heavily influenced the way the broad interested public got to know them \cite{Lewis2024}. The process of copying music throughout this history affects the musical text by intentionally or accidentally introducing variants \cite{Grier1995}. Some printed notational variants do not affect the performance, like the one shown in Figure~\ref{fig:editions}.
 
 Despite the importance of prints for the historical reception of music, in musicological research, they are often regarded as less important than other sources like manuscripts, though the reception of music can heavily influence our own perception of these historical works today~\cite{Nachtwey2024}.
-
 The species in this case study are the types of differences found in comparing all pairs of editions of each Bagatelle.
 The question of unseen species in this case study is: how complete is this set of differences?
 
-Compared to the previous case study, here the unseen species problem is not the representativeness of a sample of material, but a quantitative introspection of a constructed ontology. The implications of high coverage in such a context would be that
-
-very few new categories are likely missed, and therefore the given ontology can potentially be applied to a larger corpus as-is (e.g., via a machine learning model).
+Compared to the previous case study, here the unseen species problem is not the representativeness of a sample of material, but a quantitative introspection of a constructed ontology. The implications of high coverage in such a context would be that very few new categories are likely missed, and therefore the given ontology can potentially be applied to a larger corpus as-is (e.g., via a machine learning model).
 
 The Chao1 estimate for the combined Bagatelles data is $S = 85$ $(-9.3, +26.5)$. With $S_{obs} = 81$, that means that the coverage of the differences ontology is nearly $0.947 (-0.22, +0.12)$.\footnote{The upper bound of the coverage derived from the CI on $S$ is over 100 \% with respect to the true because of boundary effects in the bootstrap procedure when $S_obs$ is very close to $S$.} This is an upper bound, so the true coverage may be lower, but it is unlikely that the ontology still has significant blind spots, though the lower bound based on the CI does communicate some risk.
 
@@ -367,7 +325,6 @@ of these meetings,
 and moreover hosts a rich database of tunes that its users have added,
 including melodies of Irish tunes and their genres, such as Reel, Jig, Polka, Waltz, etc.
 Exports of the site's database are publicly available on GitHub.\footnote{\url{https://github.com/adactio/thesession-data}}
-
 It has been shown that population size is an important factor for melodic variety~\cite{streetRolePopulationSize2022}.
 Specifically, while popular tunes recorded in the Sessions data set show higher variation of melodic complexity in their different settings,
 popularity is also strongly related to \textit{intermediate} complexity of tunes. Given this mainly performer-centered view, the tunes themselves have received somewhat less attention.
@@ -388,7 +345,6 @@ whereas the Mazurka coverage is lowest, at approx. 53.2\%
 --- not too surprising, given that Mazurkas are originally a Polish dance form.
 Taken together, the tunes recorded in the entire Session
 dataset are estimated to cover about 76.1\% of the entire Irish tunes repertoire.
-
 We can interpret this as showing that \textit{The Session} project is successful at documenting and representing the living tradition of Irish music sessions.
 
 \begin{table}[]
@@ -423,9 +379,7 @@ In this case study, we use for the first time an estimator derived in the contex
 to estimating what's still missing from empirical distributions of chords.
 
 The recently published \textit{Distant Listening Corpus} (DLC v2.3)~\cite{Hentschel2025_CorpusModularInfrastructure} consists currently of 40 sub-corpora, some of which had been previously published separately~\cite{neuwirthAnnotatedBeethovenCorpus2018,hentschelAnnotatedMozartSonatas2021b,hentschelAnnotatedCorpusTonal2023}. It encompasses 1,238 score encodings by 36 composers from the extended tonal tradition (c. 1550--1945). Each piece has been analyzed by music theory experts using harmonic labels conforming to an elaborate annotation scheme based on Roman numerals.\footnote{\url{https://dcmlab.github.io/standards/}} In total, there are 6,015 \textit{different} chord types (species), with a total abundance of 246,166 chords.
-
 Table~\ref{tab:composers} in Appendix~\ref{appdx:tables} gives an overview, showing the composers' names and their birth and death dates, the numbers of chord types and tokens as well as the type-token ratio (TTR) of their works contained in the DLC. Moreover, the numbers of singletons and doubletons, and the estimated coverage based on Chao1 are shown, too. Each row shows values for a particular composer, and the last row shows these values for the aggregated corpus.
-
 Taking all DLC corpora together, the Chao1 estimator asserts that almost 70 \% of the total harmonic vocabulary have been covered by this massive annotation effort, providing at the same time encouragement for its continuation.
 
 Figure~\ref{fig:diachronic_composers} compares the Chao1-based estimates of species coverage (blue) with the TTR values (orange) for each composer in the DLC.\footnote{DLC sub-corpora by the same composer were merged.} In order to facilitate the visual comparison, the figure shows $1 - \text{TTR}$. For both quantities, we added a quadratic regression; error bands represent a 95\% confidence interval based on bootstrap samples of the data.\footnote{See \url{https://seaborn.pydata.org/generated/seaborn.regplot.html} for details.} The error for the Chao1 estimates fluctuates more because the values are more widely dispersed, especially in the second half of the timeline. The Pearson correlation between the two sets of datapoints is $\rho=.32$ ($p\approx.05$), indicating a positive but weak association, as expected.
@@ -448,18 +402,13 @@ numbers of unseen species in a range of cultural contexts that are commonplace i
 We have looked at two of the largest musicological databases, RISM and Cantus, and estimated
 how many new composers and chants, respectively, we should still expect to encounter when continuing these cataloguing efforts.
 We have looked at the practice of 19th-century music prints and notational differences between them caused by to editorial intervention or pure chance, and have provided a principled answer to the question of how complete an ontology of these differences is.
-
 In the domain of music performance, we have analyzed data about Irish folk music sessions and the repertoire coverage between different sub-genres. Interestingly, across nearly all genres, coverage was higher in The Session data than it is for chant genres in Cantus, possibly indicating the strength of crowdsourcing by practitioners compared to expert efforts --- or raising questions about how restrictive the ecclesiastical regulatory framework for chant in fact may have been compared to a tradition with less defined boundaries.
-
 Finally, addressing music theory, we have looked at the size of harmonic vocabularies of a great number of composers from the Renaissance onward.
 
 What have we learned from all of this? First of all: recognizing structural similarities between vastly different fields enables the transfer of methods and can lead to opening up entirely new avenues of research.
-
 Second, using the Chao1 estimators is simple: it involves only combining two easily computable quantities, the numbers of singletons and doubletons. This methods is accessible without training in formal methods.
-
 Third, Unseen Species models
 can be useful proxies in assessing whether and where usually scarce resources should be put to use. Their estimates can differ significantly from other measures of dataset diversity, as we illustrate by comparing Chao1 coverage upper bounds and TTR.
-
 One must be careful in how exactly these models are applied: for instance, the population of interest is assumed to be sampled with replacement, which is not a safe approximation if the sample size approaches an appreciable fraction of the total population \cite{wevers2022unseenSailor} (where Chao1 would over-estimate the species richness lower bound). The assumption that one is homogeneously sampling a single population also may not hold.
 
 \section{Conclusions}\label{sec:conclusion}
