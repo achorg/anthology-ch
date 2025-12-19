@@ -173,7 +173,7 @@ def run_xelatex(output_dir: Path, verbose: bool = False) -> bool:
     if result4.stdout:
         missing_entries = extract_missing_bibliography_entries(result4.stdout)
         if missing_entries:
-            print(f"⚠️  Missing bibliography entries in {output_dir.name}:")
+            print(f"Missing bibliography entries in {output_dir.name}:")
             for entry in missing_entries:
                 print(f"   - {entry}")
 
