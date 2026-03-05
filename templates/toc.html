@@ -63,7 +63,7 @@
         {% for volume in volumes %}
           <li>
             <a href="{{ volume.url }}" class="toc-link">
-              <b>Volume {{ volume.pubvolume }}{% if volume.conferencename %}: {{ volume.conferencename }}{% endif %}</b>
+              <b>Volume {{ volume.pubvolume }}{% if volume.conferencename and volume.conferencename|length > 1 %}: {{ volume.conferencename }}{% endif %}</b>
               <span class="icon is-small">
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -74,7 +74,7 @@
                 </svg>
               </span>
             </a><br>
-            <span class="has-text-grey">{{ volume.date }}{% if volume.conferenceeditors %} · Edited by {{ volume.conferenceeditors }}{% endif %}</span>
+            <span class="has-text-grey">{{ volume.date }}{% if volume.conferenceeditors and volume.conferenceeditors|length > 1 %} · Edited by {{ volume.conferenceeditors }}{% endif %}</span>
             {% if volume.num_papers %}
             <span class="has-text-blue"> · {{ volume.num_papers }} paper{% if volume.num_papers != 1 %}s{% endif %}</span>
             {% endif %}

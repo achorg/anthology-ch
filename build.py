@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from datetime import date
 from pathlib import Path
 import subprocess
@@ -18,8 +19,8 @@ TEMPLATE_ENV.globals["year"] = date.today().year
 
 
 def latex_to_html(latex_str, scalar=True):
-    if scalar and "\\" not in latex_str:
-        return latex_str
+    # if scalar and "\\" not in latex_str:
+    #     return latex_str
 
     result = subprocess.run(
         ["pandoc", "-f", "latex", "-t", "html"],
@@ -31,6 +32,8 @@ def latex_to_html(latex_str, scalar=True):
 
     if scalar and html.startswith("<p>") and html.endswith("</p>"):
         html = html[3:-4]
+    else:
+        html = re.sub(r'<p>\s*</p>', '', html)
 
     return html
 
@@ -91,7 +94,11 @@ def create_metadata_table():
 
     for paper in papers:
         #try:
-            sp = TexSoup(paper.read_text(), tolerance=1)
+            raw_tex = paper.read_text()
+            sp = TexSoup(raw_tex, tolerance=1)
+
+            abstract_match = re.search(r'\\begin\{abstract\}(.*?)\\end\{abstract\}', raw_tex, re.DOTALL)
+            abstract_latex = abstract_match.group(1).strip() if abstract_match else ""
 
             df_paper.append(pl.DataFrame({
                 "title": latex_to_html(" ".join(sp.find("title").text)),
@@ -103,10 +110,7 @@ def create_metadata_table():
                 "conferencename": " ".join(sp.find("conferencename").text),
                 "conferenceeditors": " ".join(sp.find("conferenceeditors").text),
                 "doi": " ".join(sp.find("doi").text),
-                "abstract": latex_to_html(
-                    " ".join(sp.find("abstract").text),
-                    scalar=False
-                ),
+                "abstract": latex_to_html(abstract_latex, scalar=False),
                 "keywords": latex_to_html(" ".join(sp.find("keywords").text) if sp.find("keywords") else ""),
                 "directory": str(paper.parent),
                 "slug": paper.parent.name,
@@ -170,15 +174,16 @@ def create_paper_pages():
         ]
         cite_editors = [
             {"last": e.rsplit(" ", 1)[-1], "first": e.rsplit(" ", 1)[0]}
-            for e in paper["conferenceeditors"].split(", ")
+            for e in (e.removeprefix("and ") for e in paper["conferenceeditors"].split(", "))
+            if e.strip()
         ]
 
         output = paper_template.render(
             cite_paper_title=paper["title"],
             cite_paper_url=base_url,
             cite_date=paper["pubyear"],
-            cite_volume=paper["pubvolume"],
-            cit_first_page=paper["pagestart"],
+            cite_volume_title=vol["conferencename"],
+            cite_first_page=paper["pagestart"],
             cite_last_page=paper["pageend"],
             cite_doi=paper["doi"],
             cite_authors=cite_authors,
@@ -197,7 +202,7 @@ def create_paper_pages():
             doi=paper["doi"],
             date=vol["pubdate"],
             kwords=paper["keywords"],
-            content=f'<div class="abs"><span>Abstract</span><p>{paper["abstract"]}</p></div>',
+            content=f'<div class="abs"><span>Abstract</span>{paper["abstract"]}</div>',
         )
         (Path(paper["directory"]) / "index.html").write_text(output)
 
@@ -249,6 +254,7 @@ def create_front_pages():
         {**row, "url": f"{row['vol_slug']}/"}
         for row in df_volume.iter_rows(named=True)
     ]
+    volumes = list(reversed(volumes))
 
     Path("docs/index.html").write_text(TEMPLATE_ENV.get_template("main.html").render(volumes=volumes))
     Path("docs/volumes/index.html").write_text(TEMPLATE_ENV.get_template("toc.html").render(volumes=volumes))
@@ -265,14 +271,19 @@ def create_bibtex():
         doi_file = paper["doi"].replace("/", "@")
         authors = df_author.filter(c.slug == paper["slug"])["name"].unique(maintain_order=True).to_list()
 
-        bib = f"""@article{{{doi_file},
+        editors = " and ".join(
+            e.removeprefix("and ").strip()
+            for e in vol["conferenceeditors"].split(", ")
+            if e.strip()
+        )
+        bib = f"""@incollection{{{doi_file},
   title = {{{paper["title"]}}},
   author = {{{" and ".join(authors)}}},
   year = {{{paper["pubyear"]}}},
-  journal = {{Anthology of Computers and the Humanities}},
-  volume = {{{paper["pubvolume"]}}},
+  booktitle = {{{vol["conferencename"]}}},
+  publisher = {{Anthology of Computers and the Humanities}},
   pages = {{{paper["pagestart"]}--{paper["pageend"]}}},
-  editor = {{{vol["conferenceeditors"]}}},
+  editor = {{{editors}}},
   doi = {{{paper["doi"]}}}
 }}"""
 
@@ -351,21 +362,40 @@ def create_xml_records():
     )
 
     # --- rss.xml ---
-    from email.utils import formatdate
+    from email.utils import formatdate, format_datetime
+    from datetime import datetime, timezone
     build_date = formatdate(usegmt=True)
 
     items = ""
     for paper in df_paper.iter_rows(named=True):
-        authors = df_author.filter(c.slug == paper["slug"])["name"].unique(maintain_order=True).to_list()
+        vol = df_volume.filter(c.vol_slug == paper["vol_slug"]).row(0, named=True)
+        paper_authors = (
+            df_author.filter(c.slug == paper["slug"])
+            .group_by(["name", "orcid"], maintain_order=True)
+            .agg(c.affiliations)
+        ).to_dicts()
         url = f"{BASE}/volumes/{paper['vol_slug']}/{paper['slug']}/"
-        creator_tags = "".join(f"\n      <dc:creator>{a}</dc:creator>" for a in authors)
+
+        dt = datetime.strptime(vol["pubdate"], "%d %B %Y")
+        rfc822_date = format_datetime(dt.replace(tzinfo=timezone.utc), usegmt=True)
+
+        vol_title = vol["conferencename"] if len(vol["conferencename"]) > 1 else f"Volume {vol['pubvolume']}"
+        abstract_text = re.sub(r'<[^>]+>', '', paper["abstract"])
+
+        creator_tags = "".join(
+            f"\n      <dc:creator>{a['name'].rsplit(' ', 1)[0]} {a['name'].rsplit(' ', 1)[-1]}</dc:creator>"
+            for a in paper_authors
+        )
         items += (
             f"\n    <item>"
             f"\n      <title>{paper['title']}</title>"
             f"\n      <link>{url}</link>"
-            f"\n      <guid>{url}</guid>"
+            f"\n      <guid isPermaLink=\"true\">{url}</guid>"
             f"{creator_tags}"
+            f"\n      <dc:source>{vol_title}</dc:source>"
             f"\n      <dc:identifier>https://doi.org/{paper['doi']}</dc:identifier>"
+            f"\n      <pubDate>{rfc822_date}</pubDate>"
+            f"\n      <description><![CDATA[{abstract_text}]]></description>"
             f"\n    </item>"
         )
 
@@ -402,7 +432,30 @@ def create_crossref_xml():
         dt = datetime.strptime(vol["pubdate"], "%d %B %Y")
         month, day, year = dt.strftime("%m"), dt.strftime("%d"), dt.strftime("%Y")
 
-        articles = ""
+        vol_editors = [
+            e.removeprefix("and ").strip()
+            for e in vol["conferenceeditors"].split(", ")
+            if len(e.strip()) > 1
+        ]
+        if vol_editors:
+            editor_persons = ""
+            for i, e in enumerate(vol_editors):
+                seq = "first" if i == 0 else "additional"
+                given = e.rsplit(" ", 1)[0]
+                surname = e.rsplit(" ", 1)[-1]
+                editor_persons += (
+                    f'\n          <person_name sequence="{seq}" contributor_role="editor">'
+                    f"\n            <given_name>{given}</given_name>"
+                    f"\n            <surname>{surname}</surname>"
+                    f"\n          </person_name>"
+                )
+            editor_contributors = f"        <contributors>{editor_persons}\n        </contributors>\n"
+        else:
+            editor_contributors = ""
+
+        vol_title = vol["conferencename"] if len(vol["conferencename"]) > 1 else f"Volume {vol['pubvolume']}"
+
+        chapters = ""
         for paper in df_paper.filter(c.vol_slug == vol["vol_slug"]).iter_rows(named=True):
             paper_authors = (
                 df_author.filter(c.slug == paper["slug"])
@@ -410,13 +463,13 @@ def create_crossref_xml():
                 .agg(c.affiliations)
             ).to_dicts()
 
-            contributors = ""
+            author_contributors = ""
             for i, a in enumerate(paper_authors):
                 seq = "first" if i == 0 else "additional"
                 given = a["name"].rsplit(" ", 1)[0]
                 surname = a["name"].rsplit(" ", 1)[-1]
                 orcid_tag = f"\n            <ORCID>https://orcid.org/{a['orcid']}</ORCID>" if a["orcid"] else ""
-                contributors += (
+                author_contributors += (
                     f'\n          <person_name sequence="{seq}" contributor_role="author">'
                     f"\n            <given_name>{given}</given_name>"
                     f"\n            <surname>{surname}</surname>"
@@ -425,13 +478,13 @@ def create_crossref_xml():
                 )
 
             url = f"{BASE}/volumes/{paper['vol_slug']}/{paper['slug']}/"
-            articles += f"""
-      <journal_article publication_type="full_text">
+            chapters += f"""
+      <content_item component_type="chapter" publication_type="full_text">
+        <contributors>{author_contributors}
+        </contributors>
         <titles>
           <title>{paper["title"]}</title>
         </titles>
-        <contributors>{contributors}
-        </contributors>
         <publication_date media_type="print">
           <month>{month}</month>
           <day>{day}</day>
@@ -445,7 +498,7 @@ def create_crossref_xml():
           <doi>{paper["doi"]}</doi>
           <resource>{url}</resource>
         </doi_data>
-      </journal_article>"""
+      </content_item>"""
 
         xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <doi_batch xmlns="http://www.crossref.org/schema/4.4.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jats="http://www.ncbi.nlm.nih.gov/JATS1" version="4.4.2" xsi:schemaLocation="http://www.crossref.org/schema/4.4.2 http://www.crossref.org/schema/deposit/crossref4.4.2.xsd">
@@ -459,26 +512,24 @@ def create_crossref_xml():
     <registrant>WEB-FORM</registrant>
   </head>
   <body>
-    <journal>
-      <journal_metadata>
-        <full_title>Anthology of Computers and the Humanities</full_title>
-        <abbrev_title>Anth. Comp. Hum.</abbrev_title>
-        <doi_data>
-          <doi>10.63744/GJCCSMz4QBbD</doi>
-          <resource>{BASE}/</resource>
-        </doi_data>
-      </journal_metadata>
-      <journal_issue>
+    <book book_type="book_series">
+      <book_series_metadata>
+        <series_metadata>
+          <titles>
+            <title>Anthology of Computers and the Humanities</title>
+          </titles>
+          <issn>3070-8931</issn>
+        </series_metadata>
+        {editor_contributors}<titles>
+          <title>{vol_title}</title>
+        </titles>
         <publication_date media_type="print">
           <month>{month}</month>
           <day>{day}</day>
           <year>{year}</year>
         </publication_date>
-        <journal_volume>
-          <volume>{vol["pubvolume"]}</volume>
-        </journal_volume>
-      </journal_issue>{articles}
-    </journal>
+      </book_series_metadata>{chapters}
+    </book>
   </body>
 </doi_batch>
 """
@@ -491,6 +542,7 @@ def main():
     #create_pdf()
     create_bibtex()
     create_xml_records()
+    create_crossref_xml()
 
     create_paper_pages()
     create_volume_pages()
