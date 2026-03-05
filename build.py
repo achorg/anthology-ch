@@ -106,7 +106,7 @@ def create_metadata_table():
                 "pubvolume": " ".join(sp.find("pubvolume").text),
                 "pagestart": " ".join(sp.find("pagestart").text),
                 "pageend": " ".join(sp.find("pageend").text),
-                "paperorder": " ".join(sp.find("paperorder").text),
+                "paperorder": int(" ".join(sp.find("paperorder").text)),
                 "conferencename": " ".join(sp.find("conferencename").text),
                 "conferenceeditors": " ".join(sp.find("conferenceeditors").text),
                 "doi": " ".join(sp.find("doi").text),
