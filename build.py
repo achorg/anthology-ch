@@ -417,8 +417,12 @@ def create_xml_records():
 
 def create_crossref_xml():
 
+    import re
     import uuid
     from datetime import datetime
+
+    def strip_html(s):
+        return re.sub(r'<[^>]+>', '', s)
 
     df_paper = pl.read_parquet("db/paper.parquet")
     df_author = pl.read_parquet("db/author.parquet")
@@ -441,8 +445,8 @@ def create_crossref_xml():
             editor_persons = ""
             for i, e in enumerate(vol_editors):
                 seq = "first" if i == 0 else "additional"
-                given = e.rsplit(" ", 1)[0]
-                surname = e.rsplit(" ", 1)[-1]
+                given = strip_html(e.rsplit(" ", 1)[0])
+                surname = strip_html(e.rsplit(" ", 1)[-1])
                 editor_persons += (
                     f'\n          <person_name sequence="{seq}" contributor_role="editor">'
                     f"\n            <given_name>{given}</given_name>"
@@ -466,8 +470,8 @@ def create_crossref_xml():
             author_contributors = ""
             for i, a in enumerate(paper_authors):
                 seq = "first" if i == 0 else "additional"
-                given = a["name"].rsplit(" ", 1)[0]
-                surname = a["name"].rsplit(" ", 1)[-1]
+                given = strip_html(a["name"].rsplit(" ", 1)[0])
+                surname = strip_html(a["name"].rsplit(" ", 1)[-1])
                 orcid_tag = f"\n            <ORCID>https://orcid.org/{a['orcid']}</ORCID>" if a["orcid"] else ""
                 author_contributors += (
                     f'\n          <person_name sequence="{seq}" contributor_role="author">'
@@ -512,7 +516,7 @@ def create_crossref_xml():
     <registrant>WEB-FORM</registrant>
   </head>
   <body>
-    <book book_type="book_series">
+    <book book_type="edited_book">
       <book_series_metadata>
         <series_metadata>
           <titles>
@@ -528,6 +532,10 @@ def create_crossref_xml():
           <day>{day}</day>
           <year>{year}</year>
         </publication_date>
+        <noisbn reason="simple_series"/>
+        <publisher>
+          <publisher_name>Association for Computers and the Humanities</publisher_name>
+        </publisher>
       </book_series_metadata>{chapters}
     </book>
   </body>
