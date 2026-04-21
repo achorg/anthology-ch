@@ -50,7 +50,9 @@ orcid=0000-0003-3191-4860
 \maketitle
 
 \begin{abstract}
-Named Entity Linking, or disambiguating named entities by linking them to a knowledge base, is an important Natural Language Processing task, especially in the humanities. In this paper, we examine the performance of the state-of-the-art entity linking model BLINK in connecting Ancient Greek person mentions to a domain-specific German-language knowledge base. To train the model, we create both gold-standard data through manual annotation and noisier silver data through automatic extraction. We then evaluate whether incorporating the latter improves performance. Our findings suggest that, overall, the results remain suboptimal for Ancient Greek. Increasing training data, even through automatic methods, shows promise. However, as it stands, using BLINK directly would be ill-suited for Named Entity Linking in the target setting. We discuss possible causes and suggest areas for improvement.
+Named Entity Linking, or disambiguating named entities by linking them to a knowledge base, is an important Natural Language Processing task, especially in the humanities. In this paper, we examine the performance of the state-of-the-art entity linking model BLINK in connecting Ancient Greek person mentions to a domain-specific German-language knowledge base. To train the model, we create both gold-standard data through manual annotation and noisier silver data through automatic extraction. We then evaluate whether incorporating the latter improves performance. Our findings suggest that, overall, the results remain suboptimal for Ancient Greek. Increasing training data, even through automatic methods, shows promise. However, as it stands, using BLINK directly would be ill-suited for Named Entity Linking in the target setting. We discuss possible causes and suggest areas for improvement.\footnote{\textbf{This paper has been revised}. A coding error occurred during the conversion from the original BERT configuration to a RoBERTa-based one. This was due to manual padding. Because RoBERTa and BERT use different padding token IDs, the manual padding step inadvertently caused the CLS token to be masked during training. This primarily affected the bi-encoder, where BLINK relies on CLS pooling, and to a lesser extent the cross-encoder. 
+Since then, the code has been corrected and reruns have been made. This has impacted the results, some specific claims in the error analysis and the training specifications for one model configuration, although overall conclusions held. The authors apologize for this oversight. A document with a more detailed overview of our changes can be found on \href{https://github.com/MarijkeBeersmans/CHR_code_Greek_NEL.git}{GitHub}
+}
 \end{abstract}
 
 \section{Introduction}\label{introduction}
@@ -262,7 +264,7 @@ BLINK uses a two-stage entity linking approach. In the first stage, both the men
 
 During the second stage, the mention is concatenated to each of the top $k$ most similar entities. Those concatenations are then jointly encoded (cross-encoder). They are subsequently fed through an added linear layer, which outputs a score for each mention-entity combination, making the final decision. The second step is slower and more resource-intensive, but it produces more accurate results by allowing the system to attend jointly between the mention and the entity.
 
-Bi-encoder performance is evaluated using \textit{recall@topk} (whether or not the correct entity is present in the retrieved set). For all our experiments, the top $k$ was fixed to 64, following the original paper. Other hyperparameters can be found in Table \ref{tab:combined_hyperparameters}. We follow the hyperparameters used by \textcite{Wu_Petroni_Josifoski_Riedel_Zettlemoyer_2020} in their zero-shot setting, not because we operate in a zero-shot setting ourselves, but because their setup involved training a transformer model comparable in size to ours. In the \textit{Volltext} scenario, it was necessary to extend the bi-encoder training to ten epochs. Training for only five epochs resulted in suboptimal model convergence.
+Bi-encoder performance is evaluated using \textit{recall@topk} (whether or not the correct entity is present in the retrieved set). For all our experiments, the top $k$ was fixed to 64, following the original paper. Other hyperparameters can be found in Table \ref{tab:combined_hyperparameters}. We follow the hyperparameters used by \textcite{Wu_Petroni_Josifoski_Riedel_Zettlemoyer_2020} in their zero-shot setting, not because we operate in a zero-shot setting ourselves, but because their setup involved training a transformer model comparable in size to ours. In the \textit{Volltext} scenario and the \textit{Kurztext} scenario in which only the gold training data is used, it was necessary to extend the bi-encoder training to ten epochs. Training for only five epochs resulted in suboptimal model convergence
 
 BLINK was originally tested in an English-only setting, although it needs to be mentioned that a multilingual implementation of the bi-encoder exists \cite{Plekhanov_Kassner_Popat_Martin_Merello_Kozlovskii_Dreyer_Cancedda_2023}. The full system can be adapted to a multilingual setting using multilingual transformers.
 
@@ -305,13 +307,13 @@ The bi-encoder approach was tested against the following baseline: its recall@to
 \cmidrule(lr){3-5}
 & & rc@64 & cross acc & overall acc\\
 \midrule
-\multirow{2}{*}{\bf gold} & Kurz (5 epochs) & 51 \% & 45 \% & 23 \% \\
-& Voll (10 epochs) & 58 \% & 30 \% & 17 \% \\
-\multirow{2}{*}{\bf gold + silver} & Kurz (5 epochs) & 71 \% & 50 \% & 35 \% \\
-& Voll (10 epochs) & 64 \% & 35 \% & 23 \% \\
-\midrule
-\bf baseline & & 56 \% & N/A & N/A \\
-\bottomrule
+\multirow{2}{*}{\bf gold} & Kurz (10 epochs) & 72 \% & 37 \% & 26 \% \\ 
+                          & Voll (10 epochs) & 61 \% & 40 \% & 24 \% \\ 
+\multirow{2}{*}{\bf gold + silver} & Kurz (5 epochs) & 76 \% & 37 \% & 28 \% \\ 
+                   & Voll (10 epochs) & 69 \% & 42 \% & 29 \% \\
+                   \midrule
+\bf baseline & & 56 \% & N/A & N/A \\ 
+\bottomrule     
 \end{tabular}
 \caption{Results of the BLINK model (bi-encoder recall@64, cross-encoder accuracy and total accuracy) in the \textit{Kurztext}/\textit{Volltext} scenarios on the gold-standard test set}
 \label{tab:results BLINK}
@@ -319,7 +321,8 @@ The bi-encoder approach was tested against the following baseline: its recall@to
 
 Table \ref{tab:results BLINK} shows the results of the BLINK models for the gold test set. For completeness sake, the results on the test set including the silver test data are reported in Appendix \ref{appdx:a}. We do not base our analysis on them because the silver test data was automatically created and therefore not entirely reliable for testing purposes, as discussed in Section \ref{sec:data}. For the bi-encoder, we report the recall when retrieving the top 64 entities (rc@64), for the cross-encoder we report the accuracy on the entities it received from the bi-encoder. Finally, we report the overall accuracy.
 
-The results are significantly worse those than benchmarked performance on unseen mentions for English data (76.8 \% total accuracy, as reported in \textcite{Wu_Petroni_Josifoski_Riedel_Zettlemoyer_2020}). Some performance drops are expected given the lower-data scenario and the multilingual setting. However, even in the best performing setting the model reaches only 35.44\% overall accuracy. Adding the lower-quality silver data does improve performance considerably, especially bi-encoder recall. Surprisingly, the \textit{Kurztext}-only model outperforms the \textit{Volltext}-where-available model in all data scenarios, both in bi-encoder recall (+7\% points) and cross-encoder accuracy (+15\% points), which now outperforms the baseline more convincingly.\footnote{Although the poor performance of the baseline can partially be explained by the fact that the TM Nam IDs have not been added for the gods in the \textit{RE}.} This could indicate that the model fails to utilize the additional contextual information effectively. The potential reasons for this are discussed in Section \ref{sec:analysis}.
+The results are significantly worse those than benchmarked performance on unseen mentions for English data (76.8 \% total accuracy, as reported in \textcite{Wu_Petroni_Josifoski_Riedel_Zettlemoyer_2020}). Some performance drops are expected given the lower-data scenario and the multilingual setting. However, even in the best performing setting the model reaches only 29\% overall accuracy. Adding the lower-quality silver data does improve performance considerably, especially bi-encoder recall.
+Beside this, the  \textit{Volltext}-where-available model slightly underperforms compared to the \textit{Kurztext}-only model in terms of bi-encoder recall, but makes up for this difference in cross-encoder accuracy, leading to an overall marginally superior performance.The results are further discussed in Section \ref{sec:analysis}.
 
 \section{Error Analysis}\label{sec:analysis}
 
@@ -327,18 +330,18 @@ In this section, we explore the predictions of the BLINK models in more detail, 
 
 Firstly, since most \textit{RE} entries are composed of a base name and a numerical identifier (The entry for Augustus, for example, is Iulius 132), we can utilize the number of entries sharing a base name (below \textit{RE}-basenames) as a proxy of the ubiquity of the name and, by extension, how challenging the disambiguation task is for a given entity.
 
-Building on this, we can first observe that both when using the \textit{Kurztext} and the \textit{Volltext}-where-available model, the correctly predicted entities are the less ambiguous and less challenging ones. The average number of entities with the same \textit{RE}-basename in the gold test dataset is 15.84, while for the correctly predicted entities it is 4.64 and 7.82 for the \textit{Kurztext} and the \textit{Volltext} models, respectively. Within a human-in-the-loop framework, this insight can be leveraged to prioritize mentions for manual verification, specifically those associated with entities that exhibit a high number of homonyms. However, this does not imply that mentions linked to entities with fewer homonyms can be considered reliably correct. Given the overall low accuracy of the models, it remains uncertain whether even the surface name of the matched entity is accurate.
+Building on this, we can first observe that both when using the \textit{Kurztext} and the \textit{Volltext}-where-available model, the correctly predicted entities are the less ambiguous and less challenging ones. The average number of entities with the same \textit{RE}-basename in the gold test dataset is 15.84, while for the correctly predicted entities it is 4.65 and 6.76 for the \textit{Kurztext} and the \textit{Volltext} models, respectively. Within a human-in-the-loop framework, this insight can be leveraged to prioritize mentions for manual verification, specifically those associated with entities that exhibit a high number of homonyms. However, this does not imply that mentions linked to entities with fewer homonyms can be considered reliably correct. Given the overall low accuracy of the models, it remains uncertain whether even the surface name of the matched entity is accurate.
 
-Additionally, 171 mentions in the test set link to entities that only have a single \textit{RE}-basename. It is mainly on this subset of unambiguous names that the \textit{Kurztext}-only model outperforms the \textit{Volltext} model. If these mentions are not taken into consideration, the performance gap is reduced, as seen in Table \ref{tab:re_basename_accuracy}. This could indicate that the \textit{Kurztext} model's main strength is being a better surface matcher between the Latinized \textit{RE}-entries and the Ancient Greek mentions, and that the extra contextual information detracts from this, perhaps because it introduces noise or patterns that the model cannot consistently leverage in this lower-resource multilingual setting.
+Additionally, 171 mentions in the test set link to entities that only have a single RE-basename. The scores are noticeably better on this subset. This could indicate that surface similarity remains an important asset
 
 \begin{table}[ht]
 \centering
 \begin{tabular}{lcc}
 \hline
-& \textbf{1 \textit{RE}-basename} & \textbf{>1 \textit{RE}-basename} \\
+ & \textbf{1 \textit{RE}-basename} & \textbf{>1 \textit{RE}-basename} \\
 \hline
-Acc Voll & 33 \% &  18 \% \\
-Acc Kurz &  64 \% & 23 \%\\
+Acc Voll & 50 \% &  19 \% \\
+Acc Kurz &  50 \% & 20 \%\\
 Support & 171 & 396 \\
 \hline
 \end{tabular}
@@ -348,18 +351,18 @@ Support & 171 & 396 \\
 
 Second, we examine whether the model's confidence (certainty), as indicated by the cross-encoder output score, correlates with prediction accuracy. This analysis is motivated by potential human-in-the-loop applications, where high-confidence predictions could be accepted automatically while low-confidence ones are flagged for manual review. Figure \ref{fig:kurz_score_accuracy} and \ref{fig:voll_score_accuracy}, show the prediction accuracy (blue line) at different confidence thresholds, together with the number of mentions where the prediction has a confidence of this threshold or higher (red line).
 
-From this, it is apparent that while the accuracy improves the more confident the model is (at least for the \textit{Kurztext} model), high confidence does not guarantee a correct prediction. For the \textit{Volltext} model, the increase in accuracy is minimal. As for \textit{Kurztext} model, the accuracy remains at 50 \% even if we limit ourselves to mentions where the model's prediction has a score of 0.99 or higher. These findings suggest that, in its current form, BLINK may not be directly suitable for human-in-the-loop entity linking in this setting.
+From this, it is apparent that while the accuracy improves the more confident the model is, high confidence does not guarantee a correct prediction. For the \textit{Kurztext} model, the increase in accuracy is minimal. As for \textit{Volltext} model, the accuracy remains at 60 \% even if we limit ourselves to mentions where the model's prediction has a score of 0.99 or higher. These findings suggest that, in its current form, BLINK may not be directly suitable for human-in-the-loop entity linking in this setting.
 
 \begin{figure}[ht!]
 \centering
 \begin{minipage}[b]{0.4\textwidth}
-\includegraphics[width=\textwidth]{figures/plot_score_accuracy_only_gold.png}
+\includegraphics[width=\textwidth]{figures/kurz_accuracy_threshold.png}
 \caption{Accuracy and remaining number of mentions across various score thresholds, BLINK Kurztext model}
 \label{fig:kurz_score_accuracy}
 \end{minipage}
 \hfill
 \begin{minipage}[b]{0.4\textwidth}
-\includegraphics[width=\textwidth]{figures/plot_score_accuracy_only_gold_voll.png}
+\includegraphics[width=\textwidth]{figures/voll_accuracy_threshold.png}
 \caption{Accuracy and remaining number of mentions across various score thresholds, BLINK Volltext model}
 \label{fig:voll_score_accuracy}
 \end{minipage}
@@ -398,16 +401,16 @@ Finally, recent techniques in contextual augmentation using large language model
 \begin{tabular}{lrrrr}
 \toprule
 & &  \multicolumn{3}{c}{{\bf silver + gold test set}} \\
-\cmidrule(lr){3-5}
+\cmidrule(lr){3-5} 
 & & rc@64 & cross acc & overall acc  \\
 \midrule
-\multirow{2}{*}{\bf gold} & Kurz (5 epochs)  & 47 \% & 32 \% & 16 \% \\
-& Voll (10 epochs) & 57 \% & 21 \% & 12 \% \\
-\multirow{2}{*}{\bf gold + silver} & Kurz (5 epochs)  & 71 \% & 43 \% & 31 \% \\
-& Voll (10 epochs) & 68 \% & 38 \% & 26 \% \\
+\multirow{2}{*}{\bf gold} & Kurz (10 epochs)  & 65 \% &  28 \% & 18 \% \\ 
+& Voll (10 epochs) & 61 \% & 29 \% &  18\% \\ 
+\multirow{2}{*}{\bf gold + silver} & Kurz (5 epochs)  &  77 \% & 37 \% & 29\% \\ 
+& Voll (10 epochs) & 75\% & 44\% & 33\% \\
 \midrule
 \bf baseline & & 68 \% & N/A & N/A \\
-\bottomrule
+\bottomrule     
 \end{tabular}
 \caption{Results of the BLINK model (bi-encoder recall@64, cross-encoder accuracy and total accuracy) in the different Kurztext/Volltext scenarios, silver test set added}
 \label{tab:results BLINK silver}
