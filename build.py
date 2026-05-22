@@ -13,7 +13,7 @@ from jinja2 import Environment, FileSystemLoader
 
 
 RERUN_XELATEX = False
-REBUILD_VOL = "vol0004"  # force-rebuild PDFs for this volume; set to None to skip
+REBUILD_VOL = None  # force-rebuild PDFs for this volume; set to None to skip
 
 TEMPLATE_ENV = Environment(loader=FileSystemLoader("templates"))
 TEMPLATE_ENV.globals["year"] = date.today().year
@@ -136,8 +136,19 @@ def create_metadata_table():
             abstract_match = re.search(r'\\begin\{abstract\}(.*?)\\end\{abstract\}', raw_tex, re.DOTALL)
             abstract_latex = abstract_match.group(1).strip() if abstract_match else ""
 
+            title_node = sp.find("title")
+            texorpdf = title_node.find("texorpdfstring") if title_node else None
+            if texorpdf:
+                args = list(texorpdf.args)
+                title_html = latex_to_html(str(args[0])[1:-1]) if args else ""
+                title_plain = str(args[1])[1:-1].strip() if len(args) > 1 else re.sub(r'<[^>]+>', '', title_html)
+            else:
+                title_html = latex_to_html(" ".join(title_node.text))
+                title_plain = re.sub(r'<[^>]+>', '', title_html)
+
             df_paper.append(pl.DataFrame({
-                "title": latex_to_html(" ".join(sp.find("title").text)),
+                "title": title_html,
+                "title_plain": title_plain,
                 "pubyear": " ".join(sp.find("pubyear").text),
                 "pubvolume": " ".join(sp.find("pubvolume").text),
                 "pagestart": " ".join(sp.find("pagestart").text),
@@ -570,7 +581,7 @@ def create_crossref_xml():
         <contributors>{author_contributors}
         </contributors>
         <titles>
-          <title>{paper["title"]}</title>
+          <title>{paper["title_plain"]}</title>
         </titles>
         <publication_date media_type="print">
           <month>{month}</month>
