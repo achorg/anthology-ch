@@ -261,17 +261,17 @@
 \if@final
   \if@fra
     \if@custom
-      \newcommand{\@firstpagefootnote}{\footnotesize \textcolor{newgray}{© \@pubyear par les auteurs. Sous licence \href{https://creativecommons.org/licenses/by/4.0/deed.fr}{Creative Commons Attribution 4.0 International (CC BY 4.0).}}}
+      \newcommand{\@firstpagefootnote}{\footnotesize \textcolor{newgray}{© \@pubyear{} par les auteurs. Sous licence \href{https://creativecommons.org/licenses/by/4.0/deed.fr}{Creative Commons Attribution 4.0 International (CC BY 4.0).}}}
     \else
-      \newcommand{\@firstpagefootnote}{\footnotesize\begin{minipage}[t]{\linewidth}\@authornamesend. ``\@title.''\if\relax\detokenize\expandafter{\@conferencename}\relax\else\ \textit{\@conferencename}\if\relax\detokenize\expandafter{\@conferenceeditors}\relax\else, éd. par \@conferenceeditors\fi.\fi\ Vol. \@pubvolume. Anthology of Computers et the Humanities. \@pubyear, \@pagestart--\@pageend. \href{https://doi.org/\@doi}{https://doi.org/\@doi}.\par\vspace{0.5em}\par\ifx\@correspondingauthor\@empty\else\noindent Corresponding author: \@correspondingauthor\ (\href{mailto:\@correspondingemail}{\@correspondingemail})\par\vspace{0.5em}\par\fi\noindent\textcolor{newgray}{© \@pubyear par les auteurs. Sous licence \href{https://creativecommons.org/licenses/by/4.0/deed.fr}{Creative Commons Attribution 4.0 International (CC BY 4.0).}}\end{minipage}}
+      \newcommand{\@firstpagefootnote}{\footnotesize\begin{minipage}[t]{\linewidth}\@authornamesend. ``\@title.''\if\relax\detokenize\expandafter{\@conferencename}\relax\else\ \textit{\@conferencename}\if\relax\detokenize\expandafter{\@conferenceeditors}\relax\else, éd. par \@conferenceeditors\fi.\fi\ Vol. \@pubvolume. Anthology of Computers et the Humanities. \@pubyear, \@pagestart--\@pageend. \href{https://doi.org/\@doi}{https://doi.org/\@doi}.\par\vspace{0.5em}\par\ifx\@correspondingauthor\@empty\else\noindent Corresponding author: \@correspondingauthor\ (\href{mailto:\@correspondingemail}{\@correspondingemail})\par\vspace{0.5em}\par\fi\noindent\textcolor{newgray}{© \@pubyear{} par les auteurs. Sous licence \href{https://creativecommons.org/licenses/by/4.0/deed.fr}{Creative Commons Attribution 4.0 International (CC BY 4.0).}}\end{minipage}}
     \fi
 
   \else
 
     \if@custom
-      \newcommand{\@firstpagefootnote}{\footnotesize \textcolor{newgray}{© \@pubyear by the authors. Licensed under \href{https://creativecommons.org/licenses/by/4.0}{Creative Commons Attribution 4.0 International (CC BY 4.0).}}}
+      \newcommand{\@firstpagefootnote}{\footnotesize \textcolor{newgray}{© \@pubyear{} by the authors. Licensed under \href{https://creativecommons.org/licenses/by/4.0}{Creative Commons Attribution 4.0 International (CC BY 4.0).}}}
     \else
-      \newcommand{\@firstpagefootnote}{\footnotesize\begin{minipage}[t]{\linewidth}\@authornamesend. ``\@title.''\if\relax\detokenize\expandafter{\@conferencename}\relax\else\ In:~\textit{\@conferencename}\if\relax\detokenize\expandafter{\@conferenceeditors}\relax\else, ed. by \@conferenceeditors\fi.\fi\ Vol. \@pubvolume. Anthology of Computers and the Humanities. \@pubyear, \@pagestart--\@pageend. \href{https://doi.org/\@doi}{https://doi.org/\@doi}.\par\vspace{0.5em}\par\ifx\@correspondingauthor\@empty\else\noindent Corresponding author: \@correspondingauthor\ (\href{mailto:\@correspondingemail}{\@correspondingemail})\par\vspace{0.5em}\par\fi\noindent\textcolor{newgray}{© \@pubyear by the authors. Licensed under \href{https://creativecommons.org/licenses/by/4.0}{Creative Commons Attribution 4.0 International (CC BY 4.0).}}\end{minipage}}
+      \newcommand{\@firstpagefootnote}{\footnotesize\begin{minipage}[t]{\linewidth}\@authornamesend. ``\@title.''\if\relax\detokenize\expandafter{\@conferencename}\relax\else\ In:~\textit{\@conferencename}\if\relax\detokenize\expandafter{\@conferenceeditors}\relax\else, ed. by \@conferenceeditors\fi.\fi\ Vol. \@pubvolume. Anthology of Computers and the Humanities. \@pubyear, \@pagestart--\@pageend. \href{https://doi.org/\@doi}{https://doi.org/\@doi}.\par\vspace{0.5em}\par\ifx\@correspondingauthor\@empty\else\noindent Corresponding author: \@correspondingauthor\ (\href{mailto:\@correspondingemail}{\@correspondingemail})\par\vspace{0.5em}\par\fi\noindent\textcolor{newgray}{© \@pubyear{} by the authors. Licensed under \href{https://creativecommons.org/licenses/by/4.0}{Creative Commons Attribution 4.0 International (CC BY 4.0).}}\end{minipage}}
     \fi
   \fi
 
@@ -282,14 +282,14 @@
   \vspace{0.5em}
 
   \noindent
-  \textcolor{newgray}{© \@pubyear par les auteurs. Sous licence \href{https://creativecommons.org/licenses/by/4.0/deed.fr}{Creative Commons Attribution 4.0 International (CC BY 4.0).}}}
+  \textcolor{newgray}{© \@pubyear{} par les auteurs. Sous licence \href{https://creativecommons.org/licenses/by/4.0/deed.fr}{Creative Commons Attribution 4.0 International (CC BY 4.0).}}}
   \else
     \newcommand{\@firstpagefootnote}{Paper under review.
 
   \vspace{0.5em}
 
   \noindent
-  \textcolor{newgray}{© \@pubyear by the authors. Licensed under \href{https://creativecommons.org/licenses/by/4.0}{Creative Commons Attribution 4.0 International (CC BY 4.0).}}}
+  \textcolor{newgray}{© \@pubyear{} by the authors. Licensed under \href{https://creativecommons.org/licenses/by/4.0}{Creative Commons Attribution 4.0 International (CC BY 4.0).}}}
   \fi
 \fi
 
