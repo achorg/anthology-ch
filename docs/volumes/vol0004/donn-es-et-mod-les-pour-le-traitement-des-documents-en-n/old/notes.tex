@@ -1,0 +1,180 @@
+%This file derives from the ACL template: https://github.com/acl-org/acl-style-files. Adaptation in French: Simon Gabay
+%update: Humanistica 2024, Simon Gabay
+
+% This must be in the first 5 lines to tell arXiv to use pdfLaTeX, which is strongly recommended.
+%\pdfoutput=1
+% In particular, the hyperref package requires pdfLaTeX in order to break URLs across lines.
+
+\documentclass[11pt,french]{article}
+
+% Remove the "review" option to generate the final version.
+\usepackage{humanistica}
+
+%\usepackage[review]{humanistica}
+\usepackage{stfloats}
+\usepackage{afterpage}
+\usepackage{fancyhdr}
+% Set up the fancyhdr package
+\pagestyle{fancy}
+\fancyhf{} % Clear all header and footer fields
+\renewcommand{\headrulewidth}{0pt}
+% Add custom header and footer
+\fancyfoot[R]{ \thepage}
+
+
+% Standard package includes
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage{booktabs}
+
+%here are the packages added for my own reading confort they'll be deleted in the final version
+\usepackage[parfill]{parskip} % paragraph managing 
+\setlength{\parskip}{10pt} %space between the paragraphs
+\usepackage{xcolor} %underlines the problematic writting
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{array} % For advanced column specifications
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage{makecell}  
+\newcolumntype{P}[1]{>{\arraybackslash}p{#1}<{\rule{0pt}{3ex}}}
+
+
+% For proper rendering and hyphenation of words containing Latin characters (including in bib files)
+\usepackage[T1]{fontenc}
+% For Vietnamese characters
+% \usepackage[T5]{fontenc}
+% See https://www.latex-project.org/help/documentation/encguide.pdf for other character sets
+
+% This assumes your files are encoded as UTF8
+\usepackage[utf8]{inputenc}
+
+% This is not strictly necessary, and may be commented out,
+% but it will improve the layout of the manuscript,
+% and will typically save some space.
+\usepackage{microtype}
+
+%Translate to French
+\usepackage{babel}
+\def\frenchtablename{Tableau}
+
+% If the title and author information does not fit in the area allocated, uncomment the following
+%
+%\setlength\titlebox{<dim>}
+%
+% and set <dim> to something 5cm or larger.
+
+\title{Vers une exégèse digitale : OCR et topic modeling \\ Étude du \textit{Commentaire de la Première épître à Timothée} \\ de Lambert Daneau (1530-1595)}
+
+% Author information can be set in various styles:
+% For several authors from the same institution:
+% \author{Author 1 \and ... \and Author n \\
+%         Address line \\ ... \\ Address line}
+% if the names do not fit well on one line use
+%         Author 1 \\ {\bf Author 2} \\ ... \\ {\bf Author n} \\
+% For authors from different institutions:
+% \author{Author 1 \\ Address line \\  ... \\ Address line
+%         \And  ... \And
+%         Author n \\ Address line \\ ... \\ Address line}
+% To start a seperate ``row'' of authors use \AND, as in
+% \author{Author 1 \\ Address line \\  ... \\ Address line
+%         \AND
+%         Author 2 \\ Address line \\ ... \\ Address line \And
+%         Author 3 \\ Address line \\ ... \\ Address line}
+
+\author{First Author \\
+  Affiliation / Adresse ligne 1 \\
+  Affiliation / Adresse ligne 2 \\
+  Affiliation / Adresse ligne 3 \\
+  \texttt{email@domaine} \\\And
+  Second Author \\
+  Affiliation / Adresse ligne 1 \\
+  Affiliation / Adresse ligne 2 \\
+  Affiliation / Adresse ligne 3 \\
+  \texttt{email@domaine} \\}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+Mettre un résumé de (une phrase chaque point):
+- ce sur quoi tu travail (Paul, etc.)
+- Ce que tu as fait (acquisition OCR, extraction lematisation et topic modelling)
+- Quels sont tes résultats
+Max:150 mots
+\end{abstract}
+
+\section{Introduction}
+%Décrire le problème en terme de sciences humaines pure
+%Sur la Renaissance
+-Rennaissance et Reforme 
+-le latin de Lambert Daneau et des exegetes du XVIe
+-Pourquoi une approche numérique, avantage et inconvéniant de la methode
+
+\section{note}
+\section{truc à réutiliser à la fin?}
+Le \textit{Commentaire de l'épître à Timothée} de Lambert Daneau sert de protoype à l'expérience. Il s'agit d'un commentaire exégétique imprimé par Eustache Vignon en 1577 à Genève, Lambert y analyse sur 513 page  la première épître à Timothée. L'épître à Timothée est loin de jouer un rôle aussi centrale pour la pensée reformée que l'épître aux romains. Le choix du commentaire de Lambert Daneau a en premier lieu été motivé par des raisons structurelles. Tout d'abord, il s'agit d'un commentaire relativement long qui fournit donc une matière abondante pour entrainer l'OCR et nourrir le modèle de langue. En outre le texte est doté d'un \textit{index locorum communium} détaillé. Ce type d'index des topics est plutôt rare dans les commentraires bibliques qui contienent habituellement des index rerum et verborum.Lambert Daneau lui-même offre un point de comparaison précieux pour analyser les résultats du topic modeling.    
+
+La structure même du commentaire de Lambert Daneau reprend le découpage des Bibles de la Renaissance. Au XIII\textsuperscript{e} siècle, l'avenement des universités et des méthodes scolastiques poussent les à revoir leur rapport aux textes, à mettre au point des chapitrages qui permettent une lecture plus fragmenté des documents. La bible n'échappe pas à cette mutation des codex. On attribue généralement à Etienne Langstonne, le premier essaie concluant de chapitrage de l'Ancien et du Noveau Testamment. Si d'autres avaient déjà, la Bible chapitrée mise par Etienne connaîtra un vrai succès et son découpage devient peu à peu la norme lors de la copie du document. Les versets avec leurs numérotations en chiffre arabe apparaissent, quant à eux, deux siècles plus tard dans l'imprimerie de Robert Estienne. Lorsque Lambert Daneau fait imprimer son commentaire en 1577, cette structuration de la Bible sert d'ossature à son commentaire qui reproduit ainsi le découpage de la première Épître à Timothée partagé en 6 chapitres eux même divisés en versets. 
+
+Au cours de l'expérience, le texte a été utilisé dans différents objectifs, d'abord pour entraîner l'OCR puis pour enrichir le model de langue, enfin pour tester les résultats de ces derniers. La premières phase de l'expérience a ainsi mobilisé les parties suivant du Commentaire:\\ 
+    \fcolorbox{black}{blue!10}{\makebox[0.5em][l]{}} les lignes bleues sont la partie du texte          utilisé pour entraîner l'OCR et construire le lemmatisateur.\\ 
+    \fcolorbox{black}{green!10}{\makebox[0.5em][l]{}} la lignes vertes désignent la partie réservée pour tester les outils après leur entraînement. Lors de cette seconde étape de l'expérience seules quelques pages sont selectionnées.\\
+\begin{table}[h]
+    \small
+    \centering
+    \begin{tabular}{lll}
+        \toprule
+        \textbf{Partie} & \textbf{Pages} & \textbf{Vignettes} \\
+        \textbf{} & \textbf{} & \textbf{\centering{e-rara}} \\
+        \midrule
+        \rowcolor{blue!10}titre et adresse au lecteur & & 3-4\\ %je choisis de ne pas indiquer les sign. mais il faudrai peut-être?
+        \rowcolor{blue!10}introduction sur l'épître & & 5-26 \\
+        \rowcolor{blue!10}\textbf{index locorum communium} & & 26-38 \\
+        \rowcolor{blue!10}chapitre 1 & p.1-38 & 31-68 \\
+        \rowcolor{blue!10}chapitre 2 & p.38-91 & 68-121  \\
+        chapitre 3 & p.91-180 & 121-212  \\
+        chapitre 4 & p.180-238 & 212-268  \\
+        \rowcolor{green!10}chapitre 5 & p.239-409 & 269-439  \\
+        chapitre 6 & p.409-513 & 439-543  \\
+        index rerum et verborum & & 544-551 \\
+        Errata & & 552 \\
+        \bottomrule
+    \end{tabular}
+    \caption{structure générale du commentaire}
+\end{table}
+\par 
+Dans sa dernière phase, l'expérience sur se concentre sur une comparaison entre les versets des chapitres I et II de l'épître à Timothée.
+\begin{table}[h]
+    \small
+    \centering
+    \begin{tabular}{ll|ll}
+        \toprule
+        \multicolumn{2}{c}{\textbf{Chapitre I}} & \multicolumn{2}{c}{\textbf{Chapitre II}}\\
+        \textbf{Versets} & \textbf{Pages} & \textbf{Versets} & \textbf{Pages}\\
+        \midrule
+        1.1 & p.1-4 & 2.1 & p.38-47 \\
+        1.2 & p.4-6 & 2.2 & p.47-51\\
+        1.3 & p.6-9 & 2.3 & p.51\\
+        1.4 & p.9-12 & 2.4 & p.51-55\\
+        1.5 & p.13-16 & 2.5 & p.56-59 \\
+        1.6 & p.16-17 & 2.6 & p.59-62\\
+        1.7 & p.17-18 & 2.7 & p.63-64\\
+        1.8 & p.18-20 & 2.8 & p.65-76\\
+        1.9-10 & p.20-22 & 2.9 & p.76-81\\
+        1.11 & p.22-23 & 2.10 & p.81-82\\
+        1.12 & p.23-25 & 2.11 & p.82-83\\
+        1.13 & p.25-27 & 2.12 & p.84-87\\
+        1.14 & p.27 & 2.13 & p.87-88\\
+        1.15-16 & p.27-29 & 2.14 & p.88-89\\
+        1.17 & p.29-33 & 2.15 & p.89-91\\
+        1.18 & p.33-36 & {} & {}\\
+        1.19 & p.36-37 & {} & {}\\
+        1.20 & p.37-38 & {} & {}\\
+        \bottomrule
+    \end{tabular}
+    \caption{structure du commentaire: ratio pages par versets}
+\end{table}
+Lambert consacre habituellement une à trois pages de commentaire par verset.\colorbox{yellow}{blabla le close reading...}\par
+\bibliography{bibliographie.bib}
+\end{document}

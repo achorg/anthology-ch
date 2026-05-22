@@ -13,9 +13,28 @@ from jinja2 import Environment, FileSystemLoader
 
 
 RERUN_XELATEX = False
+REBUILD_VOL = "vol0004"  # force-rebuild PDFs for this volume; set to None to skip
 
 TEMPLATE_ENV = Environment(loader=FileSystemLoader("templates"))
 TEMPLATE_ENV.globals["year"] = date.today().year
+
+# ── ANSI color helpers ────────────────────────────────────────────────────────
+RESET  = "\033[0m"
+BOLD   = "\033[1m"
+DIM    = "\033[2m"
+GREEN  = "\033[32m"
+YELLOW = "\033[33m"
+RED    = "\033[31m"
+CYAN   = "\033[36m"
+GRAY   = "\033[90m"
+
+def section(title):
+    print(f"\n{BOLD}{CYAN}  {title}{RESET}")
+    print(f"{CYAN}  {'─' * len(title)}{RESET}")
+
+def ok(msg):    print(f"  {GREEN}✓{RESET}  {msg}")
+def skip(msg):  print(f"  {GRAY}·{RESET}  {GRAY}{msg}{RESET}")
+def err(msg):   print(f"  {RED}✗{RESET}  {RED}{msg}{RESET}")
 
 
 def latex_to_html(latex_str, scalar=True):
@@ -76,6 +95,21 @@ def parse_author(node):
     return pl.DataFrame(author)
 
 
+def parse_keywords(sp):
+    result = {"keywords_eng": "", "keywords_fra": ""}
+    for node in sp.find_all("keywords"):
+        lang = "eng"
+        text = ""
+        for arg in node.args:
+            if isinstance(arg, BracketGroup):
+                lang = str(arg)[1:-1].strip()
+            elif isinstance(arg, BraceGroup):
+                text = latex_to_html(str(arg)[1:-1])
+        key = "keywords_fra" if lang == "fra" else "keywords_eng"
+        result[key] = text
+    return result
+
+
 def parse_affiliation(node):
     args = list(node.args)
     return pl.DataFrame({
@@ -85,6 +119,7 @@ def parse_affiliation(node):
 
 
 def create_metadata_table():
+    section("Parsing paper metadata")
 
     df_paper = []
     df_author = []
@@ -94,6 +129,7 @@ def create_metadata_table():
 
     for paper in papers:
         #try:
+            print(f"  {GRAY}·{RESET}  {paper.parent.parent.name} / {paper.parent.name}", end="", flush=True)
             raw_tex = paper.read_text()
             sp = TexSoup(raw_tex, tolerance=1)
 
@@ -111,7 +147,7 @@ def create_metadata_table():
                 "conferenceeditors": " ".join(sp.find("conferenceeditors").text),
                 "doi": " ".join(sp.find("doi").text),
                 "abstract": latex_to_html(abstract_latex, scalar=False),
-                "keywords": latex_to_html(" ".join(sp.find("keywords").text) if sp.find("keywords") else ""),
+                **parse_keywords(sp),
                 "directory": str(paper.parent),
                 "slug": paper.parent.name,
                 "vol_slug": paper.parent.parent.name
@@ -120,6 +156,7 @@ def create_metadata_table():
             slug = paper.parent.name
             df_author += [parse_author(x).with_columns(pl.lit(slug).alias("slug")) for x in sp.find_all("author")]
             df_aff += [parse_affiliation(x).with_columns(pl.lit(slug).alias("slug")) for x in sp.find_all("affiliation")]
+            print(f"  {GREEN}✓{RESET}")
 
         #except:
         #    print(f"Problem with {str(paper)}")
@@ -140,9 +177,11 @@ def create_metadata_table():
     df_author.write_parquet("db/author.parquet")
     df_aff.write_parquet("db/affiliation.parquet")
     df_volume.write_parquet("db/volume.parquet")
+    print(f"\n  {BOLD}{len(df_paper)} papers across {len(df_volume)} volumes{RESET}")
 
 
 def create_paper_pages():
+    section("Building paper HTML pages")
 
     df_paper = pl.read_parquet("db/paper.parquet")
     df_author = pl.read_parquet("db/author.parquet")
@@ -190,7 +229,7 @@ def create_paper_pages():
             cite_editors=cite_editors,
             cite_abstract=paper["abstract"],
             cite_language="en",
-            cite_keywords=[k.strip() for k in paper["keywords"].split(",")],
+            cite_keywords=[k.strip() for k in (paper["keywords_eng"] or paper["keywords_fra"]).split(",")],
             cite_html_url=base_url,
             cite_pdf_url=base_url + doi_file + ".pdf",
             volume=paper["pubvolume"],
@@ -201,13 +240,16 @@ def create_paper_pages():
             bib_path=doi_file + ".bib",
             doi=paper["doi"],
             date=vol["pubdate"],
-            kwords=paper["keywords"],
+            kwords_eng=paper["keywords_eng"],
+            kwords_fra=paper["keywords_fra"],
             content=f'<div class="abs"><span>Abstract</span>{paper["abstract"]}</div>',
         )
         (Path(paper["directory"]) / "index.html").write_text(output)
+        ok(f"{paper['vol_slug']} / {paper['slug']}")
 
 
 def create_volume_pages():
+    section("Building volume pages")
 
     df_paper = pl.read_parquet("db/paper.parquet")
     df_author = pl.read_parquet("db/author.parquet")
@@ -238,11 +280,15 @@ def create_volume_pages():
             conferenceeditors=vol["conferenceeditors"],
             papers=papers,
         )
-        (Path("docs/volumes") / vol["vol_slug"] / "index.html").write_text(html)
+        vol_dir = Path("docs/volumes") / vol["vol_slug"]
+        vol_dir.mkdir(parents=True, exist_ok=True)
+        (vol_dir / "index.html").write_text(html)
+        ok(f"{vol['vol_slug']}  ({len(vol_papers)} papers)")
 
 
 
 def create_front_pages():
+    section("Building front pages")
 
     df_paper = pl.read_parquet("db/paper.parquet")
     df_volume = pl.read_parquet("db/volume.parquet")
@@ -258,9 +304,12 @@ def create_front_pages():
 
     Path("docs/index.html").write_text(TEMPLATE_ENV.get_template("main.html").render(volumes=volumes))
     Path("docs/volumes/index.html").write_text(TEMPLATE_ENV.get_template("toc.html").render(volumes=volumes))
+    ok("docs/index.html")
+    ok("docs/volumes/index.html")
 
 
 def create_bibtex():
+    section("Generating BibTeX files")
 
     df_paper = pl.read_parquet("db/paper.parquet")
     df_author = pl.read_parquet("db/author.parquet")
@@ -288,36 +337,66 @@ def create_bibtex():
 }}"""
 
         (Path(paper["directory"]) / f"{doi_file}.bib").write_text(bib)
+        ok(f"{paper['vol_slug']} / {paper['slug']}")
 
 
 def create_pdf():
+    section("Compiling PDFs")
 
     df_paper = pl.read_parquet("db/paper.parquet")
 
     project_root = Path(__file__).resolve().parent
     tex_env = os.environ.copy()
-    tex_env["TEXINPUTS"] = f"{project_root / 'static'}//:{project_root / 'fonts'}//:"
+    tex_env["TEXINPUTS"] = f"{project_root / 'docs/resources/template-latex'}//:{project_root / 'fonts'}//:"
+
+    step_labels = ["xelatex 1/3", "biber      ", "xelatex 2/3", "xelatex 3/3"]
 
     for paper in df_paper.iter_rows(named=True):
         paper_dir = Path(paper["directory"])
         doi_file = paper["doi"].replace("/", "@")
+        label = f"{paper['vol_slug']} / {paper['slug']}"
+        paper_tex = str((paper_dir / "paper.tex").resolve())
+        cmds = [
+            ["xelatex", "-interaction=nonstopmode", paper_tex],
+            ["biber", "paper"],
+            ["xelatex", "-interaction=nonstopmode", paper_tex],
+            ["xelatex", "-interaction=nonstopmode", paper_tex],
+        ]
 
-        if not RERUN_XELATEX and (paper_dir / f"{doi_file}.pdf").exists():
+        pdf_exists = (paper_dir / f"{doi_file}.pdf").exists()
+        if pdf_exists and not RERUN_XELATEX and paper["vol_slug"] != REBUILD_VOL:
+            skip(label)
             continue
 
-        for cmd in [
-            ["xelatex", "-interaction=nonstopmode", "paper.tex"],
-            ["biber", "paper"],
-            ["xelatex", "-interaction=nonstopmode", "paper.tex"],
-            ["xelatex", "-interaction=nonstopmode", "paper.tex"],
-        ]:
+        print(f"\n  {BOLD}▶{RESET}  {label}")
+
+        for ext in ["aux", "bak", "bbl", "bcf", "blg", "glg-abr", "glo-abr",
+                    "gls-abr", "ist", "log", "out", "run.xml", "pdf"]:
+            (paper_dir / f"paper.{ext}").unlink(missing_ok=True)
+
+        fonts_link = paper_dir / "fonts"
+        if not fonts_link.exists():
+            fonts_link.symlink_to(project_root / "fonts")
+
+        for step_label, cmd in zip(step_labels, cmds):
+            print(f"       {GRAY}{step_label}{RESET}  ", end="", flush=True)
             result = subprocess.run(cmd, env=tex_env, cwd=paper_dir,
-                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                                    capture_output=True, text=True)
             if result.returncode != 0:
-                print(f"Problem with {paper['slug']} at {cmd[0]}")
+                print(f"{RED}✗{RESET}")
+                for line in result.stdout.splitlines():
+                    if line.startswith("!"):
+                        print(f"       {RED}{line}{RESET}")
                 break
+            print(f"{GREEN}✓{RESET}")
         else:
             (paper_dir / "paper.pdf").rename(paper_dir / f"{doi_file}.pdf")
+            for ext in ["aux", "bak", "bbl", "bcf", "blg", "glg-abr", "glo-abr",
+                        "gls-abr", "ist", "log", "out", "run.xml"]:
+                (paper_dir / f"paper.{ext}").unlink(missing_ok=True)
+            if fonts_link.is_symlink():
+                fonts_link.unlink()
+            ok(f"compiled → {doi_file}.pdf")
 
 
 def create_xml_records():
@@ -357,6 +436,7 @@ def create_xml_records():
             f"    <lastmod>{vol['pubdate']}</lastmod>\n  </url>"
         )
 
+    section("Generating sitemap & RSS")
     Path("docs/sitemap.xml").write_text(
         f'<?xml version="1.0" ?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{url_tags}\n</urlset>\n'
     )
@@ -399,6 +479,7 @@ def create_xml_records():
             f"\n    </item>"
         )
 
+    ok("docs/sitemap.xml")
     Path("docs/rss.xml").write_text(
         f'<?xml version="1.0" ?>\n'
         f'<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">\n'
@@ -413,9 +494,11 @@ def create_xml_records():
         f'  </channel>\n'
         f'</rss>\n'
     )
+    ok("docs/rss.xml")
 
 
 def create_crossref_xml():
+    section("Generating Crossref XML")
 
     import re
     import uuid
@@ -542,12 +625,13 @@ def create_crossref_xml():
 </doi_batch>
 """
         Path(f"xml/crossref-{vol['vol_slug']}.xml").write_text(xml)
+        ok(f"xml/crossref-{vol['vol_slug']}.xml")
 
 
 def main():
     create_metadata_table()
 
-    #create_pdf()
+    create_pdf()
     create_bibtex()
     create_xml_records()
     create_crossref_xml()

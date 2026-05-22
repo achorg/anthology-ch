@@ -1,0 +1,13 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} (1) importe une base SQL, un ne prenant que certaines tables}
+\PYG{n}{db} \PYG{o}{=} \PYG{n}{heimdall}\PYG{o}{.}\PYG{n}{getDatabase}\PYG{p}{(}
+  \PYG{n+nb}{format}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{sql:mariadb}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}
+  \PYG{n}{url}\PYG{o}{=}\PYG{l+s+sa}{f}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{mariadb://}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{username}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{:}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{password}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{@}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{host}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{:}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{port}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{/}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{database}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,}
+  \PYG{n}{entities}\PYG{o}{=}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{only}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{those}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{tables}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}\PYG{p}{,}
+\PYG{p}{)}
+\PYG{c+c1}{\PYGZsh{} (2) (optionnel) filtre encore davantage les données}
+\PYG{n}{moar\PYGZus{}database\PYGZus{}filtering}\PYG{p}{(}\PYG{n}{db}\PYG{p}{)}
+\PYG{c+c1}{\PYGZsh{} (3) partage uniquement les données filtrées, ici avec un SQL dump et un XML\PYGZcb{}}
+\PYG{n}{heimdall}\PYG{o}{.}\PYG{n}{createDatabase}\PYG{p}{(}\PYG{n}{db}\PYG{p}{,} \PYG{n+nb}{format}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{sql:mariadb}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{url}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{filtered\PYGZus{}dump.sql}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{heimdall}\PYG{o}{.}\PYG{n}{createDatabase}\PYG{p}{(}\PYG{n}{db}\PYG{p}{,} \PYG{n+nb}{format}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{hera:xml}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{url}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{filtered\PYGZus{}data.xml}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+\end{MintedVerbatim}

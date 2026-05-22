@@ -1,0 +1,193 @@
+%Template v.1.0: Taylor Arnold and Simon Gabay, december 2025
+% CECI EST UN FICHIER DE MODÈLE LATEX POUR LES ARTICLES INCLUS DANS
+% *Anthology of Computers and the Humanities*. AJOUTEZ L'OPTION
+% 'final' LORS DE LA CRÉATION DE LA VERSION FINALE DE L'ARTICLE. 
+% NE PAS modifier la classe du document
+\documentclass[final, fra]{anthology-ch}     % pour la version finale
+% \documentclass[fra, custom]{anthology-ch}      % pour la soumission
+
+% CHARGER LES PACKAGES LaTeX
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% TITRE DE LA SOUMISSION
+\title{Du script artisanal à l'infrastructure ouverte : genèse, enjeux et fondements de \textit{calendario\_liturgico}}
+
+% INFORMATIONS SUR LES AUTEURS ET LES AFFILIATIONS
+\author[1]{Andrés Felipe Echavarría Peláez}[
+  orcid=0009-0003-1540-8678,
+  email=andres.echavarria@cnrs.fr
+]
+
+\affiliation{1}{Consortium ARIANE- IR* Huma-Num}
+
+% MOTS-CLÉS
+\keywords[fra]{édition numérique, TEI, calendrier liturgique, \textit{computus}, science ouverte, reproductibilité, humanités numériques, algorithme de Gauss, Python}
+\keywords[eng]{digital edition, TEI, liturgical calendar, computus, open science, reproducibility, digital humanities, Gauss algorithm, Python}
+
+% MÉTADONNÉES DE LA PUBLICATION
+\pubyear{2026}
+\pubvolume{4}
+\pagestart{85}
+\pageend{91}
+\paperorder{11}
+\conferencename{Actes de la Conférence Humanistica}
+\conferenceeditors{Serena Crespi, Simon Gabay, Martin Grandjean, Ariane Pinche, Marie Puren et Léa Saint-Raymond}
+\doi{10.63744/Sik2vxas691B}
+\customhead{}
+
+\addbibresource{bibliography.bib}
+
+%%%%%%%%%%%%%%%%%%%%
+% DÉBUT DU TEXTE
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+The annotation of liturgical dates in early modern archival sources is a central methodological challenge for XML-TEI digital editions. The Python library \texttt{calendario\_liturgico} automates the computation of Christian liturgical dates from the sixth century to the present by combining the Gauss--Meeus algorithm for the Gregorian calendar with pre-calculated paschal tables for the Julian period (532--1582). This article situates the genesis of this tool within the scholarly context of editing inquisitorial trial records, analyses its mathematical and computational foundations, and assesses its validation protocols. It finally discusses how the transition from an \textit{ad hoc} script to a shared software infrastructure reshapes scientific reproducibility, the interoperability of historical data, and the relationship between humanities scholarship and computation.
+\end{abstract}
+
+%==========================================================================
+\section{Introduction} \label{sec:introduction}
+%==========================================================================
+
+L'annotation temporelle des documents d'Ancien Régime pose des difficultés spécifiques aux projets d'édition numérique structurée. La norme ISO~8601 fournit un cadre de normalisation pour les dates grégoriennes modernes, mais elle se révèle insuffisante face aux complexités chronologiques des sources historiques ; les extensions ISO~8601-2:2019 autorisent la représentation de dates incertaines ou approximatives sans offrir de mécanisme de conversion entre systèmes calendaires~\cite{iso8601-2}. Les documents procéduraux de l'Inquisition espagnole, rédigés entre les \textsc{xv}\textsuperscript{e} et \textsc{xix}\textsuperscript{e} siècles, recourent fréquemment à des repères liturgiques qui ne peuvent être normalisés sans calcul préalable de la date de la Pâques chrétienne et des fêtes mobiles qui en dépendent~\cite{echavarria2025these}.
+
+La librairie Python \texttt{calendario\_liturgico}, publiée sur PyPI, apporte une réponse computationnelle à ce problème~\cite{echavarria2025pypi}. Elle implémente l'algorithme de Gauss--Meeus pour le calcul de Pâques dans le calendrier grégorien et intègre 1\,052 dates pascales pré-calculées pour la période julienne (532--1582). Issu d'un script développé dans le cadre d'une thèse de doctorat sur l'éditorialisation des procès de foi espagnols~\cite{echavarria2025these}, cet outil s'insère dans les chaînes de traitement XML-TEI pour produire des dates conformes aux attributs \texttt{@when}, \texttt{@notBefore} et \texttt{@notAfter} du standard TEI~P5~\cite{tei2025,burnard2014}.
+
+Cet article retrace en premier lieu la genèse de la librairie en la situant dans le champ de l'éditorialisation numérique de corpus inquisitoriaux ; il analyse ensuite les fondements mathématiques et computationnels du \textit{computus} pascal tels qu'ils sont implémentés dans \texttt{calendario\_liturgico} ; enfin, il discute quelques points pour cette infrastructure mutualisée, dans la perspective de la science ouverte et des principes FAIR appliqués au logiciel de recherche~\cite{chuehong2022}.
+
+%==========================================================================
+\section{Contexte disciplinaire : éditorialisation des procès inquisitoriaux} \label{sec:contexte}
+%==========================================================================
+
+\subsection{Le corpus et ses spécificités temporelles} \label{sec:corpus}
+
+Ce projet prend sa source dans l'annotation XML-TEI d'un prototype de procès pour cause de foi instruit par l'Inquisition espagnole. Produits par les tribunaux de district, ces procès recourent fréquemment aux fêtes du calendrier liturgique pour dater les faits dans les témoignages, avec des mentions telles que \textit{después de la Navidad próxima pasada veinte días} (\og vingt jours après le prochain Noël passé\fg{})) ou \textit{el miércoles de las octavas pasadas} (\og le mercredi des octaves passées\fg{}). À notre connaissance, aucune librairie Python disponible sur PyPI ne combine un \textit{computus} julien fondé sur des tables historiques validées, le calcul systématique des fêtes mobiles dérivées et la production de sorties compatibles dans des attributs \textsc{tei}~P5.\footnote{Sur PyPI existent déjà des bibliothèques de calendriers liturgiques ou de jours fériés, telles que \texttt{workalendar} (calendriers civils incluant certains jours fériés religieux), \texttt{liturgical-calendar} et \texttt{liturgical-colour} (calendrier et couleurs liturgiques pour l’Église d’Angleterre), ou encore des liaisons Python vers la bibliothèque \textit{romcal} qui génère des calendriers liturgiques catholiques à partir d’un cœur écrit en Rust~\cite{Bordworkalendar,Gazeley-liturgical-cal,Magnie-romcal}. Aucune ne propose toutefois, à ce jour, une table pascale julienne 532--1582 validée sur sources historiques ni une production directe de dates normalisées pour l’annotation TEI.}
+
+Cette pratique de datation reflète la place centrale des dates religieuses dans l'organisation du temps civil et ecclésiastique de l'Espagne moderne. L'annotation de ce type de source selon les recommandations du TEI~P5 impose la normalisation des mentions temporelles à l'aide d'attributs structurés conformes à la norme ISO~8601~\cite{burnard2014}. L'élément \texttt{<date>} permet notamment l'utilisation de \texttt{@when} pour une date précise, de \texttt{@notBefore} et \texttt{@notAfter} pour un intervalle temporel, et de \texttt{@from}/\texttt{@to} pour une période~\cite{tei2025}.
+
+\subsection{La problématique de la conversion temporelle} \label{sec:conversion}
+
+La conversion de références liturgiques mobiles en dates absolues suppose le calcul préalable de la date de Pâques pour l'année concernée. Pâques constitue l'événement fondamental du calendrier chrétien : plus d'une vingtaine de fêtes mobiles en dépendent, parmi lesquelles le Mercredi des Cendres (46 jours avant Pâques), les Rameaux (7 jours avant), l'Ascension (39 jours après), la Pentecôte (49 jours après) et le \textit{Corpus Christi} (la Fête-Dieu, 60 jours après). Depuis le concile de Nicée (325), la règle fixe Pâques au dimanche suivant la première pleine lune ecclésiastique après l'équinoxe de printemps, conventionnellement fixé au 21 mars~\cite{mosshammer2008}.
+
+Les difficultés s'accentuent pour les documents antérieurs à octobre 1582, date de l'adoption du calendrier grégorien en Espagne. La transition entre calendriers julien et grégorien crée une discontinuité calendaire qui affecte directement le \textit{computus} pascal. Faute d'outils unifiés, les encodeurs doivent consulter manuellement des tables pascales dispersées ou recourir à des calculatrices dont la fiabilité et la pérennité ne sont pas garanties.
+
+
+
+%==========================================================================
+\section{Fondements mathématiques : le \textit{computus} pascal} \label{sec:computus}
+%==========================================================================
+
+\subsection{Historique du calcul de Pâques} \label{sec:historique}
+
+Le terme \textit{computus} désigne l'ensemble des méthodes de calcul de la date de Pâques, science qui a mobilisé les savants ecclésiastiques pendant plus de quinze siècles~\cite{bien2004}. Denys le Petit (\textit{Dionysius Exiguus}) a composé en 525 une table pascale de 95 ans couvrant la période 532--626, qui introduit le système de datation \textit{Anno Domini} et prolonge une tradition alexandrine antérieure~\cite{mosshammer2008}. Le cycle de 532 ans, produit du cycle métonique de 19 ans et du cycle solaire de 28 ans, forme la base du système de calcul pascal adopté par l'Église latine. Bède le Vénérable diffuse ce système dans son traité \textit{De temporum ratione} (725), qui fournit une justification du calcul pascal et intègre le système \textit{Anno Domini} dans l'historiographie occidentale~\cite{bede725}.
+
+\subsection{Le cycle métonique et l'arithmétique modulaire} \label{sec:meton}
+
+Le cycle de Méton, découvert par l'astronome grec Méton vers 432 av.~J.-C., établit que 19 années solaires correspondent approximativement à 235 mois synodiques, avec un écart d'environ 2 heures. Le rang d'une année dans ce cycle est appelé nombre d'or (\textit{Golden Number}), calculé par la formule :
+\begin{align}
+  G = (A \bmod 19) + 1 \label{eq:golden}
+\end{align}
+où $A$ désigne l'année considérée~\cite{dershowitz2018}. L'épacte, c'est-à-dire l'âge de la Lune au 1\textsuperscript{er} janvier, dérive du nombre d'or. Pour le calendrier julien, l'épacte $E_j$ se calcule à partir du nombre d'or $n$ par la relation :
+\begin{align}
+  E_j = (11\,n - 10) \bmod 30 \label{eq:epacte}
+\end{align}
+Pour le calendrier grégorien, des corrections séculaires interviennent pour compenser l'écart entre le cycle métonique et la durée réelle des mois synodiques, qui produit un décalage d'un jour tous les 312{,}5 ans environ~\cite{bien2004}.
+
+\subsection{L'algorithme de Gauss (1800)} \label{sec:gauss}
+
+Carl Friedrich Gauss publie en 1800, dans la revue \textit{Monatliche Correspondenz}, un algorithme pour le calcul de la date de Pâques qui remplace les tables traditionnelles d'épactes et de lettres dominicales~\cite{gauss1800}. L'algorithme procède en deux étapes. La première calcule le nombre de jours $d$ séparant le 21 mars de la pleine lune pascale. Soit $Y$ l'année considérée :
+\begin{align}
+  a &= Y \bmod 19 \label{eq:a}\\
+  k &= \lfloor Y / 100 \rfloor \label{eq:k}\\
+  p &= \lfloor (13 + 8k) / 25 \rfloor \label{eq:p}\\
+  q &= \lfloor k / 4 \rfloor \label{eq:q}\\
+  M &= (15 - p + k - q) \bmod 30 \label{eq:M}\\
+  d &= (19a + M) \bmod 30 \label{eq:d}
+\end{align}
+
+La variable $a$ positionne l'année dans le cycle métonique. L'indice séculaire $k$ et les corrections $p$ et $q$ ajustent le calcul pour les siècles grégoriens : $p$ intègre le décalage du cycle métonique, tandis que $q$ corrige pour les jours bissextiles non observés~\cite{bien2004}. La constante $M$ fournit le point de départ pour chaque siècle dans l'arithmétique modulo 30, qui correspond à la durée approximative du mois synodique. Le facteur 19 dans l'équation \eqref{eq:d} reflète le décalage annuel de 11 jours entre année solaire et année lunaire : comme $19 \times 11 = 209 \equiv -1 \pmod{30}$, ce coefficient est fonctionnellement équivalent à $-11$ en arithmétique modulo 30~\cite{bien2004}.
+
+La seconde étape calcule le nombre de jours $e$ séparant la pleine lune pascale du dimanche suivant :
+\begin{align}
+  N &= (4 + k - q) \bmod 7 \label{eq:N}\\
+  b &= Y \bmod 4 \label{eq:b}\\
+  c &= Y \bmod 7 \label{eq:c}\\
+  e &= (2b + 4c + 6d + N) \bmod 7 \label{eq:e}
+\end{align}
+
+L'expression $2b + 4c$ encode le décalage du jour de la semaine d'une année à l'autre, d'un jour pour les années ordinaires et de deux jours pour les années bissextiles~\cite{bien2004}. Deux corrections historiques s'appliquent : si $d = 29$ et $e = 6$, ou si $d = 28$, $e = 6$ et $a > 10$, alors $e$ est remplacé par $-1$, ce qui déplace Pâques d'une semaine en arrière. La date finale de Pâques est
+\begin{align}
+  P = 22 + d + e \label{eq:P}
+\end{align}
+Si $P > 31$, Pâques tombe en avril au jour $(d + e - 9)$ ; sinon, Pâques tombe en mars au jour $P$. Reinhold Bien a documenté l'évolution de cet algorithme et ses corrections successives, de la version initiale de 1800 à la version corrigée par Peter Paul Tittel en 1816~\cite{bien2004}. Dans le cadre du calendrier grégorien standard, ces variantes corrigées concordent avec les algorithmes de Butcher--Meeus et avec les fonctions de calcul de Pâques proposées par Dershowitz et Reingold pour la période postérieure à 1583~\cite{dershowitz2018}.
+
+
+\subsection{L'algorithme de Meeus et la synthèse computationnelle} \label{sec:meeus}
+
+L'algorithme publié par Jean Meeus dans \textit{Astronomical Algorithms} (1991) synthétise des formules antérieures : il réunit l'algorithme de Delambre (1814) pour le calendrier julien et l'algorithme de Butcher (1877) pour le calendrier grégorien~\cite{meeus1991}. L'algorithme de Butcher, diffusé à l'origine par une note dans \textit{Nature} et démontré sans limite de date par Samuel Butcher, a ensuite servi de base à de nombreuses implémentations, notamment dans les langages de programmation étudiés par Donald Knuth~\cite{bien2004,knuth1962}. Meeus fournit des variantes explicites pour les calendriers julien et grégorien dont la complexité temporelle est $O(1)$ : elles ne comportent qu'un nombre constant d'opérations arithmétiques, sans boucle ni récursion.
+
+\subsection{L'approche hybride de \texttt{calendario\_liturgico}} \label{sec:hybride}
+
+La librairie \texttt{calendario\_liturgico} adopte une stratégie hybride~\cite{echavarria2025pypi}. Pour le calendrier grégorien (à partir de 1582), elle implémente l'algorithme de Gauss--Meeus, qui calcule la date de Pâques en temps constant. Pour le calendrier julien (532--1582), la librairie stocke 1\,052 dates pascales pré-calculées, validées contre les tables historiques de Denys le Petit, de Bède le Vénérable et des calendriers officiels du Vatican. La table julienne (532--1582) a été construite par transcription des tables de Denys le Petit et de Bède, puis vérifiée automatiquement par comparaison avec les algorithmes de conversion de Dershowitz et Reingold pour la même période~\cite{dershowitz2018}.
+
+Ce choix repose sur une exigence de fiabilité historique. Les tables pascales juliennes sont le fruit de calculs ecclésiastiques séculaires qui constituent une autorité documentaire ; substituer un algorithme moderne à ces tables manuscrites comporterait un risque d'anachronisme méthodologique : les sources primaires médiévales (tables de Bède, de Grosseteste) représentent l'état de la pratique computistique telle qu'elle était effectivement appliquée~\cite{bede725}. En revanche, l'algorithme de Gauss--Meeus pour le calendrier grégorien relève d'un modèle mathématique explicite et sa concordance avec les algorithmes de Dershowitz et Reingold a été établie pour l'ensemble de la période grégorienne~\cite{dershowitz2018}. L'ouvrage de référence \textit{Calendrical Calculations} de Dershowitz et Reingold présente en outre des implémentations algorithmiques complètes pour la conversion entre une trentaine de systèmes calendaires, y compris les calendriers ecclésiastiques~\cite{dershowitz2018}. La librairie \texttt{calendario\_liturgico} se distingue de cette approche généraliste par sa spécialisation dans le contexte liturgique catholique et son compatibilité pour la TEI.
+
+%==========================================================================
+\section{Architecture logicielle et choix de conception} \label{sec:architecture}
+%==========================================================================
+
+\subsection{Structure modulaire} \label{sec:modules}
+
+L'architecture de \texttt{calendario\_liturgico} repose sur une séparation fonctionnelle en trois modules~\cite{echavarria2025github}. Le module \texttt{core} expose la classe principale \texttt{LiturgicalCalendar}, point d'entrée pour les utilisateurs. Le module \texttt{calculators} implémente l'algorithme de Gauss--Meeus, tandis que le module \texttt{data} stocke les dates pascales pré-calculées pour la période julienne. À partir de la date de Pâques, la librairie calcule l'ensemble des principales fêtes liturgiques mobiles (Mercredi des Cendres, Dimanche des Rameaux, Triduum pascal, Ascension, Pentecôte, \textit{Corpus Christi}, Christ Roi), ainsi que les dimanches de l'Avent et Noël~\cite{echavarria2025pypi}. Chaque fête est dérivée par un décalage arithmétique constant par rapport à Pâques, ce qui garantit la cohérence interne des résultats.
+
+%\subsection{Philosophie \textit{zero-dependency}} \label{sec:zerodep}
+
+La librairie utilise exclusivement la bibliothèque standard Python, sans recourir à tout autre paquet tiers~\cite{echavarria2025pypi}. Ce choix de conception vise à limiter les dépendances transitives, qui peuvent introduire des ruptures en cascade lors des mises à jour, et à assurer une stabilité à long terme pour un outil destiné à s'intégrer dans des chaînes de traitement académiques pérennes. Il renforce également la portabilité : un code sans dépendances externes fonctionne dans tout environnement Python standard, facilitant le déploiement sur des serveurs de recherche, des postes de travail de chercheurs en sciences humaines ou des environnements interactifs.
+
+%\subsection{Qualité logicielle et accessibilité} \label{sec:tests}
+
+La librairie intègre des annotations de types complètes (\textit{type hints}) conformes aux \textit{PEP~484} et suivantes, ce qui permet la vérification statique du code par des outils comme \texttt{mypy} et clarifie les interfaces pour les utilisateurs avancés~\cite{echavarria2025github}. Une suite de tests automatisés, implémentée avec \texttt{pytest}, couvre des cas critiques : années bissextiles, transitions séculaires, limites du calendrier julien (532) et du calendrier grégorien (1582), cas historiques documentés~\cite{pypi}. Ces tests sont exécutés en intégration continue afin de prévenir les régressions\footnote{En complément, une interface web développée avec le micro-framework Flask offre aux historiens et aux liturgistes non programmeurs un moyen de vérifier les calculs sans écrire de code Python~\cite{echavarria2025pypi, grinberg2018flask}.}.
+
+
+%==========================================================================
+\section{Validation, documentation et science ouverte} \label{sec:validation}
+%==========================================================================
+
+La librairie \texttt{calendario\_liturgico} a été confrontée à trois corpus de référence~\cite{echavarria2025pypi}~: les dates pascales officielles publiées par le Vatican pour la période 1583-2100, les tables historiques médiévales (Bède, Grosseteste) et les calendriers liturgiques contemporains de plusieurs diocèses. Par ailleurs, une validation croisée avec les algorithmes décrits par Reingold et Dershowitz fournit un contrôle supplémentaire.
+
+L'ensemble du code source est documenté en espagnol, français et anglais~\cite{echavarria2025github}. Ce choix linguistique vise les communautés scientifiques concernées~: hispanistes travaillant sur les sources inquisitoriales, chercheurs francophones des humanités numériques et communauté internationale du TEI Consortium.
+
+La librairie est publiée sous Licence Ouverte Etalab~2.0, conçue par la mission Etalab pour faciliter la réutilisation libre et gratuite des informations publiques~\cite{etalab2017} \footnote{Cette licence autorise la reproduction, l'adaptation, la modification et l'exploitation commerciale des données et du code, sous réserve de la mention de la source, et est compatible avec la licence Creative Commons Attribution (CC-BY) et l'Open Data Commons Attribution License (ODC-BY).}.
+
+La mise en œuvre des principes FAIR4RS~\cite{chuehong2022, munafo2017} dans \texttt{calendario\_liturgico} se traduit par plusieurs choix~: la \textit{trouvabilité} est assurée par la publication sur PyPI et sur Zenodo avec un DOI~; l'\textit{accessibilité} par le code source ouvert hébergé sur GitHub~\cite{echavarria2025github}~; l'\textit{interopérabilité} par la production de dates au format ISO~8601 et la compatibilité avec les attributs TEI~; la \textit{réutilisabilité} par la licence ouverte, la documentation trilingue et l'architecture modulaire.
+
+% LIMITES
+Cependant, l'algorithme de Gauss--Meeus offre une précision adaptée au calendrier grégorien standard, mais ne prend pas en compte toutes les variations régionales historiques. L'adoption du calendrier grégorien a été progressive : l'Espagne l'a adopté en octobre 1582, alors que d'autres pays européens ne l'ont fait que beaucoup plus tard. Les particularismes liturgiques locaux (rites mozarabe, ambrosien) ne sont pas modélisés, pas plus que les calendriers propres à certaines communautés religieuses. Les références temporelles ambiguës (\og esta Cuaresma o la anterior\fg{}) nécessitent en outre un jugement interprétatif humain que l'outil ne peut et ne doit pas automatiser.
+
+
+%==========================================================================
+\section{Perspectives et extensions} \label{sec:perspectives}
+%==========================================================================
+
+Les perspectives d'évolution concernent moins un programme de travail arrêté qu'un potentiel ouvert pour d'autres communautés. Le \textit{computus} n'est pas un phénomène exclusivement latin : les Églises orthodoxes calculent Pâques selon le calendrier julien, ce qui produit des dates différentes de celles du calendrier grégorien, et les calendriers hébraïque et islamique, luni-solaires ou lunaires, posent des problèmes de conversion comparables~\cite{dershowitz2018}. L'ouvrage de Dershowitz et Reingold propose des algorithmes pour une trentaine de systèmes calendaires~\cite{dershowitz2018} ; l'architecture modulaire de \texttt{calendario\_liturgico} pourrait, en principe, servir de base à des extensions ou à des projets connexes centrés sur d'autres traditions liturgiques.
+
+De même, l'exposition d'une API stable ouvre la voie à des intégrations ultérieures dans des plateformes d'édition numérique ou des services web, sans que ces développements soient nécessairement portés par l'auteur initial de la librairie. L'enrichissement des métadonnées historiques associées à chaque date (sources liturgiques médiévales, variantes régionales) constituerait une piste de travail précieuse pour documenter les limites de chaque calcul et expliciter les choix éditoriaux.
+
+Enfin, l'articulation entre calcul de dates et traitement automatique du langage naturel (TAL) reste un champ à explorer. La reconnaissance automatique des mentions temporelles liturgiques dans les textes espagnols du \textsc{xvi}\textsuperscript{e} siècle, combinée au calcul des dates correspondantes, permettrait, à terme, une annotation semi-automatique de corpus à grande échelle.
+%==========================================================================
+\section{Conclusion} \label{sec:conclusion}
+%==========================================================================
+
+La genèse de \texttt{calendario\_liturgico} témoigne d'une dynamique de mutualisation des infrastructures de recherche en humanités numériques. Partie d'un besoin méthodologique situé — l'annotation TEI d'un corpus inquisitorial espagnol —, elle aboutit à une ressource computationnelle générique, documentée, validée et accessible. Les fondements mathématiques de l'outil, ancrés dans une tradition computistique pluriséculaire (de Denys le Petit à Gauss et Meeus), garantissent la fiabilité des calculs, tandis que l'architecture sans dépendances, les tests automatisés et la documentation trilingue en renforcent la pérennité et la réutilisabilité. La conformité aux principes FAIR4RS et la publication sous licence ouverte inscrivent la librairie dans l'écosystème de la science ouverte~\cite{chuehong2022}.
+
+Cette trajectoire illustre une éthique de la recherche où la science ouverte ne se limite pas au partage des publications, mais s'étend à la mise en commun des outils, des protocoles et des données. Le dialogue entre humanités et computation suppose à la fois une acculturation des chercheurs en sciences humaines aux logiques algorithmiques et une attention accrue, du côté des informaticiens, aux subtilités herméneutiques et à l'historicité des objets culturels. Sans prétendre épuiser ces enjeux, \texttt{calendario\_liturgico} propose un exemple de rigueur computationnelle mise au service de l'intelligence historique, en maintenant une distinction claire entre ce qui relève du calcul et ce qui relève de l'interprétation.
+
+% Imprime la bibliographie à la fin.
+\printbibliography
+
+\end{document}

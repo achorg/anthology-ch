@@ -1,0 +1,412 @@
+%This file derives from the ACL template: https://github.com/acl-org/acl-style-files. Adaptation in French: Simon Gabay
+
+% This must be in the first 5 lines to tell arXiv to use pdfLaTeX, which is strongly recommended.
+%\pdfoutput=1
+% In particular, the hyperref package requires pdfLaTeX in order to break URLs across lines.
+
+\documentclass[11pt,french]{article}
+
+% Remove the "review" option to generate the final version.
+\usepackage{humanistica}
+\setlength\titlebox{5.3cm} % modifier la hauteur du `\maketitle`
+
+% Standard package includes
+\usepackage{times}
+\usepackage{latexsym}
+
+% For proper rendering and hyphenation of words containing Latin characters (including in bib files)
+\usepackage[T1]{fontenc}
+% For Vietnamese characters
+% \usepackage[T5]{fontenc}
+% See https://www.latex-project.org/help/documentation/encguide.pdf for other character sets
+% This assumes your files are encoded as UTF8
+\usepackage[utf8]{inputenc}
+
+% This is not strictly necessary, and may be commented out,
+% but it will improve the layout of the manuscript,
+% and will typically save some space.
+\usepackage{microtype}
+\usepackage{changepage}
+\usepackage{todonotes}
+\usepackage{mathptmx}
+\usepackage{placeins} % For \FloatBarrier
+
+%Translate to French
+\usepackage{fontspec}
+\usepackage{xunicode}
+\usepackage{polyglossia}
+\setmainlanguage{french}
+\setotherlanguage{greek}
+\setmainfont{TeX Gyre Termes}[SmallCapsFont={TeX Gyre Termes},SmallCapsFeatures={Language=Default,Letters = SmallCaps}]
+\newfontfamily\greekfont[Script=Greek]{Linux Libertine O}
+\def\frenchtablename{Tableau}
+\usepackage{arydshln}
+\usepackage{array}
+
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{float}
+
+\usepackage{minted} % reading the xml
+% If the title and author information does not fit in the area allocated, uncomment the following
+%
+%\setlength\titlebox{<dim>}
+%
+% and set <dim> to something 5cm or larger.
+
+\title{Données et modèles pour le traitement des documents en néolatin: le cas Lambert Daneau}
+
+% Author information can be set in various styles:
+% For several authors from the same institution:
+% \author{Author 1 \and ... \and Author n \\
+%         Address line \\ ... \\ Address line}
+% if the names do not fit well on one line use
+%         Author 1 \\ {\bf Author 2} \\ ... \\ {\bf Author n} \\
+% For authors from different institutions:
+% \author{Author 1 \\ Address line \\  ... \\ Address line
+%         \And  ... \And
+%         Author n \\ Address line \\ ... \\ Address line}
+% To start a seperate ``row'' of authors use \AND, as in
+% \author{Author 1 \\ Address line \\  ... \\ Address line
+%         \AND
+%         Author 2 \\ Address line \\ ... \\ Address line \And
+%         Author 3 \\ Address line \\ ... \\ Address line}
+
+\author{Floriane 
+GOY \\
+  Institut d'Histoire de la Réformation \\
+  Université de Genève \\
+  \texttt{floriane.goy@unige.ch}
+  }
+  %Affiliation / Adresse ligne 2 \\
+ % Affiliation / Adresse ligne 3 \\
+%\texttt{email@domaine} \\\And
+ % Second Author \\
+  %Affiliation / Adresse ligne 1 \\
+ % Affiliation / Adresse ligne 2 \\
+ % Affiliation / Adresse ligne 3 \\
+%  \texttt{email@domaine} \\}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+Le projet FNS sur l'exégèse paulinienne au \textsc{xvi}\ieme{}~siècle.~\cite{exegesisofPaul_2023} prévoit de concevoir un corpus de commentaires sur les épîtres de Paul, qui nécessite la numérisation de grande quantité d'imprimés en néolatin. Cet état de langue étant généralement peu présent dans les différents jeux de données nécessaires à l'entraînement des différents modèles utiles pour la constitution d'une bibliothèque numérique, nous avons entrepris de pallier ce problème. Nous présentons donc ici les données et les modèles conçus pour deux tâches essentielles: l'OCR et la lemmatisation.
+\end{abstract}
+
+\section{Introduction}
+\begin{table*}[t]
+    \centering\small
+    \begin{tabular}{l l c l c l l}
+        \toprule
+        \textbf{Auteur} & \textbf{Titre} & \textbf{longueur} & \textbf{Imprimeur} & \textbf{Date} & \textbf{Lieu} & \textbf{Cote} \\ \midrule
+        L. Daneau* & Ep.I ad Timotheum & 513 p. & E. Vignon & 1577 & Genève & \href{https://doi.org/10.3931/e-rara-6338}{Cti 1753 BGE S 22877} \\
+        M. Brucer & Ep. ad Ephesios & 224 p. & Anonymus & 1527 & Strasbourg& \href{https://mdz-nbn-resolving.de/urn:nbn:de:bvb:12-bsb00035303-6}{Polem. 408 Beibd.2} \\
+        K. Megander & Ep. ad Ephesios & 282 p. & H. Petrus & 1534 & Basel& \href{https://mdz-nbn-resolving.de/urn:nbn:de:bvb:12-bsb00036972-0}{Exeg. 700 m} \\
+        B. Aretius & Ep. ad Titum et & & & & & \\
+        &  ad Philemonem & 450 p. & J. Le preux & 1580 & Morges & \href{https://mdz-nbn-resolving.de/urn:nbn:de:bvb:12-bsb10313792-3}{Exeg. 53 Beibd.1} \\ \bottomrule
+    \end{tabular}
+    \caption{Corpus de travail.}
+    \label{tab:corpus}
+\end{table*}
+
+Avec les possibilités ouvertes par la numérisation massive des manuscrits et des imprimés conservés dans les bibliothèques et les institutions patrimoniales, le traitement en masse des données s'impose comme une évidence pour nombre de projets. L'ambition générale du projet FNS sur l'exégèse de Paul au \textsc{xvi}\ieme{} siècle~\cite{exegesisofPaul_2023} est ainsi de numériser et analyser les commentaires de l'Église Réformée concernant les textes des Épîtres en utilisant les ressources disponibles en ligne, et notamment celles conservées en Suisse~\footnote{\url{https://www.e-rara.ch}.} et en Allemagne~\footnote{\url{https://www.digitale-sammlungen.de}.}. Une base de données, \textit{Reformation Readings of Paul}\footnote{\url{https://rrp.zahnd.be}.} propose également une première liste des imprimés disponibles en ligne.
+
+Les commentaires exégétiques en latin du \textsc{xvi}\ieme{} siècle constituent une vaste documentation très peu étudiée dans son ensemble. La comparaison de ces commentaires à large échelle devrait pourtant offrir un aperçu de la complexité des mouvements intellectuels qui animent cette période charnière entre le Moyen Âge et l'époque moderne. Afin de mener à bien une telle étude, la lecture distante s'impose comme l'approche la plus prometteuse, avec des méthodes d'analyse linguistique comme la modélisation de sujets (\textit{topic modelling}). Pour être mené à bien, ce type de travail nécessite cependant l'acquisition du texte conservé dans les imprimés anciens grâce à la Reconnaissance Optique de Caractères (en anglais OCR), puis l'enrichissement de ces données au moyen des outils de Traitement Automatique des Langues (TAL) comme la lemmatisation. Cette communication présente les premiers résultats de ces deux phases, avant une exploitation théologique des données qui interviendra plus tard.
+
+La complexité de la création du corpus paulinien réside dans son aspect inédit: si le latin est l'une des langues les mieux outillées informatiquement, le néolatin du \textsc{xvi}\ieme{} siècle reste encore sous-doté. Cet état de langue présente pourtant des particularités non négligeables, que cela soit d'un point de vue de la graphie ou du lexique, qui en font un objet à part entière, requérant des solutions \textit{ad hoc} qui doivent être créées tout en restant compatible avec les choix opérés par les spécialistes de la langue classique, ou des imprimés de la première modernité. C'est donc à répondre à ce double défi que nous nous attelons.
+
+Dans le cadre de cette recherche, le texte du commentaire de l'épître à Timothée rédigé par Lambert Daneau (1530-1595)~\cite{daneau1577} concentre la plupart de nos efforts. Ce commentaire, écrit en latin au \textsc{xvi}\ieme{} siècle par un théologien calviniste, nous a en effet paru particulièrement représentatif des imprimés de notre corpus, tant du point de vue de la langue que de la forme (abréviations, casse de l'imprimeur…). Relativement inconnu, c'est aussi l'occasion de remettre en valeur son importance théologique~\cite{ZahndDaneauKommnetiert}.
+
+\section{État de l'art}
+
+De nombreux projets se sont intéressés aux corpus de textes en langue latine de l'Antiquité, qu'il s'agisse d'initiatives lancées par le secteur privé comme la \textit{Library of Latin Texts} de Brepols\footnote{\url{https://www.brepols.net/series/LLT-O}},
+dont le corpus couvre également les textes en médiolatin, ou de projets publics comme le portail de textes gréco-latins \textit{Perseus}\footnote{\url{http://www.perseus.tufts.edu/hopper}.}. En parallèle de ces grands projets généralistes, on trouve des projets traitant de thématiques plus spécialisées comme \textit{Musisque Deoque}\footnote{\url{https://www.mqdq.it/public},} un répertoire dédié à la poésie métrique. Pour les documents en latin médiéval, on trouve là encore des outils privés, comme une version numérique de la \textit{Patrologia Latina} de Migne\footnote{\url{https://www.proquest.com/patrologialatina}.}, ou des initiatives plus ambitieuses et non commerciales comme le \textit{Corpus Corporum} \footnote{\url{https://mlat.uzh.ch}.}. Le néolatin, lui, n'a en revanche pas eu la chance de connaître des initiatives similaires.
+
+Ce n'est pas le cas de tous les textes publiés pendant le \textsc{xvi}\ieme{} siècle. Les documents en langues vernaculaires sont bien plus étudiés que les textes latins, comme le montre le projet des Bibliothèques virtuelles humanistes à l'université de Tours \footnote{\url{https://www.bvh.univ-tours.fr}.}, ou le plus récent projet sur les \textit{Faits de Jésus Christ et du Pape} à l'université de Genève \footnote{\url{https://www.unige.ch/ihr/fr/accueil/setaf}.}.
+
+Avec le développement des dernières technologies, l'OCR s'est imposé comme un passage obligé pour la constitution rapide et efficace de grands corpus. Des premiers modèles de très grande qualité ont récemment été publiés pour les manuscrits médiévaux \citep{pinche:hal-04346939,clerice:hal-04453952} ou les imprimés en caractères gothiques \cite{solfrini:hal-04555002}, mais ceux pour les imprimés modernes en caractères romains \cite{pincheGallicorpora2022,gabay:hal-04557457} ne répondent encore qu'imparfaitement aux besoins des spécialistes de néolatin. N'ayant jamais vu de données dans cette dernière langue, les modèles disponibles commettent encore nombre d'erreurs de transcription (diacritiques, etc.).
+
+Une fois les données extraites avec l'OCR, le chercheur se trouve confronté au problème de la normalisation. L'OCR fournit en effet une transcription graphématique du texte. Or, la lemmatisatisation requiert un texte qui doit être minimalement lissé (abréviations, etc.). Il faut donc normaliser le texte, c'est-à-dire l'aligner sur une norme indépendante des traditions ecdotiques qui facilite le travail de la machine. Si des stratégies de normalisation de la langue pour le vernaculaire ont été développées \cite{bawden:hal-03540226}, il n'y a rien de tel pour le latin du \textsc{xvi}\ieme{}~siècle. 
+
+L'annotation linguistique (lemmes, POS, morphologie…) pose encore une fois le problème. Si le latin classique \citep{cléri2022}, l'ancien français \citep{camps:halshs-03353125} ou le français moderne \cite{gabay:hal-03018381} ont déjà des jeux de données d'entraînement et des modèles facilement accessibles \citep{thibault_clerice_2020_3883590}, on note l'absence de solution pour le latin du \textsc{xvi}\ieme{}~siècle. Ce dernier présente cependant des particularités lexicales et graphiques évidentes, si l'on pense à l'omniprésence et l'importance du lexique chrétien, notamment pour un corpus de commentaires théologiques.
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=.85\linewidth]{images/pipeline_2.png}
+    \caption{schéma décrivant les 4 étapes principales du traitement des données : colonne 1 la segmentation point~\ref{sec:Segmentation}, colonne 2 l'OCRisation point~\ref{sec:OCR}, colonne 3 la normalisation point~\ref{sec:normalisation}, colonne 4 l'annotation linguistique point~\ref{sec:Lemmatisation}.}
+    \label{fig:pipeline}
+    \vspace{-.4cm}
+\end{figure*}
+%\FloatBarrier
+
+\section{Données}
+\label{part:data}
+Les données des différentes expériences présentées ici proviennent d'imprimés publiés en Suisse Romande et en Alsace entre 1534 et 1580, choisis sur recommandation des doctorants\textperiodcentered e\textperiodcentered s. Ils contiennent tous des commentaires aux Épîtres de Paul rédigés par des réformateurs et sont d'une longueur très variable, allant du simple (c.~200 pages) au double (c.~500 pages). Les facsimilés numériques proviennent de la bibliothèque numérique\textit{~E-Rara}\footnote{\url{https://www.e-rara.ch}.} ou du Münchener Digitalisierungszentrum\footnote{\url{https://www.digitale-sammlungen.de}.}. Ce corpus est évidemment appelé à évoluer dans la suite du projet: il ne s'agit ici que d'un prototype, qui se consacre principalement sur le commentaire de Lambert Daneau.
+
+\section{Chaîne de traitement}
+
+Notre chaîne de traitement comprend donc trois principales étapes (cf.~fig.~\ref{fig:pipeline}): l'extraction des données (segmentation, cf.~\S\ref{sec:Segmentation}, et OCRisation, cf.~\S\ref{sec:OCR}), puis leur normalisation et leur annotation linguistique (cf.~\S\ref{sec:Lemmatisation}). Heureusement, les outils facilitant la préparation des données disponibles pour les autres langues ou états de langue, que ce soit pour l'OCRisation \citep{kiessling_escriptorium_2019} ou l'annotation linguistique \citep{deucalion2018} fonctionnent aussi pour nos données. Ces dernières sont d'abord au format XML-ALTO, puis converties en XML-TEI.
+
+\section{Segmentation}
+
+\subsection{Analyse de la page}
+\label{sec:Segmentation}
+Nos documents ne posent pas de problèmes particuliers en matière de mise en page. La préparation des données est faite avec eScriptorium~\cite{kiessling_escriptorium_2019}, dont l'Université de Genève possède une instance~\cite{gabay2021}. Pour garantir l'interopérabilité des données, nous avons recours au vocabulaire de SegmOnto ~\cite{gabay2023b}. Notre objectif principal étant une restructuration minimale du document (texte vs paratexte, différentes parties et sous-parties), nous n'avons pas jugé utile d'adopter une granularité trop fine (paragraphes, etc.)
+
+Sept types de zones ont été retenues : 
+\begin{itemize}
+    \item \texttt{RunningTitleZone} pour le titre courant en haut de page;
+    \item \texttt{MarginTextZone} pour les commentaires marginaux
+    \item \texttt{NumberingZone} pour la numérotation (pagination ou foliotation);
+    \item \texttt{MainZone} pour le corps du texte;
+    \item \texttt{QuireMarksZone} pour l'organisation des cahiers;
+    \item \texttt{GraphicZone} pour toutes les décorations (illustrations, ornementation…);
+    \item \texttt{DropCapitalZone} pour les lettrines en début de partie.
+\end{itemize}
+
+Les lignes ont été classées en trois catégories:
+\begin{itemize}
+    \item \texttt{HeadingLine} continent tout les éléments de titre, sous-titre, etc.;
+    \item \texttt{DefaultLine} décrit la ligne par défaut;
+    \item \texttt{CustomLine:BiblicalText} les versets bibliques structurant le découpage du commentaire biblique en différentes parties.
+\end{itemize}
+
+\subsection{Résultat}
+
+Nos données ont été utilisées pour entraîner un modèle de segmentation \cite{humeau_2024_10602197,solfrini:hal-04555002} proposant de bonnes performances (cf.~tab.~\ref{tab:evaluation_f1}). Ce modèle a permis d'automatiser la tâche d'annotation des images et ainsi d'accélérer le travail, en dépit de quelques faiblesses persistantes.
+
+\begin{itemize}
+    \item Concernant les types de zones, des tests montrent que, si la numérotation des pages ou les marques d'imprimerie sont bien reconnues, le modèle tend à oublier des zones comme les \texttt{DropCapitalZone}.
+    \item Concernant les types de lignes, le modèle que nous avons à disposition ne permet pas encore de prédire leur classe, qui est réduite par défaut à \texttt{DefaultLine}, et nécessite donc encore un travail manuel.
+\end{itemize}
+
+\begin{table}[htp]
+    \centering\small
+    \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}ccc}
+        \toprule
+         $P_{micro}$ & $R_{micro}$ & $F1_{micro}$ \\
+         0.88 & 0.5695 & 0.691 \\
+        \midrule
+         $P_{macro}$ & $R_{macro}$ & $F1_{macro}$ \\
+        0.883 & 0.775 & 0.814 \\
+        \bottomrule
+    \end{tabular*}
+    \caption{Détail des résultats du modèle SegmOnto \guillemotleft Capricciosa\guillemotright sur un jeu de test comprenant des exemples de nos imprimés néolatins du \textsc{xvi}\ieme{}~siècle.}
+    \label{tab:evaluation_f1}
+\end{table}
+
+%L'OCR a été amélioré sur le modèle de Gallicorpora+\cite{pincheGallicorpora2022} destiné à travaillé sur des imprimés modernes (16e au 19e siècle) en langue française. Les données employées son amélioration proviennent de deux dépôts intégrés à la chaîne de traitement \href{https://htr-united.github.io/}{HTR-United} disponible sur l'espace GitHub de \href{https://github.com/FoNDUE-HTR?q=&type=all&language=&sort=}{~FONDUE} qui contiennent de documents imprimés au 16ème siècle en caractère roman \href{https://github.com/FoNDUE-HTR/FONDUE-FR-PRINT-16}{FONDUE-FR-PRINT-16} avec des documents en français et \href{https://github.com/FoNDUE-HTR/FONDUE-LA-PRINT-16}{FONDUE-LA-PRINT-16} avec des documents en latin (cf.Tableau\ref{dépôt-git-corpus}).
+
+
+\section{Reconnaissance optique de caractères}
+Au début de notre projet, nous avions à notre disposition le modèle du projet \textit{Gallicorpora} \cite{pinche_2022_7410529}, intégralement entraîné sur des données en français. Malheureusement, les premiers tests ont démontré d'importantes lacunes sur deux points: la transcription des abréviations, et l'utilisation d'accents (cf.~fig.~\ref{fig:abréviations}).
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=\linewidth]{abréviations.png}
+    \caption{Exemple d'abréviation latine (\textit{vell\~{e}t} et \textit{sent\~{e}tia} avec un tilde sur le ‹e› pour \textit{en}) et d'accent typique du néolatin (\textit{verò} doté d'un accent grave sur le ‹o›.)
+    \href{https://www.e-rara.ch/gep_g/content/zoom/2012928}{\textsc{Lamb.Dan.}\textit{~Ep. 1 Tim.} I,16}}
+    \label{fig:abréviations}
+\end{figure}
+
+\subsection{Données}
+\label{sec:OCR}
+Si l'essentiel de nos données provient du commentaire de Lambert Daneau, nous avons recours à des échantillons provenant de pages prises de manière aléatoire dans les différents imprimés de notre corpus de travail (cf.~tab.~\ref{tab:example}).
+
+\begin{table}[!h]
+    \centering
+    \small
+    \begin{tabular}{p{4cm} c p{0.7cm} c}
+        \toprule
+        \textbf{Cote} & \textbf{Date} & \textbf{Pages} & \textbf{lines} \\ \hline
+        \href{https://doi.org/10.3931/e-rara-6338}{Bibliothèque de Genève, BGE~Cti~1753 BGE~S~22877} & 1577 & 64 & 2031 \\
+        \href{https://doi.org/10.3931/e-rara-6338}{Bibliothèque de Genève, BGE~Cti1753 BGE S 22877} & 1577 & 54 & 1897 \\ 
+        \href{https://doi.org/10.3931/e-rara-6338}{Bibliothèque de Genève, BGE Cti 1753 BGE S 22877} & 1577 & 12 & 463 \\ 
+        \href{https://mdz-nbn-resolving.de/urn:nbn:de:bvb:12-bsb00035303-6}{München, Bayerische Staatsbibliothek, Polem. 408} & 1527 & 12 & 395 \\ 
+        \href{https://mdz-nbn-resolving.de/urn:nbn:de:bvb:12-bsb00036972-0}{München, Bayerische Staatsbibliothek, Exeg. 700 m} & 1534 & 11 & 273 \\ 
+        \href{https://mdz-nbn-resolving.de/urn:nbn:de:bvb:12-bsb10313792-3}{München, Bayerische Staatsbibliothek, Exeg. 53} & 1580 & 11 & 345 \\ 
+        \href{https://mdz-nbn-resolving.de/urn:nbn:de:bvb:12-bsb11203740-5}{Augsburg, Staats- und Stadtbibliothek,2 Th Ex 424} & 1532 & 1 & 58 \\ \midrule
+        \textbf{Total} & & \textbf{164} & \textbf{5472} \\ \bottomrule
+    \end{tabular}
+    \caption{Nombre de pages et de lignes provenant de chacun des imprimés.}
+    \label{tab:example}
+\end{table}
+
+Nos données comprennent, outre les documents que nous avons préparés, d'autres imprimés néolatins transcrits par Marie Jeannot-Tirole, provenant de son travail de thèse sur Ioannes Sapidus\footnote{\url{https://mariejeannot.pages.unistra.fr/sapidus}.}. Les œuvres de ce dernier, des poésies donc plutôt écrites en italique \citep{speyer:hal-02184237}, permettent d'augmenter la quantité de ce type de caractère, dont l'usage reste rare (cf.~fig.~\ref{fig:italique}).
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=\linewidth]{italique.png}
+\caption{L'usage de l'italique se limite à la citation des versets bibliques commentés par les exégètes. Cf.~par ex.~\href{https://www.e-rara.ch/gep_g/content/zoom/2012921}{\textsc{Lamb.Dan.}\textit{~Ep. 1 Tim.}I,9}}
+\label{fig:italique}
+\end{figure}
+
+Nos données ainsi que celles de M. Jeannot-Tirole, avec qui nous partageons les mêmes règles de transcription, sont distribuées dans un dépôt GitHub préparé selon les recommandations du projet \textit{HTR-United} \citep{chague_here_2023}: \texttt{FONDUE-LA-PRINT-16} \citep{gabay_fondue-la-print-16_2024}.
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=\linewidth]{pie_chart.png}
+\caption{Origine de la vérité de terrain.}
+\label{fig:pie_chart}
+\end{figure}
+
+En plus de ces données, comme pour le modèle de segmentation, nous avons recours à des données provenant d'imprimés en langue française \citep{gabay_fondue-fr-print-16_2024}, qui partagent exactement les mêmes règles de transcription, afin d'augmenter la quantité de données. Ces données représentent environ le tiers du total des données pour le \textsc{xvi}\ieme{}~s. (cf.~tab.~\ref{fig:pie_chart}).
+
+\subsection{Règles de transcription}
+
+Les règles de transcription présentées par \citet{clericeCREMMAMediiAevi2023} couvrent l'essentiel des cas complexes. On y trouve en effet des recommandations pour les abréviations du latin médiéval, dont le système du néolatin est une simplification. En dehors du phénomène d'accentuation, le néolatin ne présente donc pas de graphie nouvelle par rapport à celles des manuscrits médiévaux. Le seul caractère ajouté à notre transcription est ainsi le pied de mouche que les imprimeurs emploient pour indiquer les débuts des cahiers. On gardera à l'esprit qu'un corpus plus large donnera certainement à voir d'autres de ces signes typographiques.
+
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=\linewidth]{images/greek_alphabet.jpg}
+    \caption{Exemple d'un passage en grec transcrit sans ligature, transcrit \textit{has πρώτην πιςτιν variè}.}
+    \label{fig:grec}
+\end{figure}
+
+Plus épineuse est la question des langues étrangères, comme le grec et l'hébreu, qui font en effet leur apparition dans les commentaires bibliques du \textsc{xvi}\ieme{} siècle. Dans le cas des commentaires pauliniens, l'hébreu est employé de manière anecdotique, il n'a donc pas été considéré pour l'instant dans cette étude. En revanche, les exégètes citent fréquemment le vocabulaire du texte source des épîtres: le grec. La transcription de cette seconde langue revêt donc un intérêt particulier pour la compréhension du propos du commentaire. Or, le grec des imprimés se décline à travers à un système de ligature complexe \cite{wallace1923ligatures} qui nécessiterait à lui seul l'entraînement d'un modèle. Pour des raisons d'efficacité, il a été décidé de ne pas tenir compte de ces ligatures.
+
+\subsection{Résultats}
+
+Nous entraînons et évaluons trois modèles différents avec Kraken \citep{kraken}.
+
+\begin{itemize}
+    \item \texttt{Gallicorpora+}\footnote{\href{https://doi.org/10.5281/zenodo.7410529}{modèle de Gallicorpora+}} le modèle entraîné sur des imprimés anciens pour le projet \texttt{Gallicorpora}, qui n'a pas vu de vérité de terrain en (néo)latin;
+    \item \texttt{gallicorpora\_ajuste}\footnote{\href{https://github.com/FourbeFlo/Lambertus/releases/download/model/Lambertus_03_best.mlmodel}{modèle gallicorpora\_ajuste}} : version ajustée de \texttt{Gallicorpora+} sur les données du \textsc{xvi}\ieme{}~s. précédemment décrites;
+    %\item \texttt{Model\_90}\footnote{\href{ https://github.com/FourbeFlo/OCR_test/releases/download/ml.model/lambertus_test_mai_best.mlmodel}{ modèle Model\_90}} : même configuration que \texttt{Model\_100}, moins 10\% des données du du \textsc{xvi}\ieme{}~s. pour évaluer notre marge de progression;
+    \item \texttt{catmusPrint\_ajuste}: version ajustée du modèle CATMuS\textit{print} \citep{gabay:hal-04557457} sur les données du \textsc{xvi}\ieme{}~s. précédemment décrites et des données du \textsc{xvii}\ieme{}~s. \cite{gabay_2024_11526040}\footnote{Modèle entraîné par \citet{gabay_clerice_2024}.}.
+\end{itemize}
+
+Pour évaluer ces modèles, nous utilisons un double corpus hors domaine décrit dans le tab.\ref{tab:exemple2}. Nous utilisons deux jeux de données différents: le premier contient des extraits de documents très proches de notre corpus de travail (Test 1: commentaires pauliniens), et le second un document qui est toujours un commentaire biblique, mais dont le thème et la facture sont différents (test 2: commentaire biblique).
+
+\begin{table}[htp]
+    \centering\footnotesize
+    \begin{tabular}{l l c c}
+        \toprule
+        \textbf{Corpus} & \textbf{Cote} & \textbf{Pages} & \textbf{Line} \\
+        \midrule
+        \multirow{4}{*}{\textbf{Test 1}} 
+        & \href{https://doi.org/10.3931/e-rara-6338}{BGE Cti 1753 BGE S 22877}  & 2 & 72 \\ 
+        & \href{https://doi.org/10.3931/e-rara-19975}{BCUL, AZ 8515 (4)} & 2 & 61 \\ 
+        & \href{https://doi.org/10.3931/e-rara-8160}{ZB, C 283,2} & 2 & 51 \\ 
+        \midrule
+        \textbf{Test 2} 
+         & \href{https://doi.org/10.3931/e-rara-75521}{BGE Cta 3110 (1)} &   &  \\
+         & \href{https://doi.org/10.3931/e-rara-75521}{BGE Bb 1049 (1)} & 2 & 88  \\
+        \midrule
+        \textbf{Total} &  & \textbf{8} & \textbf{272} \\
+        \bottomrule
+    \end{tabular}
+    \caption{Corpus de données \textit{out-of-domain} pour le test d'OCR.}
+    \label{tab:example2}
+\end{table}
+
+
+\begin{table*}[t]
+    \centering
+        \begin{tabular}{l|l|c c c c|}
+        \toprule
+        \textbf{Corpus} & \textbf{Métrique}  & \texttt{Gallicopora}  & \texttt{gallicorpora\_ajuste} & \texttt{catmusPrint\_ajuste} \\
+        \midrule
+        \multirow{2}{*}{\textbf{Test 1}} 
+        & Acc & 97.95 & 98.96 & \textbf{99.14}\\
+        & WAcc & 88.32 & 93.06 & \textbf{94.51}\\
+        \hline
+        \multirow{2}{*}{\textbf{Test 1+2}} 
+        & Acc & 97.39 & 98.56 & \textbf{98.95}\\
+        & WAcc & 86.19 & 91.11 & \textbf{93.35}\\
+        \bottomrule
+        \end{tabular}
+        \caption{Résultats des 3 modèles sur les deux jeux de test. Les meilleurs résultats sont indiqués en gras. Le calcul de la WAcc est fait avec ~\href{https://github.com/FoNDUE-HTR/kamiCLI}{kamiCLI}.}
+        \label{tab:wide_table}
+    \end{table*}
+
+
+Sans grande surprise, si les résultats sont satisfaisants pour les trois modèles, le \texttt{catmusPrint\_ajuste} obtient les meilleurs scores, notamment avec l'ajout du jeu de test 2. Si le gain au niveau de la \textit{character accuracy} (CAcc) est relativement modeste, celui au niveau de la \textit{word accuracy} (WAcc) est plus net, justifiant l'entraînement de nouveaux modèles en dépit de scores \textit{a priori} corrects au premier abord.
+
+\section{Normalisation}
+\label{sec:normalisation}
+De récentes études ont démontré la supériorité des approches neuronales pour la normalisation linguistique~\cite{gabay-barrault-2020-traduction,bawden:hal-03540226}. Les imprimés en néolatin présentent cependant une relative stabilité tant dans leurs pratiques graphiques que dans le système abréviatif: nous avons donc choisi une approche à base de règles, utilisant des expressions régulières\footnote{Le script est disponible en ligne: \url{https://github.com/16thExegesisDH/PipeLineThm/tree/main/PYTHON/normalisation}.}.
+
+\subsection{Principes généraux}
+
+La normalisation est ici comprise comme un alignement de la transcription sur les normes régissant le latin classique, la plupart des outils disponibles étant prévus pour traiter ce type de texte. Elle concerne en particulier : 
+
+\begin{itemize}
+    \item le système abréviatif : résolution des tildes…;
+    \item les accents et les cédilles: suppression des accents typiques des imprimés en néolatins…; 
+    \item les lettres ramistes: rétablissement du ‹u› pour le son consonne;
+    \item les ligatures: passage de ‹æ›/‹e› cédillé à ‹ae›, de ‹œ› à ‹oe›…
+    \item les variations de forme: passage du \textit{s} long (‹ſ›) au \textit{s} rond;
+\end{itemize}
+
+Notre script permet un lissage de la variation graphique par rapport au latin classique, mais pas de corriger des évolutions plus lourdes, du type \textit{auctor} (classique) $\to$ \textit{author} (néolatin) ou \textit{saeculum} (classique) $\to$ \textit{seclum} ou \textit{seculum} (néolatin).
+
+\subsection{Résultats}
+
+La normalisation est stockée dans une balise \texttt{<reg>} à côté du texte extrait par le moteur OCR, conservé dans un \texttt{<reg>}.
+
+\begin{minted}[linenos, breaklines, bgcolor=white,fontsize=\footnotesize]{xml}
+<lb corresp="#f2013098_line_26_ligne_26"/>
+    <choice>
+        <orig>affectum animi. Sanæ, doctrinæ opponitur tum</orig>
+        <reg>affectum animi. Sanae, doctrinae opponitur tum</reg>
+    </choice>
+<lb corresp="#f2013098_line_27_ligne_27"/>
+    <choice>
+        <orig>quod ſuprà dixit eam doctrinã Diabolicam eſſe:</orig>
+        <reg>quod supra dixit eam doctrinam Diabolicam esse:</reg>
+    </choice>
+\end{minted}
+
+\section{Annotation linguistique}
+\label{sec:Lemmatisation}
+La préparation des données pour entraîner les modèles d'annotation linguistique a été faite avec \textit{Pyrrha} \citep{clerice_building_2022}
+
+\subsection{Corpus}
+
+Nous avons contrôlé 18 329 tokens, tous tirés des deux premiers chapitres du commentaire de Lambert Danneau (cf.~\S\ref{part:data}), soit environ soixante-dix pages situées au début de l'œuvre (cf.~tab.\ref{tab:annotation}).
+
+\begin{table}[h]
+    \centering\small
+    \begin{tabular}{l l c c}
+        \toprule
+        \textbf{Parties} & \textbf{Nombre de pages} & \textbf{et de lemmes} \\
+        \midrule
+        Préface & 24 & 4 781 \\
+        Chapitre I & 37 & 9 477 \\
+        Chapitre II & 15 & 4 071 \\
+        \toprule
+        \textbf{total} & 76 & 18 329 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Corpus pour l'annotation linguistique.}
+    \label{tab:annotation}
+    \end{table}
+
+\subsection{Annotation}
+Les lemmes proviennent du dictionnaire de \citet{forcellini1940}, afin de de conserver une interopérabilité avec le travail de \citep{cléri2022}. L'utilisation de \textit{Pyrrha} permet de garantir une qualité minimale de l'annotation (contrôle des valeurs possibles en POS, liste de lemmes possibles…). 
+
+La qualité de la prédiction proposée par le modèle LASLA distribué par \textit{Pie extended} \citep{thibault_clerice_2020_3883590} est globalement de grande qualité. L'essentiel des problèmes concerne:
+\begin{itemize}
+\item le vocabulaire propre au latin chrétien et néolatin: \textit{papista}, \textit{excommunicatio}…;
+\item les noms bibliques: \textit{Ezechias}…; 
+\item les noms des penseurs chrétiens: \textit{Augustinus}…; 
+\item les variantes néolatines de mots classiques:  \textit{author}, \textit{seculus}…; 
+\item Les abréviations des différents livres bibliques: \textit{Apocalyp} pour \textit{Apocalypsis}…
+\end{itemize}
+Les abréviations de livres bibliques sont le problème majeur de notre corpus exégétique. Elles ne sont pas standardisées. Par exemple, le nom de l'Évangile de Matthieu est abrégé de trois manières différentes : ‹Math›, ‹Matth›, ‹Matt›. Nous avons choisi de regrouper ces trois tokens derrière le lemme \textit{Matthaeus} tel que l'orthographie le dictionnaire Forcellini.À chaque fois que nous rencontrons une abréviation biblique, nous en gardons la trace dans un fichier csv, ce qui nous permet de tenir à jour leur liste à compléter avec l'avancée du projet\footnote{\url{https://github.com/FourbeFlo/Lemmatization/blob/main/dictionaries\%20and\%20abbreviations/livre-biblique.csv}.}.
+
+\section{Resultat}
+
+Pour des raisons légales,  nous ne pouvons entraîner nous-même le modèle, et attendons un entraînement fait par un collègue.
+
+\section{Conclusion}
+Le travail que nous présentons ici n'est qu'une première version de notre chaîne de traitement, qui devra à être améliorée à l'avenir, notamment en ajoutant de nouvelles données \textit{gold} pour améliorer les différents modèles. Le corpus définitif n'étant pas encore totalement fixé, nous pourrions en effet rencontrer des cas différents (mise en page, typographie…) de ceux présents dans les données que nous avons jusqu'à présent rencontrées.
+
+Une fois le corpus créé, il conviendra de se pencher sur l'analyse de son contenu. Une étude par modélisation de sujets est parmi les premières approches que nous voudrions utiliser, afin d'explorer le contenu des différents commentaires, et étudier leur évolution au cours des années.
+
+\bibliography{bibliographie.bib} 
+
+\end{document}
+%%%%%%%%%%%%%%%%
+cf note.tex for futher informations 

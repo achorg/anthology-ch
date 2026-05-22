@@ -1,0 +1,30 @@
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+node distance=0.8cm and 2cm,
+box/.style={rectangle, draw, rounded corners, align=center}
+]
+
+\node[box] (corpus) {Corpus\\débats};
+
+\node[box, right=of corpus] (seg) {Segmentation\\interventions};
+\node[box, right=of seg] (llm) {Annotation\\LLM};
+
+\node[box, below=of llm] (sent) {Sentiments};
+\node[box, below=of sent] (embed) {Plongement\\sémantique};
+\node[box, left=of embed] (cluster) {Clustering\\HDBSCAN};
+
+\node[box, left=of cluster] (graph) {Graphe\\argumentatif};
+
+\draw[->] (corpus) -- (seg);
+\draw[->] (seg) -- (llm);
+\draw[->] (llm) -- (sent);
+\draw[->] (sent) -- (embed);
+\draw[->] (embed) -- (cluster);
+\draw[->] (cluster) -- (graph);
+
+\end{tikzpicture}
+
+\caption{Chaîne de traitements de structuration argumentative.}
+\label{fig:pipeline}
+\end{figure}

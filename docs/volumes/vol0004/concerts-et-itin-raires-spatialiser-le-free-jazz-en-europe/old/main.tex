@@ -1,0 +1,186 @@
+\documentclass[11pt,french,hyphens]{article}
+
+
+\usepackage{humanistica}  % Use the provided humanistica style
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{newunicodechar}
+\newunicodechar{́}{\'}
+\usepackage{geometry}
+\usepackage{titlesec}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{multicol}
+\usepackage{lipsum}  % For placeholder text
+\usepackage{booktabs}  % For better-looking tables
+\usepackage{longtable} % For tables spanning multiple pages
+\usepackage{array}     % For better column alignment
+\usepackage{xcolor}    % For cell coloring (if needed)
+\usepackage{textcomp}  % For proper Unicode-like symbols
+\usepackage[backend=biber]{biblatex}
+\usepackage{url}
+\addbibresource{jazz_hot.bib}
+
+\title{\textbf{Free Jazz Globalization: \\ African American Free Jazz Musicians in Europe as Documented by \textit{Jazz Hot} (1960s--1980s)}}
+\author{
+  Thomas Gauffroy-Naudin, Dir. Simon Gabay \\
+  Universit\'e de Gen\`eve \\
+}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+L'Europe constitue, selon les termes de Joël Pailhé, l'un des pôles d'un « oligopole mondial du jazz » aux côtés des États-Unis et du Japon(CITE Pailhé). À ce titre, elle offre un terrain d'observation privilégié pour étudier la mondialisation du jazz durant la décennie \textit{free}. L'arrivée massive de musiciens américains à Paris à partir de 1969 (Sunny Murray, Anthony Braxton, l'Art Ensemble of Chicago, Alan Silva, Frank Wright...) répond à des logiques économiques liées au déclin du marché américain, mais elle prolonge aussi une tradition d'accueil des artistes afro-américains remontant à l'entre-deux-guerres. (CITE)
+
+Pourtant, si le jazz circule désormais bien au-delà de ses frontières d'origine, les déplacements concrets de ses musiciens en Europe restent mal documentés. Dans ce contexte, la presse jazz est une ressource précieuse: programmes de concerts, rubriques d'actualité et critiques renseignent sur les dates, les lieux et les artistes qui se produisent sur le territoire. Ces périodiques constituent ainsi des index partiels des mouvements d'artistes, et temoignent de la dynamique de la représentation et diffusion artistique du jazz. 
+
+Le présent travail vise d'exploiter cette documentation pour cartographier les flux de jazzmen en Europe. La source principale est la revue \textit{Jazz Hot}, fondée en 1935, qui occupe une position centrale dans le champ français du jazz(CITE Sklower). La démarche consiste à extraire systématiquement les mentions de performances scéniques, à géolocaliser les lieux de concert, puis à reconstituer les trajets entre destinations pour faire apparaître les circuits de diffusion.
+
+
+\section{État de l'art}
+Les recherches existantes sur la diaspora jazz en Europe consistent principalement en des études biographiques retraçant des trajectoires individuelles \cite{Clark2017} \cite{Ross2000} \cite{Braggs2016}. Si ces travaux sociologiques et historiques fournissent un \textit{close reading} précieux, ils manquent d'analyses à grande échelle fondées sur des données.
+Un premier pas vers cette approche se trouve dans le travail de Joël Pailhé, qui établit un indice de diffusion du jazz en Europe à partir du cumul de chaînes de radios, revues spécialisées, festivals et musiciens professionnels recensés dans chaque pays (CITE). Plus récemment, plusieurs projets de cartographie numérique ont ouvert la voie à une analyse plus distante. La plateforme \textit{Free Jazz NYC} propose ainsi une cartographie et une \textit{timeline} des lieux de représentation du free jazz à l'échelle de Manhattan, tandis que l'application \textit{Jazz Venues} spatialise les clubs de jazz parisiens des années 1920 (CITE). Sur la question spécifique des déplacements d'artistes, \textit{The Travels of Josephine Baker and Sidney Bechet} démontre, sur un corpus réduit, le potentiel de la cartographie d'itinéraires (CITE).
+Aucun de ces projets n'a toutefois mobilisé d'outils OCR pour traiter des périodiques du XXe siècle. C'est pourquoi nous nous tournons vers le projet BasArt, qui constitue un jalon important en matière de base de données interactive sur la circulation d'artistes à partir de catalogues d'expositions \cite{BasArt}. C'est cette approche, notamment dans le traitement des sources et la structuration des données, qui nous semble la plus propice au développement d'une plateforme à grande échelle.
+
+
+\section{Entrainement modèle OCR}
+
+\subsection{Données}
+Le premier défi consiste à rassembler suffisamment de sources pour constituer un jeu de données complet. Le manque d'intérêt pour la numérisation de la presse jazz explique la difficulté à localiser des numéros de \textit{Jazz Hot}. Bien qu'une collection de revues européennes de jazz existe au \textit{Centro Nazionale Studi sul Jazz} à Sienne, l'absence de données accessibles en ligne et le coût de la numérisation  a conduit ce projet à dresser un corpus manuellement à partir de notre collection personnelle de revues. De part ces limites, notre sélection se trouve moins représentative pour les années 1966 à 1970.
+
+Notre corpus d'entraînement se compose d'un échantillon de 55 pages sélectionnées en fonction de l'interét pour les rubriques pouvant mentionner des concerts (actualités, programmes, critiques). Le déséquilibre de l'échantillonage se justifie d'une large gamme de typographie selon les numeros. En effet, les numéros de 1968 et 1969 sont davantage représentés en raison de variations de mise en page et de police plus fréquentes durant cette période, alors que les numéros des années 1970 sont plus homogènes dans leurs occurrences graphiques.
+\begin{table}[h]
+    \centering
+    \begin{tabular}{>{\raggedright\arraybackslash}p{0.25\linewidth}>{\centering\arraybackslash}p{0.2\linewidth}>{\centering\arraybackslash}p{0.2\linewidth}>{\centering\arraybackslash}p{0.18\linewidth}}
+        \toprule
+        \textbf{ID} &  \textbf{Nombre de numeros} &\textbf{Nombre de vues}&\textbf{Échantillons}\\
+        \midrule
+        JH\_1966&8&42&4\\
+        JH\_1967&1&7&5\\
+        JH\_1968&4&25&10\\
+        JH\_1969&2&16&9\\
+        JH\_1970&11&66&5\\
+        JH\_1971&11&57&2\\
+        JH\_1972&11&41&3\\
+        JH\_1973&11&35&6\\
+        JH\_1974&10&30&4\\
+        JH\_1975&11&48&4\\
+        JH\_1976&11&37&3\\
+           \midrule
+ \textbf{Total}&  91 &404&55\\
+  \bottomrule
+    \end{tabular}
+    \caption{Corpus complet et échantillons pour l’entrainement du modèle d’OCR.}
+    \label{tab:corpus}
+\end{table}
+
+\subsection{Segmentation}
+Les pages sélectionnés ont été segmentées manuellement à l'aide de FoNDUE, une instance d'eScriptorium de l'Université de Genève Kraken (version 4.3.12) \cite{eScriptorium}. Puisque le cadre du projet se cantonne à l'extraction de données précises dans le corps du texte (noms, dates et lieux), un découpage complexe n'est pas nécéssaire. De plus, la structure editoriale clairement délimitée du magazine invite à suivre un système de segmentation simple, applicable à l'ensemble du corpus :
+
+\begin{itemize}
+  \item \textbf{\texttt{AdvertisementZone:}}  Zone personnalisée pour les publicités
+  \item \textbf{\texttt{GraphicZone:}} Images
+  \item \textbf{\texttt{MainZone:}} Corps de texte (données pertinentes)
+  \item \textbf{\texttt{NumberingZone:}} Pagination
+  \item \textbf{\texttt{TextZone}}  Textes divers et légendes
+  \item \textbf{\texttt{TitlePageZone:}} Titres de rubriques
+\end{itemize}
+
+L'ensemble des lignes sont étiquetées sous \texttt{DefaultLine}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\columnwidth]{Figure_1_Sementation.png}
+    \caption{JH\_67\_04 \texttt{MainZone} (jaune), \texttt{AdvertisementZone:} (vert), \texttt{TextZone} (rouge).}
+    \label{fig:jazzhot_segmentation}
+\end{figure}
+
+\subsection{Transcription}
+En l'abscence d'un guide spécifiquement dédiés aux magazines imprimés du XXe siècle, nous suivons les recommandations de CATMuS Print pour la transcription des données  \cite{GabayClerice2024}. Toutefois, le travail de transcription nous a amené à établir un traitement des puces. (Tableau 2)
+
+\begin{table*}[t]
+    \centering
+    \begin{tabular}{lcll}
+        \toprule
+        \textbf{Catégorie}& \textbf{Cas}& \textbf{Traitement} &\textbf{Exemple}\\
+        \midrule
+        Listes& Puce& Conservation& \includegraphics[width=2cm]{exemple_puce.png}\\
+ & & U+2022 (‹•›)&\\
+    \end{tabular}
+    \caption{Règle de transcription pour les puces.}
+    \label{tab:corpus}
+\end{table*}
+
+
+
+\subsection{OCR}
+Les donnés d'entrainement ont d'abord été traitées avec le modèle CATMuS Print (large) qui a produit des résultats prometteurs. Néanmoins, les confusions fréquentes entre les caractères ‹l›, ‹j› et ‹i› limitent l'exactitude nécessaire à l'extraction de noms et d'adresses. Un affinage (\textit{fine-tuning}) s'avérait donc essentiel pour entrainer le modèle à la reconnaissance de caractères d'impression spécifiques. De là, CATMuS Jazz Hot indique un score d'exactitude (\textit{accuracy}) par caractère légèrement supérieur à CATMus mais suffisant pour réduire les confusions de manière satisfaisante. (Tableau 3)
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{lc}
+        \toprule
+        \textbf{Modèle}& \textbf{Character Accuracy}\\
+        \midrule
+        Catmus-print-& 98.03\%\\
+ fondue-large& \\
+        Catmus-print-JH& \textbf{98.73\%}\\
+  \bottomrule
+    \end{tabular}
+    \caption{Résultat de l’évaluation sur un échantillon de 11 images.}
+    \label{tab:corpus}
+\end{table}
+
+\section{Extraction \& Analyse}
+\subsection{Extraction de l'information}
+Une fois l'ensemble des images traitées par le nouveau modèle, il s'agit de retrouver les mentions de concerts et de performances dans l'\textit{output} XML-ALTO. Pour extraire ces fragments, nous avons écarté les outils de reconnaissance d'entités nommées jugés trop peu performants sur ce corpus. Le travail d'extraction a ainsi été mené à l'aide d'expressions régulières de manière à prélever systématiquement le nom de l'artiste, le lieu de performance, la ville et l'adresse complète si mentionnée.
+
+\subsection{Cartographie}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{General_Circuit_festivals.png}
+    \caption{Trajets (1966-1976)}
+    \label{fig:jazzhot_segmentation}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{General_points_villes_circuit_festival.png}
+    \caption{Trajets (1966-1976)}
+    \label{fig:jazzhot_segmentation}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{Carte_proportion free jazz concerts_general.png}
+    \caption{Proportion du free jazz joué sur le territoire européen (1966-1976)}
+    \label{fig:jazzhot_segmentation}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{Carte_proportion free jazz concerts_IDF.png}
+    \caption{Proportion du free jazz joué en Ile-de-France (1966-1976)}
+    \label{fig:jazzhot_segmentation}
+\end{figure}
+
+La première carte représente l'ensemble des trajets sur toute la période: l'épaisseur des traits et l'intensité des couleurs augmentent en fonction du nombre de trajets enregistrés. La seconde, centrée sur la France dans l'espace continental européen, figure des points dont le rayon varie en fonction du nombre de concerts joués en chaque lieu. Des cartes plus spécifiques au free jazz ont ensuite été produites, montrant la proportion d'artistes de ce genre par lieu, d'abord à l'échelle nationale, puis resserrée sur l'Île-de-France.
+
+\subsection{Résultats}
+Cette première spatialisation cristallise les traces morcelées des jazzmen sur le territoire français et européen. Parmi cet entrelacs de circuits, les artères principales dessinent un premier itinéraire privilégié par les artistes (carte 1). Il est donc peu surprenant de constater un axe transatlantique saillant entre Paris et New York, déjà rodé depuis plusieurs décennies. La place de Paris comme centre est cependant nuancée par les itinéraires vers les festivals d'été à Montreux, Nice et Antibes/Juan-les-Pins \textit{(note de bas de pages avec mention honorables autres festivals check stats)}, qui ensemble forment le circuit principal. L'intensité des circulations sur ce circuit pointe vers un système à la fois économique et culturel. Il ne s'agit pas de déplacements autonomes mais de mouvements interdépendants, liés à l'économie de la tournée et aux opportunités que le marché européen offre aux musiciens américains. Ces circuits sont surtout propices aux grands noms déjà établis (Dizzy Gillespie, Joe Turner, Memphis Slim...) qui parcourent l'Europe forts de leur succès commercial. Pour les artistes émergents ou moins reconnus, cette constellation de festivals ou l'opportunité de jouer à Paris représentent aussi un enjeu de reconnaissance et de visibilité (CITE). Ces itinéraires font alors office de pôles économiques et symboliques au sein du champ jazzistique.
+
+
+Le circuit du \textit{free jazz} présente un autre profil qui coexiste avec le précédent. Plus modeste en termes d'occurrences, il relève d'une économie de niche et ne se recoupe qu'en partie avec le circuit principal (carte 2). Il se déploie davantage en banlieue et en province autour de quelques lieux dédiés comme Willisau (Suisse) et Saint-Fons, ou à l'American Center de Paris (Carte 3). Ces pôles qui fédèrent la scène témoignent d'une géographie parallèle lié à l'évolution d'un goût pour une esthétique radicale. Precisément, la marginalité esthétique de ce genre l'empêche de trouver place dans les clubs ou sur les plus grandes scènes et souligne ainsi l'importance des intermédiaires culturels (programmateurs, critiques, institutions) et de la presse spécialisée comme \textit{Jazz Hot} qui donnent une valeur à cette proposition artistique (CITE). En outre, un regard sur la répartition entre artistes américains et européens révèle que le \textit{free jazz} s'inscrit dans une dynamique plus locale. Nous pouvons alors nous demander si nos cartes témoignent d'une diffusion du \textit{free jazz} en Europe ou d'une émancipation. D'abord, la présence américaine est minoritaire sur ce circuit. Ensuite, la plupart de ces artistes, comme Archie Shepp ou Sun Ra, ont déjà connu un succès à New York dans les années 1960. Enfin, un style \textit{free} européen s'affirme et se détache de l'influence américaine dès les années 70 (CITE). Les musiciens d'outre-Atlantique ne dictent donc pas nécessairement le ton, mais un goût s'est développé pour ce style et des écosystèmes culturels se sont créés pour les inviter et les acceuillir. Par conséquant, l'opportunité du marché européen a engendré une communauté d'expatriés comme Frank Wright, Noah Howard ou Steve Lacy qui se déplace selon la demande.
+
+\subsection{Pistes}
+Ce premier déchiffrage soulève plusieurs enjeux pour la suite. La chaîne de traitement des données (\textit{pipeline}) s'avère fonctionnelle mais reste perfectible à chaque étape. Pour aller plus loin, il conviendrait surtout de compléter les sources avec plus de revues et d'élargir le champ à l'échelle européenne. Cela supposerait toutefois une numérisation massive et un entrainement de nouveaux modèles OCR adaptés aux imprimés de différentes langues. L'ambition serait alors de développer une application interactive permettant de tracer les artistes et de naviguer dans la base de données. Reste à déterminer comment représenter au mieux ces circulations dans l'espace et dans le temps.
+
+
+\printbibliography
+
+\end{document}

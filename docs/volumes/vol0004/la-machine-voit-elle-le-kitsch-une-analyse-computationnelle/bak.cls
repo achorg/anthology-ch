@@ -38,7 +38,7 @@
   % XeLaTeX: Use fontspec for Tinos fonts from local fonts directory
   \RequirePackage{fontspec}
   \setmainfont{Tinos}[
-    Path = /Users/admin/gh/anthology-ch/docs/resources/template-latex/fonts/Tinos/,
+    Path = fonts/Tinos/,
     Extension = .ttf,
     UprightFont = *-Regular,
     BoldFont = *-Bold,
@@ -48,7 +48,7 @@
   % Define Noto Serif for small caps (Tinos doesn't have small caps)
   % Load from local fonts directory
   \newfontfamily\scfallbackfont{NotoSerif}[
-    Path = /Users/admin/gh/anthology-ch/docs/resources/template-latex/fonts/Noto_Serif/static/,
+    Path = fonts/Noto_Serif/static/,
     Extension = .ttf,
     UprightFont = *-Regular,
     BoldFont = *-Bold,
@@ -58,8 +58,9 @@
     Scale=MatchLowercase
   ]
   % Redefine small caps commands to use Noto Serif
-  \let\oldtextsc\textsc
-  \renewcommand{\textsc}[1]{{\scfallbackfont\oldtextsc{#1}}}
+
+\renewcommand{\textsc}[1]{{\scfallbackfont\addfontfeature{Letters=SmallCaps}#1}}
+\DeclareRobustCommand{\scshape}{\scfallbackfont\addfontfeature{Letters=SmallCaps}}
   \DeclareRobustCommand\scshape{\scfallbackfont\addfontfeature{Letters=SmallCaps}}
 \else
   % pdfLaTeX: Use tinos package
@@ -99,6 +100,10 @@
 % COMMANDS TO GRAB CUSTOM METADATA PRODUCED IN THE TEX FILE
 \newcommand{\@keywords}{}
 \newcommand{\keywords}[1]{\renewcommand{\@keywords}{#1}}
+%BEGIN SG CHANGE
+\newcommand{\@foreignKeywords}{}
+\newcommand{\foreignKeywords}[1]{\renewcommand{\@foreignKeywords}{#1}}
+%END SG CHANGE
 \newcommand{\@pubyear}{}
 \newcommand{\pubyear}[1]{\renewcommand{\@pubyear}{#1}}
 \newcommand{\@pubvolume}{}
@@ -205,12 +210,16 @@
   \fancyhf{} 
   \if@final
     \fancyhead[L]{
-      \textbf{\small\textcolor{newgray}{Anthology of Computers and the Humanities, Vol. \@pubvolume}}
+      %BEGIN SG CHANGE
+      %\textbf{\small\textcolor{newgray}{Anthology of Computers and the Humanities, Vol. \@pubvolume}}
+      %END SG CHANGE
     }
   \else
     \fancyhead[L]{
       \if@fra
-        \textbf{\small\textcolor{newgray}{Anthology of Computers and the Humanities: En cours d'examen}}
+      %BEGIN SG CHANGE
+        %\textbf{\small\textcolor{newgray}{Anthology of Computers and the Humanities: En cours d'examen}}
+      %END SG CHANGE
       \else
         \textbf{\small\textcolor{newgray}{Anthology of Computers and the Humanities: Under Review}}
       \fi
@@ -292,7 +301,9 @@
     \setcounter{page}{\@pagestart}
     \renewcommand{\thefootnote}{} 
     \renewcommand{\footnoterule}{}
-    \footnotetext{\hspace{-2pt}\@firstpagefootnote}%
+    %BEGIN SG CHANGE
+    %\footnotetext{\hspace{-2pt}\@firstpagefootnote}%
+    %END SG CHANGE
     \endgroup
   }
 }
@@ -303,41 +314,62 @@
 \captionsetup[figure]{labelfont=bf}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% DEFINE THE ABSTRACT ENVIRONMENT
-\renewenvironment{abstract}{%
-  \normalsize
-  \begin{center}
-    \if@fra
-      \bfseries Résumé
-    \else
-      \bfseries Abstract
-    \fi
-  \end{center}
-  \small
-  \quotation\par\noindent\ignorespaces
-}{
-  \if@fra
-    {\\\\\textbf{Mots-clés:} \@keywords}
-  \else
-    {\\\\\textbf{Keywords:} \@keywords}
-  \fi
-  \endquotation
-  \vspace{1em}
-}
+% % DEFINE THE ABSTRACT ENVIRONMENT
+% %BEGIN SG CHANGE
+% \renewenvironment{abstract}{%
+%     \normalsize
+    
+%     % Résumé (français)
+%     \selectlanguage{french}
+%     \begin{center}
+%         \bfseries Résumé
+%     \end{center}
+%     \small
+%     \begin{quotation}
+%     \noindent\ignorespaces
+% }{
+%     \end{quotation}
+    
+%     % Abstract (anglais)
+%     \selectlanguage{english}
+%     \normalsize
+%     \begin{center}
+%         \bfseries Abstract
+%     \end{center}
+%     \small
+%     \begin{quotation}
+%     \noindent\ignorespaces
+% }{
+%     \end{quotation}
+    
+%     % Mots-clés / Keywords
+%     \selectlanguage{french}
+%     \\\\ \textbf{Mots-clefs\,:} \@foreignKeywords
+    
+%     \selectlanguage{english}
+%     \\ \textbf{Keywords:} \@keywords
+    
+%     \vspace{1em}
+% }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% CONFIGURE PDF METADATA
-\AtBeginDocument{%
-  \hypersetup{
-    pdftitle={\@title},
-    pdfauthor={\@authornames},
-    pdfsubject={Anthology of Computers and the Humanities, Vol. \@pubvolume},
-    pdfkeywords={\@keywords},
-    pdfcreator={XeLaTeX with anthology-ch.cls},
-    pdfproducer={XeLaTeX with hyperref},
-  }
-}
+% }
+% \renewenvironment{acknowledgment}{%
+%     \if@fra
+%         \selectlanguage{french}
+%         \normalsize 
+%         \begin{center}
+%             \bfseries Remerciements
+%         \end{center}
+%     \else
+%         \normalsize 
+%         \begin{center}
+%             \bfseries Résumé
+%         \end{center}
+%     \fi
+%   \small
+%   \quotation\par\noindent\ignorespaces
+% }
+%END SG CHANGE
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % DEFINE THE SECTION, SUBSECTION, and SUBSUBSECTION FORMATS
@@ -444,13 +476,6 @@
   \RequirePackage[french, english]{babel}
 \fi
 \RequirePackage{csquotes}
-
-\AtBeginDocument{%
-  \renewcommand*{\multicitedelim}{\addsemicolon\space} 
-  \renewcommand*{\textcitedelim}{\addsemicolon\space}  
-  \renewcommand*{\supercitedelim}{\addsemicolon\space}
-  \renewcommand*{\compcitedelim}{\addsemicolon\space}
-}
 
 % MLA style customizations for biblatex
 \DeclareNameAlias{sortname}{family-given}

@@ -1,0 +1,379 @@
+% CECI EST UN FICHIER DE MODÈLE LATEX POUR LES ARTICLES INCLUS DANS
+% *Anthology of Computers and the Humanities*. AJOUTEZ L'OPTION
+% 'final' LORS DE LA CRÉATION DE LA VERSION FINALE DE L'ARTICLE. 
+% NE PAS modifier la classe du document
+%\documentclass[final,fra]{anthology-ch} % pour la version finale
+\documentclass[final,fra]{anthology-ch}         % pour la soumission
+
+% CHARGER LES PACKAGES LaTeX
+\usepackage{booktabs}
+\usepackage{graphicx}
+
+% AJOUTEZ vos propres packages avec \usepackage{}
+
+% TITRE DE LA SOUMISSION
+% Remplacez ceci par le titre de votre soumission
+\title{Annoter et détecter les citations : vers un cadre unifié entre linguistique et humanités computationnelles}
+
+% INFORMATIONS SUR LES AUTEURS ET LES AFFILIATIONS
+% Pour chaque auteur, utilisez une nouvelle commande \author, avec
+% les numéros entre crochets indiquant les affiliations correspondantes
+% (section suivante) et l'ORCID-ID pour chaque auteur.  
+\author[1]{Agnès Saulnier}[
+  orcid=0009-0002-9715-1405,
+  email=asaulnier@ina.fr
+]
+
+% Il doit y avoir un appel à \affiliation pour chaque affiliation des auteurs.
+% Plusieurs affiliations peuvent être attribuées à un auteur
+% et une affiliation peut être attribuée à plusieurs auteurs. 
+\affiliation{1}{Institut national de l’audiovisuel, Bry-sur-Marne, France}
+
+% MOTS-CLÉS
+% Fournissez un ou plusieurs mots-clés séparés par des virgules
+% en utilisant les commandes suivantes
+\keywords[fra]{discours rapporté, citation, corpus annotés, corpus audiovisuel, TAL}
+\keywords[eng]{reported speech, quotation, annotated corpora, audiovisual corpora, NLP}
+
+% MÉTADONNÉES DE LA PUBLICATION
+% Ces champs seront remplis lors de la publication ; 
+% ils peuvent être laissés par défaut lors de la soumission
+\pubyear{2026}
+\pubvolume{4}
+\pagestart{37}
+\pageend{43}
+\paperorder{5}
+\conferencename{Actes de la Conférence Humanistica}
+\conferenceeditors{Serena Crespi, Simon Gabay, Martin Grandjean, Ariane Pinche, Marie Puren et Léa Saint-Raymond}
+\doi{10.63744/UM96NSIlUNaK}
+\customhead{}
+
+\addbibresource{bibliography.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DÉBUT DU TEXTE
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Quotation is a central but theoretically unstable object, situated at
+the intersection of linguistic, narrative, media, and computational
+traditions. This plurality is reflected in existing annotated corpora,
+which rely on heterogeneous scopes and categories, with consequences for
+automatic detection and evaluation. Based on a review of the literature
+and an analysis of existing corpora, this article shows why these
+divergences become problematic in computational contexts. It then
+proposes a typology of quotation grounded in linguistic descriptions,
+designed to make explicit the scope choices underlying annotated
+corpora. The discussion shows how this typology can guide annotation
+practices, support system comparison, and facilitate extensions to
+audiovisual data.
+\end{abstract}
+
+\section{Introduction et problématique}
+
+La citation constitue un objet central des sciences humaines, mais elle
+ne renvoie pas, en linguistique, à une notion théorique unifiée. Elle
+est décrite à partir de traditions descriptives distinctes, mobilisant
+des critères syntaxiques, énonciatifs, narratifs, pragmatiques ou
+juridiques, dont les périmètres ne se recouvrent que partiellement.
+
+Dans ce contexte, les travaux en traitement automatique du langage (TAL)
+ont cherché à opérationnaliser la citation à partir de divers corpus
+annotés, parmi lesquels PARC \cite{pareti2012database}, FRACAS \cite{richard2024fracas}, \textit{DE-News} \cite{petersenfrey2024dataset} et \textit{QuoteBank} \cite{vaucher2021quotebank} ont joué un rôle structurant pour la détection et
+l'attribution. Ces ressources reposent toutefois sur des choix de
+périmètre différents, ce qui devient problématique lorsqu'on cherche à
+comparer des systèmes ou à interpréter leurs performances.
+
+L'objectif de cet article n'est ni de proposer une définition
+universelle de la citation, ni d'unifier artificiellement les corpus
+existants, mais de clarifier les enjeux linguistiques et computationnels
+liés à son opérationnalisation. Nous proposons une typologie conçue
+comme un outil de mise en cohérence, visant à expliciter les choix de
+périmètre et à fournir un cadre commun pour articuler corpus, méthodes
+de détection et protocoles d'évaluation, y compris en audiovisuel.
+
+\section{État de l'art : une notion plurielle et difficile à stabiliser}
+
+La notion de citation, ou plus largement de discours rapporté, occupe
+une place centrale dans plusieurs traditions disciplinaires sans
+renvoyer à un objet théorique unifié. Selon les cadres mobilisés, elle
+peut être décrite comme une structure morphosyntaxique, une opération
+énonciative, un procédé narratif, un acte de langage ou un objet
+juridique et médiatique. Cette pluralité se reflète dans les périmètres
+hétérogènes des corpus.
+
+Les grammaires de référence du français décrivent le discours rapporté à
+partir de critères morphosyntaxiques et distinguent discours direct,
+discours indirect et discours indirect libre \cite{riegel1994grammaire,grevisse2016bon}. Le discours direct et le discours
+indirect sont identifiés par des marqueurs formels explicites
+(ponctuation, subordination, concordance des temps), tandis que le
+discours indirect libre repose sur un faisceau d'indices linguistiques
+et contextuels (temps verbaux, déictiques, point de vue), sans marqueur
+explicite d'attribution. Dans cette approche, la citation est définie à
+partir de configurations linguistiques identifiables, sans prise en
+charge systématique des opérations de reformulation ou de la prise de
+position du locuteur citant.
+
+La linguistique du discours et de l'énonciation montre que rapporter un
+discours ne consiste pas à le copier mais à le reformuler, que le
+locuteur citant prend position vis-à-vis du discours rapporté, et qu'il
+existe des formes intermédiaires entre citation et interprétation
+\cite{bakhtine1977discours,authier1996ces}, fréquentes dans le discours
+journalistique \cite{rosier1998discours}.
+
+En narratologie, le discours rapporté est analysé comme un mode de
+représentation des paroles et des pensées, centré sur le point de vue et
+la mise en scène des voix dans le récit \cite{genette1972figures,genette1982palimpsestes,cohn1978transparent}. L'attention porte sur la frontière entre narrateur et personnage,
+et sur des formes telles que le discours indirect libre ou la pensée
+représentée.
+
+En pragmatique, cette réflexion est prolongée par la distinction entre
+\textit{oratio recta}, reprise d'un dire comme tel, et \textit{oratio obliqua}, reprise
+d'un contenu reformulé \cite{austin1962how,searle1969speech,recanati2000oratio}.
+Cette opposition permet de distinguer la reprise locale d'un dire
+formulé de la circulation plus abstraite de contenus propositionnels,
+indépendamment de leur énonciation d'origine.
+
+Enfin, les cadres juridiques définissent la citation comme une reprise partielle d’un extrait préexistant, intégrée dans une œuvre seconde et justifiée par une finalité (critique, scientifique, etc.)\footnote{Code de la propriété intellectuelle, art. L.122-5.}. La doctrine du droit d’auteur souligne en outre que cette reprise doit demeurer subordonnée au propos de l'œuvre citante et ne pas se substituer à l’œuvre source \cite{vivant_droit_2009,chambathouillon2016droit}. Les études médiatiques, de leur côté, s'intéressent à la circulation de fragments discursifs autonomisés (slogans ou petites phrases) dans l’espace public \cite{kriegplanque2010formule,boyer2018petites}.
+
+%Enfin, les cadres juridiques définissent la citation comme une reprise seconde et finalisée d'un extrait préexistant \cite{vivant_droit_2009,chambathouillon2016droit}. Les études médiatiques s'intéressent à la circulation de fragments discursifs autonomisés (slogans ou \emph{petites phrases}) dans l'espace public \cite{kriegplanque2010formule,boyer2018petites}.
+
+Les approches linguistiques ne proposent pas de typologie directement
+annotable de la citation, mais décrivent des phénomènes à un niveau
+conceptuel plus général (opérations de reformulation, continuum des
+formes, effets de point de vue). Ces descriptions constituent néanmoins
+un socle théorique indispensable pour élaborer des typologies
+opératoires adaptées aux corpus et aux méthodes computationnelles.
+
+\section{Corpus existants pour l'étude et la détection des citations}
+
+Les travaux en TAL ont donné lieu à de nombreux corpus annotés pour
+l'étude de la citation et de l'attribution, reposant sur des conceptions
+hétérogènes du discours rapporté.
+
+Certains corpus, comme \textit{QuoteBank} (anglais), se concentrent
+principalement sur les citations directes et l'identification du
+locuteur, sans modéliser la diversité des formes de reprise.
+
+À l'inverse, des schémas plus structurels, tels que PARC (anglais),
+décrivent les relations d'attribution à partir de composantes explicites
+(Source, Cue, Content) et distinguent citation directe, indirecte et
+mixte a posteriori. Le corpus FRACAS (français) adopte une approche
+similaire. Par exemple :
+
+{[}\emph{Rihanna}{]}\textsubscript{speaker} {[}\emph{a
+demandé}{]}\textsubscript{cue} {[}\emph{de ne pas arrêter la musique}{]}
+\textsubscript{quote}.
+
+\noindent La catégorie d'indirect y couvre toutefois des réalisations plus
+hétérogènes.
+
+PARC annote l'attribution de contenus relevant de la parole, de la
+pensée ou de l'écrit, là où FRACAS regroupe ces réalisations sous des
+catégories citationnelles plus larges.
+
+Une ressource comme DE-News (allemand), adopte un schéma plus fin,
+distinguant types de discours rapporté (dont le discours indirect libre)
+et médias du dire (parole, pensée, écrit). Cette diversité reflète des
+découpages théoriques distincts, que la typologie proposée vise à rendre
+comparables.
+
+\section{Pourquoi la définition de la citation devient un problème computationnel}
+
+La définition de la citation n'est pas seulement un enjeu théorique :
+elle conditionne le fonctionnement des systèmes de détection
+automatique. Selon la famille de méthodes mobilisée, la notion de
+citation est encodée, apprise ou inférée de manière différente, avec des
+conséquences sur les résultats et leur interprétation.
+
+Les systèmes à règles reposent sur l'identification de marqueurs formels
+explicites, tels que les guillemets, la ponctuation ou des verbes
+déclaratifs prototypiques, selon des patrons lexicosyntaxiques définis a
+priori \cite{pouliquen2007automatic}. Ils détectent efficacement les
+citations directes et certaines formes d'indirect, mais uniquement dans
+le périmètre prévu par les règles : ce qui n'a pas été anticipé (formes
+thématiques, indirect libre, reprises elliptiques) est mécaniquement
+exclu. Ce type de pipeline reste largement utilisé dans des projets en
+sciences humaines et sociales, notamment pour l'étude de la
+représentation des genres dans la presse, comme dans \textit{GenderedNews}
+\cite{richard2022genderednews} ou \textit{Radar de Parité} \cite{soumah2023radar}, où
+l'extraction de citations constitue une étape intermédiaire du
+traitement.
+
+Les modèles discriminatifs, entraînés sur des corpus annotés, apprennent
+à reconnaître les classes définies par ces corpus. Leur comportement
+reflète la typologie locale de l'annotation, qu'il s'agisse de cadres
+fondés sur l'attribution \cite{pareti2012database}, de corpus à grande échelle
+comme \textit{QuoteBank} \cite{vaucher2021quotebank}, ou de ressources plus fines
+telles que FRACAS \cite{richard2024fracas}. Plusieurs travaux comparatifs
+montrent que les différences de performance entre approches à règles et
+modèles neuronaux tiennent principalement aux choix de définition et
+d'annotation de la citation, comme le montrent Janicki et al. \cite{janicki2023detection}
+pour la presse finlandaise.
+
+Les grands modèles de langage (LLMs) introduisent une situation
+différente. Sans fine-tuning, ils mobilisent une notion implicite de la
+citation issue de données d'entraînement hétérogènes ; après fine-tuning
+sur un corpus donné, leur comportement se rapproche de celui des modèles
+discriminatifs. La formulation du prompt encode alors implicitement une
+définition de la citation, susceptible d'entrer en tension avec celle du
+corpus.
+
+Enfin, les scores sont comparables à l'intérieur d'un corpus, mais pas
+entre ressources fondées sur des définitions différentes ; la typologie
+proposée vise à rendre ces périmètres explicites.
+
+\section{Notre proposition : vers une typologie unifiée et étendue des reprises discursives}
+
+L'analyse de l'état de l'art et des corpus montre que la notion de
+citation pose moins un problème terminologique qu'un problème de
+périmètre. La typologie proposée vise à expliciter les formes de reprise
+mobilisées dans les corpus, y compris en audiovisuel. Il s'agit d'un
+schéma d'opérationnalisation. L'articulation générale de cette typologie
+est synthétisée dans la Figure 1, qui présente l'organisation des
+différentes formes de reprises discursives.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{./media/image1.png}
+\caption{Typologie des formes de reprise de discours.}
+\end{figure}
+
+Nous utilisons le terme de reprise de discours pour désigner un
+sous-ensemble du discours rapporté correspondant aux formes donnant
+accès à un dire ou à une pensée attribuable et annotable. Dans ce cadre,
+nous excluons les discours narrativisés au sens narratologique \cite{genette1972figures}, qui se bornent à mentionner une activité discursive sans en
+reprendre le contenu (\og il a expliqué sa position\fg{}), ainsi que les
+formes de discours intérieur ou de pensée représentée qui ne permettent
+pas, dans le contexte local, de reconstruire un dire ou une pensée
+formulée \cite{cohn1978transparent}. Nous excluons également les formes
+d'hétérogénéité énonciative \cite{authier1996ces}, qui signalent la
+présence diffuse de discours autres sans attribution ni contenu
+propositionnel identifiable (\og certains diront que\ldots{}\fg{}), ainsi que
+les évaluations journalistiques du dire qui relèvent d'une
+interprétation de posture discursive sans reprise effective (\og elle
+dramatise la situation\fg{}).
+
+Notre proposition se concentre sur la reprise d'un dire et repose sur un
+principe simple : toutes les reprises ne relèvent pas du même régime
+discursif. Nous distinguons deux domaines complémentaires : les
+citations structurelles, fondées sur l'attribution explicite d'un dire,
+et à des fins d'analyse médiatiques, les citations culturelles, fondées
+sur la reconnaissance intertextuelle de fragments discursifs issus d'un
+événement discursif identifié, circulant indépendamment de leur
+attribution locale.
+
+Les citations structurelles peuvent être continues ou discontinues
+(séparées par des incises ou des commentaires narratifs), et porter sur
+des propos issus de l'écrit, de l'oral ou de l'audiovisuel, repris dans
+un texte, une transcription ou un document audiovisuel. Au sein de ce
+domaine, nous proposons une typologie fondée sur la nature de la reprise
+du dire : citation directe (reprise verbatim), citation indirecte
+(reformulation d'un propos formulé), citation synthétique (reprise des
+idées du propos) et citation mixte (combinaison de reprise littérale et
+de reformulation).
+
+Cette typologie est pleinement transversale aux supports. En
+audiovisuel, la citation directe prend deux formes principales :
+l'insert audio ou vidéo d'un propos antérieur, ou la reproduction
+verbatim d'un propos par le narrateur. Dans le premier cas, seules les
+reprises d'extraits déjà rendus publics constituent des reprises de
+discours, ce qui exclut les prises de parole produites pour l'émission
+(reportage original, micro-trottoir, direct) ou de leur rediffusion.
+Dans le second cas, la citation est généralement signalée par des
+marqueurs oraux (\og je cite\fg{}, \og selon ses propres mots\fg{}), ou par des
+indices prosodiques ou multimodaux (variation du registre vocal, gestes
+iconiques). La délimitation de la citation, notamment de sa fin,
+constitue un enjeu saillant. En audiovisuel, elle repose sur des indices
+combinés (retour à la voix initiale, rupture prosodique, changement
+thématique, montage). À l'écrit, la clôture des citations indirectes
+dépend souvent du réancrage énonciatif du narrateur plutôt que de
+marqueurs formels.
+
+Au sein des reprises structurellement marquées, nous distinguons enfin
+une catégorie de propos interprété. Elle regroupe les cas où le
+narrateur attribue à une source une position, une intention ou une
+attitude discursive, sans rapporter explicitement un énoncé formulé,
+mais en interprétant le dire ou la pensée de la source. Elle recouvre
+notamment des attributions d'états mentaux (\og il pense que\ldots{}\fg{}),
+des intentions discursives (\og elle veut convaincre\fg{}) et certaines
+formes de cadrage journalistique du dire (\og il persiste et signe\fg{}),
+lorsqu'elles fonctionnent comme attributions interprétatives, sans
+ancrage explicite dans un dire rapporté. Cette distinction ne vise pas à
+améliorer la détection, mais à isoler des cas interprétatifs difficiles
+pour l'annotation et l'évaluation.
+
+Les citations culturelles constituent des reprises non structurelles
+relevant d'un régime de circulation intertextuelle (ex. « petites
+phrases »), issues d'un dire historiquement situé et reconnues
+indépendamment de leur attribution locale dans le document.
+
+\section{Discussion: portée et usages d'une typologie opérationnelle}
+
+La typologie proposée ne vise ni à remplacer les schémas d'annotation
+existants ni à imposer un standard unique pour la détection de la
+citation. Son principal apport est de rendre explicites et comparables
+les choix théoriques structurant les corpus et les tâches
+computationnelles. En distinguant la reprise d'un dire formulé (citation
+structurelle) de l'interprétation narrative d'un dire (propos
+interprété), elle permet de relire des ressources comme PARC, FRACAS ou
+\textit{DE-News} non comme des ensembles incompatibles, mais comme des découpages
+différents d'un même continuum du discours rapporté. Un test
+d'alignement avec ces corpus permettrait ultérieurement d'en examiner la
+couverture.
+
+Cette explicitation est également déterminante pour l'interprétation des
+résultats de détection automatique. Les divergences observées entre
+systèmes à base de règles, modèles discriminatifs et modèles génératifs
+apparaissent moins comme des limites algorithmiques que comme des effets
+des définitions implicites de la citation encodées dans les données
+d'entraînement et d'évaluation. Une typologie explicite permet de
+distinguer désaccord théorique et difficulté technique, et d'envisager
+des extensions de corpus cohérentes.
+
+Un troisième enjeu concerne l'extension de la détection des citations à
+l'audiovisuel. Les pratiques médiatiques contemporaines -- inserts de
+discours, reprises verbatim orales, circulation de \og petites phrases\fg{}
+médiatiques ou politiques -- ne peuvent être traitées sans une définition
+explicite des objets annotés. L'introduction de la distinction entre
+citations structurelles et citations culturelles constitue ici un apport
+central : elle permet de séparer l'attribution locale d'un dire formulé
+de la reconnaissance intertextuelle de fragments discursifs circulants
+issus d'événements médiatiques. La définition proposée de la citation
+directe audiovisuelle, par insert ou par reprise verbatim signalée,
+fournit en outre une équivalence fonctionnelle aux guillemets de
+l'écrit. Cette clarification ouvre la voie à la constitution de
+nouvelles vérités terrain audiovisuelles et au développement de systèmes
+de détection adaptés, tout en restant compatibles avec les corpus
+textuels existants.
+
+\section{Conclusion}\label{conclusion}
+
+Cet article soutient que les difficultés de détection et d'évaluation
+des citations tiennent moins aux méthodes qu'à l'instabilité
+conceptuelle de l'objet \og citation\fg{}. Tant que cette notion reste
+implicite ou variable selon les cadres théoriques, les performances des
+systèmes demeurent difficiles à interpréter et à comparer.
+
+Pour répondre à cette situation, nous avons proposé une typologie
+opératoire qui articule plusieurs distinctions complémentaires. Au sein
+des citations structurelles, la différenciation entre citations directe,
+indirecte, synthétique et mixte permet de mieux circonscrire le
+périmètre effectif de la reprise d'un dire. La séparation explicite
+entre citation et propos interprété clarifie les frontières entre
+attribution d'un propos formulé et interprétation narrative.
+L'introduction des citations culturelles permet enfin de rendre compte
+de la circulation médiatique de fragments discursifs emblématiques.
+
+En intégrant ces distinctions et en prenant explicitement en compte
+l'audiovisuel, notamment à travers les inserts et les reprises verbatim
+orales, la typologie proposée fournit un cadre explicite pour comparer
+les choix d'annotation, guider l'extension des corpus et articuler
+définition linguistique, détection automatique et évaluation.
+
+%\nocite{*}
+\printbibliography
+
+\end{document}

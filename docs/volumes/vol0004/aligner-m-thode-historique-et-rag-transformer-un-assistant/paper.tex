@@ -1,0 +1,210 @@
+%Template v.1.0: Taylor Arnold and Simon Gabay, december 2025
+% CECI EST UN FICHIER DE MODÈLE LATEX POUR LES ARTICLES INCLUS DANS
+% *Anthology of Computers and the Humanities*. AJOUTEZ L'OPTION
+% 'final' LORS DE LA CRÉATION DE LA VERSION FINALE DE L'ARTICLE. 
+% NE PAS modifier la classe du document
+\documentclass[final, fra]{anthology-ch}     % pour la version finale
+
+% CHARGER LES PACKAGES LaTeX
+\usepackage{booktabs}
+\usepackage{graphicx}
+
+% AJOUTEZ vos propres packages avec \usepackage{}
+
+% TITRE DE LA SOUMISSION
+% Remplacez ceci par le titre de votre soumission
+\title{Aligner méthode historique et RAG : transformer un assistant conversationnel en chaîne de preuve auditable et discutable}
+
+% INFORMATIONS SUR LES AUTEURS ET LES AFFILIATIONS
+% Pour chaque auteur, utilisez une nouvelle commande \author, avec
+% les numéros entre crochets indiquant les affiliations correspondantes
+% (section suivante) et l'ORCID-ID pour chaque auteur.  
+\author[1,2]{Marie Puren}[
+  orcid=0000-0001-5452-3913,
+  email=marie.puren@epita.fr
+]
+
+\author[2,1]{Donghan Bian}[
+  orcid=0009-0007-1684-6026,
+  email=donghan.bian@chartes.psl.eu
+]
+
+\author[1]{Aurélien Pellet}[
+  orcid=0000-0003-1099-4419,
+  email=aurelien.pellet@epita.fr
+]
+
+\author[1]{Julien Perez}[
+  orcid=0009-0009-6686-928X,
+  email=julien.perez@epita.fr
+]
+
+\author[1]{Florian Cafiero}[
+  orcid=0000-0002-1951-6942,
+  email=florian.cafiero@epita.fr
+]
+
+% Il doit y avoir un appel à \affiliation pour chaque affiliation des auteurs.
+% Plusieurs affiliations peuvent être attribuées à un auteur
+% et une affiliation peut être attribuée à plusieurs auteurs. 
+\affiliation{1}{Laboratoire de recherche d'Epita (LRE), EPITA, Le Kremlin-Bicêtre, France}
+\affiliation{2}{Centre Jean-Mabillon, Ecole nationale des chartes, Paris, France}
+
+% MOTS-CLÉS
+% Fournissez un ou plusieurs mots-clés séparés par des virgules
+% en utilisant les commandes suivantes
+\keywords[fra]{histoire, génération augmentée par récupération}
+\keywords[eng]{history, retrieval augmented generation}
+
+% MÉTADONNÉES DE LA PUBLICATION
+% Ces champs seront remplis lors de la publication ; 
+% ils peuvent être laissés par défaut lors de la soumission
+\pubyear{2026}
+\pubvolume{4}
+\pagestart{1}
+\pageend{9}
+\paperorder{1}
+\conferencename{Actes de la Conférence Humanistica}
+\conferenceeditors{Serena Crespi, Simon Gabay, Martin Grandjean, Ariane Pinche, Marie Puren et Léa Saint-Raymond}
+\doi{10.63744/G14mF7UizFzS}
+\customhead{}
+
+\addbibresource{bibliography.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DÉBUT DU TEXTE
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This article examines the challenges raised by deploying Retrieval-Augmented Generation (RAG) systems for the exploration of digitized historical sources.
+Starting from the observation that disciplinary acceptance remains fragile, it asks the following question: how can a RAG system applied to noisy and heterogeneous archives ensure conditions of verification and critique that are compatible with the historical method?
+Presented as a position paper, this paper offers a conceptual framing and preliminary directions for guiding the development of RAG devices aligned with these requirements.
+It argues for restoring control over the interpretive chain by articulating three conditions: traceability (the ability to locate documents and passages precisely), auditability (the ability to inspect the transformations and parameters throughout the pipeline), and discussability (the ability to subject statements to debate by distinguishing evidence from interpretation).
+Its main contribution is an auditability framework that translates historians’ requirements into instrumented conditions: (1) documentary anchoring (provenance and integrity), (2) explicit separation of quotation, paraphrase, and inference, (3) restoration of context and plurality of sources, (4) traceability of execution conditions and error diagnosis (retrieval vs. generation), and (5) abstention mechanisms when the evidence is insufficient.
+\end{abstract}
+
+%\begin{abstract}
+%Cet article examine les défis suscitées par le déploiement de systèmes de Génération Augmentée par Récupération (RAG) dans l’exploration de sources historiques numérisées. 
+%Partant du constat d’une acceptabilité disciplinaire fragile, il pose la question suivante : comment garantir, avec un RAG appliqué à des archives bruitées et hétérogènes, des conditions de vérification et de critique compatibles avec la méthode historique ? 
+%Présenté comme un exposé de position, ce texte ne décrit pas un système stabilisé : il propose un cadrage et des pistes préliminaires pour orienter le développement de dispositifs RAG alignés avec ces exigences. 
+%Il propose de rétablir un contrôle sur la chaîne d’interprétation en articulant trois conditions : traçabilité (retrouver précisément documents et passages), auditabilité (rendre inspectables les transformations et paramètres de la chaîne), et discutabilité (mettre l’énoncé en débat en séparant preuve et interprétation). 
+%La contribution principale est une grille d’auditabilité traduisant des exigences historiennes en conditions instrumentées : (1) ancrage documentaire (provenance et intégrité), (2) séparation explicite citation/paraphrase/inférence, (3) restitution du contexte et pluralité des sources, (4) traçabilité des conditions d’exécution et diagnostic d’erreurs (récupération vs génération), (5) mécanismes d’abstention lorsque la preuve est insuffisante.
+%\end{abstract}
+
+\section{RAG et histoire : tensions méthodologiques et enjeux de confiance} 
+Les systèmes de Génération Augmentée par Récupération (\textit{Retrieval Augmented Generation} ou RAG) combinent recherche dans un corpus et génération de réponses à partir de passages récupérés (Figure~\ref{fig:archi_rag})~\cite{lewis2020rag}. 
+De plus en plus mobilisés pour explorer des corpus de sources historiques numérisées (cf. section~\ref{sec:rag_patrimoine}), ces dispositifs permettent d’interroger rapidement de vastes ensembles hétérogènes en langage naturel et de produire des synthèses appuyées sur des extraits cités, utiles pour s’orienter dans les archives et dégager des pistes d’analyse ; ils constituent ainsi un nouvel outil à la disposition des historiens pour \og lire à distance \fg{} leurs corpus~\cite{muller2025ecrire}.
+
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=1\linewidth]{images/archi_simple_rag.jpeg}
+  \caption{Architecture d’un système RAG}
+  \label{fig:archi_rag}
+\end{figure}
+
+L’acceptabilité de ces outils reste toutefois fragile dans les communautés historiennes : une erreur visible peut suffire à discréditer l’ensemble du dispositif, faute d’un cadre partagé permettant de distinguer une erreur ponctuelle, une zone d’incertitude où plusieurs lectures sont possibles, et un cas hors périmètre où le système ne dispose pas des éléments nécessaires pour répondre de manière fondée. Cette fragilité renvoie aussi à des tensions avec des normes professionnelles centrales en histoire~\cite{poublanc_marque_2023_introduction_framespa} : la critique des sources, l’attention à la matérialité des documents et de leurs contextes de production, et la valeur accordée à l’enquête historique. Or le RAG tend à déplacer ces gestes vers une chaîne computationnelle dont les opérations ne sont pas immédiatement visibles. Parce qu’ils dialoguent de façon fluide, ces assistants peuvent aussi produire une illusion de solidité : une réponse bien formulée ressemble à un savoir établi, même quand elle repose sur des indices fragiles~\cite{vonreeken2025untrusting}. Si l’interface n’affiche pas clairement les limites, les conditions de validité et la provenance des éléments mobilisés, l’usage tend à osciller entre une acceptation pragmatique et un rejet brutal dès qu’une erreur est repérée -- d’où l’exigence de rendre ses médiations examinables~\cite{lamasse_rygiel_2014_nouvellesFrontieres}.
+
+L’enjeu n’est pas seulement que le RAG se trompe parfois, mais que la preuve est médiée par une chaîne computationnelle -- de la transcription à la segmentation, en passant par l'indexation, la récupération et la reformulation -- difficile à inspecter pas à pas. Autrement dit, la critique ne porte plus seulement sur le document-source, mais aussi sur les opérations qui rendent ce document lisible et mobilisable par le système, et sur leurs effets. La question qui nous guide est donc la suivante : \textbf{comment garantir, avec un RAG appliqué à des sources anciennes numérisées, des conditions de vérification et de critique compatibles avec la méthode historique ?} L’objectif est de reconstruire un contrôle épistémique : pouvoir comprendre sur quoi repose un énoncé, le vérifier et le contester. Pour cela, nous distinguons la traçabilité (retrouver précisément les documents et passages mobilisés), l’auditabilité (rendre inspectables les transformations et paramètres qui ont conduit à ces passages et à leur reformulation), et la discutabilité (mettre l’énoncé en débat sur la base de ces pièces, en séparant preuve et interprétation). 
+
+Dans la suite de cet article, nous adoptons une démarche d'exposé de position : ce texte propose un cadrage méthodologique et des pistes préliminaires pour orienter le développement de dispositifs RAG alignés avec les exigences de la méthode historique. 
+Nous soutenons que la confiance se construit à condition de faire du RAG une chaîne de preuve. 
+Autrement dit, chaque énoncé doit être relié à des passages identifiables, replacés dans leur contexte, et assortis d’indices sur leur sélection et leurs transformations. 
+L’objectif est d’en faire un instrument de travail historien, au-delà d'un outil d’accès rapide aux archives : le RAG doit donc être contrôlable, critiquable, reproductible et appropriable. 
+Nous proposons en conséquence un cadrage et un protocole minimal d’auditabilité alignés sur les exigences de la méthode historique~\cite{langlois1898introduction, bloch1949apologie, prost1996douze}.
+
+\section{Interroger les archives avec le RAG : état des lieux}
+
+\subsection{RAG pour les corpus patrimoniaux} \label{sec:rag_patrimoine}
+
+Les usages du RAG se multiplient pour interroger des corpus patrimoniaux, souvent via des assistants conversationnels~\cite{tran-etal-2024-rag-historical-newspapers,cherukuri2025oralhistory,karidi-etal-2025-kgdrivenrag,kelly2025folkrag,lee2025joseonrag,lin-etal-2025-preliminary,mudet2025hybridrag,sergeev2025talking}. 
+Or, ces systèmes sont principalement conçus pour des corpus contemporains et relativement propres, tandis que les archives historiques sont hétérogènes, parfois multilingues, longues, et fréquemment bruitées. 
+Une partie de la littérature récente souligne que, dès que l’on se confronte à des usages patrimoniaux et multimodaux, la fiabilité et l’auditabilité deviennent pourtant des objectifs explicites~\cite{abdelfattah2025fromRecognitionToReliability}. 
+Plus généralement, les méthodes computationnelles transforment les pratiques et les objets ; elles exigent donc des critères de légitimation disciplinaires, et pas seulement des scores~\cite{armand2023beyonddh}. 
+Enfin, l’explosion des recherches sur le RAG ne s’accompagne pas encore d’une standardisation stable des régimes d’évaluation et d’auditabilité, ce qui plaide pour des protocoles situés, répondant aux exigences du domaine, plutôt que pour un score unique~\cite{brown2025systematicrag}.
+
+\subsection{Récupération vs génération : diagnostiquer les erreurs du RAG}
+
+Nous pouvons distinguer deux dimensions à évaluer : (1) la récupération (\textit{retrieval}), c’est-à-dire la capacité du système à retrouver des documents et fragments pertinents ; (2) la génération, c’est-à-dire la manière dont le système formule une réponse à partir de ces fragments. 
+Cette distinction est utile si elle permet un diagnostic : un problème peut venir d’une récupération inadéquate (mauvais passages) ou d’un glissement interprétatif lors de la génération (surinterprétation, généralisation, confusion). 
+En pratique, plusieurs frictions techniques ont un effet directement épistémique : la segmentation (\textit{chunking}) peut perdre le contexte ; le bruit OCR/HTR peut altérer la lecture et déplacer la critique vers la chaîne de transcription ; la sensibilité au prompt et à la configuration fragilise la reproductibilité ; enfin, le mélange de citation, paraphrase et interprétation brouille la frontière entre preuve et commentaire.
+
+Les juges LLM (\textit{LLM-as-a-Judge})~\cite{zheng2023judging} peuvent aider à classer des erreurs ou à comparer des réponses, à condition d’être calibrés et intégrés comme auxiliaires de critique, non comme arbitres de vérité~\cite{chandak2025answermatching}. 
+Les résultats d’évaluation montrent toutefois une forte sensibilité aux tâches, aux domaines et aux hyperparamètres ; cela plaide pour des protocoles à visée diagnostique -- cartographier les conditions de succès/échec et les profils d’erreurs -- plutôt que pour des classements globaux peu transférables~\cite{chen2024benchmarkingrag}. 
+Enfin, les critiques des \og \textit{context metrics} \fg{} rappellent que des dimensions cruciales, comme la disciplinarité, l'interprétation et le contexte, résistent à une quantification simple : les métriques doivent rester arrimées à des pratiques de lecture et de validation~\cite{barnett2025somethings}. 
+Si la réduction des hallucinations repose sur de nombreuses solutions techniques (contraindre la récupération, organiser l’abstention lorsque les preuves sont insuffisantes, ou encore ajouter des étapes de vérification)~\cite{zhang2025hallucinationmitigation}, l’objectif central en histoire n’est pas d’optimiser une métrique globale, mais de rendre la preuve discutable : expliciter les appuis documentaires, signaler les zones d’incertitude, et borner clairement ce qui peut, ou ne peut pas, être inféré. 
+Ce besoin de contrôle sur la chaîne RAG ne concerne pas seulement l’histoire, mais plus largement tout domaine de connaissance où la réponse doit pouvoir être justifiée, vérifiée et contestée à partir de sources explicites~\cite{juhasz2024responsibleragclimate, ozaki2024confidenceRAG, ravi2025exploringtrust}.
+
+\section{Une grille d’auditabilité pour le RAG en histoire}
+
+L’enjeu n’est pas seulement l’optimisation technique de la chaîne, mais l’explicitation, étape par étape, des transformations susceptibles d’affecter le statut de preuve des éléments mobilisés. 
+La transparence attendue doit être opératoire : exposer les décisions prises pour la segmentation, l'indexation, les paramètres de récupération et les contraintes de génération, ainsi que leurs effets, doit permettre à l’utilisateur d’agir -- en reformulant ou comparant -- plutôt que de consommer un résultat présenté comme définitif~\cite{ravi2025exploringtrust}.
+
+Notre contribution consiste à traduire les exigences historiennes en conditions instrumentées, afin de produire des sorties qui soutiennent une lecture critique, traçable, discutée et contextualisée~\cite{dobson2021interpretableoutputs, paakkonen2021humanisticinterpretation}. 
+Nous proposons, dans cette perspective, une grille d’auditabilité qui précise ce qui doit être visible, traçable et vérifiable afin que la réponse puisse être considérée comme une preuve discutable. 
+Cette grille s’appuie sur des observations et des réflexions \og de terrain \fg{}, issues d’expérimentations menées sur des débats parlementaires et de la presse de la Troisième République (1870-1940) \cite{pellet2025eval, pellet2024generative, bian-etal-2026-efficiently-explore, pellet2026historiqaThirdRepublic}, deux corpus longs, bruités et fortement dépendants du contexte, où la segmentation, le bruit OCR et la multiplicité des versions exacerbent les enjeux de surinterprétation, de traçabilité et de reproductibilité.
+
+\subsection{Ancrer la source : provenance, intégrité et traçabilité documentaire}
+
+La critique externe des sources exige des identifiants stables, des métadonnées explicites (document, édition, date, cote/identifiant, version), et la transparence des transformations (OCR/HTR, normalisation, nettoyage, découpage). Elle suppose aussi une documentation manipulable du corpus, comprenant les choix de numérisation, les lacunes, les conditions de production, et impliquant les rôles et arbitrages des institutions documentaires~\cite{lamasse_rygiel_2014_nouvellesFrontieres}. 
+Un risque spécifique de l'utilisation des grands modèles de langue est la production de références plausibles mais invérifiables ; d’où la nécessité d’ancrages stables comme des liens et des identifiants, et de mécanismes de prévention des références non vérifiables, afin que toute citation puisse être retrouvée et contrôlée~\cite{byun2024citationaccuracy}. 
+Enfin, l’opacité de la sélection des sources empêche la critique ; rendre la provenance consultable et manipulable est une condition d’appropriation~\cite{vonreeken2025untrusting}.
+
+\subsection{Séparer preuve et commentaire : citation, paraphrase et inférence}
+
+Afin d'éviter la confusion entre preuve et commentaire, il semble nécessaire de distinguer explicitement ce qui est cité, paraphrasé ou inféré, et vérifier la fidélité de la réponse par un alignement réponse-passages récupérés, avec détection de glissements et surinterprétations. 
+La fidélité (\textit{faithfulness}) ne doit pas seulement signifier que des sources sont affichées : elle doit signifier que la réponse dépend effectivement de ces passages, et qu’on peut voir précisément quelles parties de l’énoncé sont soutenues par quels extraits \cite{wallat2025correctnessfaithfulness}.
+
+\subsection{Restituer le contexte : voisinage des fragments et pluralité des sources}
+
+Dans un système de génération augmentée par récupération, les grands corpus qui constituent la base de l’analyse sont stockés sous forme de fragments, appelés aussi segments ou \textit{chunks}, dont la taille dépend de la stratégie de pré-traitement retenue. 
+Cette segmentation soulève toutefois plusieurs défis. 
+En particulier, elle peut fausser l’interprétation en isolant des indices de leur voisinage contextuel. 
+Une exigence minimale consiste donc à garantir l’accès au contexte entourant chaque fragment (avant/après, structure du document, voire document entier si nécessaire), tout en encourageant le croisement des sources : multiplicité des passages, des documents et des points de vue, y compris contradictoires, plutôt qu’une réponse unique, énoncée comme une vérité univoque. Des choix d’interface tels que les \og réponses par source \fg{} ou la comparaison explicite des sources soutiennent ainsi des pratiques proches du croisement historien~\cite{ravi2025exploringtrust}. 
+
+\subsection{Reproduire l’analyse : traçabilité des conditions d’exécution et diagnostic d’erreurs}
+
+La discussion des énoncés suppose de pouvoir reconstituer leurs conditions de production : prompts, configurations, versions de modèles, paramètres et index. 
+Cette traçabilité des conditions d’exécution permet de rejouer l’analyse, de tester la sensibilité (top-k\footnote{Désigne le nombre $k$ de passages (ou documents) que l’étape de récupération renvoie au modèle de génération.}, taille des segments) et de distinguer un effet de corpus d’un effet de paramétrage. 
+Sur cette base, l’analyse d’erreurs nécessite d'être structurée en distinguant récupération et génération, par type de source, période ou genre, et en précisant la place et la forme de la vérification humaine. 
+Elle doit également intégrer des mécanismes d’abstention lorsque les passages récupérés n’apportent pas de preuve suffisante~\cite{ozaki2024confidenceRAG}. 
+La qualité des données en entrée doit être traitée comme un axe explicite, car un OCR médiocre peut faire chuter les performances et expliquer des réponses erronées~\cite{piryani2024, bian-etal-2026-efficiently-explore}.
+
+\section{Montrer les limites pour fonder la confiance}
+
+Au-delà des métriques et de la traçabilité, l’objectif est de faire de la sortie RAG un support de raisonnement historien. Nous entendons par là un ensemble de mécanismes qui apprennent à l’utilisateur à lire la sortie du système comme un raisonnement révisable en distinguant (1) ce qui est établi par citation, (2) ce qui est inféré et (3) ce qui ne peut pas être arbitré avec les éléments disponibles et qui exige un retour au document. 
+Il s’agit ainsi de répondre à l’illusion de certitude conversationnelle par des interactions qui incitent à vérifier, affichent les conditions de validité et signalent les zones d’ombre~\cite{vonreeken2025untrusting}, tout en favorisant l’exploration d’alternatives~\cite{ravi2025exploringtrust}. 
+L’explicitation des limites et des incertitudes n’est pas un aveu d’échec : c’est ce qui rend l’énoncé discutable. Dans cette perspective, l’erreur algorithmique peut même être méthodologiquement productive si elle est rendue visible et analysable, car elle signale des zones de complexité interprétative~\cite{rettberg2022algorithmicfailure}. 
+La confiance dépend ainsi de la robustesse des étapes de la chaîne de traitement et de la discutabilité des preuves et non d’une rhétorique de performance~\cite{da2019computationalcase} : elle relève d’un régime de travail (contrôle, critique, discussion), et non d’une croyance dans l’outil.
+
+Dans cette perspective, on peut dégager plusieurs principes. Par exemple, une typologie simple pourrait structurer l’usage : un énoncé produit par le RAG pourrait être \og attesté \fg{} (soutenu par des passages cités), \og inféré \fg{} (déduit à partir d’indices avec raisonnement explicitable), \og indécidable \fg{} (non attestable avec le corpus récupéré, le niveau de bruit ou le contexte). 
+Cette dernière catégorie doit être associée à des mécanismes d’abstention lorsque l’évidence est faible, afin de prévenir des synthèses plausibles mais non prouvées~\cite{ozaki2024confidenceRAG}. 
+Ensuite, du côté de l’interface, l’objectif est d’inciter à la vérification, avec une présentation centrée sur les sources qui affiche d’abord les passages et leurs métadonnées, puis la synthèse. Des marqueurs doivent signaler les zones à risque (OCR/HTR, segmentation, ambiguïtés contextuelles) et l’interface doit proposer des alternatives lorsque plusieurs lectures sont plausibles. 
+Enfin, les visualisations d’incertitude doivent éviter l’équation implicite « score = vérité » et privilégier des signaux utiles à l’enquête (points à vérifier, contradictions, fragilités OCR)~\cite{eberhard2023visualizationeffects}.
+
+Un tel cadrage rend la sortie discutable et révisable, compatible avec la critique interne et externe. 
+Il facilite une validation collective, en partageant non seulement un résultat mais aussi son statut et ses zones d’incertitude, ce qui relève d’une reproductibilité adaptée aux exigences des humanités numériques~\cite{ries2024reproducibilityexplainability}. 
+Il contribue également à une reconnaissance disciplinaire du travail numérique comme travail historien, en réinstallant des gestes de critique et de justification.
+
+\section{Aligner le RAG sur la logique de preuve : de la grille au protocole}
+
+Il ne s’agit donc plus d’optimiser uniquement une performance de questions-réponses, mais de rendre l’énoncé historique auditable et discutable. 
+Dans un esprit d’exposé de position, nous avançons un cadrage destiné à être discuté et mis à l’épreuve : la confiance relève moins d’une adhésion à l’outil que d’un dispositif soutenant l’herméneutique critique et la discutabilité de la preuve, dans le prolongement des débats en humanités numériques sur les inférences computationnelles et leurs effets sur les pratiques historiennes~\cite{da2019computationalcase, paakkonen2021humanisticinterpretation, poublanc_marque_2023_introduction_framespa}. 
+La proposition centrale est une grille d’auditabilité, lisible par des non-spécialistes, qui explicite ce qui doit être observable et traçable afin de soutenir une critique procédurale et l’appropriation des outils~\cite{lamasse_rygiel_2014_nouvellesFrontieres}. 
+Elle implique aussi que les historiens demeurent acteurs de la chaîne de traitement, en refusant une externalisation qui dissocierait corpus, données et responsabilité scientifique. 
+Enfin, nous esquissons une trajectoire de formalisation de cette grille en protocole minimal d’alignement méthode historique–RAG, et proposons des principes pour construire des jeux d’évaluation orientés vers la pratique historienne (comme l'illustre la Figure~\ref{fig:multi_hop}), afin d’arrimer l’évaluation à une logique de preuve plutôt qu’à des classements~\cite{piryani2024, pellet2024generative}.
+
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=1\linewidth]{images/QA_exemple_multihop.pdf}
+  \caption{Un extrait de question multi-hop question généré avec la chaîne de traitement RAG à partir de débats parlementaires et presse (1887) (cité dans~\cite{pellet2026historiqaThirdRepublic})}
+  \label{fig:multi_hop}
+\end{figure}
+
+Il ne s’agit pas de normaliser la démarche de l'enquête historienne, mais de fixer un socle commun : documenter les transformations des sources, les paramètres qui structurent récupération et génération, les limites connues, et les vérifications requises pour traiter une réponse comme un élément de preuve discutable. 
+Cette trajectoire suppose une gouvernance partagée et une collaboration effective entre histoire et informatique, conçue comme co-définition des choix plutôt que comme prestation~\cite{dumouza_lamasse_rygiel_2023_histoireDonnees_framespa}.
+
+\printbibliography
+
+\end{document}

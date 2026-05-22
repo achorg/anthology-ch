@@ -1,0 +1,150 @@
+%Template v.1.0: Taylor Arnold and Simon Gabay, december 2025
+% CECI EST UN FICHIER DE MODÈLE LATEX POUR LES ARTICLES INCLUS DANS
+% *Anthology of Computers and the Humanities*. AJOUTEZ L'OPTION
+% 'final' LORS DE LA CRÉATION DE LA VERSION FINALE DE L'ARTICLE. 
+% NE PAS modifier la classe du document
+\documentclass[final, fra]{anthology-ch}     % pour la version finale
+%\documentclass[fra, custom]{anthology-ch}      % pour la soumission
+
+% CHARGER LES PACKAGES LaTeX
+\usepackage{booktabs}
+\usepackage{graphicx}
+
+% AJOUTEZ vos propres packages avec \usepackage{}
+
+% TITRE DE LA SOUMISSION
+% Remplacez ceci par le titre de votre soumission
+\title{Circulation des spectacles marginaux : réseaux sociaux et interurbains en France (1792-1860)}
+
+% INFORMATIONS SUR LES AUTEURS ET LES AFFILIATIONS
+% Pour chaque auteur, utilisez une nouvelle commande \author, avec
+% les numéros entre crochets indiquant les affiliations correspondantes
+% (section suivante) et l'ORCID-ID pour chaque auteur.  
+\author[1]{Johanna Daniel}[
+  orcid=0000-0002-3459-7728,
+  email=johanna.daniel@inha.fr
+]
+
+\author[2]{Martin Grandjean}[
+  orcid=0000-0003-3184-3943,
+  email=martin.grandjean@unil.ch
+]
+
+
+% Il doit y avoir un appel à \affiliation pour chaque affiliation des auteurs.
+% Plusieurs affiliations peuvent être attribuées à un auteur
+% et une affiliation peut être attribuée à plusieurs auteurs. 
+\affiliation{1}{Institut national d'histoire de l'art, Paris, France}
+\affiliation{2}{Université de Lausanne, Suisse}
+
+% MOTS-CLÉS
+% Fournissez un ou plusieurs mots-clés séparés par des virgules
+% en utilisant les commandes suivantes
+\keywords[fra]{humanités numériques, humanités spatialisées, analyse de réseau, visualisation de données, histoire, histoire numérique, humanités computationnelles}
+\keywords[eng]{digital humanities, spatial humanities, network analysis, data visualization, history, digital history, computational humanities}
+
+% MÉTADONNÉES DE LA PUBLICATION
+% Ces champs seront remplis lors de la publication ; 
+% ils peuvent être laissés par défaut lors de la soumission
+\pubyear{2026}
+\pubvolume{4}
+\pagestart{158}
+\pageend{165}
+\paperorder{19}
+\conferencename{Actes de la Conférence Humanistica}
+\conferenceeditors{Serena Crespi, Simon Gabay, Martin Grandjean, Ariane Pinche, Marie Puren et Léa Saint-Raymond}
+\doi{10.63744/QYIv8j3loHxs}
+\customhead{}
+
+\addbibresource{bibliography.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DÉBUT DU TEXTE
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This article offers a network analysis of the mobility of itinerant performers in fairground shows and curiosity shows in France in the early 19th century. Based on an extensive survey of archives, the trajectories of 17,000 people are analyzed in the form of 60,000 travel segments, making it possible to reconstruct the groups of people traveling together and the main routes taken.
+\end{abstract}
+
+\section{Introduction} 
+Longtemps confinée à des monographies locales ou typologiques, l'étude des spectacles forains et des curiosités dans la France des XVIIIe et XIXe siècles (marionnettes, acrobaties, musique de rue, démonstrations optiques, cirques, etc.) connaît actuellement un renouveau historiographique majeur \cite{beauce_spectacles_2023}. Celui-ci s'appuie notamment sur l'utilisation de sources inédites, essentiellement policières, parmi lesquelles les passeports intérieurs. Ces passeports, obligatoires pendant une grande partie du XIXe siècle, permettent de retracer les mouvements de population, dont ceux des personnes qui vivaient des spectacles itinérants \cite{daniel__2020, bourdin_spectacles_2024}. 
+
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=1\linewidth]{figure1.png}
+  \caption{Exemple de passeport intérieur : passeport d’Alexandre Charpentier, 1824, Archives municipales d’Elbeuf, 2J ELB 9.}
+  \label{fig:1}
+\end{figure}
+
+Issue d'une entreprise collaborative impliquant des universitaires, des chercheurs indépendants et des non universitaires (généalogistes, collectionneurs), la base de données \href{https://spectacle-de-curiosites.msh.uca.fr}{\textit{Spectacles de curiosités}}\footnote{Base \textit{Spectacles de curiosités}, hébergée par l'Université Clermont-Auvergne et la MSH de Clermont Ferrand, mise à disposition en CC-BY-NC-SA et accessible à l'adresse : \href{https://spectacle-de-curiosites.msh.uca.fr/}{https://spectacle-de-curiosites.msh.uca.fr}. L'équipe porteuse est constituée de Philippe Bourdin, Johanna Daniel, Roger Gonin, Cyril Triolaire, Aurelia Vasile. Treize autres personnes ont contribué à la collecte et au dépouillement des archives. Les chiffres donnés dans l'article sont ceux de la base au 30 juillet 2025.} permet aux utilisateurs de consulter les données prosopographiques relatives à 17 000 personnes ayant exercé des activités en lien avec ces spectacles dits "marginaux" (identité, signalement physique, déplacements, profession, etc.) \cite{bourdin_spectacles_2024}. À partir de ces données structurées, 18 000 enregistrements datés et localisés ont été extraits, permettant de reconstituer 60 000 segments de voyage\footnote{Des 29 452 enregistrements que compte la base, nous n'avons conservé que les 18 000 relevant de l'administration des passeports. Les enregistrements écartés sont issus de sources de nature différente (autorisations locales de se produire en spectacles, principalement), qui ne permettaient pas de répondre à la problématique retenue. Pour l'analyse, seules les données à la fois datées et localisées ont été analysées.}. Cette contribution propose deux analyses de réseau distinctes de ces enregistrements. La première vise à détecter les groupes d'individus voyageant ensemble, une donnée qui n'apparaît formellement dans les sources qu'à de rares exceptions. La seconde cherche à identifier les routes les plus fréquentées, avec l'objectif de cartographier les itinéraires dominants ou secondaires et leur évolution au cours de la période étudiée.   
+
+\section{Données : les passeports intérieurs}
+Rendus obligatoires par les lois de 1792, les passeports à l’intérieur sont indispensables pour tout individu souhaitant sortir de son canton de résidence, qu'il soit français ou étranger \footnote{À leur entrée sur le territoire, les étrangers échangent leur passeport étranger contre un passeport à l'intérieur. Les français, quant à eux, doivent se munir d'un passeport à l'étranger s'ils envisagent de passer la frontière du territoire national. Les passeports à l'intérieur ont progressivement été abandonnés à partir des années 1860, leur usage n'étant plus adapté à l'intensification de la fréquence et du rythme des déplacements.} : le document, valable un an, doit être présenté régulièrement aux autorités policières et municipales pour être visé tout au long du voyage. L'absence de passeport rend le voyageur suspect de vagabondage, et peut entraîner un emprisonnement le temps de vérifier la régularité de sa situation. L’administration des passeports donne lieu à une importante production de documents de contrôle : registres de délivrance, registres de visas, signalements hebdomadaires auprès des autorités préfectorales, qui les remontent au Ministère de l’Intérieur. Ces multiples documents ont été conservés inégalement sur le territoire, de nombreux services les ayant éliminés. Mieux connus depuis les travaux sur le contrôle policier de la mobilité \cite{denis_contromobilite_2001, denis_histoire_2008, becchia_voyages_1991, noiriel_surveiller_1998}, ces documents font aujourd’hui encore l’objet de peu d’exploitation par les chercheurs, du fait de leur masse et des aléas de leur préservation, qui rend délicate la constitution de séries homogènes embrassant une longue période et couvrant la totalité d'un territoire. 
+
+Le chantier mené par l'équipe de \href{https://spectacle-de-curiosites.msh.uca.fr/}{\textit{Spectacles de curiosités}}, toujours en cours, a consisté à dépouiller des centaines de registres et de liasses de passeports périmés dans une cinquantaine de centres d’archives à travers toute la France, pour en extraire les données relatives à des personnes identifiées comme "saltimbanques" (musiciens ambulants, montreurs de curiosités, acrobates, etc.). Les données collectées ont été saisies par Roger Gonin dans une base de données conçue sur mesure par Aurelia Vasile, ingénieure de recherche à la MSH Clermont-Ferrand \cite{gonin_base_2024}.
+
+La figure~\ref{fig:1} reproduit l'un de ces passeports intérieurs : délivré à Dijon le 11 juillet 1823 à Alexandre Charpentier, un montreur de spectacles d'optique âgé de 65 ans, le passeport est couvert d'une trentaine de visas apposés par les autorités locales des communes traversées par le porteur entre juillet 1823 et février 1824, puis de mai à août 1824. Le 26 août 1824, Alexandre Charpentier fait renouveler ses papiers à Elbeuf, dont les archives conservent désormais ce passeport périmé. La figure~\ref{fig:2} montre une page d’un registre de visas conservés aux Archives de Montpellier. Ce registre, tenu du 2 janvier 1813 au 21 mai 1816,
+enregistre environ 5500 visas apposés sur les passeports de voyageurs de passage : y figurent le nom, le prénom, le domicile, la profession, l'âge, le signalement du porteur, la date et le lieu de délivrance de son passeport, ainsi que la destination qu'il déclare. Sur la double page reproduite, figure le signalement d'Alexandre Charpentier, dont on apprend qu'il est passé à Montpellier le 12 avril 1814, se présentant cette fois-ci comme "quincaillier-opticien" et déclarant se rendre à Pezenas. 
+ 
+
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=1\linewidth]{figure2.png}
+  \caption{Registre de visas pour la période 1813-1816, Archives municipales de Montpellier, non coté.}
+  \label{fig:2}
+\end{figure}
+
+\section{Méthodologie : deux types d’analyses de réseaux historiques}
+Les passeports intérieurs renferment des données précieuses pour documenter le profil social de leurs porteurs, et, surtout, leur trajectoire au sein du territoire. Le corpus rassemblé permet des analyses statistiques très variées \cite{daniel_rendre_2023}. Dans cet article, nous cherchons en particulier à saisir la nature structurelle de ces données, c’est-à-dire à utiliser ces sources pour analyser le réseau personnel des porteurs de passeports et reconstituer la toile spatiale de leurs déplacements, deux types d’approches qui font partie de la boîte à outil de l’analyse de réseaux historiques \cite{grandjean_netzwerkanalyse_2025}.
+
+Une fois les occurrences de lieux/dates de chaque passeport désambiguïsées, celles-ci sont transformées de deux manières (figure~\ref{fig:3}) : 
+\begin{itemize}
+    \item Pour connecter les individus qui partagent un même couple de lieu/date (qui ont donc été enregistrés dans le même lieu au même moment), un graphe biparti (c'est-à-dire composé de deux types de noeuds différents) de personnes et de couples lieu/date est créé puis projeté dans un graphe \textit{1-mode} (composé d'un seul type de noeuds) de personnes où deux nœuds sont liés par une arête pondérée en fonction du nombre d’occurrences de lieu/date qu’ils partagent.
+    \item Pour reconstituer le réseau de circulation global, chaque passeport est transformé en une chaîne d’occurrences de lieux. Ces chaînes sont ensuite agrégées pour créer un graphe \textit{1-mode} de lieux géolocalisés connectés par des arêtes pondérées et orientées en fonction du nombre total de personnes qui ont emprunté ce segment dans un sens comme dans l’autre pendant la période voulue. 
+\end{itemize}
+
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=1\linewidth]{figure3.png}
+  \caption{Schéma expliquant les deux types de réseaux extraits du corpus de passeports intérieurs.}
+  \label{fig:3}
+\end{figure}
+
+\section{Repérer les individus qui voyagent en groupe}
+Sur les registres de visas, chaque individu est enregistré séparément et les liens entre deux voyageurs ne sont que rarement consignés par les agents de l'administration. Lors de la saisie dans la base, ces liens peuvent se deviner, par exemple lorsque plusieurs individus déclarés le même jour au même endroit portent le même nom patronymique, sont originaires du même village ou encore exercent des professions similaires ou complémentaires (un "montreur de chiens dansants" immédiatement suivi d'un "musicien"). La confirmation de ces liens implique de lourdes vérifications manuelles par les chercheurs. Le traitement computationnel des données a ici permis d’expliciter automatiquement les liens entre les individus, à l’échelle de l’ensemble de la base. 
+
+S’il apparaît dans l’ensemble que les individus sont faiblement connectés (figure~\ref{fig:4}), ce qui est partiellement la conséquence de l’incomplétude des sources conservées, nous détectons une centaine de groupes de personnes fortement interconnectées (c’est-à-dire arrivant dans une même ville à la même date à plus de trois reprises), ce qui confirme une logique de voyage en groupe. L’approfondissement de l'analyse de ces clusters, par une reprise et une consolidation des données d’ordre biographique, permet de préciser la nature des relations entre les différents individus constituant un groupe. Pour certains, apparaît comme point commun une même origine géographique : cela confirme l'existence de logiques d’interdépendances dans la mobilité déjà très étudiés pour les colporteurs \cite{fontaine_histoire_1993}. Pour d’autres, c’est le type de spectacle qui est le dénominateur commun : c’est particulièrement vrai pour les acrobates et les écuyers, qui fonctionnent en troupe. Enfin, la visualisation a permis d’identifier des binômes féminin/masculin, qui se sont révélés être des couples, information qui nous échappait par la seule consultation des passeports. 
+
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=1\linewidth]{figure4.png}
+  \caption{Réseau de co-présence des actrices et acteurs de spectacles forains et de curiosités en France au XVIIIe et XIXe siècles. Deux personnes sont connectées si elles ont été enregistrées simultanément (même lieu et même jour) au moins une fois. Figure produite avec Gephi \cite{bastian_gephi:_2009, grandjean_gephi_2015} et l’algorithme Force Atlas 2 \cite{jacomy_forceatlas2_2014}.}
+  \label{fig:4}
+\end{figure}
+
+\section{La carte des lieux de passage}
+La façon dont les données ont été collectées permet de suivre facilement des trajectoires individuelles (dans le cas de passeports périmés) ou d’observer le passage des saltimbanques depuis un lieu fixe (le bureau de police d’une ville). Ce sont là les approches traditionnelles de l’historiographie des spectacles marginaux \cite{dumas_spectacles_1979, gandilhon_saltimbanques_1980, bourdin_curiosites_2021}. En revanche, il est difficile de se figurer les trajectoires globales à l’échelle de l’ensemble du territoire national : existe-t-il des tournées types, des routes privilégiées ? Peut-on déduire des hiérarchies dans les villes d’étapes ?
+
+Pour tenter d’y répondre, nous avons agrégé sur une carte (figure~\ref{fig:5}) les 60 000 segments de voyage présents dans la base. Si le résultat est fortement déséquilibré par le poids des villes dont les fonds de passeports conservés sont particulièrement volumineux et denses (Angers, Agen, Montpellier), un réseau de villes commence à apparaître : il confirme le poids de certains axes, déjà perçus au moment des dépouillements. On notera par exemple le caractère structurant des fleuves (Rhône, Garonne) dans les itinéraires suivis. Une lecture resserrée, à l'échelle d'une région, permet de mettre en évidence le rôle de certaines villes étapes, à l'instar d'Angers, dont on forme l’hypothèse qu'elle agit comme un carrefour. Cette hypothèse, pour être vérifiée, nécessite des dépouillements complémentaires au sein des fonds de passeports conservés dans les voisines. Dans une étape ultérieure du projet, une fois le volume des données disponibles augmenté, les données spatiales pourront être croisée à des variables temporelles (calendrier des foires et des fêtes locales), dans le but de vérifier la saisonnalité des tournées. 
+
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=1\linewidth]{figure5.png}
+  \caption{Réseau de circulation des actrices et acteurs de spectacles forains et de curiosités en France entre 1792 et 1860. Agrégation des itinéraires extraits des passeports intérieurs. Figure produite avec Gephi \cite{bastian_gephi:_2009, grandjean_gephi_2015} et le plugin GeoLayout \cite{jacomy_geolayout_2023} puis annotée avec Inkscape.}
+  \label{fig:5}
+\end{figure}
+
+\section{Conclusion}
+
+L’intérêt de ce travail réside dans la constitution d’un jeu de données nouvelles pour l’histoire des spectacles marginaux mais s’avère également original dans sa méthodologie. Il permet une discussion sur la nécessité de mener une critique rigoureuse des sources et de leur mise en données \cite{daniel_rendre_2023}, le corpus disponible étant nativement fortement biaisé par les distorsions de conservation des archives suivant les espaces géographiques. 
+
+Il entre également en fort écho avec les préoccupations des humanités numériques et computationnelles et constitue un bon exemple des vertus de la mise à disposition des données de la recherche à la communauté scientifique : si les concepteurs du projet \href{https://spectacle-de-curiosites.msh.uca.fr/}{\textit{Spectacles de curiosités}} (Roger Gonin, Philippe Bourdin, Cyril Triolaire, Aurélia Vasile) avaient en effet l’ambition de réaliser un projet avec une composante numérique forte, intégrant une exploitation statistique et des visualisations graphiques des données, l’exploitation quantitative puis la visualisation de réseau et la projection cartographique proposées ici ont permis de faire émerger des informations inédites (réseaux d’individus, routes récurrentes) et de poser des questions nouvelles. Ces développements ouvrent ainsi des pistes qui peuvent être ensuite approfondies via des approches biographiques ou prosopographiques plus classiques.
+
+
+% Imprime la bibliographie à la fin. Gardez cette ligne après le texte
+% principal de votre article et avant une annexe.
+\printbibliography
+
+\end{document}

@@ -1,0 +1,148 @@
+%Template v.1.0: Taylor Arnold and Simon Gabay, december 2025
+% CECI EST UN FICHIER DE MODÈLE LATEX POUR LES ARTICLES INCLUS DANS
+% *Anthology of Computers and the Humanities*. AJOUTEZ L'OPTION
+% 'final' LORS DE LA CRÉATION DE LA VERSION FINALE DE L'ARTICLE. 
+% NE PAS modifier la classe du document
+%\documentclass[final, fra, custom]{anthology-ch}     % pour la version finale
+\documentclass[final, fra]{anthology-ch}      % pour la soumission
+
+% CHARGER LES PACKAGES LaTeX
+\usepackage{booktabs}
+\usepackage{graphicx}
+
+% AJOUTEZ vos propres packages avec \usepackage{}
+
+% TITRE DE LA SOUMISSION
+% Remplacez ceci par le titre de votre soumission
+\title{\textit{Unknown Hands} : acquérir, structurer et interroger les données de la production des femmes copistes avant 1600}
+
+% INFORMATIONS SUR LES AUTEURS ET LES AFFILIATIONS
+% Pour chaque auteur, utilisez une nouvelle commande \author, avec
+% les numéros entre crochets indiquant les affiliations correspondantes
+% (section suivante) et l'ORCID-ID pour chaque auteur.  
+\author[1,2]{Estelle Guéville}[
+  orcid=0000-0003-2603-1051,
+  email=estelle.gueville@yale.edu
+]
+
+% Il doit y avoir un appel à \affiliation pour chaque affiliation des auteurs.
+% Plusieurs affiliations peuvent être attribuées à un auteur
+% et une affiliation peut être attribuée à plusieurs auteurs. 
+\affiliation{1}{Medieval Studies, Yale University, New Haven, USA}
+\affiliation{2}{Bibliothèque nationale de France, Paris, France}
+
+% MOTS-CLÉS
+% Fournissez un ou plusieurs mots-clés séparés par des virgules
+% en utilisant les commandes suivantes
+\keywords[fra]{femmes copistes, manuscrits, littératie, base de données, métadonnées}
+\keywords[eng]{female scribes, manuscripts, literacy, database, metadata}
+
+% MÉTADONNÉES DE LA PUBLICATION
+% Ces champs seront remplis lors de la publication ; 
+% ils peuvent être laissés par défaut lors de la soumission
+\pubyear{2026}
+\pubvolume{4}
+\pagestart{17}
+\pageend{26}
+\paperorder{3}
+\conferencename{Actes de la Conférence Humanistica}
+\conferenceeditors{Serena Crespi, Simon Gabay, Martin Grandjean, Ariane Pinche, Marie Puren et Léa Saint-Raymond}
+\doi{10.63744/VzNBllw1Ml8n}
+\customhead{}
+
+\addbibresource{bibliography.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DÉBUT DU TEXTE
+\begin{document}
+
+%TC:ignore
+\maketitle
+
+\begin{abstract} This article presents \textit{Unknown Hands}, an initiative addressing the systemic invisibility of medieval female scribes in Western Europe. It draws on a dataset comprising more than 1200 identified female scribes and 1925 scribal units in approximately 1300 manuscripts, in order to model, analyze, and visualize female manuscript production in Europe before 1600. Built on a relational data infrastructure developed using Heurist, the public interface integrates structured metadata, digital reproductions, and HTR-generated transcriptions, enabling both humanistic and computational analysis. The project thus highlights the challenges involved in identifying female scribes, shaped by historical biases and archival silences, and proposes a qualitative, quantitative, and relational exploration of this production. The results notably reveal uneven patterns in geographical distribution, chronological dynamics, and institutional collaboration networks.\end{abstract}
+
+%TC:endignore
+
+\section{Introduction} 
+L’étude de la production manuscrite féminine pré moderne \cite{Beach2004WomenAsScribes, Cyrus2009ScribesConvents, Moreton2013NunBookProduction, Blanton2013HullDialogue, Blanton2015KansasCityDialogue, Blanton2018AntwerpDialogue} se heurte à un obstacle majeur : la faible découvrabilité des femmes copistes dans les catalogues et bases de données existantes. Si de nombreux manuscrits ont été décrits dans des catalogues de bibliothèques puis plus récemment centralisés et mis en ligne sur des plateformes de référence (telles que Biblissima, \textit{Manuscripta Mediaevalia}, e-codices ou ARCA), les femmes qui les ont copiés demeurent largement invisibles dans des notices hétérogènes où elles sont parfois réduites à des mentions marginales ou à une simple transcription d’un colophon. Cette invisibilité n’est pas simplement le produit d’un manque de sources, mais résulte souvent de choix techniques, épistémologiques et politiques inscrits dans les pratiques de catalogage et de structuration des données \cite{Thylstrup2019PoliticsDigitization, RisamBordalejo2019IntersectionalityDH, Manoff2016ArchivalSilence, Cook2011ArchivalAppraisal, Zaagsma2022PoliticsDigitization}. En présentant le premier jeu de données normalisé et interopérable consacré aux femmes copistes en Europe chrétienne avant 1600 tout en développant un environnement numérique capable de représenter, d’interroger et de visualiser leur activité à différentes échelles, le projet \textit{Unknown Hands} interroge la manière dont les infrastructures numériques (modèles de données, métadonnées, standards et interfaces) conditionnent la visibilité des femmes copistes dans le monde pré-moderne et comment les chercheurs peuvent concevoir des dispositifs numériques capables de modéliser, étudier et visualiser des données biaisées, longtemps ignorées, historiquement incertaines et fragmentaires sans en effacer la complexité.
+
+\section{État de l’art}
+La transition vers le catalogage de masse et la numérisation a profondément transformé la recherche en histoire du livre et des manuscrits \cite{Thylstrup2019PoliticsDigitization}. Toutefois, ces transformations n’ont pas garanti une accessibilité équitable aux différents acteurs historiques. Au contraire, elles ont souvent renforcé des biais préexistants, en favorisant des corpus déjà bien identifiés (masculins, institutionnels, canoniques) au détriment de groupes historiquement marginalisés, dont les femmes copistes, qui sont sous-représentés dans les cadres narratifs traditionnels, puis sous-décrits, sous-indexés ete sous-numérisés dans les dispositifs numériques qui donnent accès au patrimoine \cite{RisamBordalejo2019IntersectionalityDH, Manoff2016ArchivalSilence, Cook2011ArchivalAppraisal, BowkerStar1999SortingThingsOut}. Ces biais se manifestent à la fois dans les métadonnées, les modèles descriptifs et les dispositifs de recherche, qui peinent encore à représenter le genre, les collaborations, l’incertitude dans l’attribution et l’anonymat et créent des « silences archivistiques » \cite{Manoff2016ArchivalSilence}. 
+
+En codicologie et en histoire du manuscrit, le scribe médiéval a longtemps été pensé, de manière implicite ou explicite, au masculin \cite{Moreton2013NunBookProduction, Treharne2022}. Cette présomption relève de ce que Caroline Criado Perez a appelé le  « masculin par défaut » (\textit{« default male »}), c’est-à-dire la tendance à considérer l’expérience masculine comme norme implicite de description et d’interprétation \cite{CriadoPerez2019InvisibleWomen}. Dans le domaine manuscrit, cette logique a eu des effets méthodologiques durables. Même lorsque des femmes apparaissent dans les colophons, dans les notices anciennes, ou dans les inventaires conventuels, leur présence reste difficile à repérer à grande échelle. Les travaux récents confirment pourtant que le problème est moins celui d’une absence absolue que celui d’une sous-identification systémique. Une étude bibliométrique récente fondée sur les colophons catalogués au Bouveret \cite{Bouveret1965Colophons} identifie 1,1\% de colophons attribués à des femmes copistes, ce qui représente plus de 110000 manuscrits produits à la période médiévale \cite{Ommundsen2025FemaleScribes}.
+
+Les avancées récentes en intelligence artificielle et en reconnaissance automatique de l’écriture manuscrite (HTR) offrent de nouvelles perspectives pour améliorer l’accès aux sources, notamment par la recherche plein texte ou la catégorisation thématique \cite{Muehlberger2014HTR, Terras2022HTRLibrary, HuistraMellink2016PhrasingHistory, Muehlberger2019Transkribus}. Néanmoins, ces approches ne sauraient se substituer à une structuration raisonnée et critique des données : la découvrabilité repose toujours sur des métadonnées humaines, sur des choix de modélisation explicites et sur des cadres interprétatifs assumés. 
+
+\section{Corpus, données et modélisation}
+
+Le projet \textit{Unknown Hands} rassemble actuellement un corpus de plus de 1200 femmes copistes identifiées et documentées à travers 1925 unités scribales (\textit{Scribal Units}, SU) réparties dans près de 1300 manuscrits conservés dans environ 230 institutions patrimoniales et collections privées dans de nombreux pays, principalement européens et nord-américains. La période chronologique s'étend du \textsc{viii}\textsuperscript{e} à la fin du \textsc{xvi}\textsuperscript{e}~siècle, et la production documentée s'exprime en plus d’une dizaine de langues comprenant notamment le latin et plusieurs langues vernaculaires (français, néerlandais, allemand, italien, ou suédois), reflétant ainsi la diversité linguistique et géographique de l'activité scribale féminine pré-moderne en Europe occidentale.  Certaines traditions linguistiques ont toutefois été volontairement exclues du périmètre actuel du corpus, notamment les langues d’Europe orientale et du bassin méditerranéen telles que le syriaque, le copte, l'hébreu \cite{RieglerBaskin2008} ou l'arabe. Cette limitation répond à des contraintes méthodologiques et pratiques : les manuscrits relevant de ces traditions sont généralement décrits dans des catalogues et instruments de recherche distincts, souvent spécialisés. Leur intégration nécessiterait à la fois un travail de repérage considérablement plus étendu et des compétences linguistiques supplémentaires.
+
+\section{Méthodologie}
+Le projet \textit{Unknown Hands} repose sur une infrastructure numérique conçue pour représenter, interroger et visualiser la production scribale féminine pré-moderne à différentes échelles d’analyse. Les données du projet sont structurées dans Heurist, un environnement de recherche conçu pour la modélisation de données en sciences humaines, repose sur une base relationnelle MySQL et offre une interface permettant de définir des entités (« record types »), leurs relations et leurs vocabulaires contrôlés \cite{Johnson2008Heurist}. Heurist constitue l’ossature sémantique de l’infrastructure : chaque observation, identification paléographique, attribution, analyse codicologique et présence textuelle y est enregistrée. Les métadonnées sont documentées et normalisées à l’aide de vocabulaires contrôlés, tout en conservant des champs descriptifs non structurés, ce qui permet de concilier analyse computationnelle et examen philologique de sources médiévales fondamentalement ambigues.
+
+\begin{figure}[t!]
+    \centering
+    \includegraphics[width=1\linewidth]{figure1.png}
+    \caption{Interface de consultation de la base de données. Vue du module « Browse and Search » permettant l’exploration des données par type de données (manuscrits, unités de production, unités scribales, institutions, textes). L’exemple montre une recherche ciblée sur une unité scribale produite par Anna Joerdaens, active à Bruxelles à la fin du \textsc{xv}\textsuperscript{e}~siècle, avec affichage des métadonnées, dont certaines sont normalisées (datation, localisation, manuscrit associé).}
+    \label{fig:browse-search}
+\end{figure}
+
+Le modèle de données introduit notamment le concept de \textit{Scribal Unit} (SU), une nouvelle unité analytique destinée à saisir l’activité scribale indépendamment des unités codicologiques \cite{Gumbert2004CodicologicalUnits, andrist_syntaxe_2013} ou de production \cite{kwakkel_towards_2002, kwakkel_3_2012} traditionnelles. La SU correspond à un ensemble de folios attribuables à une même main, sur la base de critères paléographiques, codicologiques ou textuels, qu’ils soient explicites (colophons) ou inférés. Ce choix de modélisation permet de rendre compte de situations complexes, par exemple dans le cas de collaborations entre plusieurs scribes ou d’interventions successives d’une même copiste dans différentes unités de production. Le modèle de données intègre également des niveaux de certitude graduels associés aux attributions scribales et aux identifications de genre.
+
+Les données sont ensuite exportées périodiquement depuis Heurist sous forme de fichiers JSON qui alimentent l’interface publique du projet. Celle-ci adopte une logique de publication statique, facilitant la diffusion ouverte des données et leur réutilisation par la communauté scientifique. L’infrastructure repose ainsi sur plusieurs standards ouverts largement utilisés dans le monde des humanités numériques et du patrimoine, notamment HTML, CSS, Markdown and Javascript pour l'interface utilisateur, IIIF pour l’intégration des images, Web Annotation pour l’alignement des transcriptions avec les images et différents formats de diffusion des données tels que JSON, CSV et YAML. Ainsi, l'approche adoptée pour \textit{Unknown Hands} réduit considérablement les contraintes de maintenance, tout en facilitant l’archivage à long terme et la réutilisation des données, rejoignant ainsi les principes du \textit{minimal computing} \cite{GilOrtega2016MinimalComputing}. 
+
+Précisément, l'interface publique repose principalement sur l’articulation de trois types de données complémentaires :
+\begin{enumerate}
+    \item Les métadonnées structurées, modélisées dans l’environnement Heurist, qui permettent à la fois une lecture humaine et des traitements computationnels. Ces métadonnées décrivent les manuscrits, les copistes, les textes, les institutions et leurs relations.
+    \item Des reproductions numériques de manuscrits, accessibles via des manifestes IIIF, assurant l’interopérabilité avec les grandes bibliothèques numériques patrimoniales. Les images restent hébergées par les institutions qui les produisent et sont utilisées conformément à leurs politiques d’accès et de diffusion. Cette approche permet d’éviter la duplication des données tout en reliant directement les métadonnées aux témoins matériels.
+    \item Des transcriptions textuelles, produites grâce à la reconnaissance automatique de l’écriture manuscrite (HTR), encodées sous forme d’annotations Web alignées sur les canevas IIIF et générées grâce à des modèles ouverts sur la plateforme eScriptorium. Ces transcriptions permettent la recherche plein texte dans les manuscrits transcrits tout en conservant un lien direct avec les images.
+\end{enumerate}
+
+L'interface d'exploration principale propose neuf modules complémentaires (fig. 1) : recherche à facettes multi-critères, visualisation cartographique, analyse de réseaux relationnels, arbre hiérarchique des niveaux de production pour l’analyse structurale des manuscrits, analyse des formes de multilinguisme, visualisation temporelle et analyse textuelle des colophons, analyse des genres textuels et des pratiques scribales. Ces modules matérialisent des questionnements distincts : où, quand, avec qui, dans quelles langues, selon quelles logiques institutionnelles, économiques ou intellectuelles les femmes ont-elles copié des textes ?  L’infrastructure constitue donc à la fois un outil de recherche, un instrument d’analyse et un dispositif de publication scientifique ouvert. À l’échelle macroscopique, il devient possible d’explorer des tendances globales telles que la répartition géographique et chronologique des femmes copistes, les pratiques multilingues, les formes de collaboration, certaines caractéristiques codicologiques de la production ou encore des estimations statistiques concernant les copistes non identifiées. À l’échelle microscopique, l’utilisateur peut revenir au manuscrit lui-même, examiner un folio précis, confronter image et transcription et analyser les pratiques graphiques ou décoratives individuelles.
+
+
+\section{Résultats}
+
+\begin{figure}[b!]
+    \centering
+    \includegraphics[width=1\linewidth]{figure2.png}
+    \caption{Interface de consultation de la base de données. Vue du module «~Map~» permettant l’exploration des données géographiquement. L’exemple montre une visualisation centrée sur les lieux de création des unités de production contenues dans l’ensemble de données.}
+    \label{fig:map}
+\end{figure}
+
+L’infrastructure permet donc d’explorer qualitativement, quantitativement et relationnellement la production manuscrite féminine avant 1600. Par exemple, l’analyse du corpus met en évidence plusieurs tendances structurantes concernant la distribution chronologique, géographique et l’organisation collective du travail scribal. Ainsi, les unités scribales actuellement recensées se concentrent très majoritairement au \textsc{xv}\textsuperscript{e}~siècle, qui représente près de 60\% du corpus, suivi du \textsc{xvi}\textsuperscript{e}~siècle avec environ 22\%, puis du \textsc{xii}\textsuperscript{e}~siècle avec près de 9\%. Les autres siècles sont beaucoup plus faiblement représentés : environ 3\% pour le \textsc{viii}\textsuperscript{e}~siècle siècle, moins de 2\% pour le \textsc{ix}\textsuperscript{e}~siècle, moins de 1\% pour le \textsc{x}\textsuperscript{e}~siècle, une présence quasi inexistante au \textsc{xi}\textsuperscript{e}~siècle, environ 1,5\% pour le \textsc{xiii}\textsuperscript{e}~siècle et un peu plus de 3\% pour le \textsc{xiv}\textsuperscript{e}~siècle. Cette concentration tardive reflète en partie une intensification de la documentation et des pratiques d’auto-identification scribale en hausse à la fin du Moyen Âge, mais aussi des effets de conservation et de découvrabilité.
+
+L’exploration cartographique révèle également une distribution géographique très inégale des femmes copistes identifiées en Europe occidentale (fig. 2). L’espace germanique, l’Italie du Nord et les anciens Pays-Bas apparaissent comme des zones de forte concentration de la production, tandis que la France, l’Angleterre et la péninsule Ibérique semblent beaucoup plus pauvres en cas identifiés. Dans certaines régions germanophones ou néerlandaises, l’expansion monastique tardive et les réformes observantes ont favorisé l’encouragement institutionnel de la lecture et de la copie, ainsi que des pratiques d’auto-identification plus fréquentes dans les colophons \cite{blair_reflections_2015, poor_mechthild_2004, hemptinne_reading_2004, roest_observant_2023}. Le cas de Saint-Gall est particulièrement éclairant : au couvent dominicain de Sainte Catherine, les sœurs étaient autorisées à copier à des heures dédiées et pouvaient signer leurs manuscrits, sous réserve de préserver l’humilité, produisant précisément les traces que l’on peut encore suivre aujourd’hui \cite{winston-allen_convent_2004}. Ces éléments d'explication permettent également de relier les résultats cartographiques et relationnels du projet : là où ces conditions sont réunies, on observe non seulement davantage de copistes identifiées, mais aussi des réseaux de co-production plus denses, comme le montre la visualisation centrée sur Nuremberg et connectée notamment au couvent de Sainte-Catherine à Saint-Gall (fig. 3).
+
+\begin{figure}[b!]
+    \centering
+    \includegraphics[width=1\linewidth]{figure3.png}
+    \caption{Interface de consultation de la base de données, module « Scribes », onglet « Collaboration ». Le graphe visualise les collaborations entre copistes (lien = participation à un même manuscrit). La taille des nœuds reflète le nombre de collaborations. L’exemple est centré sur le monastère dominicain Sainte Catherine à Nuremberg et met en évidence un réseau très clusterisé, indiquant une collaboration interne intense, ainsi que des connexions avec d’autres institutions (notamment Pillenreuth et Kirchberg en Allemagne et Sainte Claire à Saint Gall), suggérant des circulations de textes, de modèles et/ou des effets de réseaux réformateurs.}
+    \label{fig:network}
+\end{figure}
+
+À l’inverse, en France, en Espagne, au Portugal ou en Angleterre, une tradition plus marginale de l’utilisation des colophons, couplée à des transformations institutionnelles, des pertes d’archives, des interventions matérielles modernes (reliures, rognures) et des traditions catalographiques parfois lacunaires, a contribué à effacer ces traces. La carte met ainsi en évidence un point méthodologique central : la géographie des femmes copistes connues reflète moins leur activité réelle que les biais conjoints de production, de conservation et de catalogage.
+
+L’interface permet aussi d’étudier la production manuscrite comme un phénomène collectif et collaboratif. Dans l’état actuel du corpus, près de 80\% des manuscrits ne comportent qu’une seule copiste, tandis qu’environ 20\% sont produits par deux copistes ou plus. La collaboration n’est donc pas marginale : plus d’un manuscrit sur cinq documente une production partagée, et 10,5\% des manuscrits impliquent trois copistes ou plus. Dans certains cas extrêmes, un même volume peut mobiliser jusqu’à 17 copistes, ce qui correspond généralement à des objets collectifs complexes (volumes composites avec des interventions multiples et une organisation scribale fortement distribuée). 
+
+À l’échelle des individus, la base rend visible une structure caractérisée par une “longue traîne”. Près de 86\% des copistes identifiées ne sont attestées que dans un seul manuscrit, tandis qu’environ 13\% participent à au moins deux manuscrits, et une minorité très réduite (1,2\%) apparaît dans dix manuscrits ou plus. Ces écarts signalent non seulement des différences d’activité, mais aussi les inégalités de visibilité documentaire déjà mentionnées et des formes variées d’organisation du travail dans les communautés. Parmi les copistes les plus prolifiques identifiées dans le corpus figurent plusieurs figures bien étudiées. Diemut de Wessobrunn, active au \textsc{xii}\textsuperscript{e}~siècle dans le monastère de Wessobrunn, est associée à plus de quarante manuscrits, ce qui en fait l’une des copistes les plus productives connues pour le Moyen Âge \cite{Beach2004WomenAsScribes}. Dans le contexte conventuel du couvent dominicain de Sainte-Catherine de Nuremberg, plusieurs copistes apparaissent également comme des actrices majeures de la production collective, notamment Kunigund Niklasin (29 manuscrits)\cite{poor_literary_2026}, Margarete Kartäuserin (19 manuscrits), Klara Keiperin (16 manuscrits) ou Ursula Geiselherin (13 manuscrits), témoignant de l’intensité du travail scribal dans ce centre monastique \cite{Willing2012KatharinaBibliothek}. D’autres figures se distinguent dans des contextes différents, comme Christine de Pizan à Paris \cite{Ouy2012AlbumChristine}, Raffaella di Arnolfo Bardi (18 manuscrits) et Cleofe (17 manuscrits) dans le milieu florentin du \textsc{xv}\textsuperscript{e}~siècle \cite{Moreton2013NunBookProduction}, ou encore Clara Hätzlerin, une copiste active dans l'environnement laïc d'Augsbourg \cite{Edmunds1999ClaraHaetzlerin}. 
+
+Ces cas illustrent l’existence de pôles de production particulièrement actifs, souvent, mais pas systématiquement, liés à des communautés religieuses structurées où la copie constituait une activité institutionnalisée. Ils montrent également que la production manuscrite féminine ne se limite pas à des interventions isolées, mais peut correspondre, dans certains contextes, à une activité soutenue, organisée et collective.
+
+
+\section{Perspectives et enjeux}
+
+Ce projet s’inscrit donc dans une approche critique des humanités numériques où chaque choix technique constitue un acte interprétatif \cite{Drucker2013PerformativeMateriality}. Inspiré par les travaux en féminisme des données, le projet considère que l’invisibilité des femmes copistes est surtout une invisibilité infrastructurelle.  L’architecture du système reflète ainsi les réalités historiques qu’il étudie : une production dispersée, collective et souvent anonymisée. Sans prétendre à l'exhaustivité, ce projet démontre ce qui devient possible lorsque des données incomplètes, hétérogènes et historiquement biaisées sont modélisées à grande échelle et se présente comme une contre-archive \cite{Blanke2024CounterArchiving, Schweizer2021CounterArchive}, capable d’interroger les silences des catalogues existants et de proposer des cadres alternatifs pour l’étude de la culture manuscrite. En articulant acquisition de données, expérimentation méthodologique et réflexion critique sur les infrastructures, ce projet propose ainsi un modèle transférable pour l’étude d’autres acteurs marginalisés et invite à penser les humanités numériques comme un espace où données, méthodes et enjeux éthiques sont indissociables. 
+
+Les développements futurs du projet porteront principalement sur l’enrichissement progressif du corpus et sur l’amélioration des méthodes d’identification des copistes. La base repose actuellement sur un système de niveaux de confiance distinguant les attributions fondées sur des preuves directes et celles issues d’analyses paléographiques et codicologiques et contextuelles. Une priorité sera d’intégrer plus systématiquement les manuscrits attribués à des communautés féminines sans identification certaine de la copiste, afin de documenter ces zones d’incertitude et d’élargir le corpus vers des environnements de copie où le travail des femmes reste probable mais non démontré. Le projet explore également des méthodes d’attribution assistées par le numérique, combinant paléographie computationnelle, reconnaissance d’écriture manuscrite (HTR) et analyses statistiques des pratiques scribales, afin de mieux identifier et relier des mains anonymes à travers différents manuscrits \cite{wrisley_medieval_2026}. Ces développements s’appuient sur une collaboration continue avec la communauté scientifique, notamment avec des spécialistes de régions encore peu étudiées, afin d’enrichir collectivement les données et d’améliorer leur interprétation.
+
+
+% Imprime la bibliographie à la fin. Gardez cette ligne après le texte
+% principal de votre article et avant une annexe.
+\printbibliography
+
+% Vous pouvez inclure une annexe en utilisant la commande suivante
+\appendix
+
+
+\end{document}

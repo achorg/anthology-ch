@@ -1,0 +1,315 @@
+%Template v.1.0: Taylor Arnold and Simon Gabay, december 2025
+% CECI EST UN FICHIER DE MODÈLE LATEX POUR LES ARTICLES INCLUS DANS
+% *Anthology of Computers and the Humanities*. AJOUTEZ L'OPTION
+% 'final' LORS DE LA CRÉATION DE LA VERSION FINALE DE L'ARTICLE. 
+% NE PAS modifier la classe du document
+%\documentclass[final, fra, custom]{anthology-ch}     % pour la version finale
+\documentclass[final, fra, custom]{anthology-ch}      % pour la soumission
+
+% CHARGER LES PACKAGES LaTeX
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage[lastparline]{impnattypo}
+%supprimez cette ligne si vous voulez
+
+% AJOUTEZ vos propres packages avec \usepackage{}
+
+% TITRE DE LA SOUMISSION
+% Remplacez ceci par le titre de votre soumission
+\title{Le Crieur, le Pressoir et TowSty : trois applications de l'API de \_\emph{Stylo}\_ au service d'une infrastructure ouverte de publication en SHS}
+
+% INFORMATIONS SUR LES AUTEURS ET LES AFFILIATIONS
+% Pour chaque auteur, utilisez une nouvelle commande \author, avec
+% les numéros entre crochets indiquant les affiliations correspondantes
+% (section suivante) et l'ORCID-ID pour chaque auteur.  
+\author[1,2]{Victor Chaix}[
+  orcid=0009-0006-7823-3404,
+  email=victor.chaix@univ-rouen.fr
+]
+
+\author[2]{Julien Dehut}[
+  orcid=0000-0002-2641-5541,
+  email=julien.dehut1@univ-rouen.fr
+]
+
+\author[3]{Roch Delannay}[
+  orcid=0000-0002-3519-4365,
+  email=delannayr@parisnanterre.fr
+]
+
+\author[1]{Giulia Ferretti}[
+  orcid=0009-0001-2844-3319,
+  email=giulia.ferretti@umontreal.ca
+]
+
+\author[1,2]{Clara Grometto}[
+  orcid=0009-0001-2687-342X,
+  email=clara.grometto@umontreal.ca
+]
+
+\author[2]{Josselin Morvan}[
+  orcid=,
+  email=josselin.morvan@univ-rouen.fr
+]
+
+% Il doit y avoir un appel à \affiliation pour chaque affiliation des auteurs.
+% Plusieurs affiliations peuvent être attribuées à un auteur
+% et une affiliation peut être attribuée à plusieurs auteurs. 
+\affiliation{1}{Département de Littérature et Langues du Monde, Université de Montréal, Montréal, Canada}
+\affiliation{2}{UFR Lettres et Sciences Humaines, Université de Rouen Normandie, Rouen, France}
+\affiliation{3}{UFR Sciences de l'information et de la communication, Université Paris Nanterre, Paris, France}
+
+% MOTS-CLÉS
+% Fournissez un ou plusieurs mots-clés séparés par des virgules
+% en utilisant les commandes suivantes
+\keywords[fra]{infrastructure, sciences humaines, publication}
+\keywords[eng]{infrastructure, humanities, publishing}
+
+% MÉTADONNÉES DE LA PUBLICATION
+% Ces champs seront remplis lors de la publication ; 
+% ils peuvent être laissés par défaut lors de la soumission
+\pubyear{2026}
+\pubvolume{4}
+\pagestart{103}
+\pageend{107}
+\paperorder{14}
+\conferencename{Actes de la Conférence Humanistica}
+\conferenceeditors{Serena Crespi, Simon Gabay, Martin Grandjean, Ariane Pinche, Marie Puren et Léa Saint-Raymond}
+\doi{10.63744/jwg8kN78vrpx}
+\customhead{}
+
+\addbibresource{biblio.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DÉBUT DU TEXTE
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Combining with website generators Le Crieur (for journals and blogs), Le Pressoir (for monographs) and TowSty (for scientific project valorization), the collaborative text editor Stylo enables the online modelling and editorialization of various scientific publications. This helps meet the needs and practices of research communities in the humanities. These tools aim to rethink and move beyond the paradigms inherited from print publishing, as well as the one-size-fits-all approaches and systems provided by dominant commercial publishing platforms, while remaining grounded in actual practices and constraints.
+\end{abstract}
+
+\section{Problématique}\label{probluxe9matique}
+
+Il est désormais admis que l'adoption généralisée de solutions
+logicielles prêtes à l'emploi (Microsoft Office, Google Docs, Pages,
+suite Adobe\ldots) entraîne une perte de maîtrise critique sur la
+production et la signification des textes scientifiques, liée notamment
+à la répartition inégale des compétences techniques au sein des équipes
+de recherche, mais aussi au manque de réflexivité autour de la
+modélisation des textes scientifiques \cite{berginOriginsWordProcessing2006b, kirschenbaumTrackChangesLiterary2016b, coombsMarkupSystemsFuture1987a, zinsserWritingWordProcessor1983a, merzeauCommunicationAuxCommuns2016, selfeLiteracyComputersComplications1996a, delannayEnvironnementsDecritureNumerique2025, vitali-rosatiElogeBugEtre2024}.
+
+Un examen critique de cette question, qui ne serait pas seulement
+dogmatique, devrait s'articuler à partir de la réalité des usages,
+c'est-à-dire de ce qu'elle comporte d'inertie, de résistance au
+changement, mais aussi en prenant en considération les marges de
+transformation des pratiques des utilisateurs·ices, lesquelles
+demeurent étroitement conditionnées par leurs priorités.
+
+Afin de concilier les exigences d'accessibilité, de rigueur scientifique
+et de maîtrise des dépendances, nous proposons une infrastructure
+d'édition et de publication conçue spécifiquement par et pour les
+chercheurs·euses en SHS et qui s'appuit sur leurs pratiques réelles.
+
+\section{État de l'art disciplinaire et
+technique}\label{uxe9tat-de-lart-disciplinaire-et-technique}
+
+\subsection{Minimal Computing}\label{minimal-computing}
+
+L'idée d'un \emph{Minimal Computing}, telle qu'elle est formulée par
+Risam and Gil \cite{risamIntroductionQuestionsMinimal2022} s'apparente
+moins à une série de principes prescriptifs qu'à une démarche critique
+et réflexive sur la pratique des Humanités numériques. Cette approche,
+définie comme une «~heuristique du compromis~», s'articule autour de
+quatre questions : «~De quoi avons-nous besoin ? Qu'avons-nous ? Que
+priorisons-nous~? Que pouvons-nous abandonner~?~». Mais cette
+démarche n'est pas simplement pragmatique, elle constitue une posture
+éthique et politique face aux inégalités structurelles dans la
+production du savoir impliquant des outils technologiques \cite{wrisleyEnactingOpenScholarship2019}.
+
+Elle permet également de se situer non seulement face à une vision
+réductrice de l'innovation comme ayant sans cesse recours à des
+techniques de pointe, gourmandes en puissance de calcul, dépendantes de
+ressources financières et infrastructurelles, et finalement reproduisant
+et renforçant des hiérarchies institutionnelles et géopolitiques déjà
+existantes, mais aussi contre une perspective qui déconsidèrerait
+l'existence réelle d'inégalités de littératie numérique et de maîtrise
+du code au sein de la communauté universitaire. Et ce, alors même que
+les infrastructures techniques reflètent et renforcent des dynamiques
+d'exclusion tout en engendrant des conséquences sur les modalités de
+production du savoir et de la connaissance.
+
+Inscrire une démarche dans le cadre d'un \emph{Minimal Computing}
+revient alors pour nous à proposer un outil adapté à un contexte situé,
+c'est-à-dire un outil qui ne promet pas de tout faire, mais qui répond à
+des besoins spécifiques, à des ressources mobilisables et finalement aux
+capacités des chercheurs.euses \cite{vitali-rosatiElogeBugEtre2024}.
+
+\subsection{Minimal Writing, Empowered
+Publishing}\label{minimal-writing-empowered-publishing}
+
+Les pratiques d'écriture et de publication relèvent bien souvent du
+monopole de structures (WordPress, SharePoint, DOCX) qui interrogent
+tant sur la question de la propriété des données que sur le contrôle de
+la production scientifique \cite{porterWhyTechnologyMatters2003a}. Les
+outils propriétaires, avec leurs interfaces graphiques, masquent ainsi
+leur système de production tout comme le travail nécessaire pour le
+maintenir. Cette opacité rend difficile la perception de la dépendance
+technique, c'est-à-dire de tous les éléments nécessaires à la production
+et l'édition de textes que nous déléguons et sur lesquels nous
+exerçons un contrôle qui reste à évaluer.
+
+Ainsi, comme le soulignent Morozov \cite{morozovPourToutResoudre2014} ou Delannay \cite{delannayEnvironnementsDecritureNumerique2025},
+certains logiciels conduisent à une perte de modélisation, c'est-à-dire
+à ce que l'écriture numérique permet en acte comme en puissance. L'idée
+de données numériques textuelles induit en effet la possibilité qu'un
+même contenu puisse être transformé, recomposé et diffusé sous
+différentes formes. Ce sont ces modalités qui se retrouvent entravées
+dès le choix des premiers éléments de la chaine éditoriale. La
+persistance de la métaphore de la page, héritée de l'imprimé et
+reproduite par les outils de traitement de texte, constitue par exemple
+déjà une régression \cite{dehutFinirAvecWord2018}
+qui cache aux écrivant.e.s cette modularité, mais aussi la possibilité
+d'une réécriture continue ou même la richesse sémantique liée à la
+circulation des textes \cite{cotteConceptDocumentNumerique2004b, nelsonLiteraryMachines1987a, gesslerSkeuomorphsCulturalAlgorithms1998a, blancTechnologiesLeditionNumerique2018a}.
+
+L'écriture scientifique en SHS se déploie ainsi généralement en un
+continuum de formes et de statuts que nous regroupons dans un objet
+abstrait, le «~carnet de recherche~» se réalisant dans des prises de
+notes, des billets de blog, des articles de revue, des chapitres
+d'ouvrage, des thèses ou des mémoires. Or, le carnet de recherche, lieu
+par excellence de l'élaboration intellectuelle menant à ces artefacts
+documentaires, a rarement fait l'objet d'une modélisation vis-à-vis de
+ces différentes chaînes éditoriales. Un billet de blog peut évoluer en
+un article de revue ou en un chapitre de livre. Cette grande diversité
+des formes documentaires nous semble appeler des outils qui modélisent
+et soutiennent cette pluralité.
+
+Même si certaines pratiques, comme l'usage de LaTeX, existent, elles
+restent relativement marginales et davantage répandues dans les
+communautés disciplinaires des SMT, notamment en mathématiques. Leur
+faible adoption en SHS tient à un décalage avec les attentes et les
+habitudes d'écriture, largement structurées autour des traitements de
+texte WYSIWYG (\emph{tel écran, tel écrit}), sans engagement ni
+réflexion sur les questions de structuration ou de modélisation des
+contenus.
+
+Les chercheurs.euses se trouvent ainsi fréquemment pris dans une
+dichotomie entre des solutions reposant sur une modélisation fine et un
+encodage sémantique explicite, mais exigeant des compétences spécifiques
+(WYSIWYM, \emph{ce que vous voyez est ce que vous voulez dire})
+\cite{powerWhatYouSee1998a}
+parfois complexes à acquérir et des outils qui tendent à déléguer ou
+même complètement évacuer la structuration sémantique des contenus.
+
+\section{Proposition}\label{proposition}
+
+C'est dans cet espace intermédiaire que \_\emph{Stylo}\_ cherche à se
+positionner, en proposant un compromis entre une modélisation adaptée
+aux pratiques d'écriture et de publication en SHS tout en partant des
+pratiques actuelles de cette communauté.
+
+La pierre angulaire de cette approche formulée à partir du «~carnet de
+recherche~» réside dans la modélisation de structures de métadonnées
+différenciées selon les types de documents ou de corpus.
+\_\emph{Stylo}\_ permet de choisir des schémas de métadonnées
+spécifiques (article, billet, chapitre, notice, etc.), tout en
+autorisant le passage de l'un à l'autre avec des logiques de
+\emph{mapping} et d'addition des métadonnées. Il se situe ainsi entre la
+prise de notes, le billet de blog, l'article finalisé et le chapitre de
+monographie ou de thèse, et cela tout en garantissant une rigueur
+structurelle. \_\emph{Stylo}\_ a en effet la volonté de se s'appuyer sur
+des formats légers, ouverts, interopérables et structurés
+sémantiquement\footnote{Markdown pour le texte, YAML pour les
+  métadonnées, et BibTeX pour les références bibliographiques}, sans
+exiger de compétences informatiques excessivement avancées. Il propose
+ainsi une interface graphique pour la structuration des contenus avec un
+système de gestion bibliographique et de définition des métadonnées
+pensée pour répondre aux exigences de l'écriture et l'édition
+scientifique en SHS. \_\emph{Stylo}\_ s'appuie en outre sur des outils
+dont l'usage est déjà largement stabilisé dans les communautés SHS.
+L'intégration de Zotero, par exemple, permet à la fois un ancrage dans
+des pratiques reconnues et partagées, mais aussi d'éviter que le recours
+à des formats ouverts et structurés pour la gestion bibliographique ne
+soit perçu comme une exigence technique supplémentaire, détachée des
+réalités de l'écriture scientifique.
+
+À travers son API GraphQL, \_\emph{Stylo}\_ s'articule finalement avec
+un écosystème croissant de moteurs de rendu, explorant diverses
+questions liées à l'éditorialisation de la littérature savante
+\cite{vitali-rosatiWhatEditorialization2016}.
+
+\begin{itemize}
+\item
+  \href{https://pressoir.org/}{Le Pressoir} permet la production de
+  monographies «~augmentées~» sur le Web, selon une modélisation de ce
+  que peut être un livre savant en ligne. Il est utilsé pour la version
+  web des collections \href{https://ateliers.sens-public.org/}{les
+  Ateliers de sens public} et
+  \href{https://www.parcoursnumeriques-pum.ca/}{Parcours numériques}
+  (PUM) et peut désormais prendre en entrée des documents sur
+  \_\emph{Stylo}\_.
+\item
+  \href{https://crieur.org/}{Le Crieur} permet la production de sites de
+  revues ou de blogs à partir de corpus sur Stylo en indexant les
+  contenus en fonction des métadonnées indiquées sur Stylo.
+\item
+  \href{https://gitlab.huma-num.fr/ceen/towsty/towsty.jl}{TowSty}
+  (\emph{To web, from Stylo}) permet de déployer une application web
+  dynamique et/ou un site statique à partir des espaces de travail de
+  \_\emph{Stylo}\_. Il s'intéresse ainsi à la forme éditoriale des
+  dispositifs de valorisation scientifique et permet de suivre au mieux
+  les besoins et les temps de la recherche.
+\end{itemize}
+
+Axés sur la publication Web, ces trois outils tentent de revisiter et de
+s'affranchir des paradigmes hérités de l'édition papier tout comme des
+modèles généralistes proposés par les grandes plateformes commerciales
+de la publication.
+
+\section{Résultats et études de
+cas}\label{ruxe9sultats-et-uxe9tudes-de-cas}
+
+Le Crieur a été utilisé pour prototyper les sites des revues
+\emph{Photolittérature} et \emph{Troubles}, avec une adaptation des
+modèles pour permettre aux revues de garder leur identité propre.
+
+Le projet \emph{EcriSoi}, une restructuration du site sur
+l'autobiographie et les écritures de soi porté par Françoise
+Simonet-Tenant et Jean-Louis Jeannelle, constitue un autre cas d'étude
+significatif. L'équipe a adopté \_\emph{Stylo}\_ afin d'encoder des
+notices de dictionnaire tout en restructurant le site pour en améliorer
+la lisibilité et la maintenabilité à long terme. TowSty se charge alors
+de la génération du site à partir de ces données. Dans le cadre du
+projet des \emph{Héroïdes numériques}, porté par Sandra Provini, la
+nécessité d'avoir un carnet de recherche à un moment où il devient
+difficile d'en obtenir sur Hypothèses a conduit l'équipe à proposer un
+site produit depuis \_\emph{Stylo}\_ et généré grâce à TowSty.
+\_\emph{Stylo}\_ fait alors pratiquement figure de CMS (\emph{Content
+management system}).
+
+\section{Perspectives et travaux
+futurs}\label{perspectives-et-travaux-futurs}
+
+Le futur de \_\emph{Stylo}\_ et des outils associés s'inscrit dans une
+logique itérative structurée par les besoins spécifiques des projets,
+mais aussi des communautés auxquelles il se rattache. En ce sens, TowSty
+doit améliorer son accessibilité, tant en termes de
+\href{https://towsty-jl-6b585d.gitpages.huma-num.fr/}{documentation} que
+dans les formes possibles des contenus générés. Il est déjà utilisé pour
+produire le site de la Chaire~; à terme il pourrait permettre de
+générer davantage de carnets de recherche que ceux des projets en cours.
+
+Au sens large, ces développements permettent de répondre aux enjeux de
+l'édition numérique savante en préservant la rigueur de la modélisation
+d'une chaîne éditoriale scientifique tout en proposant une offre capable
+de s'adapter aux circonstances, aux besoins et aux compétences des
+utilisateurs.trices.
+
+\vspace{1cm}
+\emph{Article réalisé à 10 mains sur \_\emph{Stylo}\_.}
+
+\printbibliography
+
+\end{document}

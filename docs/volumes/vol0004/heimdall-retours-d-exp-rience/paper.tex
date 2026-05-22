@@ -1,0 +1,345 @@
+% CECI EST UN FICHIER DE MODÈLE LATEX POUR LES ARTICLES INCLUS DANS
+% *Anthology of Computers and the Humanities*. AJOUTEZ L’OPTION
+% 'final' LORS DE LA CRÉATION DE LA VERSION FINALE DE L’ARTICLE. 
+% NE PAS modifier la classe du document
+\documentclass[final,fra]{anthology-ch}         % pour la soumission
+%\documentclass[fra]{anthology-ch}         % pour la soumission
+
+% CHARGER LES PACKAGES LaTeX
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{fancyvrb}
+\usepackage{color}
+\usepackage{framed}
+\usepackage{minted}
+\usepackage{soul}
+%Update
+
+% Insertion de common.latex en enlevant babel
+% https://github.com/jgm/pandoc-templates/blob/master/common.latex
+
+%/ common.latex inclusion
+
+% AJOUTEZ vos propres packages avec \usepackage{}
+
+% TITRE DE LA SOUMISSION
+% Remplacez ceci par le titre de votre soumission
+\title{Heimdall: retours d'expérience}
+
+\author[1]{Régis Witz}[orcid=0000-0002-8064-0977]
+\author[2]{Guillaume Porte}[orcid=0000-0001-8656-8227]
+\author[2]{Elsa Van Kote}[orcid=0009-0001-3858-1096]
+\author[1]{Mohammed Benkhalid}[orcid=0009-0001-8944-9706]
+\author[2]{Marie Bizais}[orcid=0000-0002-2426-2641]
+\author[3]{Elisa Michelet}[orcid=0000-0002-1825-0097]
+\author[3]{Arthur Brody}[orcid=0000-0002-1825-0097]
+\author[4]{Clément Plancq}[orcid=0000-0001-6189-0703]
+\author[5]{Titouan Brisset-Sabouraud}[orcid=0000-0002-8064-0977]
+\author[1]{Bruno Morandière}[orcid=0000-0002-4978-2379]
+\author[6]{Elsa Ligner}[orcid=0000-0002-1825-0097]
+\author[2]{Vincent Jullion}[orcid=0009-0006-6496-7693]
+
+\affiliation{1}{CNRS, France}
+\affiliation{2}{Université de Strasbourg, France}
+\affiliation{3}{Bibliothèque Nationale Universitaire de Strasbourg, France}
+\affiliation{4}{Maison des Sciences de l'Homme Val de Loire, France}
+\affiliation{5}{Université Libre de Buxelles, Belgique}
+\affiliation{6}{Contributrice indépendante, France}
+
+
+% MOTS-CLÉS
+
+\keywords[fra]{logiciel libre, bases de données, interopérabilité, humanités numériques}
+\keywords[eng]{free software, databases, interoperability, digital humanities}
+
+
+% MÉTADONNÉES DE LA PUBLICATION
+% Ces champs seront remplis lors de la publication; 
+% ils peuvent être laissés par défaut lors de la soumission
+\pubyear{2026}
+\pubvolume{4}
+\pagestart{10}
+\pageend{16}
+\conferencename{Actes de la Conférence Humanistica}
+\conferenceeditors{Serena Crespi, Simon Gabay, Martin Grandjean, Ariane Pinche, Marie Puren et Léa Saint-Raymond}
+\doi{10.63744/04Kmo7AXXscL}
+\customhead{}
+
+\addbibresource{heimdall-usecases.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DÉBUT DU TEXTE
+\paperorder{2}
+\begin{document}
+
+\maketitle
+
+
+\begin{abstract}
+This article describes Heimdall, a mature, streamlined, and highly accessible software solution for scientific data migration and transformation. It highlights some of its features through various real-world use cases related to aggregation, migration, validation, backup, sharing, and publication of research data. It concludes by describing how to add new features, for anyone who wants to save time and avoid developing their own ad hoc migration script.
+\end{abstract}
+
+\vspace{1cm}
+
+\section{Introduction}\label{introduction}
+
+Heimdall est un logiciel permettant de convertir facilement une ou plusieurs bases de données d'un ou plusieurs formats à un ou plusieurs autres. Son implémentation sous forme de librairies
+Python
+    \footnote{Plus précisément une librairie principale \texttt{pyheimdall}, assortie de manière faiblement couplée avec des librairies tierces optionnelles spécialisées, nommées dans cet article «connecteurs». \url{https://gitlab.huma-num.fr/datasphere/heimdall/connectors/} ; \url{https://pypi.org/search/?q=pyheimdall}.}
+est documentée et testée de manière approfondie, et est disponible sous licence libre sur la forge logicielle de l'infrastructure de recherche Huma-Num ainsi que sur le repository standard \emph{Python Package Index (PyPI)}. Même si cet article est illustré en langage Python, il existe d'autres portages d'Heimdall: le premier \autocite{xheimdall} pour l'écosystème BaseX, et un autre \autocite{heimdalljs} dédié à aider les applications web.
+
+Heimdall n'est pas le seul logiciel dans la catégorie \emph{Extract, Transform, Load}%
+    \footnote{Il est impossible d'en dresser une liste exhaustive ici, mais Catmandu \autocite{catmandu} et Hadoop \autocite{hadoop} sont deux exemples d'ETL partagés sous licence libres.}%
+. Cependant, il est fait par et pour la recherche publique, et sa création a donc été constamment hantée par les questions suivantes:
+
+\begin{itemize}
+\item
+  Comment agréger facilement, et de manière reproductible, des données hétérogènes au sein d'un unique corpus?
+\item
+  Comment mettre un corpus au niveau de standards documentaires et de bonnes pratiques qui n'existaient pas quand il a été créé?
+\item
+  Comment partager un corpus de différentes manières, pour toucher différents publics, et mieux en pérenniser les données?
+\item
+  Comment ne plus perdre autant de temps à gérer la dette technique de vos prédécesseurs?
+\item
+  Comment faire tout cela facilement, sans financement, sans ressources humaines, et sans véritable temps libre sur son emploi du temps?
+\end{itemize}
+
+Plus de détails sur les motivations et les principes sous-jacents d'Heimdall sont disponibles dans l'article de contexte \emph{Interopérabilité des bases de données scientifiques: une sobriété de façade} \autocite{facade}. Cet article brosse un panorama concret, constitué de retours d'expérience terrain, des différentes situations qu'Heimdall peut aider à solutionner.
+
+\section{Exemples d'usages}\label{exemples-dusages}
+
+\subsection{Constituer un corpus à partir de sources
+hétérogènes}\label{constituer-un-corpus-uxe0-partir-de-sources-huxe9tuxe9roguxe8nes}
+
+Chaque connecteur Heimdall peut permettre de récuperer des données issues d'une source différente, agrégeant ses éléments, entités et propriétés en une nouvelle base de données. Plusieurs bases de données peuvent ensuite être fusionnées ensemble, par exemple afin de permettre des requêtes croisées, ou comparer des éléments plus aisément. Ainsi, un unique corpus peut être constitué, contenant des éléments issus de toutes les sources d'origine et ce, dans un unique format.
+
+\begin{minted}[
+  fontsize=\scriptsize,
+  xleftmargin=0em,
+  tabsize=2,
+  breaklines,
+  baselinestretch=1
+]{python}
+db_n = heimdall.getDatabase(format='nakala:api', url=...)
+db_w = heimdall.getDatabase(format='wikidata:api', url=...)
+db_z = heimdall.getDatabase(format='zotero:api', url=...)
+db = merge_databases(db_n, db_w, db_z)  # optionnel
+\end{minted}
+
+Créer un nouveau connecteur (comme décrit plus loin) nécessite de connaître le format et les spécificités syntaxiques et sémantiques de la source que ce connecteur gère. Cependant, utiliser ce connecteur (en d'autres termes, écrire les extraits de code cités dans cet article) ne le requiert pas. Ainsi, la personne utilisant Heimdall peut se concentrer sur la logique scientifique de son corpus, sans avoir à apprendre préalablement une syntaxe ou une technologie spécifique\ldots{} hormis le langage Python, évidemment.
+
+\subsection{Publier facilement}\label{publier-facilement}
+
+Il existe aujourd'hui différents entrepôts institutionnels pérennes, maintenus par différents acteurs publics de la recherche. Citons par exemple Recherche Data Gouv%
+    \footnote{\url{https://recherche.data.gouv.fr}.}%
+,
+ORTOLANG%
+    \footnote{\url{https://www.ortolang.fr}.}%
+, ou encore Nakala%
+    \footnote{\url{https://nakala.fr}.}%
+.
+
+Considérons uniquement Nakala. Il existe différentes manières d'y publier des données. L'interface graphique de Nakala est utilisable, mais rend relativement chronophage d'y publier des corpus constitués de nombreuses données. Nakala dispose aussi d'une API «REST»
+    \footnote{\url{https://api.nakala.fr}.}%
+, malheureusement peu accessible à des utilisateurs ou utilisatrices peu expérimenté·e·s dans l'interrogation de telles API ou peu au fait des comportements spécifiques de celle de Nakala. Enfin, citons Mynkl, une interface web relativement conviviale permettant de publier en lot des données sur Nakala; cependant, Mynkl attend des données dans un format qui lui est propre%
+    \footnote{MyNkl est disponible à l’adresse suivante: \url{https://mynkl.huma-num.fr}. Pour uploader des données sur Nakala avec MyNkl, il faut les recopier dans un modèle de CSV dont la syntaxe (ie. nom et ordre des colonnes) est propre à MyNkl.}%
+.
+
+Grâce à son connecteur \texttt{pyheimdall-nakala}
+\autocite{pyheimdall-nakala}, Heimdall constitue une alternative permettant de publier des données en lot sans avoir ni à maîtriser les détails de l'API Nakala, ni à écrire un fichier spécifique, en trois instructions Python
+    \footnote{C'est ce que fait le projet \emph{CiSaMe}   \autocite{cisame}, qui a publié ses données sur Nakala grâce à   Heimdall, simplifiant grandement le code à écrire et à maintenir,   puisque celui-ci a pu se concentrer sur sa logique projet. Le résultat \autocite{cisame:uploader}, dont cet article donne une version simplifiée, représente moins de 100 lignes de pur alignement des données, contre les plusieurs milliers de lignes nécessaires à implémenter un tel uploader \emph{ad hoc} sans utiliser Heimdall.}%
+.
+
+\begin{minted}[
+  fontsize=\scriptsize,
+  xleftmargin=0em,
+  tabsize=2,
+  breaklines,
+  baselinestretch=1
+]{python}
+# (1) constitution d’une base de données à partir d’un corpus de fichiers locaux
+# `url` est un chemin local; `create_item` est une fonction de création d’item
+db = heimdall.getDatabase(format='files', url=..., on_item=create_item)
+# (2) ajout d’URI standards (par exemple DublinCore)
+update_properties(db, ...)
+# (3) publication d’une nouvelle collection Nakala
+heimdall.createDatabase(db, format='nakala:api', api_key=API_KEY, ...)
+\end{minted}
+
+Le connecteur \texttt{pyheimdall-nakala} ne permet pas uniquement de créer des données, mais aussi de les modifier. Cela permet de mettre à jour une collection Nakala existante avec de nouvelles métadonnées. Cette logique de mise à jour simplifiée permet de synchroniser n'importe quelle hiérarchie de dossiers et de fichiers avec Nakala, à la demande ou automatiquement%
+    \footnote{Ce besoin de mise à jour d'une collection Nakala existante a été exprimé par la plateforme \emph{ESTRADES} \autocite{estrades} pour le projet \emph{HistCarto} \autocite{histcarto}. La fonctionnalité correspondante a été rajoutée à \texttt{pyheimdall-nakala}, avec la même logique d'abstraction et de mutualisation incrémentale que pour \emph{CiSaMe}\hyperref[cisame]{7}.}%
+.
+
+De plus, enchaîner des appels à \texttt{heimdall.createDatabase} avec différents connecteurs%
+    \footnote{Par exemple \texttt{pyheimdall-nakala}, déjà abordé dans cet article, ou encore \texttt{pyheimdall-sword} \autocite{pyheimdall-sword}, qui permet d'agréger des données issues de différents serveurs supportant le protocole SWORD \autocite{sword}, tels qu'arXiv ou une instance de Dataverse telle que Recherche Data Gouv\hyperref[rdg]{3}.}
+permet de synchroniser en une seule fois un même corpus avec plusieurs entrepôts. Cela est moins chronophage, réduit le risque d'erreur humaine, et rend envisageable de nouvelles routes de circulation des savoirs, en grande partie indépendantes des détails d'implémentation des différentes sources de données.
+
+\subsection{Partager de manière découplée}\label{partager-de-maniuxe8re-duxe9coupluxe9e}
+
+Heimdall dispose de nombreux connecteurs, dont certains lisent ou créent de simples fichiers texte tels que XML, JSON, YAML ou CSV. Combiné aux fonctionnalités de filtrage et de tri d'Heimdall, cela permet de partager aisément une « vue » partielle d'un corpus plus large pour, par exemple, en exclure les données sous embargo, ou non validées scientifiquement.
+
+\begin{minted}[
+  fontsize=\scriptsize,
+  xleftmargin=0em,
+  tabsize=2,
+  breaklines,
+  baselinestretch=1
+]{python}
+# (1) importe une base SQL, un ne prenant que certaines tables
+db = heimdall.getDatabase(
+  format='sql:mariadb',
+  url=f'mariadb://{username}:{password}@{host}:{port}/{database}',
+  entities=('only', 'those', 'tables'),
+)
+# (2) (optionnel) filtre encore davantage les données
+moar_database_filtering(db)
+# (3) partage uniquement les données filtrées, ici avec un SQL dump et un XML}
+heimdall.createDatabase(db, format='sql:mariadb', url='filtered_dump.sql')
+heimdall.createDatabase(db, format='hera:xml', url='filtered_data.xml')
+\end{minted}
+
+Ainsi, Heimdall permet de décorréler les logiques de stockage, de partage et de visualisation des données%
+    \footnote{C'est ce que fait le projet \emph{Chinese Knowledge in Poetry} \autocite{ckp}, qui partage d'une part les données filtrées ainsi que les scripts de filtrage eux-mêmes \autocite{ckp:knowledge-base}, et d'autre part ses outils de visualisation \autocite{ckp:tools}, des Notebooks Jupyter utilisant à leur tour Heimdall pour en simplifier la lecture et en améliorer les performances.}%
+.
+
+\subsection{Migrer d'un système à l'autre}\label{migrer-dun-systuxe8me-uxe0-lautre}
+
+De nombreux systèmes de gestion de bases de données sont aujourd'hui à la disposition des chercheuses et des chercheurs%
+    \footnote{Un exemple de liste des systèmes de bases de données existants: \url{https://db-engines.com/en/ranking/} . Cette liste contient plus de 400 éléments, mais est malgré tout encore loin d'être exhaustive. Par exemple, elle oublie la plupart des tableurs, et des logiciels accessibles en SaaS.}%
+. Leur durée de vie, et la confiance qu'on peut leur accorder (en termes de maturité, de sécurité, de transparence de la gestion de projet, etc) sont variables. Pour préserver, réutiliser ou libérer des données scientifiques, il est donc parfois nécessaire de migrer d'un système à l'autre.
+
+Un des objectifs de départ d'Heimdall est de rendre de telles migrations moins douleureuses, chronophages et risquées. Cette section illustre concrètement qu'il suffit généralement de quelques instructions Python.
+
+\subsubsection{Libérer des données historiques}\label{libuxe9rer-des-donnuxe9es-historiques}
+
+Pour le musée Adolf Michaelis%
+    \footnote{Site de l'Association des Amis du Musée Adolf Michaelis: \url{https://amamstrasbourg.org/}}%
+, Heimdall a permis de récupérer les données d'un serveur CollectiveAccess qui allait être fermé, puis de les exporter au format CSV, afin de pouvoir lancer un projet étudiant visant à les mettre en valeur via un site web et une application tablette.
+
+\begin{minted}[
+  fontsize=\scriptsize,
+  xleftmargin=0em,
+  tabsize=2,
+  breaklines,
+  baselinestretch=1
+]{python}
+db = heimdall.getDatabase(format='collectiveaccess:api', url=...)
+heimdall.createDatabase(db, format='csv', url=..)
+\end{minted}
+
+\subsubsection{Préserver des données}\label{pruxe9server-des-donnuxe9es}
+
+Heimdall permet de convertir automatiquement toute base de données en une véritable base SQL, avec un schéma complet et directement utilisable%
+    \footnote{Par «directement utilisable», dans un contexte de sortie d'Heurist, j'entends deux choses. Premièrement, du SQL en mode texte, directement importable quel que soit le moteur utilisé, et pas du binaire MySQL qu'il faudra certainement convertir techniquement
+  derrière, car \href{https://db-engines.com/en/ranking_trend/system/MySQL}{MySQL est visiblement en perte de vitesse}. Deuxièmement, une table par \emph{Record type}, et pas le schéma interne d'Heurist qu'il est nécessaire d'avoir étudié en amont, et qu'il faudra convertir logiquement derrière.}%
+. Par exemple, toutes les bases d'une équipe anciennement dans Heurist ont pu être transformées ainsi, puis exploitées de manière maîtrisée, sans plus avoir à craindre les régressions et indisponibilités de ce logiciel SaaS
+    \footnote{\url{https://heurist.huma-num.fr}.}%
+. L'export vers différents formats texte, hébergés ensuite sur un serveur de partage de fichiers institutionnel, a aussi été une réassurance.
+
+\begin{minted}[
+  fontsize=\scriptsize,
+  xleftmargin=0em,
+  tabsize=2,
+  breaklines,
+  baselinestretch=1
+]{python}
+db = heimdall.getDatabase(format='heurist:api', url=...)
+heimdall.createDatabase(db, format='sql:mariadb', url=...)  # à sourcer par votre serveur SQL
+heimdall.createDatabase(db, format='hera:json', url=...)  # à stocker sur ShareDocs, par exemple
+\end{minted}
+
+\subsubsection{Parler le web sémantique}\label{parler-le-web-suxe9mantique}
+
+Heimdall encourage et facilite le fait de documenter scientifiquement une base relationnelle en y ajoutant des descriptions et des URI standards, même si la technologie d'origine des données ne le permet pas. Comme décrit précédemment, cette phase de documentation, d'alignement avec des vocabulaires scientifiques contrôlés, est aujourd'hui obligatoire pour publier ses données sur un entrepôt véritablement pérenne. Une fois que cette documentation est faite, exporter en RDF est trivial.
+
+\begin{minted}[
+  fontsize=\scriptsize,
+  xleftmargin=0em,
+  tabsize=2,
+  breaklines,
+  baselinestretch=1
+]{python}
+db = heimdall.getDatabase(format='sql:mariadb', url=...)
+update_properties(db, {  # ajout d’URI standards
+  'name': [
+    'http://purl.org/dc/terms/title',
+    'http://xmlns.com/foaf/0.1/name',
+    ],
+  'author': [
+    'http://purl.org/vocab/frbr/core#creator',
+    ],
+   ...
+ })
+heimdall.createDatabase(db, format='rdf:turtle', url=...)
+\end{minted}
+
+L'exemple ci-dessus montre un export au format RDF Turtle. Cependant, les formats N-Triples, Hextuples, TriG, XML et JSON-LD sont aussi supportés par le connecteur \texttt{pyheimdall-rdf} \autocite{pyheimdall-rdf}.
+
+\subsubsection{Valider l'intégrité des données}\label{valider-lintuxe9grituxe9-des-donnuxe9es}
+
+Il existe de nombreuses manières de corrompre les données lors de leur migration \autocite{meliekthehobbitreferences}. Puisque tous les imports, exports et diverses modifications que permet Heimdall passent par la même représentation interne, il est aisé de déclencher systématiquement les mêmes procédures qualité lors de chaque migration de données, quels qu'en soient les formats d'origine et de destination.
+
+\begin{minted}[
+  fontsize=\scriptsize,
+  xleftmargin=0em,
+  tabsize=2,
+  breaklines,
+  baselinestretch=1
+]{python}
+db = heimdall.getDatabase(format=input_format, url=...)
+assert is_good_quality(db)
+heimdall.createDatabase(format=output_format, url=...)
+db_after = heimdall.getDatabase(format=output_format, url=...)
+assert is_good_quality(db_after)
+assert is_same(db, db_after)
+\end{minted}
+
+Heimdall lui-même est automatiquement et rigoureusement testé, que ce soit fonctionnellement ou unitairement, à chaque fois qu'il est modifié. Cela ne garantit pas qu'il soit dénué de défaut \autocite{0defect}, mais cela garantit la cohérence de tous les comportements qui sont testés. Comme le nombre de tests croît naturellement avec le temps en fonction des retours terrain, la maturité du logiciel croît en même temps.
+
+\subsection{Créer son propre connecteur}\label{cruxe9er-son-propre-connecteur}
+
+Un connecteur étant une extension (\emph{plugin}) d'Heimdall, n'importe qui peut déclarer le sien. Ce mécanisme est le moins intrusif possible: il ne nécessite que de créer une fonction dotée d'un décorateur spécifique \autocite{pep:318}.
+
+\begin{minted}[
+  fontsize=\scriptsize,
+  xleftmargin=0em,
+  tabsize=2,
+  breaklines,
+  baselinestretch=1
+]{python}
+import heimdall
+
+# connecteur d’import de données
+@heimdall.decorators.get_database('exemple')
+def getDatabase(**options):
+    db = heimdall.util.tree.create_empty_tree()
+    # TODO: peupler `db` avec des données importées
+    return db
+
+# connecteur d’export des données
+@heimdall.decorators.create_database('exemple')
+def createDatabase(db, **options):
+    pass # TODO: exporter les données de `db`
+\end{minted}
+
+Le profil de cette fonction décorée est le plus flexible possible. De plus, du moment qu'Heimdall est disponible dans l'environnement Python, chaque connecteur déclaré est automatiquement détecté et utilisable avec toutes les fonctions d'Heimdall. Cela permet à chacun de gérer l'implémentation et le déploiement de son propre connecteur de manière cohérente avec ses propres critères de qualité, qui peuvent différer de ceux des contributeurs et contributrices d'Heimdall.
+
+Pour simplifier encore le développement et le déploiement de nouveaux connecteurs, il existe un dépôt d'exemple \autocite{pyheimdall-example}.
+
+\section{Conclusion}\label{conclusion}
+
+Heimdall a aujourd'hui atteint une forme de stabilité. Sa qualité croît naturellement, en ne nécessitant aucune maintenance ou presque. Pour exister sur la durée, Heimdall ne requiert donc ni financement, ni communauté.
+
+L'ajout de nouveaux connecteurs se fait au gré des besoins, par n'importe qui, sans impacter ni Heimdall, ni les autres connecteurs. Développer ces connecteurs au fil de l'eau, puis les partager publiquement, est une forme de mutualisation et améliore la transparence et la reproductibilité de la recherche.
+
+
+\printbibliography
+
+% Vous pouvez inclure une annexe en utilisant la commande suivante
+%\appendix
+
+%\section{Première section de l’annexe} \label{appdx:first}
+
+
+\end{document}
