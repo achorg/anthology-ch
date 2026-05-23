@@ -1,19 +1,18 @@
 # Makefile for LaTeX projects using BibLaTeX/Biber
-# Usage: make [filename without extension]
+# Usage: make [TARGET=paper-fr]
 #        make clean
 
 # Declare all targets as phony to force execution
-.PHONY: all clean cleanall help $(basename $(wildcard *.tex))
+.PHONY: all clean cleanall help
 
-# Find all .tex files in current directory
-TEX_FILES := $(wildcard *.tex)
-PDF_FILES := $(TEX_FILES:.tex=.pdf)
+# Default target file (override with: make TARGET=paper-fr)
+TARGET ?= paper
 
-# Default target builds all PDFs
-all: $(basename $(TEX_FILES))
+# Default target builds the TARGET pdf
+all: $(TARGET)
 
 # Rule to build a specific document
-$(basename $(TEX_FILES)):
+$(TARGET):
 	@echo "Building $@.pdf from $@.tex..."
 	xelatex -interaction=nonstopmode $@.tex
 	xelatex -interaction=nonstopmode $@.tex
@@ -39,8 +38,8 @@ help:
 	@echo "Makefile for LaTeX projects with BibLaTeX/Biber"
 	@echo ""
 	@echo "Available targets:"
-	@echo "  make           - Build all PDFs from .tex files in current directory"
-	@echo "  make filename  - Build a specific filename.pdf from filename.tex"
-	@echo "  make clean     - Remove all temporary LaTeX files"
-	@echo "  make cleanall  - Remove all temporary files and PDFs"
-	@echo "  make help      - Display this help message"
+	@echo "  make                    - Build paper.pdf (default)"
+	@echo "  make TARGET=paper-fr    - Build paper-fr.pdf instead"
+	@echo "  make clean              - Remove all temporary LaTeX files"
+	@echo "  make cleanall           - Remove all temporary files and PDFs"
+	@echo "  make help               - Display this help message"
