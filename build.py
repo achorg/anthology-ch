@@ -13,7 +13,7 @@ from jinja2 import Environment, FileSystemLoader
 
 
 RERUN_XELATEX = False
-REBUILD_VOL = None  # force-rebuild PDFs for this volume; set to None to skip
+REBUILD_VOL = "vol0004" # None
 
 TEMPLATE_ENV = Environment(loader=FileSystemLoader("templates"))
 TEMPLATE_ENV.globals["year"] = date.today().year
@@ -143,7 +143,10 @@ def create_metadata_table():
                 title_html = latex_to_html(str(args[0])[1:-1]) if args else ""
                 title_plain = str(args[1])[1:-1].strip() if len(args) > 1 else re.sub(r'<[^>]+>', '', title_html)
             else:
-                title_html = latex_to_html(" ".join(title_node.text))
+                title_arg = next(
+                    (str(a)[1:-1] for a in title_node.args if isinstance(a, BraceGroup)), None
+                )
+                title_html = latex_to_html(title_arg if title_arg is not None else " ".join(title_node.text))
                 title_plain = re.sub(r'<[^>]+>', '', title_html)
 
             df_paper.append(pl.DataFrame({
@@ -229,7 +232,7 @@ def create_paper_pages():
         ]
 
         output = paper_template.render(
-            cite_paper_title=paper["title"],
+            cite_paper_title=paper["title_plain"],
             cite_paper_url=base_url,
             cite_date=paper["pubyear"],
             cite_volume_title=vol["conferencename"],
@@ -244,7 +247,7 @@ def create_paper_pages():
             cite_html_url=base_url,
             cite_pdf_url=base_url + doi_file + ".pdf",
             volume=paper["pubvolume"],
-            title=paper["title"],
+            title=paper["title_plain"],
             authors=paper_authors,
             affiliations=paper_affs,
             pdf_path=doi_file + ".pdf",
@@ -254,6 +257,7 @@ def create_paper_pages():
             kwords_eng=paper["keywords_eng"],
             kwords_fra=paper["keywords_fra"],
             content=f'<div class="abs"><span>Abstract</span>{paper["abstract"]}</div>',
+            language=vol["language"],
         )
         (Path(paper["directory"]) / "index.html").write_text(output)
         ok(f"{paper['vol_slug']} / {paper['slug']}")
@@ -290,6 +294,7 @@ def create_volume_pages():
             conferencename=vol["conferencename"],
             conferenceeditors=vol["conferenceeditors"],
             papers=papers,
+            language=vol["language"],
         )
         vol_dir = Path("docs/volumes") / vol["vol_slug"]
         vol_dir.mkdir(parents=True, exist_ok=True)
@@ -562,11 +567,15 @@ def create_crossref_xml():
             ).to_dicts()
 
             author_contributors = ""
+            seen_orcids = set()
             for i, a in enumerate(paper_authors):
                 seq = "first" if i == 0 else "additional"
                 given = strip_html(a["name"].rsplit(" ", 1)[0])
                 surname = strip_html(a["name"].rsplit(" ", 1)[-1])
-                orcid_tag = f"\n            <ORCID>https://orcid.org/{a['orcid']}</ORCID>" if a["orcid"] else ""
+                orcid = a["orcid"] if a["orcid"] and a["orcid"] not in seen_orcids else ""
+                if orcid:
+                    seen_orcids.add(orcid)
+                orcid_tag = f"\n            <ORCID>https://orcid.org/{orcid}</ORCID>" if orcid else ""
                 author_contributors += (
                     f'\n          <person_name sequence="{seq}" contributor_role="author">'
                     f"\n            <given_name>{given}</given_name>"

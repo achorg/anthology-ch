@@ -176,7 +176,11 @@
     \fi
     \def\@authornamesend{\mbox{#2}}
   \else
-    \edef\@authornamesend{\@authornames{}, and \mbox{#2}}
+    \if@fra
+      \edef\@authornamesend{\@authornames{}, et \mbox{#2}}
+    \else
+      \edef\@authornamesend{\@authornames{}, and \mbox{#2}}
+    \fi
     \appto\@authornames{, \mbox{#2}}
     \ifx\@currentorcid\@empty
       \appto\@authornamesfull{, \mbox{#2}\textsuperscript{#1}}

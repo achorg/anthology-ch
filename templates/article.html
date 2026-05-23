@@ -31,7 +31,7 @@
 
   <meta name="citation_abstract" content="{{ cite_abstract | striptags }}">
   <meta name="citation_language" content="{{ cite_language }}">
-  <meta name="citation_keywords" content="{{ cite_keywords | join('; ') }}">
+  <meta name="citation_keywords" content="{{ cite_keywords | map('striptags') | join('; ') }}">
   <meta name="citation_fulltext_html_url" content="{{ cite_html_url }}">
   <meta name="citation_pdf_url" content="{{ cite_pdf_url }}">
 
@@ -114,8 +114,8 @@
                     {%- endif %}
                   </span>
                   {%- if not loop.last %}
-                    {%- if loop.revindex == 2 %} and
-                    {%- else %}, 
+                    {%- if loop.revindex == 2 %} {{ 'et' if language == 'fra' else 'and' }}
+                    {%- else %},
                     {%- endif %}
                   {%- endif %}
                 {%- endfor %}
