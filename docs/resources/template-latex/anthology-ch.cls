@@ -234,9 +234,9 @@
           \textbf{\small\textcolor{newgray}{\@customhead}} 
       \else
         \if@fra
-          \textbf{\small\textcolor{newgray}{Anthology of Computers and the Humanities: En cours d'examen}}
+          \textbf{\small\textcolor{newgray}{En cours d'examen}}
         \else
-          \textbf{\small\textcolor{newgray}{Anthology of Computers and the Humanities: Under Review}}
+          \textbf{\small\textcolor{newgray}{Under Review}}
         \fi
       \fi
     }
