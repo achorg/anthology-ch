@@ -83,7 +83,8 @@ def main():
     out_vol = Path("docs/volumes") / vol_slug
     out_vol.mkdir(parents=True, exist_ok=True)
 
-    for order, paper_dir in enumerate(input_dirs, start=1):
+    existing_count = sum(1 for d in out_vol.iterdir() if d.is_dir())
+    for order, paper_dir in enumerate(input_dirs, start=existing_count + 1):
         tex_path = paper_dir / "paper.tex"
         if not tex_path.exists():
             print(f"SKIP  {paper_dir.name}: no paper.tex")

@@ -1,0 +1,26 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} check all links}
+\PYG{n}{links} \PYG{o}{=} \PYG{n+nb}{set}\PYG{p}{(}\PYG{p}{)}
+\PYG{n}{nav\PYGZus{}path} \PYG{o}{=} \PYG{n}{nav\PYGZus{}item}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{echo\PYGZus{}path}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}
+\PYG{k}{for} \PYG{n}{atag} \PYG{o+ow}{in} \PYG{n}{soup}\PYG{o}{.}\PYG{n}{find\PYGZus{}all}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{a}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}\PYG{p}{:}
+    \PYG{k}{if} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{href}\PYG{l+s+s1}{\PYGZsq{}} \PYG{o+ow}{in} \PYG{n}{atag}\PYG{o}{.}\PYG{n}{attrs}\PYG{p}{:}
+        \PYG{n}{link} \PYG{o}{=} \PYG{n}{atag}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{href}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{o}{.}\PYG{n}{strip}\PYG{p}{(}\PYG{p}{)}
+\PYG{o}{.}\PYG{o}{.}\PYG{o}{.}
+        \PYG{c+c1}{\PYGZsh{} process interactive map links}
+        \PYG{k}{if} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{onmouseover}\PYG{l+s+s1}{\PYGZsq{}} \PYG{o+ow}{in} \PYG{n}{atag}\PYG{o}{.}\PYG{n}{attrs}\PYG{p}{:}
+            \PYG{c+c1}{\PYGZsh{} get linked item from id}
+            \PYG{n}{m} \PYG{o}{=} \PYG{n}{maplink\PYGZus{}id\PYGZus{}pattern}\PYG{o}{.}\PYG{n}{match}\PYG{p}{(}\PYG{n}{atag}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{id}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{)}
+            \PYG{k}{if} \PYG{n}{m}\PYG{p}{:}
+                \PYG{n}{nav\PYGZus{}link} \PYG{o}{=} \PYG{n}{nav\PYGZus{}path} \PYG{o}{+} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{/}\PYG{l+s+s1}{\PYGZsq{}} \PYG{o}{+} \PYG{n}{m}\PYG{o}{.}\PYG{n}{group}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{o}{.}\PYG{n}{replace}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{ }\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{\PYGZpc{}}\PYG{l+s+s1}{20}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+                \PYG{k}{if} \PYG{n}{nav\PYGZus{}link} \PYG{o+ow}{in} \PYG{n}{args}\PYG{o}{.}\PYG{n}{nav\PYGZus{}struct}\PYG{p}{:}
+                    \PYG{n}{link\PYGZus{}item} \PYG{o}{=} \PYG{n}{args}\PYG{o}{.}\PYG{n}{nav\PYGZus{}struct}\PYG{p}{[}\PYG{n}{nav\PYGZus{}link}\PYG{p}{]}
+                    \PYG{k}{if} \PYG{n}{link\PYGZus{}item}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{type}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]} \PYG{o}{==} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{ECHO\PYGZus{}resource}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{:}
+                        \PYG{k}{if} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{link}\PYG{l+s+s1}{\PYGZsq{}} \PYG{o+ow}{in} \PYG{n}{link\PYGZus{}item} \PYG{o+ow}{and} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{digilib.html?}\PYG{l+s+s1}{\PYGZsq{}} \PYG{o+ow}{in} \PYG{n}{link\PYGZus{}item}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{link}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{:}
+                            \PYG{c+c1}{\PYGZsh{} replace link to ECHO\PYGZus{}resource linking to digilib}
+                            \PYG{n}{atag}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{href}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]} \PYG{o}{=} \PYG{n}{link\PYGZus{}item}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{link}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}
+                            \PYG{n}{processed\PYGZus{}items}\PYG{o}{.}\PYG{n}{add}\PYG{p}{(}\PYG{n}{nav\PYGZus{}link}\PYG{p}{)}
+                            \PYG{k}{continue}
+\PYG{o}{.}\PYG{o}{.}\PYG{o}{.}
+        \PYG{c+c1}{\PYGZsh{} add to be processed later}
+        \PYG{n}{links}\PYG{o}{.}\PYG{n}{add}\PYG{p}{(}\PYG{n}{link}\PYG{p}{)}
+\end{MintedVerbatim}

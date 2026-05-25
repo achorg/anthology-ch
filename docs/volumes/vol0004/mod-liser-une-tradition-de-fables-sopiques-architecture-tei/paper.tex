@@ -1,0 +1,406 @@
+% CECI EST UN FICHIER DE MODÈLE LATEX POUR LES ARTICLES INCLUS DANS
+% *Anthology of Computers and the Humanities*.
+% 'final' LORS DE LA CRÉATION DE LA VERSION FINALE DE L'ARTICLE.
+% NE PAS modifier la classe du document
+%\documentclass[final,fra]{anthology-ch} % pour la version finale
+\documentclass[final,fra]{anthology-ch}         % pour la soumission
+
+% CHARGER LES PACKAGES LaTeX
+\usepackage{booktabs}
+\usepackage{graphicx}
+
+% AJOUTEZ vos propres packages avec \usepackage{}
+
+% TITRE DE LA SOUMISSION
+% Remplacez ceci par le titre de votre soumission
+\title{Modéliser une tradition de fables ésopiques : architecture TEI, taxonomies et structuration des connaissances dans l'édition numérique de l'Isopet 1-Avionnet}
+
+% INFORMATIONS SUR LES AUTEURS ET LES AFFILIATIONS
+% Pour chaque auteur, utilisez une nouvelle commande \author, avec
+% les numéros entre crochets indiquant les affiliations correspondantes
+% (section suivante) et l'ORCID-ID pour chaque auteur.
+\author[1]{Joana Casenave}[
+  orcid=0000-0002-1609-1512,
+  email=joana.casenave@univ-lille.fr
+]
+
+% Il doit y avoir un appel à \affiliation pour chaque affiliation des auteurs.
+% Plusieurs affiliations peuvent être attribuées à un auteur
+% et une affiliation peut être attribuée à plusieurs auteurs.
+\affiliation{1}{Université de Lille, France}
+
+% MOTS-CLÉS
+% Fournissez un ou plusieurs mots-clés séparés par des virgules
+% en utilisant les commandes suivantes
+\keywords[fra]{édition critique numérique, XML/TEI, modélisation des données, taxonomies et thésaurus, annotation, structuration des connaissances, fables médiévales}
+
+\keywords[eng]{critical digital edition, XML/TEI, data modeling, taxonomies and thesaurus, annotation, knowledge structure, medieval fables}
+%\keywords[eng]{informatique, sciences humaines}
+
+% MÉTADONNÉES DE LA PUBLICATION
+% Ces champs seront remplis lors de la publication ;
+% ils peuvent être laissés par défaut lors de la soumission
+\pubyear{2026}
+\pubvolume{4}
+\pagestart{211}
+\pageend{219}
+\paperorder{26}
+\conferencename{Actes de la Conférence Humanistica}
+\conferenceeditors{Serena Crespi, Simon Gabay, Martin Grandjean, Ariane Pinche, Marie Puren et Léa Saint-Raymond}
+\doi{10.63744/oFjQfi7IwgQB}
+\customhead{}
+
+\addbibresource{bibliography.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DÉBUT DU TEXTE
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This article examines knowledge modeling within the framework of digital scholarly editing, drawing on the corpus of medieval fables from the Isopet 1-Avionnet as part of the FabuLab project. It proposes a stratified TEI architecture that distinguishes between a conceptual level - comprising a master TEI file that consolidates taxonomies and reference frameworks - and a documentary level corresponding to the encoding of manuscript witnesses. This structure makes it possible to separate the definition of categories from their use in texts, while ensuring their articulation through mechanisms of reference and annotation. The study shows that this organization promotes consistency in annotations, reduces redundancy, and enables corpus exploration based on analytical categories. The article thus advocates a conception of digital scholarly editing as a space for the formalization of knowledge, in which analytical categories are integrated into the data model.
+\end{abstract}
+
+
+\section{Introduction}\label{introduction-1}
+
+La conception d'éditions critiques numériques conduit à repenser les
+modalités de modélisation et de représentation des connaissances
+produites par le travail philologique.
+Dans le cas des fables ésopiques
+médiévales, la diversité des traditions textuelles, la richesse des
+motifs narratifs et la multiplicité des catégories d'analyse
+mobilisables font apparaître des enjeux spécifiques liés à la
+construction de modèles de connaissances.
+Dans cette perspective,
+l'édition critique numérique est envisagée avant tout
+comme un dispositif de structuration, de formalisation et d'exploitation
+des connaissances à l'aide de la TEI.
+Cette réflexion s'inscrit dans le
+cadre du projet FabuLab, dont l'un des objectifs est de
+concevoir une architecture d'encodage articulant édition des textes,
+indexation savante et élaboration de systèmes de catégories et de
+référentiels.
+
+Le corpus étudié, l'\emph{Isopet 1-Avionnet}, présente une configuration
+particulièrement propice à une réflexion sur ces questions : coexistence
+de deux rédactions successives, variations structurelles importantes,
+forte densité d'intertextualité et caractéristiques formelles et
+génériques propres à la fable \cite{boivin2006naissance, casenave2023fables}.
+Se pose dès
+lors une double question: comment traduire ces caractéristiques dans un
+modèle d'encodage TEI qui ne se limite pas à représenter les textes,
+mais qui explicite les structures, les catégories et les relations qui
+les organisent?
+Et comment concevoir, à partir de ce cadre, des
+instruments d'exploration du corpus fondés sur des taxonomies, des index
+structurés et des thésaurus? L'enjeu est de développer un modèle capable
+de rendre compte à la fois de la structure des textes, des dispositifs
+d'annotation savante et des systèmes classificatoires mobilisés pour
+l'analyse du corpus.
+Le présent article propose d'examiner les principes
+retenus dans ce cadre et d'analyser la manière dont l'encodage TEI peut
+être mobilisé pour articuler édition critique, représentation des
+connaissances et dispositifs d'indexation.
+\section{État de l'art}\label{uxe9tat-de-lart}
+
+La réflexion s'inscrit dans le champ désormais bien établi de l'édition
+critique numérique, qui a montré que l'encodage ne saurait être réduit à
+une opération de balisage technique, mais constitue une véritable
+activité de modélisation des objets textuels et des hypothèses
+interprétatives \cite{apollon2014digital, pierazzo2015digital, driscoll2016digital, sahle2016what, bleier2018digital,  casenave2023edition}.
+Dans
+le prolongement des travaux de Jerome McGann sur l'édition conçue comme
+\emph{knowledge site}, de nombreux auteurs ont souligné que les modèles
+de données jouent un rôle structurant dans l'organisation et
+l'opérationnalisation des savoirs \cite{pierazzo2019what}.
+L'édition numérique
+savante peut ainsi être comprise comme un dispositif intellectuel dans
+lequel le savoir critique n'est pas seulement formulé dans le discours,
+mais est aussi inscrit dans l'architecture même des données, des catégories et des
+relations qui les organisent.
+
+Dans cette perspective, la modélisation apparaît comme une pratique
+centrale des humanités numériques : non plus simple opération de
+représentation, mais véritable processus de production de connaissances
+fondé sur la construction et la mobilisation de structures formelles.
+Arianna Ciula \cite{ciula2017digital, ciula2023modelling} propose de l'envisager
+en tant que stratégie de recherche permettant de produire et
+d'interpréter des représentations externes afin de
+donner sens à des objets complexes.
+Cette conception conduit à
+considérer les dispositifs d'encodage comme des espaces
+de médiation entre données textuelles et structures conceptuelles, au
+sein desquels se construisent et se stabilisent les catégories de
+l'analyse.
+Elle invite également à penser la textualité
+non plus en objet stable, mais en objet dynamique, défini par des
+relations de production, de transmission et de réécriture.
+
+Parallèlement, on observe ces dernières années une évolution marquée
+vers des modèles d'édition intégrant de plus en plus explicitement des
+dispositifs d'alignement sémantique et d'interopérabilité.
+Les
+taxonomies locales en TEI tendent ainsi à être alignées sur des
+vocabulaires contrôlés et des modèles de type SKOS \cite{baker2013key},
+tandis que l'alignement des données devient un enjeu central, inscrivant
+progressivement l'édition savante dans l'écosystème des graphes de
+connaissances \cite{ciotti2014tei, eide2014ontologies}.
+Plusieurs travaux ont
+montré que la TEI peut être comprise comme une forme de modélisation
+conceptuelle propre aux humanités numériques, distincte mais
+complémentaire des ontologies formelles utilisées dans les systèmes
+d'information patrimoniaux \cite{ciula2014reflections}.
+Des recherches ont
+ainsi exploré le recours à des ontologies RDF/OWL comme extension des
+encodages TEI, afin de représenter non seulement des entités mais aussi
+les relations complexes qui les relient et d'expliciter des associations
+implicites dans les sources \cite{ciula2008expressing}.
+Dans le domaine des
+éditions savantes numériques, ces réflexions ont conduit à explorer
+l'intégration des données textuelles encodées avec des modèles de
+graphes et des technologies du web sémantique, notamment afin de
+représenter et d'exploiter les relations complexes entre textes,
+témoins, acteurs et concepts \cite{spadini2021graph}.
+
+Toutefois, malgré ces avancées, la formalisation explicite des systèmes
+conceptuels internes aux éditions numériques demeure relativement peu
+interrogée.
+Si les éditions mobilisent fréquemment des catégories
+critiques, génériques ou intertextuelles pour structurer les corpus, ces
+catégories restent souvent implicites dans les modèles de données ou
+confinées à des taxonomies locales peu formalisées.
+La question de leur
+modélisation - c'est-à-dire de la manière dont ces catégories sont
+construites, structurées et articulées au sein des données éditoriales -
+reste encore largement sous-théorisée.
+Or, dans le cas de corpus
+fortement structurés par des classifications génériques ou des relations
+intertextuelles, la formalisation de ces systèmes catégoriels devient un
+enjeu central, tant pour l'intelligibilité scientifique des éditions que
+pour leur interopérabilité et leur réutilisation dans des environnements
+de recherche élargis.
+
+Dans cette perspective, le présent article propose d'examiner la manière
+dont un système de catégories critiques peut être explicitement modélisé
+au sein d'une édition numérique, en considérant le document TEI non
+seulement comme un format d'encodage, mais aussi comme une structure de
+modélisation capable d'organiser et de formaliser un référentiel
+conceptuel interne au corpus.
+L'analyse prend pour cas d'étude le corpus
+de l'\emph{Isopet 1-Avionnet} et s'appuie sur une architecture TEI
+permettant de rendre explicite l'articulation entre données textuelles
+et structures conceptuelles (voir Figure 1).
+
+\section{Le corpus : l'\emph{Isopet 1-Avionnet}}
+
+L'\emph{Isopet 1-Avionnet} occupe une position singulière dans la
+tradition médiévale des fables ésopiques.
+Issu de la convergence des
+deux principales branches occidentales de cette tradition, le
+\emph{Romulus} et l'\emph{Avianus}, il se présente comme une compilation
+fondée sur plusieurs recueils sources, l'\emph{Anonyme de Nevelet} pour
+l'\emph{Isopet 1} et l'\emph{Avianus} pour l'\emph{Avionnet}.
+Le texte a
+par ailleurs connu deux états rédactionnels successifs : une première
+version, puis une réécriture opérée quelques décennies plus tard par un
+compilateur, qui introduit des ajouts, des réorganisations et des
+transformations substantielles \cite{boivin2006naissance}.
+
+La tradition manuscrite de l'\emph{Isopet 1-Avionnet} se compose de six
+témoins, désignés par les sigles établis par K. McKenzie et W. Oldfather \cite{McKenzie_ysopet_1919}, et répartis de manière équilibrée entre les deux états du texte.
+Les manuscrits \textit{B}\footnote{Manuscrit \textit{B} : Bruxelles, KBR, ms. 11193, 134~f.}, \textit{P}\footnote{Manuscrit \textit{P} : Paris, BnF, ms. fr.~1594, f. 1r-113v.}
+et \textit{L}\footnote{Manuscrit \textit{L} : Londres, BL, Add. 33781, 139 f.}, datés du \textsc{xiv}\textsuperscript{e} siècle, transmettent la seconde rédaction, tandis
+que le groupe
+\textit{a}\footnote{Manuscrit \textit{a} : Paris, BnF, ms.fr. 1595, f. 1r-36r.}
+\textit{b}\footnote{Manuscrit b : Paris, BnF, ms. fr. 19123, f.~110r-132v.}, 
+et \textit{c}\footnote{Manuscrit \textit{c} : Paris, BnF, ms. fr.~24310, f.~2r-57v.}, 
+daté du \textsc{xv}\textsuperscript{e} siècle, conserve la première version, antérieure.
+
+Les témoins de la seconde rédaction présentent en outre la particularité
+d'intégrer directement les sources latines, placées en amont de chaque
+fable en moyen français.
+À ces sources explicites s'ajoute un réseau
+dense de références intertextuelles, qui déborde le cadre strict des
+recueils de fables pour inclure d'autres œuvres médiévales ainsi que des
+éléments du répertoire parémiologique.
+
+Cette stratification des sources, des états du texte et des réseaux de
+références fait de l'\emph{Isopet 1-Avionnet} un terrain
+particulièrement favorable à une approche fondée sur la modélisation des
+connaissances.
+Elle soulève notamment la question de la manière dont ces
+différentes dimensions peuvent être représentées et articulées dans un
+dispositif éditorial cohérent.
+Le projet FabuLab se présente comme la
+préparation d'une édition critique numérique exhaustive de ce corpus, en
+mobilisant les potentialités des technologies d'encodage pour structurer
+les différentes couches du texte et proposer des parcours de lecture
+multiples fondés sur l'organisation même des données.
+
+\section{Méthodologie}\label{muxe9thodologie}
+
+Pour répondre à cet enjeu, le projet repose sur une architecture TEI
+stratifiée visant à articuler deux niveaux complémentaires au sein d'une
+même infrastructure (Figure 1) :
+\begin{enumerate}
+    \item un niveau conceptuel, correspondant aux systèmes de catégories et aux référentiels mobilisés pour l'analyse du corpus ;
+    \item un niveau documentaire, correspondant aux textes des témoins manuscrits et à leur encodage.
+\end{enumerate}
+
+Cette architecture s'organise autour d'un fichier TEI maître, qui
+constitue le socle conceptuel commun, et d'un ensemble de fichiers TEI
+correspondant chacun à un témoin manuscrit.
+Ce découplage répond à une
+double exigence : éviter la redondance des annotations analytiques dans
+les différents témoins, tout en garantissant la cohérence et la
+stabilité des catégories utilisées.
+
+\begin{figure}[htp]
+\centering
+\includegraphics[width=1.0\textwidth]{./media/image2.png}
+\caption{Architecture à deux niveaux du modèle TEI pour la modélisation des textes et des connaissances (projet FabuLab).}
+\end{figure}
+
+Le fichier maître regroupe l'ensemble des référentiels
+partagés du corpus et les systèmes de catégorisation : taxonomies
+analytiques (types de fables, structures discursives, formes de
+moralités, actes de discours), ainsi que des index décrivant les entités
+mentionnées dans les textes (personnages des fables, lieux concrets /
+abstraits, objets, référents zoologiques, notions abstraites, entités
+religieuses et mythologiques, types humains et rôles sociaux,
+événements, personnages historiques, œuvres référencées dans le texte).
+Ces ressources sont structurées à l'aide des éléments
+standards de la TEI (notamment \texttt{<classDecl>} pour les taxonomies et
+\texttt{<listPerson>}, \texttt{<listPlace>}, \texttt{<listObject>}, \texttt{<listNym>}, \texttt{<listEvent>},\texttt{<listBibl>} pour les
+index).
+Elles sont toutes associées à des identifiants pérennes qui
+permettent leur mobilisation dans les différents fichiers textuels.
+Ce
+choix permet de considérer ces catégories non comme de simples aides à
+l'annotation, mais comme des objets de données autonomes, réutilisables
+et interopérables.
+Le fichier maître accueille également la
+documentation scientifique globale du corpus et constitue l'espace
+commun des métadonnées éditoriales.
+
+Les fichiers TEI correspondant aux témoins manuscrits sont encodés selon un schéma homogène et reliés au fichier maître par des mécanismes de référence. Les entités mentionnées dans les textes sont annotées à l'aide de l'élément \texttt{<rs>}, dont l'attribut \texttt{@ref} pointe vers les identifiants du fichier maître, tandis que les catégories analytiques des taxonomies sont mobilisées via des attributs de typage (notamment \texttt{@ana}). Ce dispositif permet de dissocier la définition des catégories de leur mobilisation dans les textes : il maintient une séparation claire entre modélisation et encodage, tout en garantissant leur articulation.
+
+Afin d'illustrer concrètement la mobilisation, dans l'encodage des
+textes, des catégories définies dans le TEI maître, l'extrait suivant
+(Figure 2) présente le début de la première fable du recueil, tel qu'il
+est encodé dans le fichier du manuscrit \emph{c}.
+Les catégories
+déclarées dans les taxonomies analytiques et lexicales, ainsi que les
+référentiels d'entités (index), sont mobilisées au moyen des attributs
+analytiques et des mécanismes de référence pour structurer le texte et
+en permettre l'interrogation.
+
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{./media/image3.png}
+    \caption{Extrait d'encodage TEI d'une fable : annotation des entités et des catégories analytiques.}
+\end{figure}
+
+Par ailleurs, l'annotation analytique n'est pas uniformément distribuée
+sur l'ensemble des témoins.
+Nous faisons l'hypothèse qu'une annotation
+centralisée sur un nombre restreint de témoins de référence permet
+d'éviter les effets de redondance et de divergence.
+En conséquence, les
+dispositifs d'annotation analytique et d'indexation sont appliqués
+uniquement aux témoins éditoriaux de référence retenus pour chaque
+rédaction -- le manuscrit \textit{c} pour la première rédaction et le manuscrit \textit{B}
+pour la seconde.
+Les autres témoins sont encodés comme témoins alignés,
+principalement destinés à la comparaison textuelle et à l'étude des
+variantes.
+Dans une deuxième phase à venir du projet FabuLab, une
+édition critique sera proposée pour chacune des deux rédactions de
+l'Isopet 1-Avionnet et les témoins éditoriaux de
+référence deviendront alors les manuscrits de base de cette édition
+critique numérique.
+
+L'articulation entre les témoins repose sur un système d'identifiants attribués aux unités textuelles (fables et vers). Ce dispositif constitue un élément clé de l'architecture : il permet d'aligner les différentes versions sans dupliquer les annotations, et de maintenir un lien entre variation textuelle et structures analytiques.
+
+Ainsi conçue, l'architecture TEI ne se limite pas à un dispositif d'encodage, mais met en œuvre une véritable modélisation des connaissances, dans laquelle les catégories analytiques sont explicitement définies, stabilisées et mobilisables à l'échelle de l'ensemble du corpus.
+
+\section{Résultats et discussion}\label{ruxe9sultats-et-discussion}
+
+La mise en œuvre de cette architecture a conduit à la constitution
+effective d'un environnement éditorial structuré autour d'un fichier TEI
+maître et de six fichiers TEI correspondant aux témoins manuscrits du
+corpus.
+Cette organisation permet d'articuler, dans la pratique de
+l'encodage et de l'exploitation des données, les différents niveaux de
+description définis dans la modélisation initiale.
+Elle permet également
+de valider plusieurs hypothèses méthodologiques relatives à
+l'articulation entre encodage, annotation et structuration des
+connaissances.
+La Figure 3 met en évidence la circulation et
+l'articulation des données, depuis leur modélisation
+dans le fichier TEI maître jusqu'à leur mobilisation dans l'encodage et
+leur exploitation dans l'analyse du corpus.
+
+\begin{figure}[htp]
+\centering
+\includegraphics[width=1.0\textwidth]{./media/image4.png}
+\caption{Du TEI maître à l'analyse : circulation des
+données entre modélisation, encodage et exploitation du corpus (projet
+FabuLab).}
+\end{figure}
+
+L'un des premiers résultats concerne la centralisation effective des référentiels et des systèmes de catégorisation dans le fichier TEI maître. Celui-ci fonctionne comme un espace de stabilisation conceptuelle, dans lequel sont définies les catégories analytiques et les entités mobilisées dans l'annotation. Cette centralisation assure la cohérence des annotations et facilite leur réutilisation dans l'ensemble des fichiers textuels. Elle rend également possible l'alignement de ces référentiels avec les thésaurus et bases de connaissances externes
+Biblissima\footnote{Le thésaurus iconographique de Biblissima est un  vocabulaire contrôlé développé dans le cadre de l'infrastructure de  recherche Biblissima, dédié à la description et à l'indexation des  images et motifs dans les manuscrits médiévaux.
+\url{https://data.biblissima.fr}.},
+Thema\footnote{ThEMA (\textit{Thesaurus Exemplorum Medii Aevi}) est une base de données multimédia et multilingue consacrée aux récits exemplaires médiévaux, dotée d'un thésaurus pour leur indexation thématique. \url{https://thema.huma-num.fr}.} 
+et Wikidata\footnote{\url{https://www.wikidata.org}.}, inscrivant ainsi les données du corpus dans un réseau plus large de ressources sémantiques et de données interopérables.
+
+Du point de vue éditorial, l'architecture retenue permet d'articuler transcription exhaustive des témoins et annotation analytique contrôlée. Les manuscrits \emph{c} et \emph{B}, retenus comme témoins de référence pour chacune des deux rédactions, concentrent les dispositifs d'annotation savante, tandis que les autres manuscrits servent principalement de points de comparaison textuelle. Cette organisation montre qu'il est possible de dissocier annotation savante et couverture documentaire, sans perte d'information pour l'analyse.
+
+Enfin, la formalisation des catégories analytiques comme objets de
+données constitue un résultat structurant. Les catégories rhétoriques et lexicales ne relèvent plus seulement du commentaire critique, mais sont intégrées au modèle sous forme de structures explicitement définies et interrogeables. Cette évolution ouvre la possibilité d'explorer le corpus selon des entrées conceptuelles (types de morale, structures discursives, catégories d'entités) et de croiser ces dimensions avec les variations textuelles.
+
+Ainsi, l'architecture mise en place permet de penser conjointement la
+variabilité des traditions manuscrites et la stabilité des cadres
+d'analyse.
+Elle fournit un environnement éditorial dans
+lequel la production de l'édition critique et la structuration des
+connaissances sont étroitement articulées, ouvrant la voie à des formes
+d'exploration et d'analyse du corpus qui dépassent les modèles
+éditoriaux traditionnels.
+
+\section{Perspectives}\label{perspectives}
+
+Dans une perspective d'ouverture vers le web sémantique, les systèmes
+taxonomiques élaborés dans ce cadre ont vocation à être externalisés et
+reconfigurés sous la forme d'une ontologie légère, notamment en SKOS \cite{baker2013key}.
+Cette évolution vise également à étendre la modélisation à la structure
+divergente du corpus et aux différentes formes d'intertextualité qu'il
+met en jeu, afin de les intégrer dans un ensemble cohérent de relations
+formalisées.
+
+Ce travail s'inscrit dans une conception de l'édition numérique comme
+instrument de connaissance, dans laquelle l'encodage ne constitue pas
+seulement un moyen de représentation, mais une opération de modélisation
+permettant d'expliciter et de formaliser les catégories de l'analyse.
+L'architecture stratifiée mise en place dans ce projet, distinguant un
+niveau conceptuel (fichier TEI maître, taxonomies, référentiels) et un
+niveau documentaire (encodage des témoins manuscrits), participe
+pleinement de cette approche.
+Elle vise à faire du corpus non seulement
+un ensemble de textes édités, mais aussi un espace structuré de
+formalisation et d'exploration des savoirs relatifs aux fables
+médiévales.
+
+\section*{Financement}
+
+Le projet FabuLab (dir. Joana Casenave) est réalisé grâce au soutien de l'ÉquipEx Biblissima+ (financement 2024-2026), qui bénéficie d'une aide de l’État gérée par l'ANR au titre du Programme d'investissements d'avenir intégré à France 2030, portant la référence ANR-21-ESRE-0005.
+
+
+\nocite{*}
+\printbibliography
+
+\end{document}

@@ -456,7 +456,11 @@
       \@buildauthorentry{\arabic{@tempcnta}}%
     \else
       \ifnum\value{@tempcnta}=\value{authorcount}%
-        , and \@buildauthorentry{\arabic{@tempcnta}}%
+        \if@fra
+          , et \@buildauthorentry{\arabic{@tempcnta}}%
+        \else
+          , and \@buildauthorentry{\arabic{@tempcnta}}%
+        \fi
       \else
         , \@buildauthorentry{\arabic{@tempcnta}}%
       \fi

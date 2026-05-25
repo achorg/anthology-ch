@@ -12,8 +12,8 @@ from TexSoup.data import BracketGroup, BraceGroup
 from jinja2 import Environment, FileSystemLoader
 
 
-RERUN_XELATEX = False
-REBUILD_VOL = "vol0004" # None
+RERUN_ALL_XELATEX = False
+REBUILD_VOL = "vol0004"  # None or "vol0004"
 
 TEMPLATE_ENV = Environment(loader=FileSystemLoader("templates"))
 TEMPLATE_ENV.globals["year"] = date.today().year
@@ -380,7 +380,7 @@ def create_pdf():
         ]
 
         pdf_exists = (paper_dir / f"{doi_file}.pdf").exists()
-        if pdf_exists and not RERUN_XELATEX and paper["vol_slug"] != REBUILD_VOL:
+        if pdf_exists and not RERUN_ALL_XELATEX and paper["vol_slug"] != REBUILD_VOL:
             skip(label)
             continue
 
