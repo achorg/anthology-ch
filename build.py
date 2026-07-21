@@ -13,7 +13,7 @@ from jinja2 import Environment, FileSystemLoader
 
 
 RERUN_ALL_XELATEX = False
-REBUILD_VOL = "vol0004"  # None or "vol0004"
+REBUILD_VOL = None  # None or "vol0004"
 
 TEMPLATE_ENV = Environment(loader=FileSystemLoader("templates"))
 TEMPLATE_ENV.globals["year"] = date.today().year
@@ -315,6 +315,7 @@ def create_front_pages():
     volumes = [
         {**row, "url": f"{row['vol_slug']}/"}
         for row in df_volume.iter_rows(named=True)
+        if not row.get("draft")
     ]
     volumes = list(reversed(volumes))
 

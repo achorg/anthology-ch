@@ -1,0 +1,224 @@
+% THIS IS A LATEX TEMPLATE FILE FOR PAPERS INCLUDED IN THE
+% *Anthology of Computers and the Humanities*.
+% DO NOT change the documentclass
+\documentclass[final]{anthology-ch} % for the final version
+
+% LOAD LaTeX PACKAGES
+\usepackage{booktabs}
+\usepackage{graphicx}
+
+% TITLE OF THE SUBMISSION
+\title{Google Map Reviews: A Window into Plantation Narratives}
+
+% AUTHOR AND AFFILIATION INFORMATION
+\author[1]{Samone Jacobs}[
+  orcid=
+]
+
+\affiliation{1}{School of Information \& Library Science, University of North Carolina at Chapel Hill, Chapel Hill, NC, USA}
+
+% KEYWORDS
+\keywords[eng]{plantation tourism, narrative analysis, online reviews, electronic word-of-mouth, large language models, cultural heritage}
+
+% METADATA FOR THE PUBLICATION
+% This will be filled in when the document is published; the values can
+% be kept as their defaults when the file is submitted
+\pubyear{2025}
+\pubvolume{5}
+\pagestart{48}
+\pageend{57}
+\paperorder{6}
+\conferencename{From Manuscript to Megabyte: Building Sustainable and Open Futures in the Digital Humanities}
+\conferenceeditors{James B. Harr III, Emma Stanley, Jenna Rinalducci, and Donna Kain}
+\doi{10.63744/fQiaLoOkPK0r}
+\customhead{}
+
+\addbibresource{bibliography.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HERE IS THE START OF THE TEXT
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+The experiences offered by plantation museums \enquote{amount to a virtual recommodification and recommercialization of black bodies in the modern moment} and/or mythologies of the antebellum south \cite{miles2015tales, modlin2008tales}. The commodification of black spirits and historical marginalization are the foundation for plantation sites' narrative worlds. Carter, Butler, and Alderman~\cite{carter2014house} present a revised framework of plantation narrativized worlds, drawing on Holland, Lachiotte, Skinner, and Cain (as cited in \cite{carter2014house}) to illustrate how society, plantations, and audiences interact to shape and circulate historical narratives. Building on this framework, this study extends the analysis of plantation narrative worlds into networked digital spaces by examining online reviews posted to public platforms. Using computational methods and OpenAI's GPT-4o-mini, this research analyzes and categorizes visitor reviews from plantation museums located along the 70-mile stretch of the Great Mississippi River Road. By evaluating how visitors' narrative appraisals reflect, reproduce, or potentially challenge institutional narrative, the study investigates whether plantation-produced narratives travel beyond the physical site through electronic word-of-mouth (eWOM).
+\end{abstract}
+
+\section{Introduction} \label{sec:intro}
+
+Plantation museums are \enquote{steeped in racialized oppression} from their beginning attempts to be classified as historic sites (Biggs, 2023). The experiences offered by plantation museums as claimed by Tiya Miles~\cite{miles2015tales} \enquote{amount to a virtual recommodification and recommercialization of black bodies in the modern moment.} The commodification of black spirits is opposed by historical marginalization and both are the foundation for plantation sites narrative worlds.
+
+\subsection{Historical and Cultural Significance of River Road} \label{sec:riverroad}
+
+Plantation museums along the 70-mile length of The Great Mississippi River Road have served as a productive site for plantation-related research \cite{alderman2016political, bright2016who, carter2014house, carter2016where, harnay2022slavery} (Latham, 2019). As a collective unit of plantation history, these sites stand as representations of the transatlantic slave trade and the mythologies of the antebellum south \cite{modlin2008tales}. Eight plantation sites along this stretch of Louisiana are open to the public: Destrehan Plantation, Frogmore Cotton Plantation and Gins, Houmas House Estate and Gardens, Laura Plantation: Louisiana's Créole Heritage Site, Magnolia Mound Museum and Historic Site, Oak Alley Plantation, St. Joseph and Felicity Plantations, and Whitney Plantation. Despite their geographic proximity, each plantation occupies a distinct place within the narrative world of plantation visitation, shaped by varying expectations, authors, institutional missions, and constructed narrative economies. A site's narrative economy is made up of the valued stories circulating around the site. Value is assigned \enquote{on the basis of their factual content and their compatibility with a set of approved messages} (Hoskins, 2010).
+
+Destrehan Plantation is operated by The River Run Historical Society under the nonprofit Destrehan Plantation and is underpinned by a commitment to the maintenance and commercialization of the property. Attractions include holiday festivals, ghost tours, weddings, and on-site cottage rentals (Destrehan Plantation, n.d.).
+
+Frogmore Cotton Plantation and Gins is owned and operated by Buddy and Lynette Tanner. As a cotton producer and former president of the Louisiana Attractions Association, respectively, the Tanners provide a tour experience grounded in their own research and historical perspectives. The site centers a narrative focusing on \enquote{historical cotton and plantation culture,} allowing visitors to tour fields and pick cotton themselves \cite{frogmore}.
+
+Houmas House Estate and Gardens aspire to reflect on the life of wealthy plantation owners in the 1800s. While various tours are offered, the primary feature is the guided mansion tour, during which visitors learn the 250-year history of the manor home in approximately one hour \cite{houmashouse}.
+
+Laura Plantation: Louisiana's Créole Heritage Site's narrative centers the interwoven stories of the plantation owners and the enslaved forced to labor there. Since 2017, their stated mission has been to produce an \enquote{authentic} narrative of enslaved Créole men, women, and children who built the plantation and that generated the family's wealth \cite{lauraplantation}.
+
+Magnolia Mound Museum and Historic Site owned by BREC, a Baton Rouge park and recreations organization, offers event rentals, tours of the plantation structures, and educational programming for students \cite{brecabout, magnoliamound}.
+
+Oak Alley Plantation, operated by the nonprofit Oak Alley Foundation, functions as primarily a self-guided attraction. Visitors gain admittance to the grounds and the \enquote{Big House,} with purchase of a ticket \cite{oakalley}.
+
+St. Joseph and Felicity Plantations merged in 1909 and remain working Sugarcane Plantations. The plantations are operated by a family corporation, and both promote an \enquote{intimate} and \enquote{relaxed} visitor experience centered on touring the ancestral homes \cite{stjoseph}.
+
+Whitney Plantation stands apart through its explicitly stated mission: \enquote{The Whitney Institute educates the public about the history and legacies of slavery in the United States.} As a nonprofit, it offers self-guided audio tours as well as the option to tour with interpreters \cite{whitneyabout}.
+
+An analysis of these plantations' publicly available materials reveals that, despite their close physical proximity, they promote divergent stories and perspectives. This variance in narrative focus illustrates the multiplicity of commercial plantation institutions' narrative economies and underscores the value of examining these sites comparatively. Together, they are a kind of natural experiment in \enquote{the coconstruction of heritage at storyscapes,} shaping the experiences, interpretations, and takeaways of the visitors who engage with them \cite{chronis2005coconstructing}.
+
+\section{Plantation Sites: Information Institutions and Edutainment Attractions}
+
+Plantation museums are unique spaces where historical narratives, desire, and tourism converge. Their attraction to tourists positions them as information institutions, functioning as structures that obtain, control, and account for site-specific knowledge and resources sought by seekers. They are spaces where users (tourists) and information intermediaries (narrative agents such as guides, docents, owners, and other visitors) converge to meet those particular information needs (Allen, 1996). Evaluating plantation museums through the lens of information-as-thing, the physical landscape, built and preserved structures, artifacts, and curated tours function as informational objects, making the plantation both a historical site and a constructed information environment through which meaning is transmitted, mediated, and controlled (Buckland, 1991).
+
+Influenced by visitors' expectations and style of engagement, plantation museums additionally fall into the category of edutainment. Edutainment is a classification of products that operates in a space in which education and entertainment are \enquote{intertwined and not clearly differentiated} \cite{bright2018tourist}. The dual classifications of edutainment and information institution is a cause of tension and lends credence to the notion that disquieting narrative or counter-narratives centering the experience of the enslaved work against plantation authors' efforts of profit maximization \cite{bright2018tourist}.
+
+\subsection{Who Visits Plantation Tourism Sites}
+
+Travelers seeking pleasure or thrills might be called to plantation museums for nostalgia hoping for \textit{Gone with the Wind} landscapes and narratives, while others might be after dark tourism, an \enquote{exploration of death, disaster, and suffering through travel} \cite{miles2015tales}. Seeking and participating in such endeavors allows tourists to experience plantations as a liminal space between history and modern life.
+
+The motivations of plantation tourists differ but the demographics of visitors can be understood to be well educated married white women, mean age of 48, with a high household income \cite{bright2016who}. Studies of plantation tourism support the notion that visitors' interest in plantations are most intricately connected to items associated with the lives of the enslaved as opposed to the experiences of the enslaved. This might manifest as tourists expressed interest in areas like plantation homes, agricultural tools, and slave cabins \cite{bright2016who}.
+
+Building on the work of Holsey~\cite{holsey2004transatlantic}, author Sarah Latham (2019) concludes that African American tourists' motivation for visiting plantations are tied to a desire to negotiate the legacy of slavery and ancestorial pain. Roots tourism could be considered a part of reparative leisure, \enquote{the possible connections between outdoor leisure and excavative history work} which allows room for varied experiences and emotions (Biggs, 2023).
+
+\section{The Narrativized Worlds of Plantation Museums}
+
+\subsection{Fabrication of Narrative Worlds}
+
+Carter, Butler, and Alderman~\cite{carter2014house} introduce a revised conceptual framework of narrativized worlds to aid in understanding visitors' interpretation of the varied stories presented at plantation museums. Building on Holland, Lachiotte, Skinner, and Cain's theorization of figurative and narrativized worlds \cite{holland2001identity}, they illustrate the interaction between society, museums, and audiences, each shaping and influencing the narratives produced and circulated. Plantation narratives are constrained by broader social and cultural forces \cite{carter2014house}. In this framework, plantation museum narratives fall into the genre of exposition, as they contextualize, explain, and interpret the plantation museum for visitors. The genre of exposition produces two types of narratives at plantation sites: dominant narratives, those that center the lands and labors while minimizing struggle and violence, and counter-narratives which offer socially just and historically grounded accounts of plantations pasts and enslaved communities \cite{carter2016where, cook2016counter}. The dissemination of these narratives occurs through many narrative agents, however at sites such as these narrativization is frequently the task of guides and docents \cite{modlin2008tales}.
+
+\subsection{Institutional Voices as Narrative Agents}
+
+Literature centering plantation museum visitors' experiences and takeaways highlights the guides' ability to provide either a successful or failed narrative \cite{carter2016where}. In many cases, guides function as the primary narrative agents, offering limited opportunity for social constructivist interpretation, or meaning derived from the visitor's own knowledge or lived experience. The guide operates as the site's mouthpiece, delivering a cultivated narrative that reinforces the plantation's predetermined narrative economy. Within the larger narrative world these stories are the products that sites assume meet the expectations of their audience and are the most profitable.
+
+\section{eWOM (Electronic Word-of-Mouth) and Online Reviews as Narrative Appraisal}
+
+\subsection{Reviews as Narrative Appraisal}
+
+An analysis of online reviews, attributed to plantations provides a glimpse into the highlights and takeaways of plantation visitors as recipients of the narrative experience at such sites \cite{alderman2016political}. Analyzed through the lens of the narrativized worlds frameworks visitors' narrative appraisals (short stories authored based on the plantation's narrative experience; Vásquez, 2012), while informed by their interactions with docents and guides, are additionally shaped by expectation, society, and culture.
+
+\subsection{Who Writes Online Reviews}
+
+While these narrative appraisals reflect the author's values, it does not diminish the potential effect the review platforms have on what plantation visitors write. Platform functional affordances can be influential enough to be considered as an additional author \cite{ruytenbeek2021exploring}. Tourism review platforms like Google Maps or TripAdvisor can function as portable and free tour guides. This is made possible by the social network functions of the sites. Google Maps in particular is built on the input of \textit{Local Guides} \cite{schaik2019playful}. Individuals act altruistically to contribute to \enquote{a global community} \cite{localguides}. The button to author reviews in the Google Maps application is thus labeled \enquote{contribute.} This tactic assumes that the focus-related utility model of electronic word-of-mouth, e-WOM, platforms motivate users to participate in public opinion posting to add value to the community \cite{hennigthurau2004electronic}.
+
+\enquote{Contributing} and serving as Local Guides allows entry into the game reviewers play within the Google Maps platform landscape with points, level ups, and rewards only available to prolific reviewers. The quantity of reviews is rewarded on the platform as opportunities to access forums to communicate with other passionate opinion posters are limited to those with the highest status. This shifts the review from an evaluation of a geographical, commercial, or information sites to a form of social media post within an exclusive social network \cite{schaik2019playful}. These rewards-based reviewing practices exemplify the employment of approval utility available to e-WOM platforms \cite{hennigthurau2004electronic}. Reviewers are thus motivated to author reviews to appear as an expert, gain status, and reap exclusive rewards.
+
+Those that document their plantation museum experience via e-WOM submissions on review sites express what they were exposed to on their visit to plantations while operating within the constraints and affordances of the online review platform itself. Figure~\ref{fig:narrative-cycle} offers an adaptation of Carter, Butler, and Alderman's~\cite{carter2014house} model with the addition of online reviews and their impact on authorship, expectation, and interpretation.
+
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=0.9\linewidth]{images/figure1.png}
+  \caption{Plantation Narrative Cycle. \textit{Note.} Adapted from \enquote{The House That Story Built: The Place of Slavery in Plantation Museum Narratives} by Carter, P., Butler, D. L., \& Alderman, D. H., 2014, \textit{The Professional Geographer}, \textit{66}(4), p.~547--557 (\url{https://doi.org/10.1080/00330124.2014.921016}).}
+  \label{fig:narrative-cycle}
+\end{figure}
+
+\section{Hypothesis and Research Question}
+
+The connection between Google Maps as a networked online space and the cyclical reinforcement of a plantation's narrative world suggests that visitors' narrative appraisals, informed by their experiences on plantation tours, function as additional agents in narrative dissemination. If plantation museums carefully curate their narratives for visitors, then plantation tourists' online reviews should reproduce elements of those narratives (dominant and counter-narratives) and push them back out into the world, shaping future visitors' expectations before they even arrive. To explore this hypothesis, this research's central question is: when people visit plantation museums and then write online reviews---are they just rating a tourist attraction, or are they actually extending the plantation's own carefully constructed narrative?
+
+\section{Methods} \label{sec:methods}
+
+The corpus under analysis is a collection of scraped online reviews from eight Louisiana based plantations. All the plantations from which the reviews represent are located along the 70-mile stretch of the Mississippi River between Baton Rouge and New Orleans. The reviews sourced from Google Maps are attributed to the Destrehan Plantation, Frogmore Cotton Plantation and Gins, Houmas House Estate and Gardens, Laura Plantation Louisiana's Créole Heritage Site, Magnolia Mound Museum and Historic Site, Oak Alley Plantation, St. Joseph and Felicity Plantations, and Whitney Plantation. These plantations were chosen because of their proximity and variance in tour and museum content.
+
+The thousand most recent reviews from each site were scraped and added to the corpus on November 24, 2025. After removing reviews without text, 4,135 total reviews remained for analysis.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{lrr}
+    \toprule
+    Plantation & Count & Percentage \\
+    \midrule
+    Destrehan Plantation & 866 & 20.74 \\
+    Laura Plantation: Louisiana's Créole Heritage Site & 735 & 17.6 \\
+    Whitney Plantation & 673 & 16.12 \\
+    Houmas House Estate and Gardens & 632 & 15.14 \\
+    Oak Alley Plantation & 622 & 14.9 \\
+    Frogmore Cotton Plantation \& Gins & 249 & 5.96 \\
+    St. Joseph Plantation and Felicity Plantation & 239 & 5.72 \\
+    Magnolia Mound: Museum + Historic Site & 159 & 3.81 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Distribution of Plantation Google Map Reviews.}
+  \label{tab:distribution}
+\end{table}
+
+Computational methods were used to investigate the reviews with OpenAI GPT-4o-mini employed as an analysis and categorization tool. The GPT-4o-mini model was chosen because of its ease of use, affordability, and capacity to handle more complex textual analysis tasks when compared to earlier models \cite{openaigpt4omini}. The LLM was tuned via prompts that included: prescribed categories, definitions, and examples. The prompt required the LLM to act as an expert-analyzer and classify Google Map reviews into five categories.
+
+The categories for the reviews were determined based on the expectations and priorities of planation visitors as established in previous surveys centering River Road \cite{bright2016who}. The categories were as follows: Aesthetics, Abstracted History, Experiences of the Enslaved, Staff and Guides, and Narrative Critique.
+
+The results were then compared, and a Krippendorff's $\alpha$ determined to test the validity of the LLM, 300 reviews were randomly sampled from the larger corpus and tested against 30 reviews established as Ground Truth. The initial prompt produced a Krippendorff's $\alpha$ score of 0.79. This indicates that there was moderately-good reliability between the model and the determined ground truth. The score is very close to the conventional threshold of .80 necessary for drawing conclusions. The prompt was adjusted to try to achieve higher reliability between the large language model and human code.
+
+The revision of Prompt A was minor, as the original Krippendorff's $\alpha$ was close to acceptable. The first change was to combine the Architecture/Furnishings and the Garden/Grounds categories into one under the new name Aesthetics. This allows for less variance in coding about the grounds or the \enquote{Big Houses} and structures without losing the nuance or symbolism inherent to either category. The second change was expanding the Abstracted History category to also include mentions of interesting facts or experiences. There were several reviews that fell outside of the original schema before this change was implemented. After revising (Prompt B) the Krippendorff's $\alpha$ increased to 0.84, a higher reliability score and over the threshold for drawing definitive conclusions (see Table~\ref{tab:divergence}).
+
+\begin{table}[h]
+  \centering
+  \footnotesize
+  \begin{tabular}{@{}p{4.4cm}p{1.9cm}p{1.9cm}p{3.4cm}@{}}
+    \toprule
+    \textbf{Text Snippet} & \textbf{Ground Truth Label} & \textbf{Prompt B} & \textbf{Reason for Divergence} \\
+    \midrule
+    \enquote{Wonderful experience with a great tour guide! I am from Alabama so I am knowledgeable of the slave trade and slavery, however it was nice to learn more about Louisiana slavery.} & Experiences of the Enslaved & Abstracted History & Unclear review theme. \\
+    \addlinespace
+    \enquote{The grounds are beautiful. I can't get over the trees. We ate in the restaurant and had a great reasonably priced meal. The tour of the big house was nice and the view out the second story door was fantastic. I was hoping for a better tribute to the slaves and their way of living during that time. The slave quarters are replicas and almost seem too nice to depict the reality of slave quarters but there was still some history to be learned. I learned about sugar harvesting and planting which was interesting. All in all it was worth our time. The admission fee is a bit steep for what you get but in line with every other plantation tour.} & Aesthetics & Narrative Critique & The subject of the review was ambiguous: centering the grounds or the need for expansive history of the enslaved. Fault in Ground Truth. \\
+    \addlinespace
+    \enquote{Great example of a Creole plantation home built before the Louisiana purchase. Actual surviving slave homes are on site as well as a working sugarcane field.} & Aesthetics & Experiences of the Enslaved & This is a misattributed code from the model. While the enslaved are mentioned it is in reference to the buildings. \\
+    \bottomrule
+  \end{tabular}
+  \caption{Divergence between Ground Truth and Revised Prompt (B).}
+  \label{tab:divergence}
+\end{table}
+
+After tuning the LLM prompt, the model was exposed to the entire corpus. Utilizing Carter et al.'s concept of plantation's narrativized worlds as a framework the five categories were mapped to the themes of Dominant narratives (Abstracted History, Aesthetics, Narrative Critique), Counter-narratives (Experiences of the Enslaved), No Narrative (Staff/Guides and No Category). Distilling the five review categories into narrative types allowed for the evaluation of reviews reproduction of plantation narrative economies and e-WOM narrative appraisals flow back into the narrativized worlds that informs the social and cultural expectations of River Run plantations.
+
+\section{Results}
+
+Of the 4,135 analyzed reviews, the majority of reviews were attributed to Dominant narratives or no narrative (see Table~\ref{tab:narrative-stats}). As evidenced by the breakdown of the assignment of review categories, Dominant narratives ($n=1763$) overshadow counter-narratives ($n=338$), with dominant narratives representing 42.24\% of the analyzed narrative appraisals and counter-narratives representing 8.09\% of posted reviews.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    Narrative & Review Category & N (\%) \\
+    \midrule
+    No Narrative & Staff/Guides & 1284 (30.76\%) \\
+    Dominant & Aesthetics & 852 (20.4\%) \\
+    No Narrative & No Category & 789 (18.9\%) \\
+    Dominant & Abstracted History & 714 (17.11\%) \\
+    Counter-narratives & Experiences of the Enslaved & 338 (8.1\%) \\
+    Counter-narratives & Narrative Critique & 197 (4.72\%) \\
+    \bottomrule
+  \end{tabular}
+  \caption{Review Category and Narrative Statistics.}
+  \label{tab:narrative-stats}
+\end{table}
+
+This research project questioned if plantation visitors' e-WOM posts or narrative appraisals contain elements of plantation's narrative economies. The conclusion can be drawn that online reviews attributed to River Run plantations do contain elements of their commercial stories in visitors' narrative appraisals. Reviews that extend plantation narratives (dominant and counter-narrative) from the eight sites made up 50.3\% of the total corpus, while reviews with no narrative made up 49.7\% of the total corpus. As evidenced by the data, 1 out of 2 plantation visitors reproduce elements of the plantation narrative in their online reviews (Figure~\ref{fig:narrative-distribution}).
+
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=0.85\linewidth]{images/figure2.png}
+  \caption{Distribution of Narrative Types.}
+  \label{fig:narrative-distribution}
+\end{figure}
+
+As reflected in adjacent research on the subject \cite{carter2016where}, lasting impressions plantation visitors are most likely to share in public forums are their experiences with plantation sites staff and guides ($n=1284$). It was the choice to not code reviews centering experiences with staff and guides in dominant narrative category. As previously discussed, guides are narrative agents at plantation sites; the implication of this exclusion is discussed in more detail in the following section.
+
+\section{Discussion and Limitations}
+
+As this research is in iterative stages, there are a few limitations to note. Chiefly is the completeness of the sample, the variety of plantations and differences in tour availability and popularity means there is an undefined time range for reviews scraped for the corpus. Magnolia Mound Museum and Historic Site and Frogmore Cotton Plantation and Gins sites had less than a thousand reviews, and are underrepresented in the corpus. More popular attractions, such as the Destrehan Plantation, most recent reviews represent a shorter period of time. Additionally, the limitations of having a single coder are apparent in the analysis of the review text. Future stages of this research will account for coding biases by employing additional coders.
+
+A research avenue to pursue further is the exploration of the breadth of plantation narrative types. Using the definition of dominant narrative, (those that center the lands and labors while minimizing struggle and violence) allowed for the review categories Aesthetics and Abstracted History to be attributed to it but neglected Staff/Guides and No Category. The second-largest single category was Staff and Guides at 31\%. In this phase of research, reviews centering Staff and Guides are coded as no narrative; that is worth flagging. As established, guides are narrative agents, and reviews centering on them may be doing more work as dominant Narratives than the current coding scheme captures.
+
+Google Maps reviews are uniquely suited to the analysis of information and narrative spread in narrativized worlds. As likely the first step in potential visitors' tourism research their expectations are established by the information, earlier reviews, they encounter. This review data allows potential visitors to identify what they will be confronted by and make choices that best suit their values and desires. These reviews are also monitored by plantation stakeholders. Online reviews illuminates where plantation narratives succeed, fail, and how they are interpreted. This insider knowledge can legitimate or argue against elements of a plantations narrative economy further shaping the future messages and genre conventions crafted by plantation authors. Reviews could additionally be used to measure entertainment-education persuasion as defined by Moyer-Gusé~\cite{moyerguse2008toward}. Plantation tourism literature frequently centers the museum and tour as forms of edutainment; online reviews provide a space to examine visitors' lasting impressions and takeaways. Applying Moyer-Gusé's framework may offer greater insight into how these persuasive dynamics are at work on these complex landscapes.
+
+The plantations of River Road's appeal to scholars lie in its variance as well as its similarities. These are commercial enterprises dedicated to sharing historical narratives, operating under the guise of information institutions. Many of the plantation sites at River Road are non-profits, in theory acting as a third space equipped to wade into the murky Mississippi waters and delve into complicated plantation history. It can be argued that the Black, Brown, and White people of Louisiana, descendants of these plantations, deserve to be exposed to the realities of their shared history. We are left to consider: Are there standards to which these spaces should be held?
+
+% Print the biblography at the end. Keep this line after the main
+% text of your paper, and before an appendix.
+\printbibliography
+
+\end{document}
