@@ -13,7 +13,7 @@ from jinja2 import Environment, FileSystemLoader
 
 
 RERUN_ALL_XELATEX = False
-REBUILD_VOL = None  # None or "vol0004"
+REBUILD_VOL = "vol0005"  # None or "vol0004"
 
 TEMPLATE_ENV = Environment(loader=FileSystemLoader("templates"))
 TEMPLATE_ENV.globals["year"] = date.today().year
