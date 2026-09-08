@@ -7,7 +7,7 @@ from pathlib import Path
 
 from TexSoup import TexSoup
 
-VOLUME = 5
+VOLUME = 4
 INPUT_DIR = Path("ingest")
 
 DOI_PREFIX = "10.63744"
