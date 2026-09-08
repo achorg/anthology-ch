@@ -42,7 +42,7 @@ def latex_to_html(latex_str, scalar=True):
     #     return latex_str
 
     result = subprocess.run(
-        ["pandoc", "-f", "latex", "-t", "html"],
+        ["pandoc", "-f", "latex", "-t", "html", "--math-method=plain"],
         input=latex_str,
         capture_output=True,
         text=True,
